@@ -31,11 +31,11 @@ elections/
 ```yaml
 - name: string        # 完整原始姓名（含英文、原住民族名）
   id: string          # 唯一識別碼（見 ID 規則）
-  birthday: string|null  # yyyy/mm/dd，無資料為 null
+  birthday: string|integer|null  # yyyy/mm/dd（完整）或 yyyy（僅年份）或 null
   elections:
     - year: integer   # 西元年份
       type: string    # 必須是 election_types.yaml 中的合法值
-      region: string|null  # 縣市全名（官方用字）或 null
+      region: string|null  # 縣市全名（官方用字）；立法委員填 null；縣市議員填縣市名稱（不含選區）
       party: string   # 推薦政黨（原始文字）
       elected: integer     # 1 = 當選，0 = 落選
   # elections 依 year 升冪排序（越早的選舉越前面）
@@ -149,7 +149,7 @@ id_<正規化姓名>
 
 ## 生日格式（birthday）
 
-格式為 `yyyy/mm/dd`，無資料時為 `null`。自動化程序會盡量從原始資料填入，不足之處可事後人工補齊。
+原始資料有完整日期時填 `yyyy/mm/dd`；僅有年份時填 `yyyy`（整數）；無資料時填 `null`。自動化程序會盡量從原始資料填入，不足之處可事後人工補齊。
 
 ---
 
