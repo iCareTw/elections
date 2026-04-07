@@ -41,6 +41,7 @@ elections/
       region: string|null  # 縣市全名（官方用字）或 null
       party: string   # 推薦政黨（原始文字）
       elected: integer     # 1 = 當選，0 = 落選
+  # elections 依 year 升冪排序（越早的選舉越前面）
 ```
 
 ### 實際範例
@@ -103,7 +104,7 @@ elections/
     - year: 2016
       type: 縣市議員
       region: 臺北市
-      party: 中國國民黨
+      party: 民主進步黨
       elected: 1
 
 - name: 許淑華
