@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>Merge UI 示意圖</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Menlo', 'Monaco', 'Consolas', monospace; background: #1e1e1e; color: #d4d4d4; padding: 24px; margin: 0; font-size: 13px; line-height: 1.6; }
+  h1 { color: #fff; font-size: 16px; margin-bottom: 4px; }
+  .subtitle { color: #888; font-size: 12px; margin-bottom: 32px; }
+  .cmd-line { color: #569cd6; }
+  .scenario { margin-bottom: 40px; }
+  .scenario-title { font-size: 13px; font-weight: bold; color: #9cdcfe; background: #2d2d2d; border-left: 3px solid #9cdcfe; padding: 8px 14px; margin-bottom: 12px; }
+  .terminal { background: #0d0d0d; border: 1px solid #3c3c3c; border-radius: 6px; padding: 18px 20px; }
+  .terminal-bar { background: #333; border-radius: 6px 6px 0 0; padding: 8px 14px; margin: -18px -20px 14px; display: flex; align-items: center; gap: 6px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.r { background: #ff5f56; }
+  .dot.y { background: #ffbd2e; }
+  .dot.g { background: #27c93f; }
+  .line { margin: 3px 0; }
+  .ln { margin: 2px 0; }
+  .gray   { color: #6a737d; }
+  .green  { color: #4ec94e; }
+  .blue   { color: #4fc1ff; }
+  .orange { color: #ffa500; }
+  .red    { color: #f48771; }
+  .white  { color: #fff; }
+  .bold   { font-weight: bold; }
+  .prompt { color: #c586c0; }
+  .indent { padding-left: 20px; }
+  .indent2 { padding-left: 40px; }
+  .spacer { height: 10px; }
+  .divider { border: none; border-top: 1px dashed #333; margin: 10px 0; }
+  .tag-new      { background: #1a4a1a; color: #4ec94e; border: 1px solid #3a7a3a; padding: 1px 7px; border-radius: 3px; font-size: 11px; font-weight: bold; }
+  .tag-exists   { background: #1a3a5c; color: #4fc1ff; border: 1px solid #2a6aaa; padding: 1px 7px; border-radius: 3px; font-size: 11px; font-weight: bold; }
+  .tag-conflict { background: #4a2a00; color: #ffa500; border: 1px solid #8a5a00; padding: 1px 7px; border-radius: 3px; font-size: 11px; font-weight: bold; }
+  .tag-auto     { background: #1a1a4a; color: #c0a0ff; border: 1px solid #5a4aaa; padding: 1px 7px; border-radius: 3px; font-size: 11px; font-weight: bold; }
+  .note { color: #888; font-size: 11px; margin-top: 8px; padding: 6px 10px; border-left: 2px solid #444; }
+  .cursor { display: inline-block; width: 8px; height: 14px; background: #d4d4d4; vertical-align: middle; animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+</style>
+</head>
+<body>
+
+<h1>候選人 Merge UI — 三種方案示意</h1>
+<p class="subtitle">情境：candidates.yaml 已存在（含 mayor 2022 資料），現在執行 president 2024</p>
+
+<!-- Option A -->
+<div class="scenario">
+  <div class="scenario-title">方案 A &nbsp;—&nbsp; 終端機逐筆確認（每筆都問）</div>
+  <div class="terminal">
+    <div class="terminal-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+
+    <div class="ln cmd-line">$ uv run python main.py --type president --year 2024</div>
+    <div class="ln gray">解析 第16任總統副總統選舉.xlsx ...</div>
+    <div class="ln gray">比對現有 candidates.yaml ...</div>
+    <div class="spacer"></div>
+
+    <div class="ln"><span class="tag-new">NEW</span> &nbsp;<span class="white bold">吳欣盈</span> &nbsp;<span class="gray">birthday:1978 | 國家元首 2024 | 台灣民眾黨 | elected:0</span></div>
+    <div class="ln indent gray">→ 現有 yaml 找不到此人</div>
+    <div class="ln indent"><span class="prompt">新增？ [y] 是 &nbsp;[s] 跳過 &nbsp;[e] 編輯後新增 &gt; </span><span class="white">y</span></div>
+    <div class="spacer"></div>
+
+    <div class="ln"><span class="tag-exists">EXISTS</span> &nbsp;<span class="white bold">柯文哲</span> &nbsp;<span class="gray">birthday:1959 | 國家元首 2024 | 台灣民眾黨 | elected:0</span></div>
+    <div class="ln indent gray">→ 現有 id_柯文哲（已有 2014/2018 縣市首長），將新增一筆 election</div>
+    <div class="ln indent"><span class="prompt">合併？ [y] 是 &nbsp;[s] 跳過 &nbsp;[e] 編輯後合併 &gt; </span><span class="white bold">_</span><span class="cursor"></span></div>
+    <div class="spacer"></div>
+
+    <div class="ln"><span class="tag-conflict">CONFLICT</span> &nbsp;<span class="white bold">許淑華</span> &nbsp;<span class="gray">birthday:1971 | 國家元首 2024 | 民主進步黨 | elected:0</span></div>
+    <div class="ln indent gray">→ yaml 中有同名 2 人：</div>
+    <div class="ln indent2 blue">[1] id_許淑華_1973 &nbsp;臺北市議員 2016 (民主進步黨)</div>
+    <div class="ln indent2 blue">[2] id_許淑華_1975 &nbsp;南投縣長 2014 (中國國民黨)</div>
+    <div class="ln indent"><span class="prompt">歸屬？ [1][2] 合併至對應人 &nbsp;[n] 新增第三人 &nbsp;[s] 跳過 &gt; </span></div>
+
+    <div class="divider"></div>
+    <div class="ln gray">進度 3 / 6 筆</div>
+  </div>
+  <div class="note">✅ 流程透明，每筆都能控制 &nbsp;&nbsp; ⚠️ 資料量大時很繁瑣（6筆總統候選人還好，但縣市議員可能幾千筆）</div>
+</div>
+
+<!-- Option B -->
+<div class="scenario">
+  <div class="scenario-title">方案 B &nbsp;—&nbsp; 輸出草稿 YAML，手動用編輯器合併</div>
+  <div class="terminal">
+    <div class="terminal-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+
+    <div class="ln cmd-line">$ uv run python main.py --type president --year 2024</div>
+    <div class="ln gray">解析完畢，輸出草稿至 <span class="blue">draft_president_2024.yaml</span></div>
+    <div class="ln gray">請用編輯器審閱後手動合併至 candidates.yaml</div>
+    <div class="spacer"></div>
+    <div class="ln gray">統計：</div>
+    <div class="ln indent green">NEW      2 筆（可直接貼入）</div>
+    <div class="ln indent blue">MERGE    3 筆（需補 election 至現有條目）</div>
+    <div class="ln indent orange">CONFLICT 1 筆（需人工判斷同名歸屬）</div>
+  </div>
+
+  <div class="terminal" style="margin-top:10px;">
+    <div class="terminal-bar" style="justify-content: center;"><span style="color:#888; font-size:11px;">draft_president_2024.yaml</span></div>
+
+    <div class="ln gray"># ── NEW ──────────────────────────────────────</div>
+    <div class="ln gray"># 現有 yaml 找不到此人，可直接複製貼入</div>
+    <div class="ln green">- name: 吳欣盈</div>
+    <div class="ln green">  id: id_吳欣盈</div>
+    <div class="ln green">  birthday: 1978</div>
+    <div class="ln green">  elections:</div>
+    <div class="ln green">    - year: 2024</div>
+    <div class="ln green">      type: 國家元首</div>
+    <div class="ln green">      region: null</div>
+    <div class="ln green">      party: 台灣民眾黨</div>
+    <div class="ln green">      elected: 0</div>
+    <div class="spacer"></div>
+    <div class="ln gray"># ── MERGE ────────────────────────────────────</div>
+    <div class="ln gray"># 請補至 candidates.yaml 中 id_柯文哲 的 elections 下</div>
+    <div class="ln orange">    - year: 2024</div>
+    <div class="ln orange">      type: 國家元首</div>
+    <div class="ln orange">      region: null</div>
+    <div class="ln orange">      party: 台灣民眾黨</div>
+    <div class="ln orange">      elected: 0</div>
+    <div class="spacer"></div>
+    <div class="ln gray"># ── CONFLICT ─────────────────────────────────</div>
+    <div class="ln gray"># 同名 2 人，請判斷是哪一位，或新增第三人</div>
+    <div class="ln gray"># 現有: id_許淑華_1973 (臺北市議員), id_許淑華_1975 (南投縣長)</div>
+    <div class="ln red">- name: 許淑華   # ← 請確認</div>
+    <div class="ln red">  birthday: 1971</div>
+    <div class="ln red">  elections:</div>
+    <div class="ln red">    - year: 2024</div>
+    <div class="ln red">      type: 國家元首</div>
+    <div class="ln red">      party: 民主進步黨</div>
+    <div class="ln red">      elected: 0</div>
+  </div>
+  <div class="note">✅ 可以慢慢看、來回翻 &nbsp;&nbsp; ⚠️ 合併動作完全手動，MERGE 那段需要自己找到對應位置貼入</div>
+</div>
+
+<!-- Option C -->
+<div class="scenario">
+  <div class="scenario-title">方案 C &nbsp;—&nbsp; 自動處理無衝突，只暫停在需要判斷的地方（推薦）</div>
+  <div class="terminal">
+    <div class="terminal-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+
+    <div class="ln cmd-line">$ uv run python main.py --type president --year 2024</div>
+    <div class="ln gray">解析 第16任總統副總統選舉.xlsx ...</div>
+    <div class="ln gray">比對現有 candidates.yaml ...</div>
+    <div class="spacer"></div>
+    <div class="ln"><span class="tag-auto">AUTO</span> &nbsp;<span class="green">自動合併 5 筆（NEW 2 筆 + EXISTS 3 筆，無歧義）</span></div>
+    <div class="ln"><span class="tag-conflict">CONFLICT</span> &nbsp;<span class="orange">需人工確認 1 筆</span></div>
+    <div class="spacer"></div>
+    <div class="ln orange bold">─── 衝突 1 / 1 ───────────────────────────────────────</div>
+    <div class="ln white">新資料：<span class="bold">許淑華</span> &nbsp;birthday:1971 | 國家元首 2024 | 民主進步黨 | elected:0</div>
+    <div class="spacer"></div>
+    <div class="ln blue">現有同名候選人：</div>
+    <div class="ln indent blue">[1] id_許淑華_1973 &nbsp;生年:1973 &nbsp;臺北市議員 2016 (民主進步黨)</div>
+    <div class="ln indent blue">[2] id_許淑華_1975 &nbsp;生年:1975 &nbsp;南投縣長 2014 (中國國民黨)</div>
+    <div class="spacer"></div>
+    <div class="ln"><span class="prompt">請選擇：[1] 合併至 _1973 &nbsp;[2] 合併至 _1975 &nbsp;[n] 新增第三人 &nbsp;[s] 跳過 &gt; </span><span class="white bold">_</span><span class="cursor"></span></div>
+    <div class="divider"></div>
+    <div class="ln gray">確認後寫入 candidates.yaml</div>
+  </div>
+  <div class="note">✅ 不繁瑣，只在真正需要判斷時才打擾 &nbsp;&nbsp; ✅ 自動處理的部分仍透明顯示 &nbsp;&nbsp; ⚠️ 需要終端機互動</div>
+</div>
+
+</body>
+</html>
