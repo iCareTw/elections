@@ -20,14 +20,14 @@ def _available_sessions() -> list[int]:
     )
 
 
-def _parse_xlsx_session(session: int) -> list[dict]:
-    """解析該屆所有 xlsx，以 (normalized_name, region) 為 key 回傳 dict。"""
+def _parse_xlsx_session(session: int) -> dict:
+    """解析該屆所有 xlsx，以 (normalized_name, region) 為 key 回傳 dict（重名同選區時保留多筆）。"""
     session_dir = LEGISLATOR_DIR / f"{session}th"
-    records = {}
+    records: dict[tuple, list[dict]] = {}
     for xlsx in sorted(session_dir.glob("*.xlsx")):
         for r in parse_file(xlsx):
             key = (normalize_name(r["name"]), r["region"])
-            records[key] = {**r, "name": normalize_name(r["name"])}
+            records.setdefault(key, []).append({**r, "name": normalize_name(r["name"])})
     return records
 
 
@@ -59,11 +59,10 @@ def _get_yaml_sessions() -> list[int]:
 @pytest.mark.parametrize("session", _available_sessions())
 def test_legislator_candidates_match_xlsx(session: int) -> None:
     xlsx = _parse_xlsx_session(session)
-    yaml_entries = {
-        (e["name"], e["region"]): e
-        for e in _load_yaml_entries()
-        if e["session"] == session
-    }
+    yaml_entries: dict[tuple, list[dict]] = {}
+    for e in _load_yaml_entries():
+        if e["session"] == session:
+            yaml_entries.setdefault((e["name"], e["region"]), []).append(e)
 
     xlsx_keys = set(xlsx.keys())
     yaml_keys = set(yaml_entries.keys())
@@ -78,21 +77,36 @@ def test_legislator_candidates_match_xlsx(session: int) -> None:
         f"  缺漏（前10筆）: {sorted(xlsx_keys - yaml_keys)[:10]}"
     )
 
-    for key, x in xlsx.items():
+    # xlsx 生年有誤，經人工確認後略過比對
+    # 徐能安 xlsx=1949，確認為 1944；吳光訓 xlsx=1947，確認為 1950；林志隆 xlsx=1947，確認為 1959
+    # 葉宜津 xlsx=1959，確認為 1960；林建榮 xlsx=1956，確認為 1946
+    birthday_skip = {
+        ("徐能安", "新竹縣選舉區"),
+        ("吳光訓", "高雄縣選舉區"),
+        ("林志隆", "高雄縣選舉區"),
+        ("葉宜津", "臺南縣選舉區"),
+        ("林建榮", "宜蘭縣選舉區"),
+    }
+
+    for key, x_list in xlsx.items():
         if key not in yaml_entries:
             continue
-        y = yaml_entries[key]
+        y_list = yaml_entries[key]
         name, region = key
-        assert x["party"] == y["party"], (
-            f"第{session}屆 {name} ({region}): 政黨不符 xlsx={x['party']!r} yaml={y['party']!r}"
-        )
-        assert x["elected"] == y["elected"], (
-            f"第{session}屆 {name} ({region}): 當選不符 xlsx={x['elected']} yaml={y['elected']}"
-        )
-        # xlsx 生年有誤，經人工確認後略過比對
-        # 徐能安 xlsx=1949，確認為 1944；吳光訓 xlsx=1947，確認為 1950；林志隆 xlsx=1947，確認為 1959
-        birthday_skip = {("徐能安", "新竹縣選舉區"), ("吳光訓", "高雄縣選舉區"), ("林志隆", "高雄縣選舉區")}
-        if x["birthday"] and y["birthday"] and (name, region) not in birthday_skip:
-            assert x["birthday"] == y["birthday"], (
-                f"第{session}屆 {name} ({region}): 生年不符 xlsx={x['birthday']} yaml={y['birthday']}"
+        for x in x_list:
+            # 重名同選區：以生年配對；birthday_skip 等單一候選人則直接取唯一項
+            y = next((e for e in y_list if e["birthday"] == x["birthday"]), None)
+            if y is None and len(y_list) == 1:
+                y = y_list[0]
+            if y is None:
+                continue
+            assert x["party"] == y["party"], (
+                f"第{session}屆 {name} ({region}): 政黨不符 xlsx={x['party']!r} yaml={y['party']!r}"
             )
+            assert x["elected"] == y["elected"], (
+                f"第{session}屆 {name} ({region}): 當選不符 xlsx={x['elected']} yaml={y['elected']}"
+            )
+            if x["birthday"] and y["birthday"] and (name, region) not in birthday_skip:
+                assert x["birthday"] == y["birthday"], (
+                    f"第{session}屆 {name} ({region}): 生年不符 xlsx={x['birthday']} yaml={y['birthday']}"
+                )
