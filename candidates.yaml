@@ -301,6 +301,11 @@
     region: 臺北縣
     party: 中國國民黨
     elected: 0
+  - year: 2005
+    type: 縣市首長
+    region: 花蓮縣
+    party: 中國國民黨
+    elected: 1
 - name: 周荃
   id: id_周荃
   birthday: 1956
@@ -410,6 +415,11 @@
     region: 新竹縣
     party: 中國國民黨
     elected: 1
+  - year: 2005
+    type: 縣市首長
+    region: 新竹縣
+    party: 中國國民黨
+    elected: 1
 - name: 林光華
   id: id_林光華
   birthday: 1945
@@ -420,6 +430,11 @@
     party: 民主進步黨
     elected: 1
   - year: 2001
+    type: 縣市首長
+    region: 新竹縣
+    party: 民主進步黨
+    elected: 0
+  - year: 2005
     type: 縣市首長
     region: 新竹縣
     party: 民主進步黨
@@ -556,6 +571,11 @@
     region: 彰化縣
     party: 民主進步黨
     elected: 1
+  - year: 2005
+    type: 縣市首長
+    region: 彰化縣
+    party: 民主進步黨
+    elected: 0
 - name: 林宗男
   id: id_林宗男
   birthday: 1942
@@ -570,6 +590,11 @@
     region: 南投縣
     party: 民主進步黨
     elected: 1
+  - year: 2005
+    type: 縣市首長
+    region: 南投縣
+    party: 無黨籍
+    elected: 0
 - name: 許惠祐
   id: id_許惠祐
   birthday: 1952
@@ -734,6 +759,11 @@
     region: 屏東縣
     party: 無黨籍
     elected: 0
+  - year: 2005
+    type: 縣市首長
+    region: 屏東縣
+    party: 無黨籍
+    elected: 0
 - name: 曾永權
   id: id_曾永權
   birthday: 1947
@@ -867,6 +897,11 @@
     region: 金門縣
     party: 新黨
     elected: 1
+  - year: 2005
+    type: 縣市首長
+    region: 金門縣
+    party: 新黨
+    elected: 1
 - name: 李進勇
   id: id_李進勇
   birthday: 1951
@@ -890,6 +925,11 @@
     region: 基隆市
     party: 中國國民黨
     elected: 0
+  - year: 2005
+    type: 縣市首長
+    region: 基隆市
+    party: 親民黨
+    elected: 0
 - name: 許財利
   id: id_許財利
   birthday: 1947
@@ -900,6 +940,11 @@
     party: 無黨籍
     elected: 0
   - year: 2001
+    type: 縣市首長
+    region: 基隆市
+    party: 中國國民黨
+    elected: 1
+  - year: 2005
     type: 縣市首長
     region: 基隆市
     party: 中國國民黨
@@ -1046,6 +1091,11 @@
     region: 臺南市
     party: 民主進步黨
     elected: 1
+  - year: 2005
+    type: 縣市首長
+    region: 臺南市
+    party: 民主進步黨
+    elected: 1
 - name: 高家俊
   id: id_高家俊
   birthday: 1950
@@ -1074,6 +1124,11 @@
     party: 中國國民黨
     elected: 0
   - year: 2001
+    type: 縣市首長
+    region: 臺南市
+    party: 中國國民黨
+    elected: 0
+  - year: 2005
     type: 縣市首長
     region: 臺南市
     party: 中國國民黨
@@ -1259,6 +1314,11 @@
     region: 桃園縣
     party: 中國國民黨
     elected: 1
+  - year: 2005
+    type: 縣市首長
+    region: 桃園縣
+    party: 中國國民黨
+    elected: 1
   - year: 2016
     type: 國家元首_總統
     region: 全國
@@ -1310,6 +1370,11 @@
     region: 宜蘭縣
     party: 中國國民黨
     elected: 0
+  - year: 2005
+    type: 縣市首長
+    region: 宜蘭縣
+    party: 中國國民黨
+    elected: 1
 - name: 彭紹瑾
   id: id_彭紹瑾
   birthday: 1957
@@ -1369,6 +1434,11 @@
   birthday: 1942
   elections:
   - year: 2001
+    type: 縣市首長
+    region: 臺中縣
+    party: 中國國民黨
+    elected: 1
+  - year: 2005
     type: 縣市首長
     region: 臺中縣
     party: 中國國民黨
@@ -1445,6 +1515,11 @@
     region: 南投縣
     party: 中國國民黨
     elected: 0
+  - year: 2005
+    type: 縣市首長
+    region: 南投縣
+    party: 無黨籍
+    elected: 0
 - name: 林樹山
   id: id_林樹山
   birthday: 1958
@@ -1468,6 +1543,11 @@
   birthday: 1954
   elections:
   - year: 2001
+    type: 縣市首長
+    region: 嘉義縣
+    party: 民主進步黨
+    elected: 1
+  - year: 2005
     type: 縣市首長
     region: 嘉義縣
     party: 民主進步黨
@@ -1517,6 +1597,11 @@
     region: 臺南縣
     party: 民主進步黨
     elected: 1
+  - year: 2005
+    type: 縣市首長
+    region: 臺南縣
+    party: 民主進步黨
+    elected: 1
 - name: 魏耀乾
   id: id_魏耀乾
   birthday: 1950
@@ -1544,6 +1629,11 @@
     region: 高雄縣
     party: 民主進步黨
     elected: 1
+  - year: 2005
+    type: 縣市首長
+    region: 高雄縣
+    party: 民主進步黨
+    elected: 1
 - name: 吳光訓
   id: id_吳光訓
   birthday: 1950
@@ -1562,11 +1652,21 @@
     region: 屏東縣
     party: 中國國民黨
     elected: 0
+  - year: 2005
+    type: 縣市首長
+    region: 屏東縣
+    party: 中國國民黨
+    elected: 0
 - name: 彭權國
   id: id_彭權國
   birthday: 1963
   elections:
   - year: 2001
+    type: 縣市首長
+    region: 臺東縣
+    party: 無黨籍
+    elected: 0
+  - year: 2005
     type: 縣市首長
     region: 臺東縣
     party: 無黨籍
@@ -1580,6 +1680,11 @@
     region: 臺東縣
     party: 中國國民黨
     elected: 0
+  - year: 2005
+    type: 縣市首長
+    region: 臺東縣
+    party: 無黨籍
+    elected: 1
 - name: 賴坤成
   id: id_賴坤成
   birthday: 1964
@@ -1634,6 +1739,11 @@
     region: 澎湖縣
     party: 民主進步黨
     elected: 0
+  - year: 2005
+    type: 縣市首長
+    region: 澎湖縣
+    party: 民主進步黨
+    elected: 0
 - name: 許麗音
   id: id_許麗音
   birthday: 1948
@@ -1648,6 +1758,11 @@
   birthday: 1952
   elections:
   - year: 2001
+    type: 縣市首長
+    region: 連江縣
+    party: 親民黨
+    elected: 1
+  - year: 2005
     type: 縣市首長
     region: 連江縣
     party: 親民黨
@@ -1706,6 +1821,11 @@
     region: 新竹市
     party: 中國國民黨
     elected: 1
+  - year: 2005
+    type: 縣市首長
+    region: 新竹市
+    party: 中國國民黨
+    elected: 1
 - name: 黃中媄
   id: id_黃中媄
   birthday: 1951
@@ -1729,6 +1849,11 @@
   birthday: 1948
   elections:
   - year: 2001
+    type: 縣市首長
+    region: 臺中市
+    party: 中國國民黨
+    elected: 1
+  - year: 2005
     type: 縣市首長
     region: 臺中市
     party: 中國國民黨
@@ -1769,6 +1894,11 @@
     region: 嘉義市
     party: 無黨籍
     elected: 1
+  - year: 2005
+    type: 縣市首長
+    region: 嘉義市
+    party: 民主進步黨
+    elected: 0
 - name: 江清馦
   id: id_江清馦
   birthday: 1942
@@ -1840,6 +1970,456 @@
     type: 縣市首長
     region: 高雄市
     party: 中國國民黨
+    elected: 0
+- name: 黃福卿
+  id: id_黃福卿
+  birthday: 1937
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺北縣
+    party: 無黨籍
+    elected: 0
+- name: 周錫瑋
+  id: id_周錫瑋
+  birthday: 1958
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺北縣
+    party: 中國國民黨
+    elected: 1
+- name: 陳誠鈞
+  id: id_陳誠鈞
+  birthday: 1955
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺北縣
+    party: 無黨籍
+    elected: 0
+- name: 陳俊傑
+  id: id_陳俊傑
+  birthday: 1967
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺北縣
+    party: 無黨籍
+    elected: 0
+- name: 羅文嘉
+  id: id_羅文嘉
+  birthday: 1966
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺北縣
+    party: 民主進步黨
+    elected: 0
+- name: 黃茂全
+  id: id_黃茂全
+  birthday: 1973
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺北縣
+    party: 無黨籍
+    elected: 0
+- name: 陳定南
+  id: id_陳定南
+  birthday: 1943
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 宜蘭縣
+    party: 民主進步黨
+    elected: 0
+- name: 謝李靜宜
+  id: id_謝李靜宜
+  birthday: 1958
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 宜蘭縣
+    party: 無黨籍
+    elected: 0
+- name: 鄭寶清
+  id: id_鄭寶清
+  birthday: 1955
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 桃園縣
+    party: 民主進步黨
+    elected: 0
+- name: 吳家登
+  id: id_吳家登
+  birthday: 1959
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 桃園縣
+    party: 無黨籍
+    elected: 0
+- name: 顏培元
+  id: id_顏培元
+  birthday: 1951
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 苗栗縣
+    party: 無黨籍
+    elected: 0
+- name: 陳秀龍
+  id: id_陳秀龍
+  birthday: 1937
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 苗栗縣
+    party: 無黨籍
+    elected: 0
+- name: 劉政鴻
+  id: id_劉政鴻
+  birthday: 1947
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 苗栗縣
+    party: 中國國民黨
+    elected: 1
+- name: 邱炳坤
+  id: id_邱炳坤
+  birthday: 1950
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 苗栗縣
+    party: 民主進步黨
+    elected: 0
+- name: 徐耀昌
+  id: id_徐耀昌
+  birthday: 1955
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 苗栗縣
+    party: 無黨籍
+    elected: 0
+- name: 江炳輝
+  id: id_江炳輝
+  birthday: 1929
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 苗栗縣
+    party: 無黨籍
+    elected: 0
+- name: 邱太三
+  id: id_邱太三
+  birthday: 1956
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺中縣
+    party: 民主進步黨
+    elected: 0
+- name: 林振昌
+  id: id_林振昌
+  birthday: 1967
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺中縣
+    party: 無黨籍
+    elected: 0
+- name: 卓伯源
+  id: id_卓伯源
+  birthday: 1965
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 彰化縣
+    party: 中國國民黨
+    elected: 1
+- name: 陳進丁
+  id: id_陳進丁
+  birthday: 1946
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 彰化縣
+    party: 無黨籍
+    elected: 0
+- name: 李朝卿
+  id: id_李朝卿
+  birthday: 1950
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 南投縣
+    party: 中國國民黨
+    elected: 1
+- name: 蔡煌瑯
+  id: id_蔡煌瑯
+  birthday: 1960
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 南投縣
+    party: 民主進步黨
+    elected: 0
+- name: 林佳瑜
+  id: id_林佳瑜
+  birthday: 1959
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 雲林縣
+    party: 無黨籍
+    elected: 0
+- name: 蘇治芬
+  id: id_蘇治芬
+  birthday: 1953
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 雲林縣
+    party: 民主進步黨
+    elected: 1
+- name: 許舒博
+  id: id_許舒博
+  birthday: 1963
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 雲林縣
+    party: 中國國民黨
+    elected: 0
+- name: 陳明振
+  id: id_陳明振
+  birthday: 1960
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 嘉義縣
+    party: 中國國民黨
+    elected: 0
+- name: 郭添財
+  id: id_郭添財
+  birthday: 1962
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺南縣
+    party: 中國國民黨
+    elected: 0
+- name: 張博森
+  id: id_張博森
+  birthday: 1948
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺南縣
+    party: 無黨籍
+    elected: 0
+- name: 蔡四結
+  id: id_蔡四結
+  birthday: 1943
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺南縣
+    party: 無黨籍
+    elected: 0
+- name: 林益世
+  id: id_林益世
+  birthday: 1968
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 高雄縣
+    party: 中國國民黨
+    elected: 0
+- name: 曹啟鴻
+  id: id_曹啟鴻
+  birthday: 1948
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 屏東縣
+    party: 民主進步黨
+    elected: 1
+- name: 宋麗華
+  id: id_宋麗華
+  birthday: 1968
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 屏東縣
+    party: 無黨籍
+    elected: 0
+- name: 劉櫂豪
+  id: id_劉櫂豪
+  birthday: 1967
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺東縣
+    party: 無黨籍
+    elected: 0
+- name: 柯賜海
+  id: id_柯賜海
+  birthday: 1956
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 花蓮縣
+    party: 無黨籍
+    elected: 0
+- name: 盧博基
+  id: id_盧博基
+  birthday: 1949
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 花蓮縣
+    party: 民主進步黨
+    elected: 0
+- name: 傅崐萁
+  id: id_傅崐萁
+  birthday: 1962
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 花蓮縣
+    party: 親民黨
+    elected: 0
+- name: 王乾發
+  id: id_王乾發
+  birthday: 1949
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 澎湖縣
+    party: 中國國民黨
+    elected: 1
+- name: 許敬民
+  id: id_許敬民
+  birthday: 1949
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 澎湖縣
+    party: 無黨籍
+    elected: 0
+- name: 吳軾子
+  id: id_吳軾子
+  birthday: 1959
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 連江縣
+    party: 無黨籍
+    elected: 0
+- name: 楊綏生
+  id: id_楊綏生
+  birthday: 1954
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 連江縣
+    party: 無黨籍
+    elected: 0
+- name: 陳福海
+  id: id_陳福海
+  birthday: 1963
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 金門縣
+    party: 無黨籍
+    elected: 0
+- name: 陳平
+  id: id_陳平
+  birthday: 1957
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 金門縣
+    party: 無黨籍
+    elected: 0
+- name: 陳建銘
+  id: id_陳建銘
+  birthday: 1961
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 基隆市
+    party: 台灣團結聯盟
+    elected: 0
+- name: 王拓
+  id: id_王拓
+  birthday: 1944
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 基隆市
+    party: 民主進步黨
+    elected: 0
+- name: 鄭貴元
+  id: id_鄭貴元
+  birthday: 1952
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 新竹市
+    party: 民主進步黨
+    elected: 0
+- name: 李貴富
+  id: id_李貴富
+  birthday: 1961
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺中市
+    party: 無黨籍
+    elected: 0
+- name: 沈智慧
+  id: id_沈智慧
+  birthday: 1957
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺中市
+    party: 親民黨
+    elected: 0
+- name: 林佳龍
+  id: id_林佳龍
+  birthday: 1964
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺中市
+    party: 民主進步黨
+    elected: 0
+- name: 黃敏惠
+  id: id_黃敏惠
+  birthday: 1959
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 嘉義市
+    party: 中國國民黨
+    elected: 1
+- name: 錢林慧君
+  id: id_錢林慧君
+  birthday: 1947
+  elections:
+  - year: 2005
+    type: 縣市首長
+    region: 臺南市
+    party: 台灣團結聯盟
     elected: 0
 - name: 蔡英文
   id: id_蔡英文
