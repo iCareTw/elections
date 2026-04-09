@@ -25,9 +25,9 @@ def classify_records(records: list[dict], existing: list[dict]) -> dict:
 
         if len(matches) == 1:
             c = matches[0]
-            bday_ok = (r['birthday'] is None or c['birthday'] is None
-                       or r['birthday'] == c['birthday'])
-            if bday_ok:
+            bday_match = (r['birthday'] is not None and c['birthday'] is not None
+                          and r['birthday'] == c['birthday'])
+            if bday_match:
                 election = {k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')} | ({'ticket': r['ticket']} if 'ticket' in r else {})
                 if election in c['elections']:
                     continue  # 已存在，跳過
@@ -50,7 +50,7 @@ def apply_auto(auto: list[dict], existing: list[dict]) -> list[dict]:
         if item['action'] == 'new':
             result.append({
                 'name': r['name'],
-                'id': generate_id(r['name']),
+                'id': generate_id(r['name'], r['birthday']),
                 'birthday': r['birthday'],
                 'elections': [{k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')} | ({'ticket': r['ticket']} if 'ticket' in r else {})],
             })

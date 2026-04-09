@@ -60,8 +60,46 @@ def load_valid_types() -> set[str]:
     return {t['id'] for t in data}
 
 
+def _make_election(r: dict) -> dict:
+    return {k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')} | (
+        {'ticket': r['ticket']} if 'ticket' in r else {}
+    )
+
+
+def _add_as_new(r: dict, matches: list[dict], to_add: list[dict]) -> None:
+    """將 r 新增為獨立候選人，並更新現有同名者的 id（加上生日後綴）。"""
+    for m in matches:
+        if m['birthday']:
+            m['id'] = generate_id(m['name'], m['birthday'])
+    to_add.append({
+        'name': r['name'],
+        'id': generate_id(r['name'], r['birthday']),
+        'birthday': r['birthday'],
+        'elections': [_make_election(r)],
+    })
+
+
+def _resolve_birthday(c: dict, r: dict) -> None:
+    """當生日不同時，互動式詢問要以哪個生日為主。"""
+    print(f'  生年不同：現有 \033[1m{c["birthday"]}\033[0m，新資料 \033[1m{r["birthday"]}\033[0m')
+    while True:
+        ans = input('  以哪個為主？[1] 保留現有  [2] 採用新資料  [m] 手動輸入 > ').strip().lower()
+        if ans == '1':
+            break
+        elif ans == '2':
+            c['birthday'] = r['birthday']
+            c['id'] = generate_id(c['name'], c['birthday'])
+            break
+        elif ans == 'm':
+            val = input('  請輸入生日（yyyy 或 yyyy/mm 或 yyyy/mm/dd）> ').strip()
+            if val:
+                c['birthday'] = val
+                c['id'] = generate_id(c['name'], c['birthday'])
+            break
+
+
 def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]:
-    """互動式處理 conflicts，回傳需要追加至 existing 的新候選人（若選 n）。"""
+    """互動式處理 conflicts，回傳需要追加至 existing 的新候選人。"""
     to_add = []
 
     for i, item in enumerate(conflicts, 1):
@@ -76,36 +114,52 @@ def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]
             print(f'  [{j}] {c["id"]}  生年:{c["birthday"]}  '
                   f'{last.get("type", "")} {last.get("year", "")} ({last.get("party", "")})')
 
-        choices = [str(j) for j in range(1, len(matches) + 1)]
-        prompt = f'\n請選擇：{" ".join(f"[{j}]" for j in choices)} 合併  [n] 新增第三人  [s] 跳過 > '
-        while True:
-            ans = input(prompt).strip().lower()
-            if ans in choices:
-                c = matches[int(ans) - 1]
-                election = {k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')} | ({'ticket': r['ticket']} if 'ticket' in r else {})
-                c['elections'].append(election)
-                c['elections'].sort(key=lambda e: e['year'])
-                if r['birthday'] and c['birthday'] != r['birthday']:
-                    print(f'  生年不符：現有 {c["birthday"]}，新資料 {r["birthday"]}')
-                    fix = input('  是否以新資料更新 birthday？[y/n] > ').strip().lower()
-                    if fix == 'y':
-                        c['birthday'] = r['birthday']
-                        c['id'] = generate_id(c['name'], c['birthday'])
-                break
-            elif ans == 'n':
-                for m in matches:
-                    if m['birthday']:
-                        m['id'] = generate_id(m['name'], m['birthday'])
-                to_add.append({
-                    'name': r['name'],
-                    'id': generate_id(r['name'], r['birthday']),
-                    'birthday': r['birthday'],
-                    'elections': [{k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')} | ({'ticket': r['ticket']} if 'ticket' in r else {})],
-                })
-                break
-            elif ans == 's':
-                print('  跳過')
-                break
+        if len(matches) == 1:
+            # 單一同名者：先問是否同人
+            while True:
+                ans = input('\n是否為同一人？[y] 是  [n] 新增為不同人  [s] 跳過 > ').strip().lower()
+                if ans == 'y':
+                    c = matches[0]
+                    c['elections'].append(_make_election(r))
+                    c['elections'].sort(key=lambda e: e['year'])
+                    if r['birthday'] and c['birthday'] != r['birthday']:
+                        _resolve_birthday(c, r)
+                    elif r['birthday'] and not c['birthday']:
+                        upd = input(f'  現有生年為空，是否補上 {r["birthday"]}？[y/n] > ').strip().lower()
+                        if upd == 'y':
+                            c['birthday'] = r['birthday']
+                            c['id'] = generate_id(c['name'], c['birthday'])
+                    break
+                elif ans == 'n':
+                    _add_as_new(r, matches, to_add)
+                    break
+                elif ans == 's':
+                    print('  跳過')
+                    break
+        else:
+            # 多個同名者：選擇合併哪一個，或新增
+            choices = [str(j) for j in range(1, len(matches) + 1)]
+            prompt = f'\n請選擇：{" ".join(f"[{j}]" for j in choices)} 合併  [n] 新增為不同人  [s] 跳過 > '
+            while True:
+                ans = input(prompt).strip().lower()
+                if ans in choices:
+                    c = matches[int(ans) - 1]
+                    c['elections'].append(_make_election(r))
+                    c['elections'].sort(key=lambda e: e['year'])
+                    if r['birthday'] and c['birthday'] != r['birthday']:
+                        _resolve_birthday(c, r)
+                    elif r['birthday'] and not c['birthday']:
+                        upd = input(f'  現有生年為空，是否補上 {r["birthday"]}？[y/n] > ').strip().lower()
+                        if upd == 'y':
+                            c['birthday'] = r['birthday']
+                            c['id'] = generate_id(c['name'], c['birthday'])
+                    break
+                elif ans == 'n':
+                    _add_as_new(r, matches, to_add)
+                    break
+                elif ans == 's':
+                    print('  跳過')
+                    break
 
     return to_add
 
