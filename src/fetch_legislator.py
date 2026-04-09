@@ -61,3 +61,80 @@ def parse_session_map(data: list[dict]) -> dict:
                     'desc':       item['legislator_desc'],
                 }
     return result
+
+
+async def _fetch_json(client: httpx.AsyncClient, url: str) -> dict | list:
+    r = await client.get(url)
+    r.raise_for_status()
+    return r.json()
+
+
+async def _scrape_entry(
+    client: httpx.AsyncClient,
+    session: int,
+    legis_id: str,
+    entry: dict,
+    force: bool,
+) -> None:
+    theme_id   = entry['theme_id']
+    data_level = entry['data_level']
+    desc       = entry['desc']
+
+    if legis_id == 'L1':
+        areas_data = await _fetch_json(client, areas_url(theme_id))
+        cities = list(areas_data.values())[0]
+        for city in cities:
+            prv_code  = city['prv_code']
+            area_name = city['area_name']
+            path = output_path(session, desc, area_name)
+            if path.exists() and not force:
+                print(f'  skip {path.name}')
+                continue
+            try:
+                data = await _fetch_json(client, tickets_url(legis_id, theme_id, prv_code, data_level))
+                records = list(data.values())[0]
+                write_xlsx(records, path)
+                print(f'  wrote {path}')
+                await asyncio.sleep(0.3)
+            except Exception as e:
+                print(f'  WARNING {area_name}: {e}')
+    else:
+        path = output_path(session, desc)
+        if path.exists() and not force:
+            print(f'  skip {path.name}')
+            return
+        try:
+            data = await _fetch_json(client, tickets_url(legis_id, theme_id, '00', data_level))
+            records = list(data.values())[0]
+            write_xlsx(records, path)
+            print(f'  wrote {path}')
+        except Exception as e:
+            print(f'  WARNING {desc}: {e}')
+
+
+async def _run(sessions: list[int], force: bool) -> None:
+    async with httpx.AsyncClient(timeout=30) as client:
+        raw = await _fetch_json(client, f'{BASE_URL}/static/elections/list/ELC_L0.json')
+        session_map = parse_session_map(raw)
+        for s in sorted(sessions):
+            print(f'\n=== 第{s}屆 ===')
+            for legis_id in ('L1', 'L2', 'L3'):
+                entry = session_map.get((s, legis_id))
+                if not entry:
+                    print(f'  WARNING: no data for session {s} {legis_id}')
+                    continue
+                await _scrape_entry(client, s, legis_id, entry, force)
+                await asyncio.sleep(0.3)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description='Fetch legislator XLSX from CEC')
+    parser.add_argument('--session', type=int, help='single session number (3–11)')
+    parser.add_argument('--force',   action='store_true', help='overwrite existing files')
+    args = parser.parse_args()
+    sessions = [args.session] if args.session else list(range(3, 12))
+    asyncio.run(_run(sessions, args.force))
+
+
+if __name__ == '__main__':
+    main()
