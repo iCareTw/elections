@@ -22,4 +22,15 @@
 # uv run python main.py --type mayor --year 2014   # 103年直轄市長 + 縣市長（2 檔合併）
 # uv run python main.py --type mayor --year 2018   # 107年直轄市長 + 縣市長（2 檔合併）
 # uv run python main.py --type mayor --year 2020   # 109年直轄市長_補選（高雄）
-# uv run python main.py --type mayor --year 2022   # 111年直轄市長 + 縣市長 + 縣市長_重選（3 檔合併） 
+# uv run python main.py --type mayor --year 2022   # 111年直轄市長 + 縣市長 + 縣市長_重選（3 檔合併）
+
+## ---------------------- 立法委員 ----------------------
+uv run python main.py --type legislator --session 3
+uv run python main.py --type legislator --session 4
+uv run python main.py --type legislator --session 5
+uv run python main.py --type legislator --session 6
+uv run python main.py --type legislator --session 7
+uv run python main.py --type legislator --session 8
+uv run python main.py --type legislator --session 9
+uv run python main.py --type legislator --session 10
+uv run python main.py --type legislator --session 11
