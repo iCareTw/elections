@@ -38,6 +38,12 @@
     party: 中國國民黨
     elected: 1
     ticket: 2
+  - year: 2000
+    type: 國家元首_總統
+    region: 全國
+    party: 中國國民黨
+    elected: 0
+    ticket: 2
 - name: 彭明敏
   id: id_彭明敏
   birthday: 1923
@@ -78,3 +84,93 @@
     party: 連署
     elected: 0
     ticket: 4
+- name: 宋楚瑜
+  id: id_宋楚瑜
+  birthday: 1942
+  elections:
+  - year: 2000
+    type: 國家元首_總統
+    region: 全國
+    party: 連署
+    elected: 0
+    ticket: 1
+- name: 張昭雄
+  id: id_張昭雄
+  birthday: 1944
+  elections:
+  - year: 2000
+    type: 國家元首_副總統
+    region: 全國
+    party: 連署
+    elected: 0
+    ticket: 1
+- name: 蕭萬長
+  id: id_蕭萬長
+  birthday: 1942
+  elections:
+  - year: 2000
+    type: 國家元首_副總統
+    region: 全國
+    party: 中國國民黨
+    elected: 0
+    ticket: 2
+- name: 李敖
+  id: id_李敖
+  birthday: 1937
+  elections:
+  - year: 2000
+    type: 國家元首_總統
+    region: 全國
+    party: 新黨
+    elected: 0
+    ticket: 3
+- name: 馮滬祥
+  id: id_馮滬祥
+  birthday: 1948
+  elections:
+  - year: 2000
+    type: 國家元首_副總統
+    region: 全國
+    party: 新黨
+    elected: 0
+    ticket: 3
+- name: 許信良
+  id: id_許信良
+  birthday: 1941
+  elections:
+  - year: 2000
+    type: 國家元首_總統
+    region: 全國
+    party: 連署
+    elected: 0
+    ticket: 4
+- name: 朱惠良
+  id: id_朱惠良
+  birthday: 1950
+  elections:
+  - year: 2000
+    type: 國家元首_副總統
+    region: 全國
+    party: 連署
+    elected: 0
+    ticket: 4
+- name: 陳水扁
+  id: id_陳水扁
+  birthday: 1951
+  elections:
+  - year: 2000
+    type: 國家元首_總統
+    region: 全國
+    party: 民主進步黨
+    elected: 1
+    ticket: 5
+- name: 呂秀蓮
+  id: id_呂秀蓮
+  birthday: 1944
+  elections:
+  - year: 2000
+    type: 國家元首_副總統
+    region: 全國
+    party: 民主進步黨
+    elected: 1
+    ticket: 5
