@@ -7,6 +7,11 @@
     region: 臺北市
     party: 民主進步黨
     elected: 1
+  - year: 1998
+    type: 縣市首長
+    region: 臺北市
+    party: 民主進步黨
+    elected: 0
   - year: 2000
     type: 國家元首_總統
     region: 全國
@@ -28,6 +33,11 @@
     region: 高雄市
     party: 中國國民黨
     elected: 1
+  - year: 1998
+    type: 縣市首長
+    region: 高雄市
+    party: 中國國民黨
+    elected: 0
   - year: 2012
     type: 國家元首_副總統
     region: 全國
@@ -97,6 +107,11 @@
   - year: 1997
     type: 縣市首長
     region: 高雄縣
+    party: 無黨籍
+    elected: 0
+  - year: 1998
+    type: 縣市首長
+    region: 高雄市
     party: 無黨籍
     elected: 0
 - name: 湯阿根
@@ -180,6 +195,11 @@
     party: 民主進步黨
     elected: 0
     ticket: 3
+  - year: 1998
+    type: 縣市首長
+    region: 高雄市
+    party: 民主進步黨
+    elected: 1
   - year: 2008
     type: 國家元首_副總統
     region: 全國
@@ -941,6 +961,45 @@
     region: 臺南市
     party: 民主進步黨
     elected: 1
+- name: 馬英九
+  id: id_馬英九
+  birthday: 1950
+  elections:
+  - year: 1998
+    type: 縣市首長
+    region: 臺北市
+    party: 中國國民黨
+    elected: 1
+  - year: 2008
+    type: 國家元首_總統
+    region: 全國
+    party: 中國國民黨
+    elected: 1
+    ticket: 2
+  - year: 2012
+    type: 國家元首_總統
+    region: 全國
+    party: 中國國民黨
+    elected: 1
+    ticket: 2
+- name: 王建煊
+  id: id_王建煊
+  birthday: 1938
+  elections:
+  - year: 1998
+    type: 縣市首長
+    region: 臺北市
+    party: 新黨
+    elected: 0
+- name: 吳建國
+  id: id_吳建國
+  birthday: 1950
+  elections:
+  - year: 1998
+    type: 縣市首長
+    region: 高雄市
+    party: 新黨
+    elected: 0
 - name: 宋楚瑜
   id: id_宋楚瑜
   birthday: 1942
@@ -1041,22 +1100,6 @@
     party: 連署
     elected: 0
     ticket: 4
-- name: 馬英九
-  id: id_馬英九
-  birthday: 1950
-  elections:
-  - year: 2008
-    type: 國家元首_總統
-    region: 全國
-    party: 中國國民黨
-    elected: 1
-    ticket: 2
-  - year: 2012
-    type: 國家元首_總統
-    region: 全國
-    party: 中國國民黨
-    elected: 1
-    ticket: 2
 - name: 蔡英文
   id: id_蔡英文
   birthday: 1956
