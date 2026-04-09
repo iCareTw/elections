@@ -91,23 +91,35 @@ def _get_yaml_years() -> list[int]:
 
 
 @pytest.mark.parametrize("year", _get_yaml_years())
-def test_president_candidates_match_xlsx(year: int) -> None:
-    xlsx = {(c["type"], c["ticket"]): c for c in _parse_xlsx(year)}
+@pytest.mark.parametrize("election_type", sorted(PRESIDENT_TYPES))
+def test_president_candidates_match_xlsx(year: int, election_type: str) -> None:
+    xlsx = {
+        c["ticket"]: c
+        for c in _parse_xlsx(year)
+        if c["type"] == election_type
+    }
     yaml_entries = {
-        (e["type"], e["ticket"]): e
+        e["ticket"]: e
         for e in _load_yaml_entries()
-        if e["year"] == year
+        if e["year"] == year and e["type"] == election_type
     }
 
-    assert set(xlsx.keys()) == set(yaml_entries.keys()), (
-        f"{year} 年候選人組合不一致\n"
-        f"  xlsx 有但 yaml 缺: {set(xlsx) - set(yaml_entries)}\n"
-        f"  yaml 有但 xlsx 缺: {set(yaml_entries) - set(xlsx)}"
+    yaml_tickets = set(yaml_entries.keys())
+    xlsx_tickets = set(xlsx.keys())
+
+    # 要馬全部都要有，要馬全部都沒有
+    assert yaml_tickets in (set(), xlsx_tickets), (
+        f"{year} 年 {election_type} 資料不完整\n"
+        f"  xlsx: {sorted(xlsx_tickets)}\n"
+        f"  yaml: {sorted(yaml_tickets)}\n"
+        f"  缺漏: {sorted(xlsx_tickets - yaml_tickets)}"
     )
 
-    for key in xlsx:
-        x, y = xlsx[key], yaml_entries[key]
-        assert x["name"] == y["name"], f"{year}/{key}: 姓名不符 xlsx={x['name']!r} yaml={y['name']!r}"
-        assert x["party"] == y["party"], f"{year}/{key}: 政黨不符 xlsx={x['party']!r} yaml={y['party']!r}"
-        assert x["elected"] == y["elected"], f"{year}/{key}: 當選不符 xlsx={x['elected']} yaml={y['elected']}"
-        assert x["birthday"] == y["birthday"], f"{year}/{key}: 生日不符 xlsx={x['birthday']} yaml={y['birthday']}"
+    for ticket, x in xlsx.items():
+        if ticket not in yaml_entries:
+            continue
+        y = yaml_entries[ticket]
+        assert x["name"] == y["name"], f"{year}/{election_type}/號次{ticket}: 姓名不符 xlsx={x['name']!r} yaml={y['name']!r}"
+        assert x["party"] == y["party"], f"{year}/{election_type}/號次{ticket}: 政黨不符 xlsx={x['party']!r} yaml={y['party']!r}"
+        assert x["elected"] == y["elected"], f"{year}/{election_type}/號次{ticket}: 當選不符 xlsx={x['elected']} yaml={y['elected']}"
+        assert x["birthday"] == y["birthday"], f"{year}/{election_type}/號次{ticket}: 生日不符 xlsx={x['birthday']} yaml={y['birthday']}"
