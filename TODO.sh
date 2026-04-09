@@ -21,5 +21,5 @@
 # uv run python main.py --type mayor --year 2010   # 99年直轄市長選舉
 # uv run python main.py --type mayor --year 2014   # 103年直轄市長 + 縣市長（2 檔合併）
 # uv run python main.py --type mayor --year 2018   # 107年直轄市長 + 縣市長（2 檔合併）
-uv run python main.py --type mayor --year 2020   # 109年直轄市長_補選（高雄）
+# uv run python main.py --type mayor --year 2020   # 109年直轄市長_補選（高雄）
 uv run python main.py --type mayor --year 2022   # 111年直轄市長 + 縣市長 + 縣市長_重選（3 檔合併） 

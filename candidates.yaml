@@ -4035,6 +4035,11 @@
     region: 高雄市
     party: 民主進步黨
     elected: 0
+  - year: 2020
+    type: 縣市首長
+    region: 高雄市
+    party: 民主進步黨
+    elected: 1
 - name: 璩美鳳
   id: id_璩美鳳
   birthday: 1966
@@ -4433,6 +4438,24 @@
     party: 中國國民黨
     elected: 0
     ticket: 2
+- name: 吳益政
+  id: id_吳益政
+  birthday: 1963
+  elections:
+  - year: 2020
+    type: 縣市首長
+    region: 高雄市
+    party: 台灣民眾黨
+    elected: 0
+- name: 李眉蓁
+  id: id_李眉蓁
+  birthday: 1979
+  elections:
+  - year: 2020
+    type: 縣市首長
+    region: 高雄市
+    party: 中國國民黨
+    elected: 0
 - name: 吳欣盈
   id: id_吳欣盈
   birthday: 1978
