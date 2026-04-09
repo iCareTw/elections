@@ -112,6 +112,12 @@
     party: 中國國民黨
     elected: 0
     ticket: 2
+  - year: 2012
+    type: 國家元首_總統
+    region: 全國
+    party: 無黨籍
+    elected: 0
+    ticket: 3
 - name: 張昭雄
   id: id_張昭雄
   birthday: 1944
@@ -230,3 +236,49 @@
     party: 中國國民黨
     elected: 1
     ticket: 2
+  - year: 2012
+    type: 國家元首_總統
+    region: 全國
+    party: 中國國民黨
+    elected: 1
+    ticket: 2
+- name: 蔡英文
+  id: id_蔡英文
+  birthday: 1956
+  elections:
+  - year: 2012
+    type: 國家元首_總統
+    region: 全國
+    party: 民主進步黨
+    elected: 0
+    ticket: 1
+- name: 蘇嘉全
+  id: id_蘇嘉全
+  birthday: 1956
+  elections:
+  - year: 2012
+    type: 國家元首_副總統
+    region: 全國
+    party: 民主進步黨
+    elected: 0
+    ticket: 1
+- name: 吳敦義
+  id: id_吳敦義
+  birthday: 1948
+  elections:
+  - year: 2012
+    type: 國家元首_副總統
+    region: 全國
+    party: 中國國民黨
+    elected: 1
+    ticket: 2
+- name: 林瑞雄
+  id: id_林瑞雄
+  birthday: 1940
+  elections:
+  - year: 2012
+    type: 國家元首_副總統
+    region: 全國
+    party: 無黨籍
+    elected: 0
+    ticket: 3
