@@ -9,7 +9,7 @@
     elected: 1
   - year: 2024
     type: 國家元首
-    region: null
+    region: 全國
     party: 中國國民黨
     elected: 0
 - name: 劉建國
@@ -45,7 +45,7 @@
   elections:
   - year: 2024
     type: 國家元首
-    region: null
+    region: 全國
     party: 台灣民眾黨
     elected: 0
 - name: 吳炳輝
@@ -306,7 +306,7 @@
   elections:
   - year: 2024
     type: 國家元首
-    region: null
+    region: 全國
     party: 台灣民眾黨
     elected: 0
 - name: 楊文科
@@ -495,7 +495,7 @@
   elections:
   - year: 2024
     type: 國家元首
-    region: null
+    region: 全國
     party: 民主進步黨
     elected: 1
 - name: 蘇清泉
@@ -612,7 +612,7 @@
   elections:
   - year: 2024
     type: 國家元首
-    region: null
+    region: 全國
     party: 民主進步黨
     elected: 1
 - name: 賴香伶
@@ -630,7 +630,7 @@
   elections:
   - year: 2024
     type: 國家元首
-    region: null
+    region: 全國
     party: 中國國民黨
     elected: 0
 - name: 鄭凱升

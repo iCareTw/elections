@@ -34,7 +34,7 @@ def parse_workbook(wb: openpyxl.Workbook, year: int) -> list[dict]:
             'birthday': int(birth_year) if birth_year else None,
             'year': year,
             'type': '國家元首',
-            'region': None,
+            'region': '全國',
             'party': current_party,
             'elected': current_elected,
         })
