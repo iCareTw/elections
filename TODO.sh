@@ -14,7 +14,7 @@
 # uv run python main.py --type mayor --year 1997   # 86年縣市長選舉
 # uv run python main.py --type mayor --year 1998   # 87年直轄市長選舉
 # uv run python main.py --type mayor --year 2001   # 90年縣市長選舉
-uv run python main.py --type mayor --year 2002   # 91年直轄市長選舉
+# uv run python main.py --type mayor --year 2002   # 91年直轄市長選舉
 uv run python main.py --type mayor --year 2005   # 94年縣市長選舉
 uv run python main.py --type mayor --year 2006   # 95年直轄市長選舉
 uv run python main.py --type mayor --year 2009   # 98年縣市長選舉

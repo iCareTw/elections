@@ -200,6 +200,11 @@
     region: 高雄市
     party: 民主進步黨
     elected: 1
+  - year: 2002
+    type: 縣市首長
+    region: 高雄市
+    party: 民主進步黨
+    elected: 1
   - year: 2008
     type: 國家元首_副總統
     region: 全國
@@ -1004,6 +1009,11 @@
     region: 嘉義市
     party: 無黨籍
     elected: 1
+  - year: 2002
+    type: 縣市首長
+    region: 高雄市
+    party: 無黨籍
+    elected: 0
 - name: 臧汀生
   id: id_臧汀生
   birthday: 1951
@@ -1096,6 +1106,11 @@
   birthday: 1950
   elections:
   - year: 1998
+    type: 縣市首長
+    region: 臺北市
+    party: 中國國民黨
+    elected: 1
+  - year: 2002
     type: 縣市首長
     region: 臺北市
     party: 中國國民黨
@@ -1789,6 +1804,42 @@
     type: 縣市首長
     region: 臺南市
     party: 無黨籍
+    elected: 0
+- name: 李應元
+  id: id_李應元
+  birthday: 1953
+  elections:
+  - year: 2002
+    type: 縣市首長
+    region: 臺北市
+    party: 民主進步黨
+    elected: 0
+- name: 施明德
+  id: id_施明德
+  birthday: 1941
+  elections:
+  - year: 2002
+    type: 縣市首長
+    region: 高雄市
+    party: 無黨籍
+    elected: 0
+- name: 黃天生
+  id: id_黃天生
+  birthday: 1946
+  elections:
+  - year: 2002
+    type: 縣市首長
+    region: 高雄市
+    party: 無黨籍
+    elected: 0
+- name: 黃俊英
+  id: id_黃俊英
+  birthday: 1941
+  elections:
+  - year: 2002
+    type: 縣市首長
+    region: 高雄市
+    party: 中國國民黨
     elected: 0
 - name: 蔡英文
   id: id_蔡英文
