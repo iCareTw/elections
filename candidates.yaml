@@ -277,6 +277,11 @@
     party: 民主進步黨
     elected: 0
     ticket: 1
+  - year: 2010
+    type: 縣市首長
+    region: 臺北市
+    party: 民主進步黨
+    elected: 0
 - name: 蘇嘉全
   id: id_蘇嘉全
   birthday: 1956
@@ -291,6 +296,11 @@
     region: 屏東縣
     party: 民主進步黨
     elected: 1
+  - year: 2010
+    type: 縣市首長
+    region: 臺中市
+    party: 民主進步黨
+    elected: 0
   - year: 2012
     type: 國家元首_副總統
     region: 全國
@@ -1359,6 +1369,11 @@
     region: 桃園縣
     party: 中國國民黨
     elected: 1
+  - year: 2010
+    type: 縣市首長
+    region: 新北市
+    party: 中國國民黨
+    elected: 1
   - year: 2016
     type: 國家元首_總統
     region: 全國
@@ -1694,6 +1709,11 @@
     region: 高雄縣
     party: 民主進步黨
     elected: 1
+  - year: 2010
+    type: 縣市首長
+    region: 高雄市
+    party: 無黨籍
+    elected: 0
 - name: 吳光訓
   id: id_吳光訓
   birthday: 1950
@@ -1919,6 +1939,11 @@
     party: 中國國民黨
     elected: 1
   - year: 2005
+    type: 縣市首長
+    region: 臺中市
+    party: 中國國民黨
+    elected: 1
+  - year: 2010
     type: 縣市首長
     region: 臺中市
     party: 中國國民黨
@@ -2304,6 +2329,11 @@
     region: 臺南縣
     party: 中國國民黨
     elected: 0
+  - year: 2010
+    type: 縣市首長
+    region: 臺南市
+    party: 中國國民黨
+    elected: 0
 - name: 張博森
   id: id_張博森
   birthday: 1948
@@ -2569,6 +2599,11 @@
     region: 臺北市
     party: 中國國民黨
     elected: 1
+  - year: 2010
+    type: 縣市首長
+    region: 臺北市
+    party: 中國國民黨
+    elected: 1
 - name: 林志昇
   id: id_林志昇
   birthday: 1950
@@ -2592,6 +2627,11 @@
   birthday: 1950
   elections:
   - year: 2006
+    type: 縣市首長
+    region: 高雄市
+    party: 民主進步黨
+    elected: 1
+  - year: 2010
     type: 縣市首長
     region: 高雄市
     party: 民主進步黨
@@ -2906,6 +2946,11 @@
   id: id_蔡英文
   birthday: 1956
   elections:
+  - year: 2010
+    type: 縣市首長
+    region: 新北市
+    party: 民主進步黨
+    elected: 0
   - year: 2012
     type: 國家元首_總統
     region: 全國
@@ -2924,6 +2969,63 @@
     party: 民主進步黨
     elected: 1
     ticket: 3
+- name: 賴清德
+  id: id_賴清德
+  birthday: 1959
+  elections:
+  - year: 2010
+    type: 縣市首長
+    region: 臺南市
+    party: 民主進步黨
+    elected: 1
+  - year: 2020
+    type: 國家元首_副總統
+    region: 全國
+    party: 民主進步黨
+    elected: 1
+    ticket: 3
+  - year: 2024
+    type: 國家元首_總統
+    region: 全國
+    party: 民主進步黨
+    elected: 1
+    ticket: 2
+- name: 吳炎成
+  id: id_吳炎成
+  birthday: 1942
+  elections:
+  - year: 2010
+    type: 縣市首長
+    region: 臺北市
+    party: 無黨籍
+    elected: 0
+- name: 蕭淑華
+  id: id_蕭淑華
+  birthday: 1961
+  elections:
+  - year: 2010
+    type: 縣市首長
+    region: 臺北市
+    party: 無黨籍
+    elected: 0
+- name: 吳武明
+  id: id_吳武明
+  birthday: 1957
+  elections:
+  - year: 2010
+    type: 縣市首長
+    region: 臺北市
+    party: 無黨籍
+    elected: 0
+- name: 黃昭順
+  id: id_黃昭順
+  birthday: 1953
+  elections:
+  - year: 2010
+    type: 縣市首長
+    region: 高雄市
+    party: 中國國民黨
+    elected: 0
 - name: 林瑞雄
   id: id_林瑞雄
   birthday: 1940
@@ -2993,22 +3095,6 @@
     region: 全國
     party: 中國國民黨
     elected: 0
-    ticket: 2
-- name: 賴清德
-  id: id_賴清德
-  birthday: 1959
-  elections:
-  - year: 2020
-    type: 國家元首_副總統
-    region: 全國
-    party: 民主進步黨
-    elected: 1
-    ticket: 3
-  - year: 2024
-    type: 國家元首_總統
-    region: 全國
-    party: 民主進步黨
-    elected: 1
     ticket: 2
 - name: 柯文哲
   id: id_柯文哲
