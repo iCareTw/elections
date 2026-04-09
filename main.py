@@ -7,6 +7,7 @@ import yaml
 
 from src.merge import apply_auto, classify_records
 from src.normalize import generate_id
+from src.parse_legislator import parse_file as parse_legislator
 from src.parse_mayor import parse_file as parse_mayor
 from src.parse_president import parse_file as parse_president
 from src.validate import validate_candidates
@@ -16,8 +17,9 @@ CANDIDATES_FILE = Path('candidates.yaml')
 ELECTION_TYPES_FILE = Path('election_types.yaml')
 
 PARSERS = {
-    'president': (parse_president, DATA_DIR / 'president'),
-    'mayor':     (parse_mayor,     DATA_DIR / 'mayor'),
+    'president':  (parse_president,  DATA_DIR / 'president'),
+    'mayor':      (parse_mayor,      DATA_DIR / 'mayor'),
+    'legislator': (parse_legislator, DATA_DIR / 'legislator'),
 }
 
 
@@ -35,8 +37,10 @@ def _mayor_year(path: Path) -> int:
     return int(m.group(1)) + 1911
 
 
-def find_xlsx(type_: str, year: int) -> list[Path]:
+def find_xlsx(type_: str, year: int = 0, session: int = 0) -> list[Path]:
     _, data_dir = PARSERS[type_]
+    if type_ == 'legislator':
+        return sorted((data_dir / f'{session}th').glob('*.xlsx'))
     files = sorted(data_dir.glob('*.xlsx'))
     if type_ == 'president':
         return [f for f in files if _president_year(f) == year]
@@ -109,13 +113,24 @@ def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]
 def main():
     parser = argparse.ArgumentParser(description='解析選舉資料並更新 candidates.yaml')
     parser.add_argument('--type', required=True, choices=list(PARSERS.keys()), help='選舉類型')
-    parser.add_argument('--year', required=True, type=int, help='西元年份')
+    parser.add_argument('--year', type=int, help='西元年份 (president/mayor)')
+    parser.add_argument('--session', type=int, help='屆次 (legislator)')
     args = parser.parse_args()
 
+    if args.type == 'legislator':
+        if not args.session:
+            print('--type legislator 需要 --session', file=sys.stderr)
+            sys.exit(1)
+    else:
+        if not args.year:
+            print(f'--type {args.type} 需要 --year', file=sys.stderr)
+            sys.exit(1)
+
     parse_fn, _ = PARSERS[args.type]
-    xlsx_files = find_xlsx(args.type, args.year)
+    xlsx_files = find_xlsx(args.type, year=args.year or 0, session=args.session or 0)
     if not xlsx_files:
-        print(f'找不到 {args.type} {args.year} 的資料檔', file=sys.stderr)
+        label = f'session {args.session}' if args.type == 'legislator' else str(args.year)
+        print(f'找不到 {args.type} {label} 的資料檔', file=sys.stderr)
         sys.exit(1)
 
     print(f'解析 {len(xlsx_files)} 個檔案 ...')
