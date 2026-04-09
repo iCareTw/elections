@@ -102,31 +102,51 @@ def _fmt_elected(elected) -> str:
     return '\033[32m當選\033[0m' if elected == 1 else '未當選'
 
 
+def _fmt_election_label(e: dict) -> str:
+    """立法委員加屆次，其他只顯示 type + year。"""
+    session = e.get('session')
+    if session:
+        return f'{e["type"]}  第{session}屆 ({e["year"]})'
+    return f'{e["type"]}  {e["year"]}'
+
+
+def _print_election_fields(e: dict, indent: str = '    ') -> None:
+    """以統一縮排輸出一筆選舉的所有欄位。"""
+    print(f'{indent}選舉    {_fmt_election_label(e)}')
+    print(f'{indent}地區    {e.get("region") or "不詳"}')
+    print(f'{indent}政黨    {e["party"]}')
+    print(f'{indent}結果    {_fmt_elected(e["elected"])}')
+    if e.get('ticket'):
+        print(f'{indent}搭檔    {e["ticket"]}')
+
+
 def _print_conflict_panel(r: dict, matches: list[dict]) -> None:
-    w = 54
-    sep = '─' * w
+    bday_new = r['birthday']
 
     # 新資料
+    bday_str = str(bday_new) if bday_new else '不詳'
     print(f'  \033[36m新資料\033[0m')
-    print(f'    \033[1m{r["name"]}\033[0m  生年：{r["birthday"] or "不詳"}')
-    ticket = f'  搭檔：{r["ticket"]}' if r.get('ticket') else ''
-    print(f'    {r["type"]} {r["year"]} ｜ {r["region"] or ""} ｜ {r["party"]} ｜ {_fmt_elected(r["elected"])}{ticket}')
-
-    print()
+    print(f'    生年    {bday_str}')
+    _print_election_fields(r)
 
     # 現有候選人
     for j, c in enumerate(matches, 1):
-        label = f'[{j}] ' if len(matches) > 1 else ''
-        print(f'  \033[34m現有{label}\033[0m  {c["id"]}  生年：{c["birthday"] or "不詳"}')
+        label = f'現有 [{j}]' if len(matches) > 1 else '現有'
+        bday_diff = bool(bday_new and c['birthday'] and bday_new != c['birthday'])
+        warn = '  \033[33m⚠️  與新資料不同\033[0m' if bday_diff else ''
+        bday_str_c = str(c['birthday']) if c['birthday'] else '不詳'
+        print()
+        print(f'  \033[34m{label}\033[0m  {c["id"]}')
+        print(f'    生年    {bday_str_c}{warn}')
         if c['elections']:
-            for e in c['elections']:
-                t = e.get('ticket', '')
-                ticket_str = f'  搭檔：{t}' if t else ''
-                print(f'    {e["type"]} {e["year"]} ｜ {e.get("region") or ""} ｜ {e["party"]} ｜ {_fmt_elected(e["elected"])}{ticket_str}')
+            for k, e in enumerate(c['elections']):
+                if k > 0:
+                    print(f'    {"─" * 30}')
+                _print_election_fields(e)
         else:
-            print('    （無選舉紀錄）')
+            print(f'    選舉    （無選舉紀錄）')
 
-    print(f'  \033[33m{sep}\033[0m')
+    print()
 
 
 def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]:
