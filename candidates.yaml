@@ -70,6 +70,12 @@
     party: 民主進步黨
     elected: 0
     ticket: 3
+  - year: 2008
+    type: 國家元首_副總統
+    region: 全國
+    party: 民主進步黨
+    elected: 0
+    ticket: 1
 - name: 林洋港
   id: id_林洋港
   birthday: 1927
@@ -117,14 +123,20 @@
     elected: 0
     ticket: 1
 - name: 蕭萬長
-  id: id_蕭萬長
-  birthday: 1942
+  id: id_蕭萬長_1939
+  birthday: 1939
   elections:
   - year: 2000
     type: 國家元首_副總統
     region: 全國
     party: 中國國民黨
     elected: 0
+    ticket: 2
+  - year: 2008
+    type: 國家元首_副總統
+    region: 全國
+    party: 中國國民黨
+    elected: 1
     ticket: 2
 - name: 李敖
   id: id_李敖
@@ -198,3 +210,23 @@
     party: 民主進步黨
     elected: 1
     ticket: 1
+- name: 蘇貞昌
+  id: id_蘇貞昌
+  birthday: 1947
+  elections:
+  - year: 2008
+    type: 國家元首_總統
+    region: 全國
+    party: 民主進步黨
+    elected: 0
+    ticket: 1
+- name: 馬英九
+  id: id_馬英九
+  birthday: 1950
+  elections:
+  - year: 2008
+    type: 國家元首_總統
+    region: 全國
+    party: 中國國民黨
+    elected: 1
+    ticket: 2
