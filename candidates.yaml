@@ -44,6 +44,12 @@
     party: 中國國民黨
     elected: 0
     ticket: 2
+  - year: 2004
+    type: 國家元首_總統
+    region: 全國
+    party: 中國國民黨
+    elected: 0
+    ticket: 2
 - name: 彭明敏
   id: id_彭明敏
   birthday: 1923
@@ -94,6 +100,12 @@
     party: 連署
     elected: 0
     ticket: 1
+  - year: 2004
+    type: 國家元首_副總統
+    region: 全國
+    party: 中國國民黨
+    elected: 0
+    ticket: 2
 - name: 張昭雄
   id: id_張昭雄
   birthday: 1944
@@ -164,6 +176,12 @@
     party: 民主進步黨
     elected: 1
     ticket: 5
+  - year: 2004
+    type: 國家元首_總統
+    region: 全國
+    party: 民主進步黨
+    elected: 1
+    ticket: 1
 - name: 呂秀蓮
   id: id_呂秀蓮
   birthday: 1944
@@ -174,3 +192,9 @@
     party: 民主進步黨
     elected: 1
     ticket: 5
+  - year: 2004
+    type: 國家元首_副總統
+    region: 全國
+    party: 民主進步黨
+    elected: 1
+    ticket: 1
