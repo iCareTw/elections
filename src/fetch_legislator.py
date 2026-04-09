@@ -28,8 +28,8 @@ def output_path(session: int, desc: str, area_name: str | None = None) -> Path:
     return folder / f'{desc}.xlsx'
 
 
-def tickets_url(legis_id: str, theme_id: str, prv_code: str, data_level: str) -> str:
-    loc = f'{prv_code}_000_00_000_0000'
+def tickets_url(legis_id: str, theme_id: str, prv_code: str, city_code: str, data_level: str) -> str:
+    loc = f'{prv_code}_{city_code}_00_000_0000'
     return f'{BASE_URL}/static/elections/data/tickets/ELC/L0/{legis_id}/{theme_id}/{data_level}/{loc}.json'
 
 
@@ -85,13 +85,14 @@ async def _scrape_entry(
         cities = list(areas_data.values())[0]
         for city in cities:
             prv_code  = city['prv_code']
+            city_code = city['city_code']
             area_name = city['area_name']
             path = output_path(session, desc, area_name)
             if path.exists() and not force:
                 print(f'  skip {path.name}')
                 continue
             try:
-                data = await _fetch_json(client, tickets_url(legis_id, theme_id, prv_code, data_level))
+                data = await _fetch_json(client, tickets_url(legis_id, theme_id, prv_code, city_code, data_level))
                 records = list(data.values())[0]
                 write_xlsx(records, path)
                 print(f'  wrote {path}')
@@ -104,7 +105,7 @@ async def _scrape_entry(
             print(f'  skip {path.name}')
             return
         try:
-            data = await _fetch_json(client, tickets_url(legis_id, theme_id, '00', data_level))
+            data = await _fetch_json(client, tickets_url(legis_id, theme_id, '00', '000', data_level))
             records = list(data.values())[0]
             write_xlsx(records, path)
             print(f'  wrote {path}')
@@ -113,7 +114,7 @@ async def _scrape_entry(
 
 
 async def _run(sessions: list[int], force: bool) -> None:
-    async with httpx.AsyncClient(timeout=30) as client:
+    async with httpx.AsyncClient(timeout=30, verify=False) as client:
         raw = await _fetch_json(client, f'{BASE_URL}/static/elections/list/ELC_L0.json')
         session_map = parse_session_map(raw)
         for s in sorted(sessions):

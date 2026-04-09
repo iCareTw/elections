@@ -17,12 +17,16 @@ def test_output_path_l3():
 
 # tickets_url
 
-def test_tickets_url_l1_city():
-    url = tickets_url('L1', 'abc123', '63', 'A')
+def test_tickets_url_l1_city_municipality():
+    url = tickets_url('L1', 'abc123', '63', '000', 'A')
     assert url == 'https://db.cec.gov.tw/static/elections/data/tickets/ELC/L0/L1/abc123/A/63_000_00_000_0000.json'
 
+def test_tickets_url_l1_city_county():
+    url = tickets_url('L1', 'abc123', '10', '002', 'A')
+    assert url == 'https://db.cec.gov.tw/static/elections/data/tickets/ELC/L0/L1/abc123/A/10_002_00_000_0000.json'
+
 def test_tickets_url_l2_national():
-    url = tickets_url('L2', 'def456', '00', 'N')
+    url = tickets_url('L2', 'def456', '00', '000', 'N')
     assert url == 'https://db.cec.gov.tw/static/elections/data/tickets/ELC/L0/L2/def456/N/00_000_00_000_0000.json'
 
 # areas_url
