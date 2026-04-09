@@ -94,6 +94,11 @@
     region: 高雄市
     party: 無黨籍
     elected: 0
+  - year: 1997
+    type: 縣市首長
+    region: 高雄縣
+    party: 無黨籍
+    elected: 0
 - name: 湯阿根
   id: id_湯阿根
   birthday: 1936
@@ -201,6 +206,741 @@
     party: 連署
     elected: 0
     ticket: 4
+- name: 呂秀蓮
+  id: id_呂秀蓮
+  birthday: 1944
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 桃園縣
+    party: 民主進步黨
+    elected: 1
+  - year: 2000
+    type: 國家元首_副總統
+    region: 全國
+    party: 民主進步黨
+    elected: 1
+    ticket: 5
+  - year: 2004
+    type: 國家元首_副總統
+    region: 全國
+    party: 民主進步黨
+    elected: 1
+    ticket: 1
+- name: 蘇貞昌
+  id: id_蘇貞昌
+  birthday: 1947
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺北縣
+    party: 民主進步黨
+    elected: 1
+  - year: 2008
+    type: 國家元首_總統
+    region: 全國
+    party: 民主進步黨
+    elected: 0
+    ticket: 1
+- name: 蘇嘉全
+  id: id_蘇嘉全
+  birthday: 1956
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 屏東縣
+    party: 民主進步黨
+    elected: 1
+  - year: 2012
+    type: 國家元首_副總統
+    region: 全國
+    party: 民主進步黨
+    elected: 0
+    ticket: 1
+- name: 謝深山
+  id: id_謝深山
+  birthday: 1939
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺北縣
+    party: 中國國民黨
+    elected: 0
+- name: 周荃
+  id: id_周荃
+  birthday: 1956
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺北縣
+    party: 無黨籍
+    elected: 0
+- name: 楊泰順
+  id: id_楊泰順
+  birthday: 1953
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺北縣
+    party: 新黨
+    elected: 0
+- name: 林志嘉
+  id: id_林志嘉
+  birthday: 1958
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺北縣
+    party: 無黨籍
+    elected: 0
+- name: 廖學廣
+  id: id_廖學廣
+  birthday: 1954
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺北縣
+    party: 無黨籍
+    elected: 0
+- name: 廖風德
+  id: id_廖風德
+  birthday: 1951
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 宜蘭縣
+    party: 中國國民黨
+    elected: 0
+- name: 劉守成
+  id: id_劉守成
+  birthday: 1951
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 宜蘭縣
+    party: 民主進步黨
+    elected: 1
+- name: 陳根德
+  id: id_陳根德
+  birthday: 1956
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 桃園縣
+    party: 中國國民黨
+    elected: 0
+- name: 徐運德
+  id: id_徐運德
+  birthday: 1931
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 桃園縣
+    party: 社會改革黨
+    elected: 0
+- name: 徐能安
+  id: id_徐能安
+  birthday: 1944
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 新竹縣
+    party: 無黨籍
+    elected: 0
+- name: 邱鏡淳
+  id: id_邱鏡淳
+  birthday: 1949
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 新竹縣
+    party: 無黨籍
+    elected: 0
+- name: 鄭永金
+  id: id_鄭永金
+  birthday: 1949
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 新竹縣
+    party: 中國國民黨
+    elected: 0
+- name: 林光華
+  id: id_林光華
+  birthday: 1945
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 新竹縣
+    party: 民主進步黨
+    elected: 1
+- name: 傅學鵬
+  id: id_傅學鵬
+  birthday: 1951
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 苗栗縣
+    party: 無黨籍
+    elected: 1
+- name: 何智輝
+  id: id_何智輝
+  birthday: 1950
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 苗栗縣
+    party: 中國國民黨
+    elected: 0
+- name: 黃達業
+  id: id_黃達業
+  birthday: 1957
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 苗栗縣
+    party: 新黨
+    elected: 0
+- name: 徐進榮
+  id: id_徐進榮
+  birthday: 1946
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 苗栗縣
+    party: 民主進步黨
+    elected: 0
+- name: 錢文南
+  id: id_錢文南
+  birthday: 1953
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺中縣
+    party: 建國黨
+    elected: 0
+- name: 陳欽隆
+  id: id_陳欽隆
+  birthday: 1957
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺中縣
+    party: 無黨籍
+    elected: 0
+- name: 郭榮振
+  id: id_郭榮振
+  birthday: 1950
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺中縣
+    party: 中國國民黨
+    elected: 0
+- name: 徐中雄
+  id: id_徐中雄
+  birthday: 1957
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺中縣
+    party: 中國國民黨
+    elected: 0
+- name: 劉銓忠
+  id: id_劉銓忠
+  birthday: 1942
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺中縣
+    party: 無黨籍
+    elected: 0
+- name: 廖永來
+  id: id_廖永來
+  birthday: 1956
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺中縣
+    party: 民主進步黨
+    elected: 1
+- name: 張榮昌
+  id: id_張榮昌
+  birthday: 1954
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 彰化縣
+    party: 無黨籍
+    elected: 0
+- name: 阮剛猛
+  id: id_阮剛猛
+  birthday: 1951
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 彰化縣
+    party: 中國國民黨
+    elected: 1
+- name: 翁金珠
+  id: id_翁金珠
+  birthday: 1947
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 彰化縣
+    party: 民主進步黨
+    elected: 0
+- name: 林宗男
+  id: id_林宗男
+  birthday: 1942
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 南投縣
+    party: 民主進步黨
+    elected: 0
+- name: 許惠祐
+  id: id_許惠祐
+  birthday: 1952
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 南投縣
+    party: 中國國民黨
+    elected: 0
+- name: 彭百顯
+  id: id_彭百顯
+  birthday: 1949
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 南投縣
+    party: 無黨籍
+    elected: 1
+- name: 陳振盛
+  id: id_陳振盛
+  birthday: 1950
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 南投縣
+    party: 新黨
+    elected: 0
+- name: 吳清江
+  id: id_吳清江
+  birthday: 1936
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 南投縣
+    party: 無黨籍
+    elected: 0
+- name: 蘇文雄
+  id: id_蘇文雄
+  birthday: 1943
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 雲林縣
+    party: 中國國民黨
+    elected: 1
+- name: 歐明憲
+  id: id_歐明憲
+  birthday: 1947
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 雲林縣
+    party: 無黨籍
+    elected: 0
+- name: 張榮味
+  id: id_張榮味
+  birthday: 1957
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 雲林縣
+    party: 無黨籍
+    elected: 0
+- name: 廖大林
+  id: id_廖大林
+  birthday: 1936
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 雲林縣
+    party: 民主進步黨
+    elected: 0
+- name: 李雅景
+  id: id_李雅景
+  birthday: 1949
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 嘉義縣
+    party: 中國國民黨
+    elected: 1
+- name: 何嘉榮
+  id: id_何嘉榮
+  birthday: 1945
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 嘉義縣
+    party: 民主進步黨
+    elected: 0
+- name: 陳唐山
+  id: id_陳唐山
+  birthday: 1935
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺南縣
+    party: 民主進步黨
+    elected: 1
+- name: 洪玉欽
+  id: id_洪玉欽
+  birthday: 1943
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺南縣
+    party: 中國國民黨
+    elected: 0
+- name: 余政憲
+  id: id_余政憲
+  birthday: 1959
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 高雄縣
+    party: 民主進步黨
+    elected: 1
+- name: 黃鴻都
+  id: id_黃鴻都
+  birthday: 1961
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 高雄縣
+    party: 中國國民黨
+    elected: 0
+- name: 林景元
+  id: id_林景元
+  birthday: 1925
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 高雄縣
+    party: 無黨籍
+    elected: 0
+- name: 李景雯
+  id: id_李景雯
+  birthday: 1928
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 屏東縣
+    party: 無黨籍
+    elected: 0
+- name: 曾永權
+  id: id_曾永權
+  birthday: 1947
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 屏東縣
+    party: 中國國民黨
+    elected: 0
+- name: 徐慶元
+  id: id_徐慶元
+  birthday: 1957
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺東縣
+    party: 無黨籍
+    elected: 0
+- name: 陳建年
+  id: id_陳建年
+  birthday: 1947
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺東縣
+    party: 中國國民黨
+    elected: 1
+- name: 黃昭輝
+  id: id_黃昭輝
+  birthday: 1946
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺東縣
+    party: 民主進步黨
+    elected: 0
+- name: 王慶豐
+  id: id_王慶豐
+  birthday: 1933
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 花蓮縣
+    party: 中國國民黨
+    elected: 1
+- name: 游盈隆
+  id: id_游盈隆
+  birthday: 1956
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 花蓮縣
+    party: 民主進步黨
+    elected: 0
+- name: 賴峰偉
+  id: id_賴峰偉
+  birthday: 1953
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 澎湖縣
+    party: 中國國民黨
+    elected: 1
+- name: 許丕龍
+  id: id_許丕龍
+  birthday: 1939
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 澎湖縣
+    party: 民主進步黨
+    elected: 0
+- name: 劉立群
+  id: id_劉立群
+  birthday: 1951
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 連江縣
+    party: 中國國民黨
+    elected: 1
+- name: 曹原彰
+  id: id_曹原彰
+  birthday: 1948
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 連江縣
+    party: 新黨
+    elected: 0
+- name: 陳水在
+  id: id_陳水在
+  birthday: 1948
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 金門縣
+    party: 中國國民黨
+    elected: 1
+- name: 李炷烽
+  id: id_李炷烽
+  birthday: 1953
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 金門縣
+    party: 新黨
+    elected: 0
+- name: 李進勇
+  id: id_李進勇
+  birthday: 1951
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 基隆市
+    party: 民主進步黨
+    elected: 1
+- name: 劉文雄
+  id: id_劉文雄
+  birthday: 1954
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 基隆市
+    party: 中國國民黨
+    elected: 0
+- name: 許財利
+  id: id_許財利
+  birthday: 1947
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 基隆市
+    party: 無黨籍
+    elected: 0
+- name: 林志成
+  id: id_林志成
+  birthday: 1962
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 新竹市
+    party: 中國國民黨
+    elected: 0
+- name: 蔡仁堅
+  id: id_蔡仁堅
+  birthday: 1952
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 新竹市
+    party: 民主進步黨
+    elected: 1
+- name: 王少泉
+  id: id_王少泉
+  birthday: 1942
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 新竹市
+    party: 無黨籍
+    elected: 0
+- name: 張溫鷹
+  id: id_張溫鷹
+  birthday: 1950
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺中市
+    party: 民主進步黨
+    elected: 1
+- name: 鄭邦鎮
+  id: id_鄭邦鎮
+  birthday: 1947
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺中市
+    party: 建國黨
+    elected: 0
+- name: 洪昭男
+  id: id_洪昭男
+  birthday: 1943
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺中市
+    party: 中國國民黨
+    elected: 0
+- name: 宋艾克
+  id: id_宋艾克
+  birthday: 1953
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺中市
+    party: 新黨
+    elected: 0
+- name: 江義雄
+  id: id_江義雄
+  birthday: 1944
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 嘉義市
+    party: 中國國民黨
+    elected: 0
+- name: 蔡鴻章
+  id: id_蔡鴻章
+  birthday: 1959
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 嘉義市
+    party: 民主進步黨
+    elected: 0
+- name: 張博雅
+  id: id_張博雅
+  birthday: 1942
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 嘉義市
+    party: 無黨籍
+    elected: 1
+- name: 臧汀生
+  id: id_臧汀生
+  birthday: 1951
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 嘉義市
+    party: 建國黨
+    elected: 0
+- name: 方金海
+  id: id_方金海
+  birthday: 1955
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺南市
+    party: 無黨籍
+    elected: 0
+- name: 許添財
+  id: id_許添財
+  birthday: 1951
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺南市
+    party: 無黨籍
+    elected: 0
+- name: 高家俊
+  id: id_高家俊
+  birthday: 1950
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺南市
+    party: 新黨
+    elected: 0
+- name: 林南生
+  id: id_林南生
+  birthday: 1952
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺南市
+    party: 中國國民黨
+    elected: 0
+- name: 陳榮盛
+  id: id_陳榮盛
+  birthday: 1946
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺南市
+    party: 中國國民黨
+    elected: 0
+- name: 林壽宏
+  id: id_林壽宏
+  birthday: 1940
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺南市
+    party: 無黨籍
+    elected: 0
+- name: 張燦鍙
+  id: id_張燦鍙
+  birthday: 1936
+  elections:
+  - year: 1997
+    type: 縣市首長
+    region: 臺南市
+    party: 民主進步黨
+    elected: 1
 - name: 宋楚瑜
   id: id_宋楚瑜
   birthday: 1942
@@ -301,32 +1041,6 @@
     party: 連署
     elected: 0
     ticket: 4
-- name: 呂秀蓮
-  id: id_呂秀蓮
-  birthday: 1944
-  elections:
-  - year: 2000
-    type: 國家元首_副總統
-    region: 全國
-    party: 民主進步黨
-    elected: 1
-    ticket: 5
-  - year: 2004
-    type: 國家元首_副總統
-    region: 全國
-    party: 民主進步黨
-    elected: 1
-    ticket: 1
-- name: 蘇貞昌
-  id: id_蘇貞昌
-  birthday: 1947
-  elections:
-  - year: 2008
-    type: 國家元首_總統
-    region: 全國
-    party: 民主進步黨
-    elected: 0
-    ticket: 1
 - name: 馬英九
   id: id_馬英九
   birthday: 1950
@@ -365,16 +1079,6 @@
     party: 民主進步黨
     elected: 1
     ticket: 3
-- name: 蘇嘉全
-  id: id_蘇嘉全
-  birthday: 1956
-  elections:
-  - year: 2012
-    type: 國家元首_副總統
-    region: 全國
-    party: 民主進步黨
-    elected: 0
-    ticket: 1
 - name: 林瑞雄
   id: id_林瑞雄
   birthday: 1940
