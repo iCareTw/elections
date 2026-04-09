@@ -98,6 +98,37 @@ def _resolve_birthday(c: dict, r: dict) -> None:
             break
 
 
+def _fmt_elected(elected) -> str:
+    return '\033[32m當選\033[0m' if elected == 1 else '未當選'
+
+
+def _print_conflict_panel(r: dict, matches: list[dict]) -> None:
+    w = 54
+    sep = '─' * w
+
+    # 新資料
+    print(f'  \033[36m新資料\033[0m')
+    print(f'    \033[1m{r["name"]}\033[0m  生年：{r["birthday"] or "不詳"}')
+    ticket = f'  搭檔：{r["ticket"]}' if r.get('ticket') else ''
+    print(f'    {r["type"]} {r["year"]} ｜ {r["region"] or ""} ｜ {r["party"]} ｜ {_fmt_elected(r["elected"])}{ticket}')
+
+    print()
+
+    # 現有候選人
+    for j, c in enumerate(matches, 1):
+        label = f'[{j}] ' if len(matches) > 1 else ''
+        print(f'  \033[34m現有{label}\033[0m  {c["id"]}  生年：{c["birthday"] or "不詳"}')
+        if c['elections']:
+            for e in c['elections']:
+                t = e.get('ticket', '')
+                ticket_str = f'  搭檔：{t}' if t else ''
+                print(f'    {e["type"]} {e["year"]} ｜ {e.get("region") or ""} ｜ {e["party"]} ｜ {_fmt_elected(e["elected"])}{ticket_str}')
+        else:
+            print('    （無選舉紀錄）')
+
+    print(f'  \033[33m{sep}\033[0m')
+
+
 def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]:
     """互動式處理 conflicts，回傳需要追加至 existing 的新候選人。"""
     to_add = []
@@ -106,13 +137,7 @@ def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]
         r = item['record']
         matches = item['matches']
         print(f'\n\033[33m─── 衝突 {i}/{len(conflicts)} ───────────────────────────────────────\033[0m')
-        print(f'新資料：\033[1m{r["name"]}\033[0m  birthday:{r["birthday"]} | {r["type"]} {r["year"]} | {r["party"]} | elected:{r["elected"]}')
-        print()
-        print('\033[34m現有同名候選人：\033[0m')
-        for j, c in enumerate(matches, 1):
-            last = c['elections'][-1] if c['elections'] else {}
-            print(f'  [{j}] {c["id"]}  生年:{c["birthday"]}  '
-                  f'{last.get("type", "")} {last.get("year", "")} ({last.get("party", "")})')
+        _print_conflict_panel(r, matches)
 
         if len(matches) == 1:
             # 單一同名者：先問是否同人
