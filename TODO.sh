@@ -1,5 +1,5 @@
 
-
+## ---------------------- 國家元首 ----------------------
 # uv run python main.py --type president --year 1996
 # uv run python main.py --type president --year 2000
 # uv run python main.py --type president --year 2004
@@ -9,7 +9,7 @@
 # uv run python main.py --type president --year 2020
 # uv run python main.py --type president --year 2024
 
-
+## ---------------------- 縣市首長 ----------------------
 # uv run python main.py --type mayor --year 1994   # 83年直轄市長選舉
 # uv run python main.py --type mayor --year 1997   # 86年縣市長選舉
 # uv run python main.py --type mayor --year 1998   # 87年直轄市長選舉
