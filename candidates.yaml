@@ -1,3 +1,108 @@
+- name: 陳水扁
+  id: id_陳水扁
+  birthday: 1951
+  elections:
+  - year: 1994
+    type: 縣市首長
+    region: 臺北市
+    party: 民主進步黨
+    elected: 1
+  - year: 2000
+    type: 國家元首_總統
+    region: 全國
+    party: 民主進步黨
+    elected: 1
+    ticket: 5
+  - year: 2004
+    type: 國家元首_總統
+    region: 全國
+    party: 民主進步黨
+    elected: 1
+    ticket: 1
+- name: 吳敦義
+  id: id_吳敦義
+  birthday: 1948
+  elections:
+  - year: 1994
+    type: 縣市首長
+    region: 高雄市
+    party: 中國國民黨
+    elected: 1
+  - year: 2012
+    type: 國家元首_副總統
+    region: 全國
+    party: 中國國民黨
+    elected: 1
+    ticket: 2
+- name: 趙少康
+  id: id_趙少康
+  birthday: 1950
+  elections:
+  - year: 1994
+    type: 縣市首長
+    region: 臺北市
+    party: 新黨
+    elected: 0
+  - year: 2024
+    type: 國家元首_副總統
+    region: 全國
+    party: 中國國民黨
+    elected: 0
+    ticket: 3
+- name: 紀榮治
+  id: id_紀榮治
+  birthday: 1944
+  elections:
+  - year: 1994
+    type: 縣市首長
+    region: 臺北市
+    party: 無黨籍
+    elected: 0
+- name: 黃大洲
+  id: id_黃大洲
+  birthday: 1936
+  elections:
+  - year: 1994
+    type: 縣市首長
+    region: 臺北市
+    party: 中國國民黨
+    elected: 0
+- name: 施鐘響
+  id: id_施鐘響
+  birthday: 1937
+  elections:
+  - year: 1994
+    type: 縣市首長
+    region: 高雄市
+    party: 無黨籍
+    elected: 0
+- name: 張俊雄
+  id: id_張俊雄
+  birthday: 1938
+  elections:
+  - year: 1994
+    type: 縣市首長
+    region: 高雄市
+    party: 民主進步黨
+    elected: 0
+- name: 鄭德耀
+  id: id_鄭德耀
+  birthday: 1951
+  elections:
+  - year: 1994
+    type: 縣市首長
+    region: 高雄市
+    party: 無黨籍
+    elected: 0
+- name: 湯阿根
+  id: id_湯阿根
+  birthday: 1936
+  elections:
+  - year: 1994
+    type: 縣市首長
+    region: 高雄市
+    party: 新黨
+    elected: 0
 - name: 陳履安
   id: id_陳履安
   birthday: 1937
@@ -196,22 +301,6 @@
     party: 連署
     elected: 0
     ticket: 4
-- name: 陳水扁
-  id: id_陳水扁
-  birthday: 1951
-  elections:
-  - year: 2000
-    type: 國家元首_總統
-    region: 全國
-    party: 民主進步黨
-    elected: 1
-    ticket: 5
-  - year: 2004
-    type: 國家元首_總統
-    region: 全國
-    party: 民主進步黨
-    elected: 1
-    ticket: 1
 - name: 呂秀蓮
   id: id_呂秀蓮
   birthday: 1944
@@ -286,16 +375,6 @@
     party: 民主進步黨
     elected: 0
     ticket: 1
-- name: 吳敦義
-  id: id_吳敦義
-  birthday: 1948
-  elections:
-  - year: 2012
-    type: 國家元首_副總統
-    region: 全國
-    party: 中國國民黨
-    elected: 1
-    ticket: 2
 - name: 林瑞雄
   id: id_林瑞雄
   birthday: 1940
@@ -428,16 +507,6 @@
   elections:
   - year: 2024
     type: 國家元首_總統
-    region: 全國
-    party: 中國國民黨
-    elected: 0
-    ticket: 3
-- name: 趙少康
-  id: id_趙少康
-  birthday: 1950
-  elections:
-  - year: 2024
-    type: 國家元首_副總統
     region: 全國
     party: 中國國民黨
     elected: 0
