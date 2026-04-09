@@ -89,7 +89,10 @@ def test_legislator_candidates_match_xlsx(session: int) -> None:
         assert x["elected"] == y["elected"], (
             f"第{session}屆 {name} ({region}): 當選不符 xlsx={x['elected']} yaml={y['elected']}"
         )
-        if x["birthday"] and y["birthday"]:
+        # xlsx 生年有誤，經人工確認後略過比對
+        # 徐能安 xlsx=1949，確認為 1944；吳光訓 xlsx=1947，確認為 1950；林志隆 xlsx=1947，確認為 1959
+        birthday_skip = {("徐能安", "新竹縣選舉區"), ("吳光訓", "高雄縣選舉區"), ("林志隆", "高雄縣選舉區")}
+        if x["birthday"] and y["birthday"] and (name, region) not in birthday_skip:
             assert x["birthday"] == y["birthday"], (
                 f"第{session}屆 {name} ({region}): 生年不符 xlsx={x['birthday']} yaml={y['birthday']}"
             )
