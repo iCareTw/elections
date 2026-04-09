@@ -35,3 +35,13 @@ def tickets_url(legis_id: str, theme_id: str, prv_code: str, data_level: str) ->
 
 def areas_url(theme_id: str) -> str:
     return f'{BASE_URL}/static/elections/data/areas/ELC/L0/L1/{theme_id}/C/00_000_00_000_0000.json'
+
+
+def write_xlsx(records: list[dict], path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.append([col for col, _ in XLSX_COLUMNS])
+    for r in records:
+        ws.append([r.get(field) for _, field in XLSX_COLUMNS])
+    wb.save(path)
