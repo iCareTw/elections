@@ -256,6 +256,11 @@
     region: 臺北縣
     party: 民主進步黨
     elected: 1
+  - year: 2001
+    type: 縣市首長
+    region: 臺北縣
+    party: 民主進步黨
+    elected: 1
   - year: 2008
     type: 國家元首_總統
     region: 全國
@@ -267,6 +272,11 @@
   birthday: 1956
   elections:
   - year: 1997
+    type: 縣市首長
+    region: 屏東縣
+    party: 民主進步黨
+    elected: 1
+  - year: 2001
     type: 縣市首長
     region: 屏東縣
     party: 民主進步黨
@@ -340,6 +350,11 @@
     region: 宜蘭縣
     party: 民主進步黨
     elected: 1
+  - year: 2001
+    type: 縣市首長
+    region: 宜蘭縣
+    party: 民主進步黨
+    elected: 1
 - name: 陳根德
   id: id_陳根德
   birthday: 1956
@@ -385,6 +400,11 @@
     region: 新竹縣
     party: 中國國民黨
     elected: 0
+  - year: 2001
+    type: 縣市首長
+    region: 新竹縣
+    party: 中國國民黨
+    elected: 1
 - name: 林光華
   id: id_林光華
   birthday: 1945
@@ -394,11 +414,21 @@
     region: 新竹縣
     party: 民主進步黨
     elected: 1
+  - year: 2001
+    type: 縣市首長
+    region: 新竹縣
+    party: 民主進步黨
+    elected: 0
 - name: 傅學鵬
   id: id_傅學鵬
   birthday: 1951
   elections:
   - year: 1997
+    type: 縣市首長
+    region: 苗栗縣
+    party: 無黨籍
+    elected: 1
+  - year: 2001
     type: 縣市首長
     region: 苗栗縣
     party: 無黨籍
@@ -484,6 +514,11 @@
     region: 臺中縣
     party: 民主進步黨
     elected: 1
+  - year: 2001
+    type: 縣市首長
+    region: 臺中縣
+    party: 民主進步黨
+    elected: 0
 - name: 張榮昌
   id: id_張榮昌
   birthday: 1954
@@ -511,6 +546,11 @@
     region: 彰化縣
     party: 民主進步黨
     elected: 0
+  - year: 2001
+    type: 縣市首長
+    region: 彰化縣
+    party: 民主進步黨
+    elected: 1
 - name: 林宗男
   id: id_林宗男
   birthday: 1942
@@ -520,6 +560,11 @@
     region: 南投縣
     party: 民主進步黨
     elected: 0
+  - year: 2001
+    type: 縣市首長
+    region: 南投縣
+    party: 民主進步黨
+    elected: 1
 - name: 許惠祐
   id: id_許惠祐
   birthday: 1952
@@ -538,6 +583,11 @@
     region: 南投縣
     party: 無黨籍
     elected: 1
+  - year: 2001
+    type: 縣市首長
+    region: 南投縣
+    party: 無黨籍
+    elected: 0
 - name: 陳振盛
   id: id_陳振盛
   birthday: 1950
@@ -546,6 +596,11 @@
     type: 縣市首長
     region: 南投縣
     party: 新黨
+    elected: 0
+  - year: 2001
+    type: 縣市首長
+    region: 南投縣
+    party: 親民黨
     elected: 0
 - name: 吳清江
   id: id_吳清江
@@ -583,6 +638,11 @@
     region: 雲林縣
     party: 無黨籍
     elected: 0
+  - year: 2001
+    type: 縣市首長
+    region: 雲林縣
+    party: 中國國民黨
+    elected: 1
 - name: 廖大林
   id: id_廖大林
   birthday: 1936
@@ -664,6 +724,11 @@
     region: 屏東縣
     party: 無黨籍
     elected: 0
+  - year: 2001
+    type: 縣市首長
+    region: 屏東縣
+    party: 無黨籍
+    elected: 0
 - name: 曾永權
   id: id_曾永權
   birthday: 1947
@@ -682,6 +747,11 @@
     region: 臺東縣
     party: 無黨籍
     elected: 0
+  - year: 2001
+    type: 縣市首長
+    region: 臺東縣
+    party: 親民黨
+    elected: 1
 - name: 陳建年
   id: id_陳建年
   birthday: 1947
@@ -718,11 +788,21 @@
     region: 花蓮縣
     party: 民主進步黨
     elected: 0
+  - year: 2001
+    type: 縣市首長
+    region: 花蓮縣
+    party: 民主進步黨
+    elected: 0
 - name: 賴峰偉
   id: id_賴峰偉
   birthday: 1953
   elections:
   - year: 1997
+    type: 縣市首長
+    region: 澎湖縣
+    party: 中國國民黨
+    elected: 1
+  - year: 2001
     type: 縣市首長
     region: 澎湖縣
     party: 中國國民黨
@@ -745,6 +825,11 @@
     region: 連江縣
     party: 中國國民黨
     elected: 1
+  - year: 2001
+    type: 縣市首長
+    region: 連江縣
+    party: 中國國民黨
+    elected: 0
 - name: 曹原彰
   id: id_曹原彰
   birthday: 1948
@@ -772,6 +857,11 @@
     region: 金門縣
     party: 新黨
     elected: 0
+  - year: 2001
+    type: 縣市首長
+    region: 金門縣
+    party: 新黨
+    elected: 1
 - name: 李進勇
   id: id_李進勇
   birthday: 1951
@@ -781,6 +871,11 @@
     region: 基隆市
     party: 民主進步黨
     elected: 1
+  - year: 2001
+    type: 縣市首長
+    region: 基隆市
+    party: 民主進步黨
+    elected: 0
 - name: 劉文雄
   id: id_劉文雄
   birthday: 1954
@@ -799,6 +894,11 @@
     region: 基隆市
     party: 無黨籍
     elected: 0
+  - year: 2001
+    type: 縣市首長
+    region: 基隆市
+    party: 中國國民黨
+    elected: 1
 - name: 林志成
   id: id_林志成
   birthday: 1962
@@ -817,11 +917,21 @@
     region: 新竹市
     party: 民主進步黨
     elected: 1
+  - year: 2001
+    type: 縣市首長
+    region: 新竹市
+    party: 民主進步黨
+    elected: 0
 - name: 王少泉
   id: id_王少泉
   birthday: 1942
   elections:
   - year: 1997
+    type: 縣市首長
+    region: 新竹市
+    party: 無黨籍
+    elected: 0
+  - year: 2001
     type: 縣市首長
     region: 新竹市
     party: 無黨籍
@@ -835,6 +945,11 @@
     region: 臺中市
     party: 民主進步黨
     elected: 1
+  - year: 2001
+    type: 縣市首長
+    region: 臺中市
+    party: 無黨籍
+    elected: 0
 - name: 鄭邦鎮
   id: id_鄭邦鎮
   birthday: 1947
@@ -916,6 +1031,11 @@
     region: 臺南市
     party: 無黨籍
     elected: 0
+  - year: 2001
+    type: 縣市首長
+    region: 臺南市
+    party: 民主進步黨
+    elected: 1
 - name: 高家俊
   id: id_高家俊
   birthday: 1950
@@ -943,6 +1063,11 @@
     region: 臺南市
     party: 中國國民黨
     elected: 0
+  - year: 2001
+    type: 縣市首長
+    region: 臺南市
+    party: 中國國民黨
+    elected: 0
 - name: 林壽宏
   id: id_林壽宏
   birthday: 1940
@@ -961,6 +1086,11 @@
     region: 臺南市
     party: 民主進步黨
     elected: 1
+  - year: 2001
+    type: 縣市首長
+    region: 臺南市
+    party: 無黨籍
+    elected: 0
 - name: 馬英九
   id: id_馬英九
   birthday: 1950
@@ -989,6 +1119,11 @@
   - year: 1998
     type: 縣市首長
     region: 臺北市
+    party: 新黨
+    elected: 0
+  - year: 2001
+    type: 縣市首長
+    region: 臺北縣
     party: 新黨
     elected: 0
 - name: 吳建國
@@ -1100,6 +1235,561 @@
     party: 連署
     elected: 0
     ticket: 4
+- name: 朱立倫
+  id: id_朱立倫
+  birthday: 1961
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 桃園縣
+    party: 中國國民黨
+    elected: 1
+  - year: 2016
+    type: 國家元首_總統
+    region: 全國
+    party: 中國國民黨
+    elected: 0
+    ticket: 1
+- name: 邵建興
+  id: id_邵建興
+  birthday: 1959
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺北縣
+    party: 無黨籍
+    elected: 0
+- name: 石翊靖
+  id: id_石翊靖
+  birthday: 1950
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺北縣
+    party: 無黨籍
+    elected: 0
+- name: 朱振東
+  id: id_朱振東
+  birthday: 1953
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 宜蘭縣
+    party: 無黨籍
+    elected: 0
+- name: 林錦坤
+  id: id_林錦坤
+  birthday: 1964
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 宜蘭縣
+    party: 無黨籍
+    elected: 0
+- name: 呂國華
+  id: id_呂國華
+  birthday: 1956
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 宜蘭縣
+    party: 中國國民黨
+    elected: 0
+- name: 彭紹瑾
+  id: id_彭紹瑾
+  birthday: 1957
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 桃園縣
+    party: 民主進步黨
+    elected: 0
+- name: 莊志忠
+  id: id_莊志忠
+  birthday: 1934
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 桃園縣
+    party: 無黨籍
+    elected: 0
+- name: 魏早炳
+  id: id_魏早炳
+  birthday: 1941
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 苗栗縣
+    party: 民主進步黨
+    elected: 0
+- name: 李佳穆
+  id: id_李佳穆
+  birthday: 1950
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 苗栗縣
+    party: 無黨籍
+    elected: 0
+- name: 徐享崑
+  id: id_徐享崑
+  birthday: 1953
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 苗栗縣
+    party: 中國國民黨
+    elected: 0
+- name: 林敏霖
+  id: id_林敏霖
+  birthday: 1949
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺中縣
+    party: 無黨籍
+    elected: 0
+- name: 黃仲生
+  id: id_黃仲生
+  birthday: 1942
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺中縣
+    party: 中國國民黨
+    elected: 1
+- name: 鄭秀珠
+  id: id_鄭秀珠
+  birthday: 1970
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 彰化縣
+    party: 親民黨
+    elected: 0
+- name: 葉金鳳
+  id: id_葉金鳳
+  birthday: 1943
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 彰化縣
+    party: 中國國民黨
+    elected: 0
+- name: 洪參民
+  id: id_洪參民
+  birthday: 1946
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 彰化縣
+    party: 無黨籍
+    elected: 0
+- name: 陳婉貞
+  id: id_陳婉貞
+  birthday: 1950
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 彰化縣
+    party: 無黨籍
+    elected: 0
+- name: 姜君佩
+  id: id_姜君佩
+  birthday: 1955
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 南投縣
+    party: 無黨籍
+    elected: 0
+- name: 張明雄
+  id: id_張明雄
+  birthday: 1944
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 南投縣
+    party: 中國國民黨
+    elected: 0
+- name: 陳胘富
+  id: id_陳胘富
+  birthday: 1960
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 南投縣
+    party: 無黨籍
+    elected: 0
+- name: 林明溱
+  id: id_林明溱
+  birthday: 1951
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 南投縣
+    party: 中國國民黨
+    elected: 0
+- name: 林樹山
+  id: id_林樹山
+  birthday: 1958
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 雲林縣
+    party: 民主進步黨
+    elected: 0
+- name: 陳勝三
+  id: id_陳勝三
+  birthday: 1940
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 嘉義縣
+    party: 無黨籍
+    elected: 0
+- name: 陳明文
+  id: id_陳明文
+  birthday: 1954
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 嘉義縣
+    party: 民主進步黨
+    elected: 1
+- name: 李明憲
+  id: id_李明憲
+  birthday: 1959
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 嘉義縣
+    party: 無黨籍
+    elected: 0
+- name: 蔡炳欽
+  id: id_蔡炳欽
+  birthday: 1953
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 嘉義縣
+    party: 無黨籍
+    elected: 0
+- name: 翁重鈞
+  id: id_翁重鈞
+  birthday: 1955
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 嘉義縣
+    party: 中國國民黨
+    elected: 0
+- name: 吳清基
+  id: id_吳清基
+  birthday: 1951
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺南縣
+    party: 中國國民黨
+    elected: 0
+- name: 蘇煥智
+  id: id_蘇煥智
+  birthday: 1956
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺南縣
+    party: 民主進步黨
+    elected: 1
+- name: 魏耀乾
+  id: id_魏耀乾
+  birthday: 1950
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺南縣
+    party: 無黨籍
+    elected: 0
+- name: 黃八野
+  id: id_黃八野
+  birthday: 1943
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 高雄縣
+    party: 無黨籍
+    elected: 0
+- name: 楊秋興
+  id: id_楊秋興
+  birthday: 1956
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 高雄縣
+    party: 民主進步黨
+    elected: 1
+- name: 吳光訓
+  id: id_吳光訓
+  birthday: 1950
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 高雄縣
+    party: 中國國民黨
+    elected: 0
+- name: 王進士
+  id: id_王進士
+  birthday: 1948
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 屏東縣
+    party: 中國國民黨
+    elected: 0
+- name: 彭權國
+  id: id_彭權國
+  birthday: 1963
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺東縣
+    party: 無黨籍
+    elected: 0
+- name: 吳俊立
+  id: id_吳俊立
+  birthday: 1962
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺東縣
+    party: 中國國民黨
+    elected: 0
+- name: 賴坤成
+  id: id_賴坤成
+  birthday: 1964
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺東縣
+    party: 民主進步黨
+    elected: 0
+- name: 賴政雄
+  id: id_賴政雄
+  birthday: 1943
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 花蓮縣
+    party: 親民黨
+    elected: 0
+- name: 莊三修
+  id: id_莊三修
+  birthday: 1957
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 花蓮縣
+    party: 無黨籍
+    elected: 0
+- name: 齊淑英
+  id: id_齊淑英
+  birthday: 1950
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 花蓮縣
+    party: 綠黨
+    elected: 0
+- name: 張福興
+  id: id_張福興
+  birthday: 1942
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 花蓮縣
+    party: 中國國民黨
+    elected: 1
+- name: 陳光復
+  id: id_陳光復
+  birthday: 1955
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 澎湖縣
+    party: 民主進步黨
+    elected: 0
+- name: 許麗音
+  id: id_許麗音
+  birthday: 1948
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 澎湖縣
+    party: 無黨籍
+    elected: 0
+- name: 陳雪生
+  id: id_陳雪生
+  birthday: 1952
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 連江縣
+    party: 親民黨
+    elected: 1
+- name: 翁天慶
+  id: id_翁天慶
+  birthday: 1953
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 金門縣
+    party: 無黨籍
+    elected: 0
+- name: 蔡是民
+  id: id_蔡是民
+  birthday: 1947
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 金門縣
+    party: 親民黨
+    elected: 0
+- name: 陳川青
+  id: id_陳川青
+  birthday: 1949
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 金門縣
+    party: 無黨籍
+    elected: 0
+- name: 陳昭南
+  id: id_陳昭南
+  birthday: 1942
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 金門縣
+    party: 民主進步黨
+    elected: 0
+- name: 許金象
+  id: id_許金象
+  birthday: 1955
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 金門縣
+    party: 中國國民黨
+    elected: 0
+- name: 林政則
+  id: id_林政則
+  birthday: 1944
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 新竹市
+    party: 中國國民黨
+    elected: 1
+- name: 黃中媄
+  id: id_黃中媄
+  birthday: 1951
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 新竹市
+    party: 無黨籍
+    elected: 0
+- name: 蔡明憲
+  id: id_蔡明憲
+  birthday: 1941
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺中市
+    party: 民主進步黨
+    elected: 0
+- name: 胡志強
+  id: id_胡志強
+  birthday: 1948
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺中市
+    party: 中國國民黨
+    elected: 1
+- name: 蕭裕珍
+  id: id_蕭裕珍
+  birthday: 1956
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 嘉義市
+    party: 無黨籍
+    elected: 0
+- name: 黃正男
+  id: id_黃正男
+  birthday: 1941
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 嘉義市
+    party: 民主進步黨
+    elected: 0
+- name: 張榮藏
+  id: id_張榮藏
+  birthday: 1942
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 嘉義市
+    party: 無黨籍
+    elected: 0
+- name: 陳麗貞
+  id: id_陳麗貞
+  birthday: 1958
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 嘉義市
+    party: 無黨籍
+    elected: 1
+- name: 江清馦
+  id: id_江清馦
+  birthday: 1942
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 嘉義市
+    party: 中國國民黨
+    elected: 0
+- name: 林易煌
+  id: id_林易煌
+  birthday: 1964
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺南市
+    party: 無黨籍
+    elected: 0
+- name: 蘇南成
+  id: id_蘇南成
+  birthday: 1936
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺南市
+    party: 無黨籍
+    elected: 0
+- name: 陳源奇
+  id: id_陳源奇
+  birthday: 1940
+  elections:
+  - year: 2001
+    type: 縣市首長
+    region: 臺南市
+    party: 無黨籍
+    elected: 0
 - name: 蔡英文
   id: id_蔡英文
   birthday: 1956
@@ -1132,16 +1822,6 @@
     party: 無黨籍
     elected: 0
     ticket: 3
-- name: 朱立倫
-  id: id_朱立倫
-  birthday: 1961
-  elections:
-  - year: 2016
-    type: 國家元首_總統
-    region: 全國
-    party: 中國國民黨
-    elected: 0
-    ticket: 1
 - name: 王如玄
   id: id_王如玄
   birthday: 1961
