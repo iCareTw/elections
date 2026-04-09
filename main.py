@@ -61,9 +61,12 @@ def load_valid_types() -> set[str]:
 
 
 def _make_election(r: dict) -> dict:
-    return {k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')} | (
-        {'ticket': r['ticket']} if 'ticket' in r else {}
-    )
+    base = {k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')}
+    if 'session' in r:
+        base['session'] = r['session']
+    if 'ticket' in r:
+        base['ticket'] = r['ticket']
+    return base
 
 
 def _add_as_new(r: dict, matches: list[dict], to_add: list[dict]) -> None:
