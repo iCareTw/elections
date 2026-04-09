@@ -60,3 +60,38 @@ def test_write_xlsx_creates_file_with_header_and_rows(tmp_path):
     assert rows[1][2] == '吳思瑤'
     assert rows[2][2] == '王某某'
     assert len(rows) == 3
+
+# parse_session_map
+
+from src.fetch_legislator import parse_session_map
+
+def test_parse_session_map_extracts_l1_l2_l3():
+    raw = [
+        {'area_name': '全國', 'theme_items': [
+            {'session': 11, 'legislator_type_id': 'L1', 'theme_id': 'aaa', 'data_level': 'A', 'legislator_desc': '區域'},
+            {'session': 11, 'legislator_type_id': 'L2', 'theme_id': 'bbb', 'data_level': 'N', 'legislator_desc': '平地原住民'},
+            {'session': 11, 'legislator_type_id': 'L3', 'theme_id': 'ccc', 'data_level': 'N', 'legislator_desc': '山地原住民'},
+            {'session': 11, 'legislator_type_id': 'L4', 'theme_id': 'ddd', 'data_level': 'N', 'legislator_desc': '不分區政黨'},
+        ]},
+    ]
+    result = parse_session_map(raw)
+    assert (11, 'L1') in result
+    assert result[(11, 'L1')] == {'theme_id': 'aaa', 'data_level': 'A', 'desc': '區域'}
+    assert (11, 'L2') in result
+    assert (11, 'L3') in result
+    assert (11, 'L4') not in result  # L4 excluded
+
+def test_parse_session_map_excludes_out_of_range():
+    raw = [
+        {'area_name': '全國', 'theme_items': [
+            {'session': 2,  'legislator_type_id': 'L1', 'theme_id': 'x', 'data_level': 'A', 'legislator_desc': '區域'},
+            {'session': 3,  'legislator_type_id': 'L1', 'theme_id': 'y', 'data_level': 'A', 'legislator_desc': '區域'},
+            {'session': 11, 'legislator_type_id': 'L1', 'theme_id': 'z', 'data_level': 'A', 'legislator_desc': '區域'},
+            {'session': 12, 'legislator_type_id': 'L1', 'theme_id': 'w', 'data_level': 'A', 'legislator_desc': '區域'},
+        ]},
+    ]
+    result = parse_session_map(raw)
+    assert (2,  'L1') not in result
+    assert (3,  'L1') in result
+    assert (11, 'L1') in result
+    assert (12, 'L1') not in result

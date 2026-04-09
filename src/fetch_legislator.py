@@ -45,3 +45,19 @@ def write_xlsx(records: list[dict], path: Path) -> None:
     for r in records:
         ws.append([r.get(field) for _, field in XLSX_COLUMNS])
     wb.save(path)
+
+
+def parse_session_map(data: list[dict]) -> dict:
+    """Returns {(session, legis_id): {theme_id, data_level, desc}} for sessions 3–11, L1/L2/L3."""
+    result = {}
+    for entry in data:
+        for item in entry.get('theme_items', []):
+            s = item['session']
+            lid = item['legislator_type_id']
+            if 3 <= s <= 11 and lid in ('L1', 'L2', 'L3'):
+                result[(s, lid)] = {
+                    'theme_id':   item['theme_id'],
+                    'data_level': item['data_level'],
+                    'desc':       item['legislator_desc'],
+                }
+    return result
