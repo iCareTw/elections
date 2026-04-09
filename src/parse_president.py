@@ -14,6 +14,8 @@ def filename_to_year(filename: str) -> int:
 def parse_workbook(wb: openpyxl.Workbook, year: int) -> list[dict]:
     ws = wb.active
     records = []
+    current_type = None
+    current_ticket = None
     current_party = None
     current_elected = None
 
@@ -25,16 +27,21 @@ def parse_workbook(wb: openpyxl.Workbook, year: int) -> list[dict]:
             continue
 
         if num is not None:
-            # 正職候選人，記錄黨籍與當選狀態（副手繼承）
+            # 正職候選人（總統），記錄號次、黨籍與當選狀態（副手繼承）
+            current_type = '國家元首_總統'
+            current_ticket = int(num)
             current_party = '無黨籍' if not party or party == '無黨籍及未經政黨推薦' else party
             current_elected = 1 if elected_mark == '*' else 0
+        else:
+            current_type = '國家元首_副總統'
 
         records.append({
             'name': str(name),
             'birthday': int(birth_year) if birth_year else None,
             'year': year,
-            'type': '國家元首',
+            'type': current_type,
             'region': '全國',
+            'ticket': current_ticket,
             'party': current_party,
             'elected': current_elected,
         })

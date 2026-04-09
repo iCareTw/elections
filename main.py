@@ -78,16 +78,25 @@ def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]
             ans = input(prompt).strip().lower()
             if ans in choices:
                 c = matches[int(ans) - 1]
-                election = {k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')}
+                election = {k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')} | ({'ticket': r['ticket']} if 'ticket' in r else {})
                 c['elections'].append(election)
                 c['elections'].sort(key=lambda e: e['year'])
+                if r['birthday'] and c['birthday'] != r['birthday']:
+                    print(f'  生年不符：現有 {c["birthday"]}，新資料 {r["birthday"]}')
+                    fix = input('  是否以新資料更新 birthday？[y/n] > ').strip().lower()
+                    if fix == 'y':
+                        c['birthday'] = r['birthday']
+                        c['id'] = generate_id(c['name'], c['birthday'])
                 break
             elif ans == 'n':
+                for m in matches:
+                    if m['birthday']:
+                        m['id'] = generate_id(m['name'], m['birthday'])
                 to_add.append({
                     'name': r['name'],
                     'id': generate_id(r['name'], r['birthday']),
                     'birthday': r['birthday'],
-                    'elections': [{k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')}],
+                    'elections': [{k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')} | ({'ticket': r['ticket']} if 'ticket' in r else {})],
                 })
                 break
             elif ans == 's':
@@ -146,7 +155,7 @@ def main():
             print(f'  {e}', file=sys.stderr)
         sys.exit(1)
 
-    result.sort(key=lambda c: c['name'])
+    result.sort(key=lambda c: min((e['year'] for e in c['elections']), default=9999))
     with open(CANDIDATES_FILE, 'w', encoding='utf-8') as f:
         yaml.dump(result, f, allow_unicode=True, sort_keys=False, default_flow_style=False)
     print(f'\n\033[32m✓ 寫入 {CANDIDATES_FILE}（共 {len(result)} 筆）\033[0m')

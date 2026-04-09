@@ -14,7 +14,7 @@ EXISTING = [
 
 def test_new_person():
     records = [{'name': '吳欣盈', 'birthday': 1978, 'year': 2024,
-                'type': '國家元首', 'region': '全國', 'party': '台灣民眾黨', 'elected': 0}]
+                'type': '國家元首_總統', 'region': '全國', 'party': '台灣民眾黨', 'elected': 0}]
     result = classify_records(records, EXISTING)
     assert len(result['auto']) == 1
     assert result['auto'][0]['action'] == 'new'
@@ -23,7 +23,7 @@ def test_new_person():
 
 def test_existing_person_new_election():
     records = [{'name': '柯文哲', 'birthday': 1959, 'year': 2024,
-                'type': '國家元首', 'region': '全國', 'party': '台灣民眾黨', 'elected': 0}]
+                'type': '國家元首_總統', 'region': '全國', 'party': '台灣民眾黨', 'elected': 0}]
     result = classify_records(records, EXISTING)
     assert len(result['auto']) == 1
     assert result['auto'][0]['action'] == 'merge'
@@ -32,7 +32,7 @@ def test_existing_person_new_election():
 
 def test_conflict_multiple_same_name():
     records = [{'name': '許淑華', 'birthday': 1971, 'year': 2024,
-                'type': '國家元首', 'region': '全國', 'party': '民主進步黨', 'elected': 0}]
+                'type': '國家元首_總統', 'region': '全國', 'party': '民主進步黨', 'elected': 0}]
     result = classify_records(records, EXISTING)
     assert len(result['conflicts']) == 1
     assert len(result['conflicts'][0]['matches']) == 2

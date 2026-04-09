@@ -28,7 +28,7 @@ def classify_records(records: list[dict], existing: list[dict]) -> dict:
             bday_ok = (r['birthday'] is None or c['birthday'] is None
                        or r['birthday'] == c['birthday'])
             if bday_ok:
-                election = {k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')}
+                election = {k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')} | ({'ticket': r['ticket']} if 'ticket' in r else {})
                 if election in c['elections']:
                     continue  # 已存在，跳過
                 auto.append({'action': 'merge', 'record': r, 'candidate': c})
@@ -52,11 +52,11 @@ def apply_auto(auto: list[dict], existing: list[dict]) -> list[dict]:
                 'name': r['name'],
                 'id': generate_id(r['name']),
                 'birthday': r['birthday'],
-                'elections': [{k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')}],
+                'elections': [{k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')} | ({'ticket': r['ticket']} if 'ticket' in r else {})],
             })
         elif item['action'] == 'merge':
             c = item['candidate']
-            election = {k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')}
+            election = {k: r[k] for k in ('year', 'type', 'region', 'party', 'elected')} | ({'ticket': r['ticket']} if 'ticket' in r else {})
             c['elections'].append(election)
             c['elections'].sort(key=lambda e: e['year'])
 
