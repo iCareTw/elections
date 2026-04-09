@@ -51,12 +51,12 @@ elections/
     - year: 2014
       type: 縣市首長
       region: 臺北市
-      party: 無黨籍及未經政黨推薦
+      party: 無黨籍
       elected: 1
     - year: 2018
       type: 縣市首長
       region: 臺北市
-      party: 無黨籍及未經政黨推薦
+      party: 無黨籍
       elected: 1
     - year: 2024
       type: 國家元首

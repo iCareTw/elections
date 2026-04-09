@@ -26,7 +26,7 @@ def parse_workbook(wb: openpyxl.Workbook, year: int) -> list[dict]:
 
         if num is not None:
             # 正職候選人，記錄黨籍與當選狀態（副手繼承）
-            current_party = party or '無黨籍及未經政黨推薦'
+            current_party = '無黨籍' if not party or party == '無黨籍及未經政黨推薦' else party
             current_elected = 1 if elected_mark == '*' else 0
 
         records.append({

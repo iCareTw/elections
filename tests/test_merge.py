@@ -4,7 +4,7 @@ EXISTING = [
     {
         'name': '柯文哲', 'id': 'id_柯文哲', 'birthday': 1959,
         'elections': [
-            {'year': 2014, 'type': '縣市首長', 'region': '臺北市', 'party': '無黨籍及未經政黨推薦', 'elected': 1},
+            {'year': 2014, 'type': '縣市首長', 'region': '臺北市', 'party': '無黨籍', 'elected': 1},
         ]
     },
     {'name': '許淑華', 'id': 'id_許淑華_1973', 'birthday': 1973, 'elections': []},
@@ -40,7 +40,7 @@ def test_conflict_multiple_same_name():
 
 def test_duplicate_election_skipped():
     records = [{'name': '柯文哲', 'birthday': 1959, 'year': 2014,
-                'type': '縣市首長', 'region': '臺北市', 'party': '無黨籍及未經政黨推薦', 'elected': 1}]
+                'type': '縣市首長', 'region': '臺北市', 'party': '無黨籍', 'elected': 1}]
     result = classify_records(records, EXISTING)
     assert len(result['auto']) == 0
     assert len(result['conflicts']) == 0

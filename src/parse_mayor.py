@@ -34,7 +34,7 @@ def parse_workbook(wb: openpyxl.Workbook, year: int) -> list[dict]:
             'year': year,
             'type': '縣市首長',
             'region': current_region,
-            'party': party or '無黨籍及未經政黨推薦',
+            'party': '無黨籍' if not party or party == '無黨籍及未經政黨推薦' else party,
             'elected': 1 if elected_mark == '*' else 0,
         })
     return records

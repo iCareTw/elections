@@ -7,7 +7,7 @@ def test_valid_passes():
     candidates = [{
         'name': '柯文哲', 'id': 'id_柯文哲', 'birthday': 1959,
         'elections': [
-            {'year': 2014, 'type': '縣市首長', 'region': '臺北市', 'party': '無黨籍及未經政黨推薦', 'elected': 1},
+            {'year': 2014, 'type': '縣市首長', 'region': '臺北市', 'party': '無黨籍', 'elected': 1},
             {'year': 2024, 'type': '國家元首', 'region': None, 'party': '台灣民眾黨', 'elected': 0},
         ]
     }]

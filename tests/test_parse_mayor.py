@@ -35,6 +35,7 @@ def test_parse_basic():
         'party': '中國國民黨', 'elected': 1,
     }
     assert records[1]['region'] == '臺北市'
+    assert records[1]['party'] == '無黨籍'
     assert records[1]['elected'] == 0
 
 

@@ -28,7 +28,7 @@
   - year: 2022
     type: 縣市首長
     region: 新竹縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 劉櫂豪
   id: id_劉櫂豪
@@ -55,7 +55,7 @@
   - year: 2022
     type: 縣市首長
     region: 臺南市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 吳盛聖
   id: id_吳盛聖
@@ -64,7 +64,7 @@
   - year: 2022
     type: 縣市首長
     region: 苗栗縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 周春米
   id: id_周春米
@@ -154,7 +154,7 @@
   - year: 2022
     type: 縣市首長
     region: 臺北市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 曹爾元
   id: id_曹爾元
@@ -172,7 +172,7 @@
   - year: 2022
     type: 縣市首長
     region: 基隆市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 曾尹儷
   id: id_曾尹儷
@@ -181,7 +181,7 @@
   - year: 2022
     type: 縣市首長
     region: 高雄市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 朱振東
   id: id_朱振東
@@ -226,7 +226,7 @@
   - year: 2022
     type: 縣市首長
     region: 金門縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 李驥羣
   id: id_李驥羣
@@ -235,7 +235,7 @@
   - year: 2022
     type: 縣市首長
     region: 新竹市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 林佳瑜
   id: id_林佳瑜
@@ -244,7 +244,7 @@
   - year: 2022
     type: 縣市首長
     region: 雲林縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 林佳龍
   id: id_林佳龍
@@ -271,7 +271,7 @@
   - year: 2022
     type: 縣市首長
     region: 金門縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 林義豐
   id: id_林義豐
@@ -280,7 +280,7 @@
   - year: 2022
     type: 縣市首長
     region: 臺南市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 林耕仁
   id: id_林耕仁
@@ -352,7 +352,7 @@
   - year: 2022
     type: 縣市首長
     region: 金門縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 王忠銘
   id: id_王忠銘
@@ -379,7 +379,7 @@
   - year: 2022
     type: 縣市首長
     region: 臺北市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 王永慶
   id: id_王永慶
@@ -388,7 +388,7 @@
   - year: 2022
     type: 縣市首長
     region: 南投縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 王育敏
   id: id_王育敏
@@ -415,7 +415,7 @@
   - year: 2022
     type: 縣市首長
     region: 臺北市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 翁章梁
   id: id_翁章梁
@@ -433,7 +433,7 @@
   - year: 2022
     type: 縣市首長
     region: 新竹縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 葉竹林
   id: id_葉竹林
@@ -442,7 +442,7 @@
   - year: 2022
     type: 縣市首長
     region: 澎湖縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 蔡其昌
   id: id_蔡其昌
@@ -487,7 +487,7 @@
   - year: 2022
     type: 縣市首長
     region: 彰化縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 蕭美琴
   id: id_蕭美琴
@@ -523,7 +523,7 @@
   - year: 2022
     type: 縣市首長
     region: 臺南市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 許淑華
   id: id_許淑華
@@ -541,7 +541,7 @@
   - year: 2022
     type: 縣市首長
     region: 宜蘭縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 詹智鈞
   id: id_詹智鈞
@@ -577,7 +577,7 @@
   - year: 2022
     type: 縣市首長
     region: 臺北市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 謝龍介
   id: id_謝龍介
@@ -640,7 +640,7 @@
   - year: 2022
     type: 縣市首長
     region: 嘉義市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 鄭匡宇
   id: id_鄭匡宇
@@ -649,7 +649,7 @@
   - year: 2022
     type: 縣市首長
     region: 臺北市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 鄭宇翔
   id: id_鄭宇翔
@@ -658,7 +658,7 @@
   - year: 2022
     type: 縣市首長
     region: 高雄市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 鄭寶清
   id: id_鄭寶清
@@ -667,7 +667,7 @@
   - year: 2022
     type: 縣市首長
     region: 桃園市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 鄭運鵬
   id: id_鄭運鵬
@@ -685,7 +685,7 @@
   - year: 2022
     type: 縣市首長
     region: 苗栗縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 1
 - name: 陳光復
   id: id_陳光復
@@ -721,7 +721,7 @@
   - year: 2022
     type: 縣市首長
     region: 嘉義市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 陳琬惠
   id: id_陳琬惠
@@ -739,7 +739,7 @@
   - year: 2022
     type: 縣市首長
     region: 金門縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 1
 - name: 陳秋境
   id: id_陳秋境
@@ -748,7 +748,7 @@
   - year: 2022
     type: 縣市首長
     region: 宜蘭縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 陳美妃
   id: id_陳美妃
@@ -757,7 +757,7 @@
   - year: 2022
     type: 縣市首長
     region: 臺中市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 陳薇仲
   id: id_陳薇仲
@@ -775,7 +775,7 @@
   - year: 2022
     type: 縣市首長
     region: 臺東縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 饒慶鈴
   id: id_饒慶鈴
@@ -811,7 +811,7 @@
   - year: 2022
     type: 縣市首長
     region: 嘉義市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 黃希賢
   id: id_黃希賢
@@ -820,7 +820,7 @@
   - year: 2022
     type: 縣市首長
     region: 基隆市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 黃敏惠
   id: id_黃敏惠
@@ -838,7 +838,7 @@
   - year: 2022
     type: 縣市首長
     region: 新竹市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 黃珊珊
   id: id_黃珊珊
@@ -847,7 +847,7 @@
   - year: 2022
     type: 縣市首長
     region: 臺北市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 黃秀芳
   id: id_黃秀芳
@@ -865,7 +865,7 @@
   - year: 2022
     type: 縣市首長
     region: 新竹縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 黃聖峰
   id: id_黃聖峰
@@ -883,7 +883,7 @@
   - year: 2022
     type: 縣市首長
     region: 花蓮縣
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0
 - name: 龔偉綸
   id: id_龔偉綸
@@ -892,5 +892,5 @@
   - year: 2022
     type: 縣市首長
     region: 新竹市
-    party: 無黨籍及未經政黨推薦
+    party: 無黨籍
     elected: 0

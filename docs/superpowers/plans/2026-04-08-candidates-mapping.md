@@ -290,7 +290,7 @@ def parse_workbook(wb: openpyxl.Workbook, year: int) -> list[dict]:
 
         if num is not None:
             # 正職候選人
-            current_party = party or '無黨籍及未經政黨推薦'
+            current_party = party or '無黨籍'
             current_elected = 1 if elected_mark == '*' else 0
 
         records.append({
@@ -367,7 +367,7 @@ def test_parse_basic():
     wb = make_wb([
         ('地區', '姓名', '號次', '性別', '出生年次', '推薦政黨', '得票數', '得票率', '當選', '現任'),
         ('臺北市', '蔣萬安', 6, '男', '1978', '中國國民黨', '575,590', '42.29%', '*', None),
-        (None,    '黃珊珊', 8, '女', '1969', '無黨籍及未經政黨推薦', '342,141', '25.14%', ' ', None),
+        (None,    '黃珊珊', 8, '女', '1969', '無黨籍', '342,141', '25.14%', ' ', None),
     ])
     records = parse_workbook(wb, year=2022)
     assert len(records) == 2
@@ -436,7 +436,7 @@ def parse_workbook(wb: openpyxl.Workbook, year: int) -> list[dict]:
             'year': year,
             'type': '縣市首長',
             'region': current_region,
-            'party': party or '無黨籍及未經政黨推薦',
+            'party': party or '無黨籍',
             'elected': 1 if elected_mark == '*' else 0,
         })
     return records
@@ -483,7 +483,7 @@ def test_valid_passes():
     candidates = [{
         'name': '柯文哲', 'id': 'id_柯文哲', 'birthday': 1959,
         'elections': [
-            {'year': 2014, 'type': '縣市首長', 'region': '臺北市', 'party': '無黨籍及未經政黨推薦', 'elected': 1},
+            {'year': 2014, 'type': '縣市首長', 'region': '臺北市', 'party': '無黨籍', 'elected': 1},
             {'year': 2024, 'type': '國家元首', 'region': None, 'party': '台灣民眾黨', 'elected': 0},
         ]
     }]
@@ -601,7 +601,7 @@ EXISTING = [
     {
         'name': '柯文哲', 'id': 'id_柯文哲', 'birthday': 1959,
         'elections': [
-            {'year': 2014, 'type': '縣市首長', 'region': '臺北市', 'party': '無黨籍及未經政黨推薦', 'elected': 1},
+            {'year': 2014, 'type': '縣市首長', 'region': '臺北市', 'party': '無黨籍', 'elected': 1},
         ]
     },
     {'name': '許淑華', 'id': 'id_許淑華_1973', 'birthday': 1973, 'elections': []},
@@ -633,7 +633,7 @@ def test_conflict_multiple_same_name():
 
 def test_duplicate_election_skipped():
     records = [{'name': '柯文哲', 'birthday': 1959, 'year': 2014,
-                'type': '縣市首長', 'region': '臺北市', 'party': '無黨籍及未經政黨推薦', 'elected': 1}]
+                'type': '縣市首長', 'region': '臺北市', 'party': '無黨籍', 'elected': 1}]
     result = classify_records(records, EXISTING)
     # 已存在的 election，不重複新增
     assert len(result['auto']) == 0
