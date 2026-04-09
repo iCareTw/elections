@@ -205,6 +205,11 @@
     region: 高雄市
     party: 民主進步黨
     elected: 1
+  - year: 2006
+    type: 縣市首長
+    region: 臺北市
+    party: 民主進步黨
+    elected: 0
   - year: 2008
     type: 國家元首_副總統
     region: 全國
@@ -745,6 +750,11 @@
     region: 高雄縣
     party: 無黨籍
     elected: 0
+  - year: 2006
+    type: 縣市首長
+    region: 高雄市
+    party: 無黨籍
+    elected: 0
 - name: 李景雯
   id: id_李景雯
   birthday: 1928
@@ -1221,6 +1231,11 @@
     party: 中國國民黨
     elected: 0
     ticket: 2
+  - year: 2006
+    type: 縣市首長
+    region: 臺北市
+    party: 無黨籍
+    elected: 0
   - year: 2012
     type: 國家元首_總統
     region: 全國
@@ -1275,6 +1290,11 @@
     party: 新黨
     elected: 0
     ticket: 3
+  - year: 2006
+    type: 縣市首長
+    region: 臺北市
+    party: 無黨籍
+    elected: 0
 - name: 馮滬祥
   id: id_馮滬祥
   birthday: 1948
@@ -1971,6 +1991,11 @@
     region: 高雄市
     party: 中國國民黨
     elected: 0
+  - year: 2006
+    type: 縣市首長
+    region: 高雄市
+    party: 中國國民黨
+    elected: 0
 - name: 黃福卿
   id: id_黃福卿
   birthday: 1937
@@ -2277,6 +2302,11 @@
     region: 花蓮縣
     party: 無黨籍
     elected: 0
+  - year: 2006
+    type: 縣市首長
+    region: 臺北市
+    party: 無黨籍
+    elected: 0
 - name: 盧博基
   id: id_盧博基
   birthday: 1949
@@ -2421,6 +2451,51 @@
     region: 臺南市
     party: 台灣團結聯盟
     elected: 0
+- name: 周玉蔻
+  id: id_周玉蔻
+  birthday: 1953
+  elections:
+  - year: 2006
+    type: 縣市首長
+    region: 臺北市
+    party: 台灣團結聯盟
+    elected: 0
+- name: 郝龍斌
+  id: id_郝龍斌
+  birthday: 1952
+  elections:
+  - year: 2006
+    type: 縣市首長
+    region: 臺北市
+    party: 中國國民黨
+    elected: 1
+- name: 林志昇
+  id: id_林志昇
+  birthday: 1950
+  elections:
+  - year: 2006
+    type: 縣市首長
+    region: 高雄市
+    party: 保護台灣大聯盟
+    elected: 0
+- name: 羅志明
+  id: id_羅志明
+  birthday: 1957
+  elections:
+  - year: 2006
+    type: 縣市首長
+    region: 高雄市
+    party: 台灣團結聯盟
+    elected: 0
+- name: 陳菊
+  id: id_陳菊
+  birthday: 1950
+  elections:
+  - year: 2006
+    type: 縣市首長
+    region: 高雄市
+    party: 民主進步黨
+    elected: 1
 - name: 蔡英文
   id: id_蔡英文
   birthday: 1956
