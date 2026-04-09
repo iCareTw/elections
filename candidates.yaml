@@ -282,6 +282,11 @@
     region: 臺北市
     party: 民主進步黨
     elected: 0
+  - year: 2018
+    type: 縣市首長
+    region: 新北市
+    party: 民主進步黨
+    elected: 0
 - name: 蘇嘉全
   id: id_蘇嘉全
   birthday: 1956
@@ -887,6 +892,11 @@
     region: 澎湖縣
     party: 中國國民黨
     elected: 1
+  - year: 2018
+    type: 縣市首長
+    region: 澎湖縣
+    party: 中國國民黨
+    elected: 1
 - name: 許丕龍
   id: id_許丕龍
   birthday: 1939
@@ -971,6 +981,11 @@
     region: 雲林縣
     party: 民主進步黨
     elected: 1
+  - year: 2018
+    type: 縣市首長
+    region: 雲林縣
+    party: 民主進步黨
+    elected: 0
 - name: 劉文雄
   id: id_劉文雄
   birthday: 1954
@@ -1441,6 +1456,11 @@
     region: 宜蘭縣
     party: 無黨籍
     elected: 0
+  - year: 2018
+    type: 縣市首長
+    region: 宜蘭縣
+    party: 無黨籍
+    elected: 0
 - name: 呂國華
   id: id_呂國華
   birthday: 1956
@@ -1620,6 +1640,11 @@
     region: 南投縣
     party: 中國國民黨
     elected: 1
+  - year: 2018
+    type: 縣市首長
+    region: 南投縣
+    party: 中國國民黨
+    elected: 1
 - name: 林樹山
   id: id_林樹山
   birthday: 1958
@@ -1712,6 +1737,11 @@
     region: 臺南縣
     party: 民主進步黨
     elected: 1
+  - year: 2018
+    type: 縣市首長
+    region: 臺南市
+    party: 無黨籍
+    elected: 0
 - name: 魏耀乾
   id: id_魏耀乾
   birthday: 1950
@@ -1719,6 +1749,11 @@
   - year: 2001
     type: 縣市首長
     region: 臺南縣
+    party: 無黨籍
+    elected: 0
+  - year: 2018
+    type: 縣市首長
+    region: 連江縣
     party: 無黨籍
     elected: 0
 - name: 黃八野
@@ -1787,6 +1822,11 @@
     party: 無黨籍
     elected: 0
   - year: 2005
+    type: 縣市首長
+    region: 臺東縣
+    party: 無黨籍
+    elected: 0
+  - year: 2018
     type: 縣市首長
     region: 臺東縣
     party: 無黨籍
@@ -1869,6 +1909,11 @@
     region: 澎湖縣
     party: 民主進步黨
     elected: 1
+  - year: 2018
+    type: 縣市首長
+    region: 澎湖縣
+    party: 民主進步黨
+    elected: 0
 - name: 許麗音
   id: id_許麗音
   birthday: 1948
@@ -2261,6 +2306,11 @@
     region: 苗栗縣
     party: 中國國民黨
     elected: 1
+  - year: 2018
+    type: 縣市首長
+    region: 苗栗縣
+    party: 中國國民黨
+    elected: 1
 - name: 江炳輝
   id: id_江炳輝
   birthday: 1929
@@ -2339,6 +2389,11 @@
   birthday: 1959
   elections:
   - year: 2005
+    type: 縣市首長
+    region: 雲林縣
+    party: 無黨籍
+    elected: 0
+  - year: 2018
     type: 縣市首長
     region: 雲林縣
     party: 無黨籍
@@ -2454,6 +2509,11 @@
     party: 民主進步黨
     elected: 0
   - year: 2014
+    type: 縣市首長
+    region: 臺東縣
+    party: 民主進步黨
+    elected: 0
+  - year: 2018
     type: 縣市首長
     region: 臺東縣
     party: 民主進步黨
@@ -2575,6 +2635,11 @@
     region: 金門縣
     party: 無黨籍
     elected: 1
+  - year: 2018
+    type: 縣市首長
+    region: 金門縣
+    party: 無黨籍
+    elected: 0
 - name: 陳平
   id: id_陳平
   birthday: 1957
@@ -2643,6 +2708,11 @@
     region: 臺中市
     party: 民主進步黨
     elected: 1
+  - year: 2018
+    type: 縣市首長
+    region: 臺中市
+    party: 民主進步黨
+    elected: 0
 - name: 黃敏惠
   id: id_黃敏惠
   birthday: 1959
@@ -2653,6 +2723,11 @@
     party: 中國國民黨
     elected: 1
   - year: 2009
+    type: 縣市首長
+    region: 嘉義市
+    party: 中國國民黨
+    elected: 1
+  - year: 2018
     type: 縣市首長
     region: 嘉義市
     party: 中國國民黨
@@ -2749,6 +2824,11 @@
     region: 桃園縣
     party: 客家黨
     elected: 0
+  - year: 2018
+    type: 縣市首長
+    region: 桃園市
+    party: 無黨籍
+    elected: 0
 - name: 鄭文燦
   id: id_鄭文燦
   birthday: 1967
@@ -2759,6 +2839,11 @@
     party: 民主進步黨
     elected: 0
   - year: 2014
+    type: 縣市首長
+    region: 桃園市
+    party: 民主進步黨
+    elected: 1
+  - year: 2018
     type: 縣市首長
     region: 桃園市
     party: 民主進步黨
@@ -2959,6 +3044,11 @@
     region: 連江縣
     party: 中國國民黨
     elected: 1
+  - year: 2018
+    type: 縣市首長
+    region: 連江縣
+    party: 中國國民黨
+    elected: 1
 - name: 梁國棟
   id: id_梁國棟
   birthday: 1956
@@ -3019,6 +3109,11 @@
     region: 基隆市
     party: 民主進步黨
     elected: 1
+  - year: 2018
+    type: 縣市首長
+    region: 基隆市
+    party: 民主進步黨
+    elected: 1
 - name: 李步輝
   id: id_李步輝
   birthday: 1968
@@ -3047,6 +3142,11 @@
     party: 中國國民黨
     elected: 1
   - year: 2014
+    type: 縣市首長
+    region: 新竹市
+    party: 中國國民黨
+    elected: 0
+  - year: 2018
     type: 縣市首長
     region: 新竹市
     party: 中國國民黨
@@ -3092,6 +3192,11 @@
     region: 嘉義市
     party: 民主進步黨
     elected: 1
+  - year: 2018
+    type: 縣市首長
+    region: 嘉義市
+    party: 民主進步黨
+    elected: 0
 - name: 蔡英文
   id: id_蔡英文
   birthday: 1956
@@ -3201,6 +3306,11 @@
   birthday: 1959
   elections:
   - year: 2014
+    type: 縣市首長
+    region: 臺北市
+    party: 無黨籍
+    elected: 1
+  - year: 2018
     type: 縣市首長
     region: 臺北市
     party: 無黨籍
@@ -3328,6 +3438,11 @@
     region: 新竹縣
     party: 無黨籍
     elected: 0
+  - year: 2018
+    type: 縣市首長
+    region: 新竹縣
+    party: 無黨籍
+    elected: 0
 - name: 莊作兵
   id: id_莊作兵
   birthday: 1933
@@ -3391,11 +3506,21 @@
     region: 彰化縣
     party: 無黨籍
     elected: 0
+  - year: 2018
+    type: 縣市首長
+    region: 彰化縣
+    party: 無黨籍
+    elected: 0
 - name: 洪敏雄
   id: id_洪敏雄
   birthday: 1961
   elections:
   - year: 2014
+    type: 縣市首長
+    region: 彰化縣
+    party: 無黨籍
+    elected: 0
+  - year: 2018
     type: 縣市首長
     region: 彰化縣
     party: 無黨籍
@@ -3409,6 +3534,11 @@
     region: 彰化縣
     party: 民主進步黨
     elected: 1
+  - year: 2018
+    type: 縣市首長
+    region: 彰化縣
+    party: 民主進步黨
+    elected: 0
 - name: 林滄敏
   id: id_林滄敏
   birthday: 1958
@@ -3427,6 +3557,11 @@
     region: 雲林縣
     party: 中國國民黨
     elected: 0
+  - year: 2018
+    type: 縣市首長
+    region: 雲林縣
+    party: 中國國民黨
+    elected: 1
 - name: 黃宏成台灣阿成世界偉人
   id: id_黃宏成台灣阿成世界偉人
   birthday: 1968
@@ -3454,6 +3589,11 @@
     region: 屏東縣
     party: 民主進步黨
     elected: 1
+  - year: 2018
+    type: 縣市首長
+    region: 屏東縣
+    party: 民主進步黨
+    elected: 1
 - name: 徐榛蔚
   id: id_徐榛蔚
   birthday: 1968
@@ -3463,11 +3603,21 @@
     region: 花蓮縣
     party: 無黨籍
     elected: 0
+  - year: 2018
+    type: 縣市首長
+    region: 花蓮縣
+    party: 中國國民黨
+    elected: 1
 - name: 黄師鵬
   id: id_黄師鵬
   birthday: 1957
   elections:
   - year: 2014
+    type: 縣市首長
+    region: 花蓮縣
+    party: 無黨籍
+    elected: 0
+  - year: 2018
     type: 縣市首長
     region: 花蓮縣
     party: 無黨籍
@@ -3535,6 +3685,11 @@
     region: 金門縣
     party: 無黨籍
     elected: 0
+  - year: 2018
+    type: 縣市首長
+    region: 金門縣
+    party: 金門高粱黨
+    elected: 0
 - name: 莊育民
   id: id_莊育民
   birthday: 1970
@@ -3567,6 +3722,11 @@
   birthday: 1961
   elections:
   - year: 2014
+    type: 縣市首長
+    region: 基隆市
+    party: 中國國民黨
+    elected: 0
+  - year: 2018
     type: 縣市首長
     region: 基隆市
     party: 中國國民黨
@@ -3612,6 +3772,11 @@
   birthday: 1975
   elections:
   - year: 2014
+    type: 縣市首長
+    region: 新竹市
+    party: 民主進步黨
+    elected: 1
+  - year: 2018
     type: 縣市首長
     region: 新竹市
     party: 民主進步黨
@@ -3700,6 +3865,554 @@
     party: 親民黨
     elected: 0
     ticket: 3
+  - year: 2018
+    type: 縣市首長
+    region: 新竹縣
+    party: 民國黨
+    elected: 0
+- name: 韓國瑜
+  id: id_韓國瑜
+  birthday: 1957
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 高雄市
+    party: 中國國民黨
+    elected: 1
+  - year: 2020
+    type: 國家元首_總統
+    region: 全國
+    party: 中國國民黨
+    elected: 0
+    ticket: 2
+- name: 侯友宜
+  id: id_侯友宜
+  birthday: 1957
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 新北市
+    party: 中國國民黨
+    elected: 1
+  - year: 2024
+    type: 國家元首_總統
+    region: 全國
+    party: 中國國民黨
+    elected: 0
+    ticket: 3
+- name: 吳蕚洋
+  id: id_吳蕚洋
+  birthday: 1960
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 臺北市
+    party: 無黨籍
+    elected: 0
+- name: 丁守中
+  id: id_丁守中
+  birthday: 1954
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 臺北市
+    party: 中國國民黨
+    elected: 0
+- name: 姚文智
+  id: id_姚文智
+  birthday: 1965
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 臺北市
+    party: 民主進步黨
+    elected: 0
+- name: 李錫錕
+  id: id_李錫錕
+  birthday: 1947
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 臺北市
+    party: 無黨籍
+    elected: 0
+- name: 朱梅雪
+  id: id_朱梅雪
+  birthday: 1964
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 桃園市
+    party: 無黨籍
+    elected: 0
+- name: 陳學聖
+  id: id_陳學聖
+  birthday: 1957
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 桃園市
+    party: 中國國民黨
+    elected: 0
+- name: 楊麗環
+  id: id_楊麗環
+  birthday: 1957
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 桃園市
+    party: 無黨籍
+    elected: 0
+- name: 宋原通
+  id: id_宋原通
+  birthday: 1959
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 臺中市
+    party: 無黨籍
+    elected: 0
+- name: 盧秀燕
+  id: id_盧秀燕
+  birthday: 1961
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 臺中市
+    party: 中國國民黨
+    elected: 1
+- name: 黃偉哲
+  id: id_黃偉哲
+  birthday: 1963
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 臺南市
+    party: 民主進步黨
+    elected: 1
+- name: 高思博
+  id: id_高思博
+  birthday: 1968
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 臺南市
+    party: 中國國民黨
+    elected: 0
+- name: 林義豐
+  id: id_林義豐
+  birthday: 1948
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 臺南市
+    party: 無黨籍
+    elected: 0
+- name: 許忠信
+  id: id_許忠信
+  birthday: 1965
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 臺南市
+    party: 無黨籍
+    elected: 0
+- name: 陳永和
+  id: id_陳永和
+  birthday: 1960
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 臺南市
+    party: 無黨籍
+    elected: 0
+- name: 陳其邁
+  id: id_陳其邁
+  birthday: 1964
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 高雄市
+    party: 民主進步黨
+    elected: 0
+- name: 璩美鳳
+  id: id_璩美鳳
+  birthday: 1966
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 高雄市
+    party: 無黨籍
+    elected: 0
+- name: 蘇盈貴
+  id: id_蘇盈貴
+  birthday: 1958
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 高雄市
+    party: 無黨籍
+    elected: 0
+- name: 林信華
+  id: id_林信華
+  birthday: 1967
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 宜蘭縣
+    party: 無黨籍
+    elected: 0
+- name: 林姿妙
+  id: id_林姿妙
+  birthday: 1952
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 宜蘭縣
+    party: 中國國民黨
+    elected: 1
+- name: 陳歐珀
+  id: id_陳歐珀
+  birthday: 1962
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 宜蘭縣
+    party: 民主進步黨
+    elected: 0
+- name: 陳秋境
+  id: id_陳秋境
+  birthday: 1963
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 宜蘭縣
+    party: 無黨籍
+    elected: 0
+- name: 楊文科
+  id: id_楊文科
+  birthday: 1951
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 新竹縣
+    party: 中國國民黨
+    elected: 1
+- name: 鄭朝方
+  id: id_鄭朝方
+  birthday: 1980
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 新竹縣
+    party: 民主進步黨
+    elected: 0
+- name: 朱泰平
+  id: id_朱泰平
+  birthday: 1955
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 苗栗縣
+    party: 無黨籍
+    elected: 0
+- name: 徐定禎
+  id: id_徐定禎
+  birthday: 1961
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 苗栗縣
+    party: 無黨籍
+    elected: 0
+- name: 黃玉燕
+  id: id_黃玉燕
+  birthday: 1961
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 苗栗縣
+    party: 無黨籍
+    elected: 0
+- name: 王惠美
+  id: id_王惠美
+  birthday: 1968
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 彰化縣
+    party: 中國國民黨
+    elected: 1
+- name: 白雅燦
+  id: id_白雅燦
+  birthday: 1945
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 彰化縣
+    party: 無黨籍
+    elected: 0
+- name: 洪國浩
+  id: id_洪國浩
+  birthday: 1958
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 南投縣
+    party: 民主進步黨
+    elected: 0
+- name: 王麗萍
+  id: id_王麗萍
+  birthday: 1962
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 雲林縣
+    party: 無黨籍
+    elected: 0
+- name: 翁章梁
+  id: id_翁章梁
+  birthday: 1965
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 嘉義縣
+    party: 民主進步黨
+    elected: 1
+- name: 吳芳銘
+  id: id_吳芳銘
+  birthday: 1971
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 嘉義縣
+    party: 無黨籍
+    elected: 0
+- name: 林國龍
+  id: id_林國龍
+  birthday: 1950
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 嘉義縣
+    party: 無黨籍
+    elected: 0
+- name: 吳育仁
+  id: id_吳育仁
+  birthday: 1969
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 嘉義縣
+    party: 中國國民黨
+    elected: 0
+- name: 李鎔任
+  id: id_李鎔任
+  birthday: 1952
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 屏東縣
+    party: 無黨籍
+    elected: 0
+- name: 蘇清泉
+  id: id_蘇清泉
+  birthday: 1957
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 屏東縣
+    party: 中國國民黨
+    elected: 0
+- name: 鄺麗貞
+  id: id_鄺麗貞
+  birthday: 1963
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 臺東縣
+    party: 無黨籍
+    elected: 0
+- name: 黃裕斌
+  id: id_黃裕斌
+  birthday: 1949
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 臺東縣
+    party: 無黨籍
+    elected: 0
+- name: 饒慶鈴
+  id: id_饒慶鈴
+  birthday: 1969
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 臺東縣
+    party: 中國國民黨
+    elected: 1
+- name: 劉曉玫
+  id: id_劉曉玫
+  birthday: 1973
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 花蓮縣
+    party: 民主進步黨
+    elected: 0
+- name: 翁珍聖
+  id: id_翁珍聖
+  birthday: 1970
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 澎湖縣
+    party: 無黨籍
+    elected: 0
+- name: 鄭清發
+  id: id_鄭清發
+  birthday: 1958
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 澎湖縣
+    party: 無黨籍
+    elected: 0
+- name: 陳大松
+  id: id_陳大松
+  birthday: 1958
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 澎湖縣
+    party: 無黨籍
+    elected: 0
+- name: 吳政隆
+  id: id_吳政隆
+  birthday: 1966
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 澎湖縣
+    party: 無黨籍
+    elected: 0
+- name: 呂華苑
+  id: id_呂華苑
+  birthday: 1959
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 澎湖縣
+    party: 無黨籍
+    elected: 0
+- name: 蘇柏豪
+  id: id_蘇柏豪
+  birthday: 1986
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 連江縣
+    party: 樹黨
+    elected: 0
+- name: 朱秀珍
+  id: id_朱秀珍
+  birthday: 1966
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 連江縣
+    party: 無黨籍
+    elected: 0
+- name: 楊鎮浯
+  id: id_楊鎮浯
+  birthday: 1972
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 金門縣
+    party: 中國國民黨
+    elected: 1
+- name: 汪承樺
+  id: id_汪承樺
+  birthday: 1960
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 金門縣
+    party: 教科文預算保障e聯盟
+    elected: 0
+- name: 謝宜璋
+  id: id_謝宜璋
+  birthday: 1967
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 金門縣
+    party: 無黨籍
+    elected: 0
+- name: 洪和成
+  id: id_洪和成
+  birthday: 1961
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 金門縣
+    party: 無黨籍
+    elected: 0
+- name: 謝文進
+  id: id_謝文進
+  birthday: 1954
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 新竹市
+    party: 無黨籍
+    elected: 0
+- name: 李驥羣
+  id: id_李驥羣
+  birthday: 1956
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 新竹市
+    party: 無黨籍
+    elected: 0
+- name: 黃源甫
+  id: id_黃源甫
+  birthday: 1954
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 新竹市
+    party: 無黨籍
+    elected: 0
+- name: 郭榮睿
+  id: id_郭榮睿
+  birthday: 1954
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 新竹市
+    party: 無黨籍
+    elected: 0
+- name: 蕭淑麗
+  id: id_蕭淑麗
+  birthday: 1967
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 嘉義市
+    party: 無黨籍
+    elected: 0
+- name: 黃宏成台灣阿成世界偉人財神總統
+  id: id_黃宏成台灣阿成世界偉人財神總統
+  birthday: 1968
+  elections:
+  - year: 2018
+    type: 縣市首長
+    region: 嘉義市
+    party: 無黨籍
+    elected: 0
 - name: 余湘
   id: id_余湘
   birthday: 1959
@@ -3710,16 +4423,6 @@
     party: 親民黨
     elected: 0
     ticket: 1
-- name: 韓國瑜
-  id: id_韓國瑜
-  birthday: 1957
-  elections:
-  - year: 2020
-    type: 國家元首_總統
-    region: 全國
-    party: 中國國民黨
-    elected: 0
-    ticket: 2
 - name: 張善政
   id: id_張善政
   birthday: 1954
@@ -3750,13 +4453,3 @@
     party: 民主進步黨
     elected: 1
     ticket: 2
-- name: 侯友宜
-  id: id_侯友宜
-  birthday: 1957
-  elections:
-  - year: 2024
-    type: 國家元首_總統
-    region: 全國
-    party: 中國國民黨
-    elected: 0
-    ticket: 3
