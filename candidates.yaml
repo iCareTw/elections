@@ -1,0 +1,80 @@
+- name: 陳履安
+  id: id_陳履安
+  birthday: 1937
+  elections:
+  - year: 1996
+    type: 國家元首_總統
+    region: 全國
+    party: 連署
+    elected: 0
+    ticket: 1
+- name: 王清峰
+  id: id_王清峰
+  birthday: 1952
+  elections:
+  - year: 1996
+    type: 國家元首_副總統
+    region: 全國
+    party: 連署
+    elected: 0
+    ticket: 1
+- name: 李登輝
+  id: id_李登輝
+  birthday: 1923
+  elections:
+  - year: 1996
+    type: 國家元首_總統
+    region: 全國
+    party: 中國國民黨
+    elected: 1
+    ticket: 2
+- name: 連戰
+  id: id_連戰
+  birthday: 1936
+  elections:
+  - year: 1996
+    type: 國家元首_副總統
+    region: 全國
+    party: 中國國民黨
+    elected: 1
+    ticket: 2
+- name: 彭明敏
+  id: id_彭明敏
+  birthday: 1923
+  elections:
+  - year: 1996
+    type: 國家元首_總統
+    region: 全國
+    party: 民主進步黨
+    elected: 0
+    ticket: 3
+- name: 謝長廷
+  id: id_謝長廷
+  birthday: 1946
+  elections:
+  - year: 1996
+    type: 國家元首_副總統
+    region: 全國
+    party: 民主進步黨
+    elected: 0
+    ticket: 3
+- name: 林洋港
+  id: id_林洋港
+  birthday: 1927
+  elections:
+  - year: 1996
+    type: 國家元首_總統
+    region: 全國
+    party: 連署
+    elected: 0
+    ticket: 4
+- name: 郝柏村
+  id: id_郝柏村
+  birthday: 1919
+  elections:
+  - year: 1996
+    type: 國家元首_副總統
+    region: 全國
+    party: 連署
+    elected: 0
+    ticket: 4
