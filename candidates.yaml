@@ -1042,6 +1042,12 @@
     region: 連江縣
     party: 無黨籍
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 賴坤成
   id: id_賴坤成
   birthday: 1964
@@ -1063,6 +1069,12 @@
     party: 民主進步黨
     elected: 0
     session: 8
+  - year: 2024
+    type: 立法委員
+    region: 臺東縣第01選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 陳光復
   id: id_陳光復
   birthday: 1955
@@ -2465,6 +2477,12 @@
     party: 無黨籍
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新竹市第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 高新武
   id: id_高新武_1949
   birthday: 1949
@@ -6961,7 +6979,7 @@
     party: 中國國民黨
     elected: 1
 - name: 林志成
-  id: id_林志成
+  id: id_林志成_1962
   birthday: 1962
   elections:
   - year: 1997
@@ -8735,6 +8753,12 @@
     party: 無黨籍
     elected: 0
     session: 4
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第03選區
+    party: 制度救世島
+    elected: 0
+    session: 11
 - name: 彭添富
   id: id_彭添富_1951
   birthday: 1951
@@ -9103,6 +9127,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第03選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 林克謨
   id: id_林克謨_1955
   birthday: 1955
@@ -9559,6 +9589,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第08選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 高成炎
   id: id_高成炎_1948
   birthday: 1948
@@ -10235,6 +10271,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第11選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 金介壽
   id: id_金介壽_1951
   birthday: 1951
@@ -10403,6 +10445,12 @@
     party: 無黨籍
     elected: 0
     session: 4
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第04選區
+    party: 司法改革黨
+    elected: 0
+    session: 11
 - name: 楊石龍
   id: id_楊石龍_1956
   birthday: 1956
@@ -10577,6 +10625,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第04選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 晋志宏
   id: id_晋志宏_1962
   birthday: 1962
@@ -10689,6 +10743,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 苗栗縣第01選區
+    party: 無黨籍
+    elected: 1
+    session: 11
 - name: 杜文卿
   id: id_杜文卿_1954
   birthday: 1954
@@ -11087,6 +11147,12 @@
     party: 建國黨
     elected: 0
     session: 4
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第06選區
+    party: 喜樂島聯盟
+    elected: 0
+    session: 11
 - name: 鍾紹和
   id: id_鍾紹和_1956
   birthday: 1956
@@ -11534,6 +11600,12 @@
     region: 宜蘭縣
     party: 無黨籍
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 宜蘭縣第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 呂國華
   id: id_呂國華
   birthday: 1956
@@ -11918,6 +11990,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 連江縣第01選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 翁天慶
   id: id_翁天慶
   birthday: 1953
@@ -12200,6 +12278,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 雲林縣第01選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 郭添財
   id: id_郭添財
   birthday: 1962
@@ -12290,6 +12374,12 @@
     party: 無黨籍
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 花蓮縣第01選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 吳軾子
   id: id_吳軾子
   birthday: 1959
@@ -12876,6 +12966,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第01選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 陳諸讚
   id: id_陳諸讚_1958
   birthday: 1958
@@ -13382,6 +13478,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 澎湖縣第01選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 黃坤錫
   id: id_黃坤錫_1954
   birthday: 1954
@@ -14656,6 +14758,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第09選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 王昭增
   id: id_王昭增_1945
   birthday: 1945
@@ -14810,6 +14918,12 @@
     party: 中國國民黨
     elected: 0
     session: 8
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第04選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 侯水盛
   id: id_侯水盛_1949
   birthday: 1949
@@ -14878,6 +14992,12 @@
     party: 民主進步黨
     elected: 0
     session: 6
+  - year: 2024
+    type: 立法委員
+    region: 臺東縣第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 詹幸雄
   id: id_詹幸雄_1939
   birthday: 1939
@@ -15396,6 +15516,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第04選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 陳麗惠
   id: id_陳麗惠_1971
   birthday: 1971
@@ -15524,6 +15650,12 @@
     party: 無黨籍
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 山地原住民 全國
+    party: 無黨籍
+    elected: 1
+    session: 11
 - name: 李文來
   id: id_李文來_1936
   birthday: 1936
@@ -15780,6 +15912,12 @@
     region: 金門縣
     party: 無黨籍
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第05選區
+    party: 合一行動聯盟
+    elected: 0
+    session: 11
 - name: 吳志揚
   id: id_吳志揚
   birthday: 1969
@@ -16008,6 +16146,12 @@
     region: 桃園市
     party: 民主進步黨
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第01選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 蔡其昌
   id: id_蔡其昌
   birthday: 1969
@@ -16047,6 +16191,12 @@
     region: 臺中市
     party: 民主進步黨
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第01選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 吳炳輝
   id: id_吳炳輝
   birthday: 1967
@@ -16068,6 +16218,12 @@
     region: 臺南市
     party: 無黨籍
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 雲林縣第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 謝國樑
   id: id_謝國樑
   birthday: 1975
@@ -16283,6 +16439,12 @@
     party: 無黨籍
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 嘉義縣第02選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 陳明仁
   id: id_陳明仁_1953
   birthday: 1953
@@ -16437,6 +16599,12 @@
     party: 無黨籍
     elected: 0
     session: 8
+  - year: 2024
+    type: 立法委員
+    region: 新竹市第01選區
+    party: 制度救世島
+    elected: 0
+    session: 11
 - name: 柯俊雄
   id: id_柯俊雄_1945
   birthday: 1945
@@ -16489,6 +16657,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新竹市第01選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 楊志強
   id: id_楊志強_1966
   birthday: 1966
@@ -17143,6 +17317,12 @@
     party: 民主進步黨
     elected: 0
     session: 7
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第02選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 林鴻池
   id: id_林鴻池_1955
   birthday: 1955
@@ -17235,6 +17415,12 @@
     party: 無黨籍
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第03選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 林麗容
   id: id_林麗容_1954
   birthday: 1954
@@ -17371,6 +17557,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第02選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 許文仁
   id: id_許文仁_1968
   birthday: 1968
@@ -17923,6 +18115,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第05選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 張榮顯
   id: id_張榮顯_1943
   birthday: 1943
@@ -18111,6 +18309,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 山地原住民 全國
+    party: 中國國民黨
+    elected: 0
+    session: 11
 - name: 宋進財
   id: id_宋進財_1950
   birthday: 1950
@@ -18159,6 +18363,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 平地原住民 全國
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 陳俊傑
   id: id_陳俊傑
   birthday: 1967
@@ -18335,6 +18545,12 @@
     region: 臺東縣
     party: 民主進步黨
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 臺東縣第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 王乾發
   id: id_王乾發
   birthday: 1949
@@ -18551,6 +18767,12 @@
     region: 新竹縣
     party: 民國黨
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 新竹縣第01選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 姚文智
   id: id_姚文智
   birthday: 1965
@@ -18631,6 +18853,12 @@
     region: 雲林縣
     party: 民主進步黨
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 雲林縣第02選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 陳翠容
   id: id_陳翠容_1973
   birthday: 1973
@@ -18723,6 +18951,12 @@
     party: 綠黨
     elected: 0
     session: 7
+  - year: 2024
+    type: 立法委員
+    region: 基隆市第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 王樹圍
   id: id_王樹圍_1955
   birthday: 1955
@@ -19075,6 +19309,12 @@
     party: 無黨籍
     elected: 0
     session: 9
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第06選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 林振東
   id: id_林振東_1960
   birthday: 1960
@@ -19085,6 +19325,12 @@
     party: 民主自由黨
     elected: 0
     session: 7
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第07選區
+    party: 司法改革黨
+    elected: 0
+    session: 11
 - name: 王名江
   id: id_王名江_1950
   birthday: 1950
@@ -19253,6 +19499,12 @@
     party: 制憲聯盟
     elected: 0
     session: 7
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第04選區
+    party: 制度救世島
+    elected: 0
+    session: 11
 - name: 樂可銘
   id: id_樂可銘_1947
   birthday: 1947
@@ -19703,6 +19955,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第03選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 陳俊倫
   id: id_陳俊倫_1968
   birthday: 1968
@@ -20922,6 +21180,12 @@
     region: 彰化縣
     party: 民主進步黨
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 彰化縣第02選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 李俊俋
   id: id_李俊俋
   birthday: 1965
@@ -20981,6 +21245,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 南投縣第01選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 何國隆
   id: id_何國隆_1960
   birthday: 1960
@@ -21033,6 +21303,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 嘉義縣第01選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 黃小陵
   id: id_黃小陵_1970
   birthday: 1970
@@ -21139,6 +21415,12 @@
     party: 民主進步黨
     elected: 0
     session: 8
+  - year: 2024
+    type: 立法委員
+    region: 新北市第01選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 余宗珮
   id: id_余宗珮_1975
   birthday: 1975
@@ -21293,6 +21575,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第07選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 曾文振
   id: id_曾文振_1952
   birthday: 1952
@@ -21503,6 +21791,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第05選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 陳振瑋
   id: id_陳振瑋_1981
   birthday: 1981
@@ -21601,6 +21895,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第04選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 楊書銘
   id: id_楊書銘_1984
   birthday: 1984
@@ -21679,6 +21979,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第07選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 段緯宇
   id: id_段緯宇_1955
   birthday: 1955
@@ -21751,6 +22057,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第08選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 張育憬
   id: id_張育憬_1970
   birthday: 1970
@@ -22101,6 +22413,12 @@
     party: 中華台商愛國黨
     elected: 0
     session: 8
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第02選區
+    party: 人民最大黨
+    elected: 0
+    session: 11
 - name: 楊士昌
   id: id_楊士昌_1947
   birthday: 1947
@@ -22223,6 +22541,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第02選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 謝長利
   id: id_謝長利_1973
   birthday: 1973
@@ -22377,6 +22701,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第07選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 陳致中
   id: id_陳致中_1979
   birthday: 1979
@@ -22459,6 +22789,12 @@
     party: 無黨籍
     elected: 0
     session: 8
+  - year: 2024
+    type: 立法委員
+    region: 平地原住民 全國
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 林金瑛
   id: id_林金瑛_1944
   birthday: 1944
@@ -23435,6 +23771,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 屏東縣第01選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 黃昭展
   id: id_黃昭展_1956
   birthday: 1956
@@ -23593,6 +23935,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 彰化縣第04選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 張錦昆
   id: id_張錦昆_1965
   birthday: 1965
@@ -23787,6 +24135,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第05選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 郭柏瑜
   id: id_郭柏瑜_1988
   birthday: 1988
@@ -23883,6 +24237,12 @@
     party: 中國國民黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第06選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
 - name: 張宏陸
   id: id_張宏陸_1972
   birthday: 1972
@@ -23899,6 +24259,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第06選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 李婉鈺
   id: id_李婉鈺_1972
   birthday: 1972
@@ -24001,6 +24367,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第10選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 黃魯光
   id: id_黃魯光_1966
   birthday: 1966
@@ -24021,6 +24393,12 @@
     party: 綠黨社會民主黨聯盟
     elected: 0
     session: 9
+  - year: 2024
+    type: 立法委員
+    region: 新北市第11選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 鐘國誌
   id: id_鐘國誌_1981
   birthday: 1981
@@ -24091,6 +24469,12 @@
     party: 時代力量
     elected: 0
     session: 9
+  - year: 2024
+    type: 立法委員
+    region: 新竹市第01選區
+    party: 時代力量
+    elected: 0
+    session: 11
 - name: 蘇雯英
   id: id_蘇雯英_1962
   birthday: 1962
@@ -24299,6 +24683,12 @@
     party: 無黨籍
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第06選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 藍大山
   id: id_藍大山_1959
   birthday: 1959
@@ -24415,6 +24805,12 @@
     party: 中國國民黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第02選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 鍾文龍
   id: id_鍾文龍_1981
   birthday: 1981
@@ -24517,6 +24913,12 @@
     party: 無黨籍
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第05選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 劉國隆
   id: id_劉國隆_1959
   birthday: 1959
@@ -24583,6 +24985,12 @@
     party: 民主進步黨
     elected: 0
     session: 9
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第08選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 吳思瑤
   id: id_吳思瑤_1974
   birthday: 1974
@@ -24599,6 +25007,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第01選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 黃清原
   id: id_黃清原_1961
   birthday: 1961
@@ -24695,6 +25109,12 @@
     party: 大愛憲改聯盟
     elected: 0
     session: 9
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第03選區
+    party: 制度救世島
+    elected: 0
+    session: 11
 - name: 潘建志
   id: id_潘建志_1966
   birthday: 1966
@@ -24831,6 +25251,12 @@
     party: 中國國民黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第04選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 蕭亞譚
   id: id_蕭亞譚_1971
   birthday: 1971
@@ -25083,6 +25509,12 @@
     party: 綠黨社會民主黨聯盟
     elected: 0
     session: 9
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第06選區
+    party: 社會民主黨
+    elected: 0
+    session: 11
 - name: 陳如聖
   id: id_陳如聖_1970
   birthday: 1970
@@ -25179,6 +25611,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第05選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 傅建峰
   id: id_傅建峰_1959
   birthday: 1959
@@ -25245,6 +25683,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第06選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 晏揚清
   id: id_晏揚清_1959
   birthday: 1959
@@ -25453,6 +25897,12 @@
     party: 中國國民黨
     elected: 0
     session: 9
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第07選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
 - name: 劉子麟
   id: id_劉子麟_1990
   birthday: 1990
@@ -25643,6 +26093,12 @@
     party: 中國國民黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第05選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
 - name: 楊翰奇
   id: id_楊翰奇_1982
   birthday: 1982
@@ -25765,6 +26221,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第08選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 林世偉
   id: id_林世偉_1967
   birthday: 1967
@@ -25775,6 +26237,12 @@
     party: 無黨籍
     elected: 0
     session: 9
+  - year: 2024
+    type: 立法委員
+    region: 山地原住民 全國
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 尤命‧蘇樣
   id: id_尤命蘇樣_1962
   birthday: 1962
@@ -26017,6 +26485,12 @@
     region: 臺南市
     party: 無黨籍
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第06選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 林信華
   id: id_林信華
   birthday: 1967
@@ -26291,6 +26765,12 @@
     party: 無黨籍
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 金門縣第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 謝文進
   id: id_謝文進
   birthday: 1954
@@ -26381,6 +26861,12 @@
     region: 高雄市
     party: 中國國民黨
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第03選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
 - name: 柯志恩
   id: id_柯志恩
   birthday: 1962
@@ -26426,6 +26912,12 @@
     region: 新竹縣
     party: 無黨籍
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 新竹縣第01選區
+    party: 台灣維新
+    elected: 0
+    session: 11
 - name: 蔡培慧
   id: id_蔡培慧
   birthday: 1971
@@ -26441,6 +26933,12 @@
     region: 南投縣
     party: 民主進步黨
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 南投縣第02選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 李問
   id: id_李問
   birthday: 1989
@@ -26456,6 +26954,12 @@
     region: 連江縣
     party: 民主進步黨
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 連江縣第01選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 林志錦
   id: id_林志錦
   birthday: 1972
@@ -26511,6 +27015,12 @@
     party: 民主進步黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 南投縣第02選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 戴寧
   id: id_戴寧_1982
   birthday: 1982
@@ -26541,6 +27051,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 嘉義市第01選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 蔡永泉
   id: id_蔡永泉_1952
   birthday: 1952
@@ -26611,6 +27127,12 @@
     party: 無黨籍
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 嘉義市第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 王金山
   id: id_王金山_1969
   birthday: 1969
@@ -26681,6 +27203,12 @@
     party: 無黨籍
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 屏東縣第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 秦鴻明
   id: id_秦鴻明_1967
   birthday: 1967
@@ -26721,6 +27249,12 @@
     party: 台灣工黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 屏東縣第02選區
+    party: 人民最大黨
+    elected: 0
+    session: 11
 - name: 何麗莉
   id: id_何麗莉_1966
   birthday: 1966
@@ -26791,6 +27325,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 彰化縣第01選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 張瀚天
   id: id_張瀚天_1968
   birthday: 1968
@@ -26811,6 +27351,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 彰化縣第03選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 楊麗香
   id: id_楊麗香_1964
   birthday: 1964
@@ -26931,6 +27477,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第01選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 陳榮太
   id: id_陳榮太_1944
   birthday: 1944
@@ -27191,6 +27743,12 @@
     party: 台灣維新
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第09選區
+    party: 台灣維新
+    elected: 0
+    session: 11
 - name: 林聲洲
   id: id_林聲洲_1974
   birthday: 1974
@@ -27241,6 +27799,12 @@
     party: 中國國民黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第10選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
 - name: 李縉穎
   id: id_李縉穎_1985
   birthday: 1985
@@ -27371,6 +27935,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第12選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 孫繼正
   id: id_孫繼正_1962
   birthday: 1962
@@ -27421,6 +27991,12 @@
     party: 綠黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新竹縣第01選區
+    party: 台灣綠黨
+    elected: 0
+    session: 11
 - name: 林碩彥
   id: id_林碩彥_1976
   birthday: 1976
@@ -27451,6 +28027,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新竹縣第02選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 劉士睿
   id: id_劉士睿_1985
   birthday: 1985
@@ -27501,6 +28083,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第02選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 吳文凱
   id: id_吳文凱_1980
   birthday: 1980
@@ -27521,6 +28109,12 @@
     party: 中華統一促進黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第02選區
+    party: 中華統一促進黨
+    elected: 0
+    session: 11
 - name: 張馨云
   id: id_張馨云_1969
   birthday: 1969
@@ -27551,6 +28145,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第03選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 李奇峰
   id: id_李奇峰_1989
   birthday: 1989
@@ -27571,6 +28171,12 @@
     party: 民主進步黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第03選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 林佳瑋
   id: id_林佳瑋_1986
   birthday: 1986
@@ -27621,6 +28227,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第04選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 劉芳萍
   id: id_劉芳萍_1956
   birthday: 1956
@@ -27641,6 +28253,12 @@
     party: 無黨籍
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第05選區
+    party: 司法改革黨
+    elected: 0
+    session: 11
 - name: 蔣絜安
   id: id_蔣絜安_1968
   birthday: 1968
@@ -27741,6 +28359,12 @@
     party: 喜樂島聯盟
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第03選區
+    party: 司法改革黨
+    elected: 0
+    session: 11
 - name: 李家葳
   id: id_李家葳_1978
   birthday: 1978
@@ -27811,6 +28435,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第05選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 彭振芳
   id: id_彭振芳_1964
   birthday: 1964
@@ -27821,6 +28451,12 @@
     party: 臺灣前進黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第05選區
+    party: 司法改革黨
+    elected: 0
+    session: 11
 - name: 賴建豪
   id: id_賴建豪_1977
   birthday: 1977
@@ -28001,6 +28637,12 @@
     party: 人民民主黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第01選區
+    party: 人民民主黨
+    elected: 0
+    session: 11
 - name: 方儉
   id: id_方儉_1960
   birthday: 1960
@@ -28041,6 +28683,12 @@
     party: 中華統一促進黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第02選區
+    party: 中華統一促進黨
+    elected: 0
+    session: 11
 - name: 巫超勝
   id: id_巫超勝_1946
   birthday: 1946
@@ -28061,6 +28709,12 @@
     party: 合一行動聯盟
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第02選區
+    party: 制度救世島
+    elected: 0
+    session: 11
 - name: 何景榮
   id: id_何景榮_1977
   birthday: 1977
@@ -28131,6 +28785,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第04選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 蕭蒼澤
   id: id_蕭蒼澤_1965
   birthday: 1965
@@ -28251,6 +28911,12 @@
     party: 民主進步黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第03選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 黃典本
   id: id_黃典本_1956
   birthday: 1956
@@ -28271,6 +28937,12 @@
     party: 中華婦女黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 新北市第10選區
+    party: 人民最大黨
+    elected: 0
+    session: 11
 - name: 張余健
   id: id_張余健_1972
   birthday: 1972
@@ -28421,6 +29093,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第01選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 蔡承攸
   id: id_蔡承攸_1987
   birthday: 1987
@@ -28431,6 +29109,12 @@
     party: 合一行動聯盟
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第01選區
+    party: 復康聯盟黨
+    elected: 0
+    session: 11
 - name: 蘇志仁
   id: id_蘇志仁_1958
   birthday: 1958
@@ -28491,6 +29175,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第02選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 陳西安
   id: id_陳西安_1958
   birthday: 1958
@@ -28571,6 +29261,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第04選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 李伯利
   id: id_李伯利_1980
   birthday: 1980
@@ -28681,6 +29377,12 @@
     party: 臺灣前進黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 花蓮縣第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 曹純明
   id: id_曹純明_1974
   birthday: 1974
@@ -28831,6 +29533,12 @@
     party: 中國國民黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 金門縣第01選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 程耀德
   id: id_程耀德_1986
   birthday: 1986
@@ -28851,6 +29559,12 @@
     party: 台灣革命黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 雲林縣第01選區
+    party: 台灣革命黨
+    elected: 0
+    session: 11
 - name: 彭新銘
   id: id_彭新銘_1991
   birthday: 1991
@@ -29081,6 +29795,12 @@
     party: 中國國民黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第06選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
 - name: 李雅靜
   id: id_李雅靜_1977
   birthday: 1977
@@ -29151,6 +29871,12 @@
     party: 民主進步黨
     elected: 1
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 山地原住民 全國
+    party: 民主進步黨
+    elected: 1
+    session: 11
 - name: 林曉婷
   id: id_林曉婷_1977
   birthday: 1977
@@ -29171,6 +29897,12 @@
     party: 喜樂島聯盟
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 山地原住民 全國
+    party: 司法改革黨
+    elected: 0
+    session: 11
 - name: 張曜羣Lawpaw Buya
   id: id_張曜羣LawpawBuya_1981
   birthday: 1981
@@ -29241,6 +29973,12 @@
     party: 中國國民黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 平地原住民 全國
+    party: 中國國民黨
+    elected: 1
+    session: 11
 - name: 高潞．以用．巴魕剌Kawlo．Iyun．Pacidal
   id: id_高潞．以用．巴魕剌Kawlo．Iyun．Pacidal_1977
   birthday: 1977
@@ -29311,6 +30049,12 @@
     party: 無黨籍
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第04選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 許淑華
   id: id_許淑華_1973
   birthday: 1973
@@ -29321,6 +30065,12 @@
     party: 民主進步黨
     elected: 0
     session: 10
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第07選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
 - name: 張家豪
   id: id_張家豪
   birthday: 1985
@@ -29411,6 +30161,12 @@
     region: 桃園市
     party: 台灣民眾黨
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第05選區
+    party: 台灣民眾黨
+    elected: 0
+    session: 11
 - name: 陳美妃
   id: id_陳美妃
   birthday: 1971
@@ -29438,6 +30194,12 @@
     region: 高雄市
     party: 無黨籍
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第01選區
+    party: 台灣民眾黨
+    elected: 0
+    session: 11
 - name: 許鋐哲
   id: id_許鋐哲
   birthday: 1949
@@ -29465,6 +30227,12 @@
     region: 宜蘭縣
     party: 台灣民眾黨
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 宜蘭縣第01選區
+    party: 台灣民眾黨
+    elected: 0
+    session: 11
 - name: 鍾東錦
   id: id_鍾東錦
   birthday: 1963
@@ -29555,6 +30323,12 @@
     region: 臺東縣
     party: 無黨籍
     elected: 0
+  - year: 2024
+    type: 立法委員
+    region: 臺東縣第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
 - name: 谷辣斯．尤達卡 Kolas Yotaka
   id: id_谷辣斯．尤達卡KolasYotaka
   birthday: 1974
@@ -29682,3 +30456,1993 @@
     party: 台灣民眾黨
     elected: 0
     ticket: 1
+- name: 許文忠
+  id: id_許文忠_1975
+  birthday: 1975
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 南投縣第01選區
+    party: 勞動黨
+    elected: 0
+    session: 11
+- name: 蔡銘軒
+  id: id_蔡銘軒_1984
+  birthday: 1984
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 南投縣第01選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 李圓恩
+  id: id_李圓恩_1980
+  birthday: 1980
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 南投縣第01選區
+    party: 小民參政歐巴桑聯盟
+    elected: 0
+    session: 11
+- name: 林金潭
+  id: id_林金潭_1957
+  birthday: 1957
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 南投縣第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 游顥
+  id: id_游顥_1983
+  birthday: 1983
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 南投縣第02選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 陳玥妗
+  id: id_陳玥妗_1982
+  birthday: 1982
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 嘉義市第01選區
+    party: 小民參政歐巴桑聯盟
+    elected: 0
+    session: 11
+- name: 林智勲
+  id: id_林智勲_1980
+  birthday: 1980
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 嘉義市第01選區
+    party: 臺灣雙語無法黨
+    elected: 0
+    session: 11
+- name: 張秀華
+  id: id_張秀華_1957
+  birthday: 1957
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 嘉義市第01選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 蔡松益
+  id: id_蔡松益_1974
+  birthday: 1974
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 嘉義市第01選區
+    party: 復康聯盟黨
+    elected: 0
+    session: 11
+- name: 詹琬蓁
+  id: id_詹琬蓁_1977
+  birthday: 1977
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 嘉義縣第01選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 廖昱婧
+  id: id_廖昱婧_1978
+  birthday: 1978
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 嘉義縣第02選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 簡銘傑
+  id: id_簡銘傑_1989
+  birthday: 1989
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 嘉義縣第02選區
+    party: 制度救世島
+    elected: 0
+    session: 11
+- name: 黃一哲
+  id: id_黃一哲_1963
+  birthday: 1963
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 嘉義縣第02選區
+    party: 台灣維新
+    elected: 0
+    session: 11
+- name: 陳冠廷
+  id: id_陳冠廷_1986
+  birthday: 1986
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 嘉義縣第02選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
+- name: 邱紹祐
+  id: id_邱紹祐_1983
+  birthday: 1983
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 基隆市第01選區
+    party: 家庭基本收入
+    elected: 0
+    session: 11
+- name: 黃傑陽
+  id: id_黃傑陽_1982
+  birthday: 1982
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 基隆市第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 謝海菁
+  id: id_謝海菁_1996
+  birthday: 1996
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 基隆市第01選區
+    party: 小民參政歐巴桑聯盟
+    elected: 0
+    session: 11
+- name: 林沛祥
+  id: id_林沛祥_1977
+  birthday: 1977
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 基隆市第01選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 鄭文婷
+  id: id_鄭文婷_1968
+  birthday: 1968
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 基隆市第01選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 陳俊宇
+  id: id_陳俊宇_1975
+  birthday: 1975
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 宜蘭縣第01選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
+- name: 邱介勲
+  id: id_邱介勲_1954
+  birthday: 1954
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 宜蘭縣第01選區
+    party: 制度救世島
+    elected: 0
+    session: 11
+- name: 林意評
+  id: id_林意評_1989
+  birthday: 1989
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 宜蘭縣第01選區
+    party: 台灣基進
+    elected: 0
+    session: 11
+- name: 黃琤婷
+  id: id_黃琤婷_1978
+  birthday: 1978
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 宜蘭縣第01選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 曾鈺庭
+  id: id_曾鈺庭_1973
+  birthday: 1973
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 屏東縣第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 張庭源
+  id: id_張庭源_1995
+  birthday: 1995
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 屏東縣第01選區
+    party: 台灣維新
+    elected: 0
+    session: 11
+- name: 李孟翰
+  id: id_李孟翰_1990
+  birthday: 1990
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 屏東縣第01選區
+    party: 中華統一促進黨
+    elected: 0
+    session: 11
+- name: 黃明賢
+  id: id_黃明賢_1983
+  birthday: 1983
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 屏東縣第01選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 吳媚宮
+  id: id_吳媚宮_1965
+  birthday: 1965
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 屏東縣第02選區
+    party: 中華聯合黨
+    elected: 0
+    session: 11
+- name: 徐富癸
+  id: id_徐富癸_1970
+  birthday: 1970
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 屏東縣第02選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
+- name: 蘇孟淳
+  id: id_蘇孟淳_1992
+  birthday: 1992
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 屏東縣第02選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 蘇群傑
+  id: id_蘇群傑_1980
+  birthday: 1980
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 彰化縣第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 阮厚爵
+  id: id_阮厚爵_1970
+  birthday: 1970
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 彰化縣第01選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 楊曜聰
+  id: id_楊曜聰_1972
+  birthday: 1972
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 彰化縣第02選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 洪建興
+  id: id_洪建興_1979
+  birthday: 1979
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 彰化縣第03選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 吳音寧
+  id: id_吳音寧_1972
+  birthday: 1972
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 彰化縣第03選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 桂麗娜
+  id: id_桂麗娜_1974
+  birthday: 1974
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 彰化縣第03選區
+    party: 中華統一促進黨
+    elected: 0
+    session: 11
+- name: 鄭錫懋
+  id: id_鄭錫懋_1980
+  birthday: 1980
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 彰化縣第04選區
+    party: 臺灣雙語無法黨
+    elected: 0
+    session: 11
+- name: 鄭俊雄
+  id: id_鄭俊雄_1961
+  birthday: 1961
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 彰化縣第04選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 蔡念諶
+  id: id_蔡念諶_1995
+  birthday: 1995
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 彰化縣第04選區
+    party: 中華文化共和黨
+    elected: 0
+    session: 11
+- name: 徐百弟
+  id: id_徐百弟_1952
+  birthday: 1952
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第01選區
+    party: 台灣維新
+    elected: 0
+    session: 11
+- name: 游清池
+  id: id_游清池_1968
+  birthday: 1968
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第01選區
+    party: 制度救世島
+    elected: 0
+    session: 11
+- name: 翁藤原
+  id: id_翁藤原_1971
+  birthday: 1971
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第01選區
+    party: 中華統一促進黨
+    elected: 0
+    session: 11
+- name: 何淯笙
+  id: id_何淯笙_1974
+  birthday: 1974
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第02選區
+    party: 中華統一促進黨
+    elected: 0
+    session: 11
+- name: 李有宜
+  id: id_李有宜_1990
+  birthday: 1990
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第02選區
+    party: 台灣民眾黨
+    elected: 0
+    session: 11
+- name: 蔡明堂
+  id: id_蔡明堂_1958
+  birthday: 1958
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第03選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 李坤城
+  id: id_李坤城_1973
+  birthday: 1973
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第03選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
+- name: 陳東雲
+  id: id_陳東雲_1958
+  birthday: 1958
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第03選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 洪懿馥
+  id: id_洪懿馥_1978
+  birthday: 1978
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第04選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 蘇輝湟
+  id: id_蘇輝湟_1976
+  birthday: 1976
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第04選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 蔣欣璋
+  id: id_蔣欣璋_1987
+  birthday: 1987
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第04選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 邱吉均
+  id: id_邱吉均_1958
+  birthday: 1958
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第04選區
+    party: 制度救世島
+    elected: 0
+    session: 11
+- name: 洪佳君
+  id: id_洪佳君_1977
+  birthday: 1977
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第05選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 黃淑珍
+  id: id_黃淑珍_1965
+  birthday: 1965
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第06選區
+    party: 司法改革黨
+    elected: 0
+    session: 11
+- name: 葉元之
+  id: id_葉元之_1974
+  birthday: 1974
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第07選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 劉書婷
+  id: id_劉書婷_1990
+  birthday: 1990
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第07選區
+    party: 小民參政歐巴桑聯盟
+    elected: 0
+    session: 11
+- name: 吳崢
+  id: id_吳崢_1989
+  birthday: 1989
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第08選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 邱臣遠
+  id: id_邱臣遠_1981
+  birthday: 1981
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第08選區
+    party: 台灣民眾黨
+    elected: 0
+    session: 11
+- name: 張智倫
+  id: id_張智倫_1983
+  birthday: 1983
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第08選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 莊銘淵
+  id: id_莊銘淵_1973
+  birthday: 1973
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第09選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 袁興
+  id: id_袁興_1963
+  birthday: 1963
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第10選區
+    party: 復康聯盟黨
+    elected: 0
+    session: 11
+- name: 鄭添泉
+  id: id_鄭添泉_1950
+  birthday: 1950
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第11選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 魏趨安
+  id: id_魏趨安_1973
+  birthday: 1973
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第11選區
+    party: 制度救世島
+    elected: 0
+    session: 11
+- name: 張家榛
+  id: id_張家榛_1975
+  birthday: 1975
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第11選區
+    party: 人民最大黨
+    elected: 0
+    session: 11
+- name: 陳聖
+  id: id_陳聖_1961
+  birthday: 1961
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第11選區
+    party: 中華婦女黨
+    elected: 0
+    session: 11
+- name: 黃瑞傳
+  id: id_黃瑞傳_1950
+  birthday: 1950
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第12選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 楊木火
+  id: id_楊木火_1961
+  birthday: 1961
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第12選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 李佳蒨
+  id: id_李佳蒨_1978
+  birthday: 1978
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第12選區
+    party: 臺灣雙語無法黨
+    elected: 0
+    session: 11
+- name: 陳長志
+  id: id_陳長志_1976
+  birthday: 1976
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第12選區
+    party: 台灣維新
+    elected: 0
+    session: 11
+- name: 廖先翔
+  id: id_廖先翔_1988
+  birthday: 1988
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新北市第12選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 楊清華
+  id: id_楊清華_1977
+  birthday: 1977
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新竹市第01選區
+    party: 司法改革黨
+    elected: 0
+    session: 11
+- name: 柯美蘭
+  id: id_柯美蘭_1962
+  birthday: 1962
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新竹市第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 林志潔
+  id: id_林志潔_1973
+  birthday: 1973
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新竹市第01選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 劉台穠
+  id: id_劉台穠_1981
+  birthday: 1981
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新竹縣第01選區
+    party: 小民參政歐巴桑聯盟
+    elected: 0
+    session: 11
+- name: 詹紀緹
+  id: id_詹紀緹_1990
+  birthday: 1990
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新竹縣第01選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 王婉諭
+  id: id_王婉諭_1979
+  birthday: 1979
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新竹縣第02選區
+    party: 時代力量
+    elected: 0
+    session: 11
+- name: 曾聖凱
+  id: id_曾聖凱_1984
+  birthday: 1984
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 新竹縣第02選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 馬治薇
+  id: id_馬治薇_1983
+  birthday: 1983
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 牛煦庭
+  id: id_牛煦庭_1990
+  birthday: 1990
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第01選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 王思玟
+  id: id_王思玟_1995
+  birthday: 1995
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第02選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 涂權吉
+  id: id_涂權吉_1970
+  birthday: 1970
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第02選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 游智彬
+  id: id_游智彬_1983
+  birthday: 1983
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第03選區
+    party: 新黨
+    elected: 0
+    session: 11
+- name: 徐鶯慈
+  id: id_徐鶯慈_1971
+  birthday: 1971
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第03選區
+    party: 小民參政歐巴桑聯盟
+    elected: 0
+    session: 11
+- name: 范綱祥
+  id: id_范綱祥_1966
+  birthday: 1966
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第04選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 甘乃迪
+  id: id_甘乃迪_1955
+  birthday: 1955
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第04選區
+    party: 台灣國民黨
+    elected: 0
+    session: 11
+- name: 黃明莉
+  id: id_黃明莉_1970
+  birthday: 1970
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第04選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 劉仁照
+  id: id_劉仁照_1981
+  birthday: 1981
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第05選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 葉堂宇
+  id: id_葉堂宇_1958
+  birthday: 1958
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第06選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 李慕妍
+  id: id_李慕妍_1996
+  birthday: 1996
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第06選區
+    party: 台灣民眾黨
+    elected: 0
+    session: 11
+- name: 邱若華
+  id: id_邱若華_1988
+  birthday: 1988
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第06選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 翁紹庭
+  id: id_翁紹庭_1968
+  birthday: 1968
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第06選區
+    party: 人民最大黨
+    elected: 0
+    session: 11
+- name: 劉睿宸
+  id: id_劉睿宸_1954
+  birthday: 1954
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 桃園市第06選區
+    party: 復康聯盟黨
+    elected: 0
+    session: 11
+- name: 吳政杰
+  id: id_吳政杰_1967
+  birthday: 1967
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 澎湖縣第01選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 陳慧娟
+  id: id_陳慧娟_1963
+  birthday: 1963
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 澎湖縣第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 蔡壁如
+  id: id_蔡壁如_1964
+  birthday: 1964
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第01選區
+    party: 台灣民眾黨
+    elected: 0
+    session: 11
+- name: 賴信全
+  id: id_賴信全_1974
+  birthday: 1974
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 劉燈鐘
+  id: id_劉燈鐘_1966
+  birthday: 1966
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 林靜儀
+  id: id_林靜儀_1974
+  birthday: 1974
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第02選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 洪麗華
+  id: id_洪麗華_1961
+  birthday: 1961
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第02選區
+    party: 司法正義黨
+    elected: 0
+    session: 11
+- name: 紀銘修
+  id: id_紀銘修_1968
+  birthday: 1968
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第02選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 謝子涵
+  id: id_謝子涵_1991
+  birthday: 1991
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第03選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 廖偉翔
+  id: id_廖偉翔_1990
+  birthday: 1990
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第04選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 林中翊
+  id: id_林中翊_1979
+  birthday: 1979
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第04選區
+    party: 臺灣雙語無法黨
+    elected: 0
+    session: 11
+- name: 李海碩
+  id: id_李海碩_1982
+  birthday: 1982
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第04選區
+    party: 臺灣雙語無法黨
+    elected: 0
+    session: 11
+- name: 蔡善雯
+  id: id_蔡善雯_1976
+  birthday: 1976
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第05選區
+    party: 小民參政歐巴桑聯盟
+    elected: 0
+    session: 11
+- name: 陳維新
+  id: id_陳維新_1998
+  birthday: 1998
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第05選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 黃健豪
+  id: id_黃健豪_1988
+  birthday: 1988
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第05選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 謝旻汎
+  id: id_謝旻汎_1986
+  birthday: 1986
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第05選區
+    party: 臺灣雙語無法黨
+    elected: 0
+    session: 11
+- name: 林澤培
+  id: id_林澤培_1973
+  birthday: 1973
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第05選區
+    party: 中華統一促進黨
+    elected: 0
+    session: 11
+- name: 羅廷瑋
+  id: id_羅廷瑋_1989
+  birthday: 1989
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第06選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 紀文清
+  id: id_紀文清_1952
+  birthday: 1952
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第06選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 江肇國
+  id: id_江肇國_1977
+  birthday: 1977
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第06選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 黃千庭
+  id: id_黃千庭_1984
+  birthday: 1984
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第06選區
+    party: 中華統一促進黨
+    elected: 0
+    session: 11
+- name: 林家興
+  id: id_林家興_1990
+  birthday: 1990
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺中市第07選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 張斯綱
+  id: id_張斯綱_1971
+  birthday: 1971
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第01選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 侯漢廷
+  id: id_侯漢廷_1988
+  birthday: 1988
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 張臺勝
+  id: id_張臺勝_1956
+  birthday: 1956
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第01選區
+    party: 人民最大黨
+    elected: 0
+    session: 11
+- name: 胡金城
+  id: id_胡金城_1953
+  birthday: 1953
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第01選區
+    party: 人民最大黨
+    elected: 0
+    session: 11
+- name: 許盛鋒
+  id: id_許盛鋒_1948
+  birthday: 1948
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 陳執中
+  id: id_陳執中_1978
+  birthday: 1978
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第01選區
+    party: 臺灣雙語無法黨
+    elected: 0
+    session: 11
+- name: 何梅娟
+  id: id_何梅娟_1971
+  birthday: 1971
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第02選區
+    party: 人民最大黨
+    elected: 0
+    session: 11
+- name: 游淑慧
+  id: id_游淑慧_1976
+  birthday: 1976
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第02選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 余新造
+  id: id_余新造_1963
+  birthday: 1963
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第03選區
+    party: 人民最大黨
+    elected: 0
+    session: 11
+- name: 陳源發
+  id: id_陳源發_1953
+  birthday: 1953
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第03選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 王鴻薇
+  id: id_王鴻薇_1964
+  birthday: 1964
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第03選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 楊時睿
+  id: id_楊時睿_1988
+  birthday: 1988
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第03選區
+    party: 台灣維新
+    elected: 0
+    session: 11
+- name: 陳一郎
+  id: id_陳一郎_1964
+  birthday: 1964
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第03選區
+    party: 臺灣雙語無法黨
+    elected: 0
+    session: 11
+- name: 吳欣岱
+  id: id_吳欣岱_1987
+  birthday: 1987
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第04選區
+    party: 台灣基進
+    elected: 0
+    session: 11
+- name: 林秋彤
+  id: id_林秋彤_1955
+  birthday: 1955
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第04選區
+    party: 台灣整復師聯盟工黨
+    elected: 0
+    session: 11
+- name: 鍾小平
+  id: id_鍾小平_1962
+  birthday: 1962
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第05選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 陳燕玉
+  id: id_陳燕玉_1957
+  birthday: 1957
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第05選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 于美人
+  id: id_于美人_1965
+  birthday: 1965
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第05選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 蘇諍
+  id: id_蘇諍_1959
+  birthday: 1959
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第05選區
+    party: 經濟黨
+    elected: 0
+    session: 11
+- name: 吳沛憶
+  id: id_吳沛憶_1987
+  birthday: 1987
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第05選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
+- name: 孫智麗
+  id: id_孫智麗_1968
+  birthday: 1968
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第05選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 張華特
+  id: id_張華特_1957
+  birthday: 1957
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第05選區
+    party: 台灣麻將最大黨
+    elected: 0
+    session: 11
+- name: 李慧曦
+  id: id_李慧曦_1961
+  birthday: 1961
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第05選區
+    party: 司法改革黨
+    elected: 0
+    session: 11
+- name: 張雪卿
+  id: id_張雪卿_1951
+  birthday: 1951
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第06選區
+    party: 制度救世島
+    elected: 0
+    session: 11
+- name: 崔建章
+  id: id_崔建章_1979
+  birthday: 1979
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第06選區
+    party: 臺灣雙語無法黨
+    elected: 0
+    session: 11
+- name: 羅智強
+  id: id_羅智強_1970
+  birthday: 1970
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第06選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 朱翊銘
+  id: id_朱翊銘_1992
+  birthday: 1992
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第06選區
+    party: 台灣維新
+    elected: 0
+    session: 11
+- name: 李承龍
+  id: id_李承龍_1958
+  birthday: 1958
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第07選區
+    party: 中華愛國同心黨
+    elected: 0
+    session: 11
+- name: 徐巧芯
+  id: id_徐巧芯_1989
+  birthday: 1989
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第07選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 羅丹
+  id: id_羅丹_1992
+  birthday: 1992
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第07選區
+    party: 台灣維新
+    elected: 0
+    session: 11
+- name: 陳韋安
+  id: id_陳韋安_1990
+  birthday: 1990
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第07選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 劉佩玲
+  id: id_劉佩玲_1985
+  birthday: 1985
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第08選區
+    party: 台灣維新
+    elected: 0
+    session: 11
+- name: 王閔生
+  id: id_王閔生_1975
+  birthday: 1975
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第08選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 賴宣任
+  id: id_賴宣任_1986
+  birthday: 1986
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第08選區
+    party: 小民參政歐巴桑聯盟
+    elected: 0
+    session: 11
+- name: 夏萬浪
+  id: id_夏萬浪_1952
+  birthday: 1952
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第08選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 張其祿
+  id: id_張其祿_1968
+  birthday: 1968
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第08選區
+    party: 台灣民眾黨
+    elected: 0
+    session: 11
+- name: 張維學
+  id: id_張維學_1949
+  birthday: 1949
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第08選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 胡之壯
+  id: id_胡之壯_1961
+  birthday: 1961
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第08選區
+    party: 興中同盟會
+    elected: 0
+    session: 11
+- name: 林芳竹
+  id: id_林芳竹_1992
+  birthday: 1992
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第01選區
+    party: 中華統一促進黨
+    elected: 0
+    session: 11
+- name: 周宏昌
+  id: id_周宏昌_1977
+  birthday: 1977
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第01選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 侯陸太
+  id: id_侯陸太_1961
+  birthday: 1961
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 陳昆和
+  id: id_陳昆和_1961
+  birthday: 1961
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第02選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 姚正玉
+  id: id_姚正玉_1966
+  birthday: 1966
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第03選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 蕭燐洪
+  id: id_蕭燐洪_1943
+  birthday: 1943
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第05選區
+    party: 臺灣雙語無法黨
+    elected: 0
+    session: 11
+- name: 陳以信
+  id: id_陳以信_1972
+  birthday: 1972
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺南市第06選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 黃婉茹
+  id: id_黃婉茹_1981
+  birthday: 1981
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺東縣第01選區
+    party: 小民參政歐巴桑聯盟
+    elected: 0
+    session: 11
+- name: 黃建賓
+  id: id_黃建賓_1978
+  birthday: 1978
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺東縣第01選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 張美慧
+  id: id_張美慧_1970
+  birthday: 1970
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 花蓮縣第01選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 周玉梅
+  id: id_周玉梅_1976
+  birthday: 1976
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 花蓮縣第01選區
+    party: 制度救世島
+    elected: 0
+    session: 11
+- name: 康世明
+  id: id_康世明_1969
+  birthday: 1969
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 苗栗縣第01選區
+    party: 民主進步黨
+    elected: 0
+    session: 11
+- name: 邱鎮軍
+  id: id_邱鎮軍_1971
+  birthday: 1971
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 苗栗縣第02選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 曾玟學
+  id: id_曾玟學_1987
+  birthday: 1987
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 苗栗縣第02選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 曹爾凱
+  id: id_曹爾凱_1977
+  birthday: 1977
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 連江縣第01選區
+    party: 台灣民眾黨
+    elected: 0
+    session: 11
+- name: 尚文凱
+  id: id_尚文凱_1977
+  birthday: 1977
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 金門縣第01選區
+    party: 台灣民眾黨
+    elected: 0
+    session: 11
+- name: 郭炳宏
+  id: id_郭炳宏_1998
+  birthday: 1998
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 雲林縣第01選區
+    party: 中華統一促進黨
+    elected: 0
+    session: 11
+- name: 丁學忠
+  id: id_丁學忠_1970
+  birthday: 1970
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 雲林縣第01選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 陳俊龍
+  id: id_陳俊龍_1969
+  birthday: 1969
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 雲林縣第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 邱良閱
+  id: id_邱良閱_1982
+  birthday: 1982
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 雲林縣第02選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 林義迪
+  id: id_林義迪_1959
+  birthday: 1959
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第01選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 劉承智
+  id: id_劉承智_1971
+  birthday: 1971
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第01選區
+    party: 人民最大黨
+    elected: 0
+    session: 11
+- name: 曹桓榮
+  id: id_曹桓榮_1976
+  birthday: 1976
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第02選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 郭璽
+  id: id_郭璽_1958
+  birthday: 1958
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第03選區
+    party: 台灣麻將最大黨
+    elected: 0
+    session: 11
+- name: 陳銓霖
+  id: id_陳銓霖_1953
+  birthday: 1953
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第03選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 李柏毅
+  id: id_李柏毅_1977
+  birthday: 1977
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第03選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
+- name: 張正達
+  id: id_張正達_1971
+  birthday: 1971
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第03選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 陳若翠
+  id: id_陳若翠_1969
+  birthday: 1969
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第04選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 楊椒喬
+  id: id_楊椒喬_1974
+  birthday: 1974
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第05選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 張芳愉
+  id: id_張芳愉_1982
+  birthday: 1982
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第05選區
+    party: 小民參政歐巴桑聯盟
+    elected: 0
+    session: 11
+- name: 黃捷
+  id: id_黃捷_1993
+  birthday: 1993
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第06選區
+    party: 民主進步黨
+    elected: 1
+    session: 11
+- name: 洪啟修
+  id: id_洪啟修_1988
+  birthday: 1988
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第07選區
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 王和平統一
+  id: id_王和平統一_1953
+  birthday: 1953
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第07選區
+    party: 司法改革黨
+    elected: 0
+    session: 11
+- name: 李政憲
+  id: id_李政憲_1956
+  birthday: 1956
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第08選區
+    party: 司法改革黨
+    elected: 0
+    session: 11
+- name: 李明璇
+  id: id_李明璇_1993
+  birthday: 1993
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第08選區
+    party: 中國國民黨
+    elected: 0
+    session: 11
+- name: 湛秀英
+  id: id_湛秀英_1976
+  birthday: 1976
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 高雄市第08選區
+    party: 勞動黨
+    elected: 0
+    session: 11
+- name: 李我要單列族名我的布農族名字是Savungaz Valincinan
+  id: id_李我要單列族名我的布農族名字是SavungazValincinan_1987
+  birthday: 1987
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 山地原住民 全國
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 盧縣一
+  id: id_盧縣一_1968
+  birthday: 1968
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 山地原住民 全國
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 林果
+  id: id_林果_1977
+  birthday: 1977
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 山地原住民 全國
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 張子孝
+  id: id_張子孝_1960
+  birthday: 1960
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 山地原住民 全國
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 胡黃廣文
+  id: id_胡黃廣文_1969
+  birthday: 1969
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 山地原住民 全國
+    party: 台灣民眾黨
+    elected: 0
+    session: 11
+- name: 高美珠
+  id: id_高美珠_1970
+  birthday: 1970
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 平地原住民 全國
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 陳國榮
+  id: id_陳國榮_1962
+  birthday: 1962
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 平地原住民 全國
+    party: 台灣維新
+    elected: 0
+    session: 11
+- name: 陳政宗
+  id: id_陳政宗_1973
+  birthday: 1973
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 平地原住民 全國
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 吳建智咖啡哥
+  id: id_吳建智咖啡哥_1982
+  birthday: 1982
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 平地原住民 全國
+    party: 無黨籍
+    elected: 0
+    session: 11
+- name: 米甘幹．理佛克
+  id: id_米甘幹．理佛克_1957
+  birthday: 1957
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 平地原住民 全國
+    party: 新黨
+    elected: 0
+    session: 11
+- name: 鄭天財 Sra‧Kacaw
+  id: id_鄭天財SraKacaw_1956
+  birthday: 1956
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 平地原住民 全國
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 林志成
+  id: id_林志成_1965
+  birthday: 1965
+  elections:
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第05選區
+    party: 無黨籍
+    elected: 0
+    session: 11
