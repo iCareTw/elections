@@ -8,7 +8,7 @@ from src.normalize import normalize_name
 from src.parse_legislator import parse_file
 
 CANDIDATES_YAML = Path("candidates.yaml")
-LEGISLATOR_DIR = Path("_data/legislator")
+LEGISLATOR_DIR = Path("_data/legislator/district-legislator")
 ELECTION_TYPE = "立法委員"
 
 

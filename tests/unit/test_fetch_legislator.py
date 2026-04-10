@@ -4,16 +4,16 @@ from src.fetch_legislator import output_path, tickets_url, areas_url
 # output_path
 
 def test_output_path_l1():
-    assert output_path(11, '區域', '臺北市') == Path('_data/legislator/11th/區域_臺北市.xlsx')
+    assert output_path(11, '區域', '臺北市') == Path('_data/legislator/district-legislator/11th/區域_臺北市.xlsx')
 
 def test_output_path_l1_session3():
-    assert output_path(3, '區域', '臺北縣') == Path('_data/legislator/3th/區域_臺北縣.xlsx')
+    assert output_path(3, '區域', '臺北縣') == Path('_data/legislator/district-legislator/3th/區域_臺北縣.xlsx')
 
 def test_output_path_l2():
-    assert output_path(11, '平地原住民') == Path('_data/legislator/11th/平地原住民.xlsx')
+    assert output_path(11, '平地原住民') == Path('_data/legislator/district-legislator/11th/平地原住民.xlsx')
 
 def test_output_path_l3():
-    assert output_path(9, '山地原住民') == Path('_data/legislator/9th/山地原住民.xlsx')
+    assert output_path(9, '山地原住民') == Path('_data/legislator/district-legislator/9th/山地原住民.xlsx')
 
 # tickets_url
 

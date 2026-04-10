@@ -6,7 +6,7 @@ import httpx
 import openpyxl
 
 BASE_URL = 'https://db.cec.gov.tw'
-DATA_ROOT = Path('_data/legislator')
+DATA_ROOT = Path('_data/legislator/district-legislator')
 
 XLSX_COLUMNS = [
     ('地區',  'area_name'),
