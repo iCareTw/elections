@@ -32,5 +32,5 @@
 # uv run python main.py --type legislator --session 7
 # uv run python main.py --type legislator --session 8
 # uv run python main.py --type legislator --session 9
-uv run python main.py --type legislator --session 10
+# uv run python main.py --type legislator --session 10
 uv run python main.py --type legislator --session 11
