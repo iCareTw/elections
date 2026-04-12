@@ -1,5 +1,5 @@
 - name: 陳水扁
-  id: id_陳水扁
+  id: id_陳水扁_1951
   birthday: 1951
   elections:
   - year: 1994
@@ -25,7 +25,7 @@
     elected: 1
     ticket: 1
 - name: 吳敦義
-  id: id_吳敦義
+  id: id_吳敦義_1948
   birthday: 1948
   elections:
   - year: 1994
@@ -63,7 +63,7 @@
     elected: 1
     ticket: 2
 - name: 趙少康
-  id: id_趙少康
+  id: id_趙少康_1950
   birthday: 1950
   elections:
   - year: 1994
@@ -78,7 +78,7 @@
     elected: 0
     ticket: 3
 - name: 紀榮治
-  id: id_紀榮治
+  id: id_紀榮治_1944
   birthday: 1944
   elections:
   - year: 1994
@@ -87,7 +87,7 @@
     party: 無黨籍
     elected: 0
 - name: 黃大洲
-  id: id_黃大洲
+  id: id_黃大洲_1936
   birthday: 1936
   elections:
   - year: 1994
@@ -96,7 +96,7 @@
     party: 中國國民黨
     elected: 0
 - name: 施鐘響
-  id: id_施鐘響
+  id: id_施鐘響_1937
   birthday: 1937
   elections:
   - year: 1994
@@ -105,7 +105,7 @@
     party: 無黨籍
     elected: 0
 - name: 張俊雄
-  id: id_張俊雄
+  id: id_張俊雄_1938
   birthday: 1938
   elections:
   - year: 1994
@@ -126,7 +126,7 @@
     elected: 1
     session: 4
 - name: 鄭德耀
-  id: id_鄭德耀
+  id: id_鄭德耀_1951
   birthday: 1951
   elections:
   - year: 1994
@@ -151,7 +151,7 @@
     party: 無黨籍
     elected: 0
 - name: 湯阿根
-  id: id_湯阿根
+  id: id_湯阿根_1936
   birthday: 1936
   elections:
   - year: 1994
@@ -160,7 +160,7 @@
     party: 新黨
     elected: 0
 - name: 蘇貞昌
-  id: id_蘇貞昌
+  id: id_蘇貞昌_1947
   birthday: 1947
   elections:
   - year: 1995
@@ -196,7 +196,7 @@
     party: 民主進步黨
     elected: 0
 - name: 蘇嘉全
-  id: id_蘇嘉全
+  id: id_蘇嘉全_1956
   birthday: 1956
   elections:
   - year: 1995
@@ -227,7 +227,7 @@
     elected: 0
     ticket: 1
 - name: 周荃
-  id: id_周荃
+  id: id_周荃_1956
   birthday: 1956
   elections:
   - year: 1995
@@ -254,7 +254,7 @@
     elected: 0
     session: 5
 - name: 林志嘉
-  id: id_林志嘉
+  id: id_林志嘉_1958
   birthday: 1958
   elections:
   - year: 1995
@@ -287,7 +287,7 @@
     elected: 0
     session: 7
 - name: 廖學廣
-  id: id_廖學廣
+  id: id_廖學廣_1954
   birthday: 1954
   elections:
   - year: 1995
@@ -320,7 +320,7 @@
     elected: 0
     session: 7
 - name: 鄭永金
-  id: id_鄭永金
+  id: id_鄭永金_1949
   birthday: 1949
   elections:
   - year: 1995
@@ -362,7 +362,7 @@
     elected: 0
     session: 9
 - name: 林光華
-  id: id_林光華
+  id: id_林光華_1945
   birthday: 1945
   elections:
   - year: 1995
@@ -387,7 +387,7 @@
     party: 民主進步黨
     elected: 0
 - name: 徐中雄
-  id: id_徐中雄
+  id: id_徐中雄_1957
   birthday: 1957
   elections:
   - year: 1995
@@ -426,7 +426,7 @@
     elected: 1
     session: 7
 - name: 廖永來
-  id: id_廖永來
+  id: id_廖永來_1956
   birthday: 1956
   elections:
   - year: 1995
@@ -446,7 +446,7 @@
     party: 民主進步黨
     elected: 0
 - name: 翁金珠
-  id: id_翁金珠
+  id: id_翁金珠_1947
   birthday: 1947
   elections:
   - year: 1995
@@ -482,7 +482,7 @@
     party: 民主進步黨
     elected: 0
 - name: 彭百顯
-  id: id_彭百顯
+  id: id_彭百顯_1949
   birthday: 1949
   elections:
   - year: 1995
@@ -502,7 +502,7 @@
     party: 無黨籍
     elected: 0
 - name: 廖大林
-  id: id_廖大林
+  id: id_廖大林_1936
   birthday: 1936
   elections:
   - year: 1995
@@ -529,7 +529,7 @@
     elected: 0
     session: 5
 - name: 洪玉欽
-  id: id_洪玉欽
+  id: id_洪玉欽_1943
   birthday: 1943
   elections:
   - year: 1995
@@ -568,7 +568,7 @@
     elected: 0
     session: 7
 - name: 林景元
-  id: id_林景元
+  id: id_林景元_1925
   birthday: 1925
   elections:
   - year: 1995
@@ -624,7 +624,7 @@
     elected: 0
     session: 9
 - name: 李景雯
-  id: id_李景雯
+  id: id_李景雯_1928
   birthday: 1928
   elections:
   - year: 1995
@@ -661,7 +661,7 @@
     party: 無黨籍
     elected: 0
 - name: 曾永權
-  id: id_曾永權
+  id: id_曾永權_1947
   birthday: 1947
   elections:
   - year: 1995
@@ -688,7 +688,7 @@
     elected: 1
     session: 5
 - name: 黃昭輝
-  id: id_黃昭輝
+  id: id_黃昭輝_1946
   birthday: 1946
   elections:
   - year: 1995
@@ -715,7 +715,7 @@
     elected: 0
     session: 7
 - name: 曹原彰
-  id: id_曹原彰
+  id: id_曹原彰_1948
   birthday: 1948
   elections:
   - year: 1995
@@ -742,7 +742,7 @@
     elected: 0
     session: 6
 - name: 李進勇
-  id: id_李進勇
+  id: id_李進勇_1951
   birthday: 1951
   elections:
   - year: 1995
@@ -778,7 +778,7 @@
     party: 民主進步黨
     elected: 0
 - name: 洪昭男
-  id: id_洪昭男
+  id: id_洪昭男_1943
   birthday: 1943
   elections:
   - year: 1995
@@ -799,7 +799,7 @@
     elected: 1
     session: 5
 - name: 許添財
-  id: id_許添財
+  id: id_許添財_1951
   birthday: 1951
   elections:
   - year: 1995
@@ -836,7 +836,7 @@
     elected: 1
     session: 8
 - name: 張燦鍙
-  id: id_張燦鍙
+  id: id_張燦鍙_1936
   birthday: 1936
   elections:
   - year: 1995
@@ -878,7 +878,7 @@
     elected: 1
     ticket: 2
 - name: 朱惠良
-  id: id_朱惠良
+  id: id_朱惠良_1950
   birthday: 1950
   elections:
   - year: 1995
@@ -906,7 +906,7 @@
     elected: 0
     session: 5
 - name: 彭紹瑾
-  id: id_彭紹瑾
+  id: id_彭紹瑾_1957
   birthday: 1957
   elections:
   - year: 1995
@@ -944,7 +944,7 @@
     elected: 0
     session: 8
 - name: 翁重鈞
-  id: id_翁重鈞
+  id: id_翁重鈞_1955
   birthday: 1955
   elections:
   - year: 1995
@@ -987,7 +987,7 @@
     party: 中國國民黨
     elected: 0
 - name: 蘇煥智
-  id: id_蘇煥智
+  id: id_蘇煥智_1956
   birthday: 1956
   elections:
   - year: 1995
@@ -1023,7 +1023,7 @@
     party: 台灣維新
     elected: 0
 - name: 魏耀乾
-  id: id_魏耀乾
+  id: id_魏耀乾_1950
   birthday: 1950
   elections:
   - year: 1995
@@ -1049,7 +1049,7 @@
     elected: 0
     session: 11
 - name: 賴坤成
-  id: id_賴坤成
+  id: id_賴坤成_1964
   birthday: 1964
   elections:
   - year: 1995
@@ -1076,7 +1076,7 @@
     elected: 0
     session: 11
 - name: 陳光復
-  id: id_陳光復
+  id: id_陳光復_1955
   birthday: 1955
   elections:
   - year: 1995
@@ -1123,7 +1123,7 @@
     party: 民主進步黨
     elected: 1
 - name: 林政則
-  id: id_林政則
+  id: id_林政則_1944
   birthday: 1944
   elections:
   - year: 1995
@@ -1149,7 +1149,7 @@
     party: 中國國民黨
     elected: 1
 - name: 蔡明憲
-  id: id_蔡明憲
+  id: id_蔡明憲_1941
   birthday: 1941
   elections:
   - year: 1995
@@ -1176,7 +1176,7 @@
     elected: 0
     session: 7
 - name: 蕭裕珍
-  id: id_蕭裕珍
+  id: id_蕭裕珍_1956
   birthday: 1956
   elections:
   - year: 1995
@@ -1197,7 +1197,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳源奇
-  id: id_陳源奇
+  id: id_陳源奇_1940
   birthday: 1940
   elections:
   - year: 1995
@@ -1230,7 +1230,7 @@
     elected: 0
     session: 8
 - name: 李應元
-  id: id_李應元
+  id: id_李應元_1953
   birthday: 1953
   elections:
   - year: 1995
@@ -1251,7 +1251,7 @@
     party: 民主進步黨
     elected: 0
 - name: 施明德
-  id: id_施明德
+  id: id_施明德_1941
   birthday: 1941
   elections:
   - year: 1995
@@ -1284,7 +1284,7 @@
     elected: 0
     session: 6
 - name: 陳定南
-  id: id_陳定南
+  id: id_陳定南_1943
   birthday: 1943
   elections:
   - year: 1995
@@ -1305,7 +1305,7 @@
     party: 民主進步黨
     elected: 0
 - name: 鄭寶清
-  id: id_鄭寶清
+  id: id_鄭寶清_1955
   birthday: 1955
   elections:
   - year: 1995
@@ -1343,7 +1343,7 @@
     party: 無黨籍
     elected: 0
 - name: 劉政鴻
-  id: id_劉政鴻
+  id: id_劉政鴻_1947
   birthday: 1947
   elections:
   - year: 1995
@@ -1381,7 +1381,7 @@
     party: 中國國民黨
     elected: 1
 - name: 蔡煌瑯
-  id: id_蔡煌瑯
+  id: id_蔡煌瑯_1960
   birthday: 1960
   elections:
   - year: 1995
@@ -1414,7 +1414,7 @@
     elected: 0
     session: 9
 - name: 許舒博
-  id: id_許舒博
+  id: id_許舒博_1963
   birthday: 1963
   elections:
   - year: 1995
@@ -1453,7 +1453,7 @@
     elected: 0
     session: 8
 - name: 柯賜海
-  id: id_柯賜海
+  id: id_柯賜海_1956
   birthday: 1956
   elections:
   - year: 1995
@@ -1490,7 +1490,7 @@
     party: 無黨籍
     elected: 0
 - name: 沈智慧
-  id: id_沈智慧
+  id: id_沈智慧_1957
   birthday: 1957
   elections:
   - year: 1995
@@ -1541,7 +1541,7 @@
     elected: 0
     session: 10
 - name: 郝龍斌
-  id: id_郝龍斌
+  id: id_郝龍斌_1952
   birthday: 1952
   elections:
   - year: 1995
@@ -1573,7 +1573,7 @@
     elected: 0
     session: 9
 - name: 吳成典
-  id: id_吳成典
+  id: id_吳成典_1957
   birthday: 1957
   elections:
   - year: 1995
@@ -1618,7 +1618,7 @@
     elected: 0
     session: 9
 - name: 吳武明
-  id: id_吳武明
+  id: id_吳武明_1957
   birthday: 1957
   elections:
   - year: 1995
@@ -1638,7 +1638,7 @@
     party: 無黨籍
     elected: 0
 - name: 黃昭順
-  id: id_黃昭順
+  id: id_黃昭順_1953
   birthday: 1953
   elections:
   - year: 1995
@@ -1677,7 +1677,7 @@
     elected: 0
     session: 10
 - name: 韓國瑜
-  id: id_韓國瑜
+  id: id_韓國瑜_1957
   birthday: 1957
   elections:
   - year: 1995
@@ -1704,7 +1704,7 @@
     elected: 0
     ticket: 2
 - name: 丁守中
-  id: id_丁守中
+  id: id_丁守中_1954
   birthday: 1954
   elections:
   - year: 1995
@@ -1755,7 +1755,7 @@
     party: 中國國民黨
     elected: 0
 - name: 李錫錕
-  id: id_李錫錕
+  id: id_李錫錕_1947
   birthday: 1947
   elections:
   - year: 1995
@@ -1770,7 +1770,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳其邁
-  id: id_陳其邁
+  id: id_陳其邁_1964
   birthday: 1964
   elections:
   - year: 1995
@@ -1807,7 +1807,7 @@
     party: 民主進步黨
     elected: 1
 - name: 蘇盈貴
-  id: id_蘇盈貴
+  id: id_蘇盈貴_1958
   birthday: 1958
   elections:
   - year: 1995
@@ -6108,7 +6108,7 @@
     elected: 0
     session: 6
 - name: 陳履安
-  id: id_陳履安
+  id: id_陳履安_1937
   birthday: 1937
   elections:
   - year: 1996
@@ -6118,7 +6118,7 @@
     elected: 0
     ticket: 1
 - name: 王清峰
-  id: id_王清峰
+  id: id_王清峰_1952
   birthday: 1952
   elections:
   - year: 1996
@@ -6128,7 +6128,7 @@
     elected: 0
     ticket: 1
 - name: 李登輝
-  id: id_李登輝
+  id: id_李登輝_1923
   birthday: 1923
   elections:
   - year: 1996
@@ -6138,7 +6138,7 @@
     elected: 1
     ticket: 2
 - name: 連戰
-  id: id_連戰
+  id: id_連戰_1936
   birthday: 1936
   elections:
   - year: 1996
@@ -6160,7 +6160,7 @@
     elected: 0
     ticket: 2
 - name: 彭明敏
-  id: id_彭明敏
+  id: id_彭明敏_1923
   birthday: 1923
   elections:
   - year: 1996
@@ -6170,7 +6170,7 @@
     elected: 0
     ticket: 3
 - name: 謝長廷
-  id: id_謝長廷
+  id: id_謝長廷_1946
   birthday: 1946
   elections:
   - year: 1996
@@ -6201,7 +6201,7 @@
     elected: 0
     ticket: 1
 - name: 林洋港
-  id: id_林洋港
+  id: id_林洋港_1927
   birthday: 1927
   elections:
   - year: 1996
@@ -6211,7 +6211,7 @@
     elected: 0
     ticket: 4
 - name: 郝柏村
-  id: id_郝柏村
+  id: id_郝柏村_1919
   birthday: 1919
   elections:
   - year: 1996
@@ -6221,7 +6221,7 @@
     elected: 0
     ticket: 4
 - name: 呂秀蓮
-  id: id_呂秀蓮
+  id: id_呂秀蓮_1944
   birthday: 1944
   elections:
   - year: 1997
@@ -6242,7 +6242,7 @@
     elected: 1
     ticket: 1
 - name: 謝深山
-  id: id_謝深山
+  id: id_謝深山_1939
   birthday: 1939
   elections:
   - year: 1997
@@ -6256,7 +6256,7 @@
     party: 中國國民黨
     elected: 1
 - name: 楊泰順
-  id: id_楊泰順
+  id: id_楊泰順_1953
   birthday: 1953
   elections:
   - year: 1997
@@ -6265,7 +6265,7 @@
     party: 新黨
     elected: 0
 - name: 廖風德
-  id: id_廖風德
+  id: id_廖風德_1951
   birthday: 1951
   elections:
   - year: 1997
@@ -6280,7 +6280,7 @@
     elected: 1
     session: 5
 - name: 劉守成
-  id: id_劉守成
+  id: id_劉守成_1951
   birthday: 1951
   elections:
   - year: 1997
@@ -6294,7 +6294,7 @@
     party: 民主進步黨
     elected: 1
 - name: 陳根德
-  id: id_陳根德
+  id: id_陳根德_1956
   birthday: 1956
   elections:
   - year: 1997
@@ -6345,7 +6345,7 @@
     elected: 0
     session: 10
 - name: 徐運德
-  id: id_徐運德
+  id: id_徐運德_1931
   birthday: 1931
   elections:
   - year: 1997
@@ -6354,7 +6354,7 @@
     party: 社會改革黨
     elected: 0
 - name: 徐能安
-  id: id_徐能安
+  id: id_徐能安_1944
   birthday: 1944
   elections:
   - year: 1997
@@ -6369,7 +6369,7 @@
     elected: 0
     session: 4
 - name: 邱鏡淳
-  id: id_邱鏡淳
+  id: id_邱鏡淳_1949
   birthday: 1949
   elections:
   - year: 1997
@@ -6412,7 +6412,7 @@
     party: 中國國民黨
     elected: 1
 - name: 傅學鵬
-  id: id_傅學鵬
+  id: id_傅學鵬_1951
   birthday: 1951
   elections:
   - year: 1997
@@ -6426,7 +6426,7 @@
     party: 無黨籍
     elected: 1
 - name: 何智輝
-  id: id_何智輝
+  id: id_何智輝_1950
   birthday: 1950
   elections:
   - year: 1997
@@ -6459,7 +6459,7 @@
     elected: 0
     session: 7
 - name: 黃達業
-  id: id_黃達業
+  id: id_黃達業_1957
   birthday: 1957
   elections:
   - year: 1997
@@ -6474,7 +6474,7 @@
     elected: 0
     session: 5
 - name: 徐進榮
-  id: id_徐進榮
+  id: id_徐進榮_1946
   birthday: 1946
   elections:
   - year: 1997
@@ -6483,7 +6483,7 @@
     party: 民主進步黨
     elected: 0
 - name: 錢文南
-  id: id_錢文南
+  id: id_錢文南_1953
   birthday: 1953
   elections:
   - year: 1997
@@ -6492,7 +6492,7 @@
     party: 建國黨
     elected: 0
 - name: 陳欽隆
-  id: id_陳欽隆
+  id: id_陳欽隆_1957
   birthday: 1957
   elections:
   - year: 1997
@@ -6507,7 +6507,7 @@
     elected: 0
     session: 4
 - name: 郭榮振
-  id: id_郭榮振
+  id: id_郭榮振_1950
   birthday: 1950
   elections:
   - year: 1997
@@ -6528,7 +6528,7 @@
     elected: 0
     session: 5
 - name: 劉銓忠
-  id: id_劉銓忠
+  id: id_劉銓忠_1942
   birthday: 1942
   elections:
   - year: 1997
@@ -6561,7 +6561,7 @@
     elected: 1
     session: 7
 - name: 張榮昌
-  id: id_張榮昌
+  id: id_張榮昌_1954
   birthday: 1954
   elections:
   - year: 1997
@@ -6570,7 +6570,7 @@
     party: 無黨籍
     elected: 0
 - name: 阮剛猛
-  id: id_阮剛猛
+  id: id_阮剛猛_1951
   birthday: 1951
   elections:
   - year: 1997
@@ -6579,7 +6579,7 @@
     party: 中國國民黨
     elected: 1
 - name: 林宗男
-  id: id_林宗男
+  id: id_林宗男_1942
   birthday: 1942
   elections:
   - year: 1997
@@ -6604,7 +6604,7 @@
     party: 無黨籍
     elected: 0
 - name: 許惠祐
-  id: id_許惠祐
+  id: id_許惠祐_1952
   birthday: 1952
   elections:
   - year: 1997
@@ -6613,7 +6613,7 @@
     party: 中國國民黨
     elected: 0
 - name: 陳振盛
-  id: id_陳振盛
+  id: id_陳振盛_1950
   birthday: 1950
   elections:
   - year: 1997
@@ -6659,7 +6659,7 @@
     party: 無黨籍
     elected: 0
 - name: 蘇文雄
-  id: id_蘇文雄
+  id: id_蘇文雄_1943
   birthday: 1943
   elections:
   - year: 1997
@@ -6668,7 +6668,7 @@
     party: 中國國民黨
     elected: 1
 - name: 歐明憲
-  id: id_歐明憲
+  id: id_歐明憲_1947
   birthday: 1947
   elections:
   - year: 1997
@@ -6677,7 +6677,7 @@
     party: 無黨籍
     elected: 0
 - name: 張榮味
-  id: id_張榮味
+  id: id_張榮味_1957
   birthday: 1957
   elections:
   - year: 1997
@@ -6691,7 +6691,7 @@
     party: 中國國民黨
     elected: 1
 - name: 李雅景
-  id: id_李雅景
+  id: id_李雅景_1949
   birthday: 1949
   elections:
   - year: 1997
@@ -6706,7 +6706,7 @@
     elected: 1
     session: 5
 - name: 何嘉榮
-  id: id_何嘉榮
+  id: id_何嘉榮_1945
   birthday: 1945
   elections:
   - year: 1997
@@ -6727,7 +6727,7 @@
     elected: 0
     session: 6
 - name: 陳唐山
-  id: id_陳唐山
+  id: id_陳唐山_1935
   birthday: 1935
   elections:
   - year: 1997
@@ -6748,7 +6748,7 @@
     elected: 1
     session: 8
 - name: 余政憲
-  id: id_余政憲
+  id: id_余政憲_1959
   birthday: 1959
   elections:
   - year: 1997
@@ -6763,7 +6763,7 @@
     elected: 0
     session: 7
 - name: 黃鴻都
-  id: id_黃鴻都
+  id: id_黃鴻都_1961
   birthday: 1961
   elections:
   - year: 1997
@@ -6772,7 +6772,7 @@
     party: 中國國民黨
     elected: 0
 - name: 徐慶元
-  id: id_徐慶元
+  id: id_徐慶元_1957
   birthday: 1957
   elections:
   - year: 1997
@@ -6792,7 +6792,7 @@
     party: 親民黨
     elected: 1
 - name: 陳建年
-  id: id_陳建年
+  id: id_陳建年_1947
   birthday: 1947
   elections:
   - year: 1997
@@ -6801,7 +6801,7 @@
     party: 中國國民黨
     elected: 1
 - name: 王慶豐
-  id: id_王慶豐
+  id: id_王慶豐_1933
   birthday: 1933
   elections:
   - year: 1997
@@ -6810,7 +6810,7 @@
     party: 中國國民黨
     elected: 1
 - name: 游盈隆
-  id: id_游盈隆
+  id: id_游盈隆_1956
   birthday: 1956
   elections:
   - year: 1997
@@ -6830,7 +6830,7 @@
     party: 民主進步黨
     elected: 0
 - name: 賴峰偉
-  id: id_賴峰偉
+  id: id_賴峰偉_1953
   birthday: 1953
   elections:
   - year: 1997
@@ -6854,7 +6854,7 @@
     party: 中國國民黨
     elected: 0
 - name: 許丕龍
-  id: id_許丕龍
+  id: id_許丕龍_1939
   birthday: 1939
   elections:
   - year: 1997
@@ -6869,7 +6869,7 @@
     elected: 0
     session: 4
 - name: 劉立群
-  id: id_劉立群
+  id: id_劉立群_1951
   birthday: 1951
   elections:
   - year: 1997
@@ -6883,7 +6883,7 @@
     party: 中國國民黨
     elected: 0
 - name: 陳水在
-  id: id_陳水在
+  id: id_陳水在_1948
   birthday: 1948
   elections:
   - year: 1997
@@ -6903,7 +6903,7 @@
     party: 無黨籍
     elected: 0
 - name: 李炷烽
-  id: id_李炷烽
+  id: id_李炷烽_1953
   birthday: 1953
   elections:
   - year: 1997
@@ -6922,7 +6922,7 @@
     party: 新黨
     elected: 1
 - name: 劉文雄
-  id: id_劉文雄
+  id: id_劉文雄_1954
   birthday: 1954
   elections:
   - year: 1997
@@ -6960,7 +6960,7 @@
     elected: 0
     session: 9
 - name: 許財利
-  id: id_許財利
+  id: id_許財利_1947
   birthday: 1947
   elections:
   - year: 1997
@@ -6988,7 +6988,7 @@
     party: 中國國民黨
     elected: 0
 - name: 蔡仁堅
-  id: id_蔡仁堅
+  id: id_蔡仁堅_1952
   birthday: 1952
   elections:
   - year: 1997
@@ -7007,7 +7007,7 @@
     party: 無黨籍
     elected: 0
 - name: 王少泉
-  id: id_王少泉
+  id: id_王少泉_1942
   birthday: 1942
   elections:
   - year: 1997
@@ -7021,7 +7021,7 @@
     party: 無黨籍
     elected: 0
 - name: 張溫鷹
-  id: id_張溫鷹
+  id: id_張溫鷹_1950
   birthday: 1950
   elections:
   - year: 1997
@@ -7041,7 +7041,7 @@
     elected: 0
     session: 6
 - name: 鄭邦鎮
-  id: id_鄭邦鎮
+  id: id_鄭邦鎮_1947
   birthday: 1947
   elections:
   - year: 1997
@@ -7056,7 +7056,7 @@
     elected: 0
     session: 4
 - name: 宋艾克
-  id: id_宋艾克
+  id: id_宋艾克_1953
   birthday: 1953
   elections:
   - year: 1997
@@ -7071,7 +7071,7 @@
     elected: 0
     session: 4
 - name: 江義雄
-  id: id_江義雄
+  id: id_江義雄_1944
   birthday: 1944
   elections:
   - year: 1997
@@ -7092,7 +7092,7 @@
     elected: 0
     session: 8
 - name: 蔡鴻章
-  id: id_蔡鴻章
+  id: id_蔡鴻章_1959
   birthday: 1959
   elections:
   - year: 1997
@@ -7101,7 +7101,7 @@
     party: 民主進步黨
     elected: 0
 - name: 張博雅
-  id: id_張博雅
+  id: id_張博雅_1942
   birthday: 1942
   elections:
   - year: 1997
@@ -7115,7 +7115,7 @@
     party: 無黨籍
     elected: 0
 - name: 臧汀生
-  id: id_臧汀生
+  id: id_臧汀生_1951
   birthday: 1951
   elections:
   - year: 1997
@@ -7124,7 +7124,7 @@
     party: 建國黨
     elected: 0
 - name: 方金海
-  id: id_方金海
+  id: id_方金海_1955
   birthday: 1955
   elections:
   - year: 1997
@@ -7133,7 +7133,7 @@
     party: 無黨籍
     elected: 0
 - name: 高家俊
-  id: id_高家俊
+  id: id_高家俊_1950
   birthday: 1950
   elections:
   - year: 1997
@@ -7142,7 +7142,7 @@
     party: 新黨
     elected: 0
 - name: 林南生
-  id: id_林南生
+  id: id_林南生_1952
   birthday: 1952
   elections:
   - year: 1997
@@ -7169,7 +7169,7 @@
     elected: 1
     session: 6
 - name: 陳榮盛
-  id: id_陳榮盛
+  id: id_陳榮盛_1946
   birthday: 1946
   elections:
   - year: 1997
@@ -7194,7 +7194,7 @@
     party: 中國國民黨
     elected: 0
 - name: 林壽宏
-  id: id_林壽宏
+  id: id_林壽宏_1940
   birthday: 1940
   elections:
   - year: 1997
@@ -7203,7 +7203,7 @@
     party: 無黨籍
     elected: 0
 - name: 馬英九
-  id: id_馬英九
+  id: id_馬英九_1950
   birthday: 1950
   elections:
   - year: 1998
@@ -7229,7 +7229,7 @@
     elected: 1
     ticket: 2
 - name: 王建煊
-  id: id_王建煊
+  id: id_王建煊_1938
   birthday: 1938
   elections:
   - year: 1998
@@ -7243,7 +7243,7 @@
     party: 新黨
     elected: 0
 - name: 吳建國
-  id: id_吳建國
+  id: id_吳建國_1950
   birthday: 1950
   elections:
   - year: 1998
@@ -7252,7 +7252,7 @@
     party: 新黨
     elected: 0
 - name: 馮滬祥
-  id: id_馮滬祥
+  id: id_馮滬祥_1948
   birthday: 1948
   elections:
   - year: 1998
@@ -7274,7 +7274,7 @@
     elected: 0
     session: 5
 - name: 朱立倫
-  id: id_朱立倫
+  id: id_朱立倫_1961
   birthday: 1961
   elections:
   - year: 1998
@@ -7310,7 +7310,7 @@
     elected: 0
     ticket: 1
 - name: 石翊靖
-  id: id_石翊靖
+  id: id_石翊靖_1950
   birthday: 1950
   elections:
   - year: 1998
@@ -7331,7 +7331,7 @@
     elected: 0
     session: 8
 - name: 張明雄
-  id: id_張明雄
+  id: id_張明雄_1944
   birthday: 1944
   elections:
   - year: 1998
@@ -7346,7 +7346,7 @@
     party: 中國國民黨
     elected: 0
 - name: 陳明文
-  id: id_陳明文
+  id: id_陳明文_1954
   birthday: 1954
   elections:
   - year: 1998
@@ -7384,7 +7384,7 @@
     elected: 1
     session: 10
 - name: 楊秋興
-  id: id_楊秋興
+  id: id_楊秋興_1956
   birthday: 1956
   elections:
   - year: 1998
@@ -7414,7 +7414,7 @@
     party: 中國國民黨
     elected: 0
 - name: 吳光訓
-  id: id_吳光訓
+  id: id_吳光訓_1950
   birthday: 1950
   elections:
   - year: 1998
@@ -7441,7 +7441,7 @@
     elected: 0
     session: 7
 - name: 張福興
-  id: id_張福興
+  id: id_張福興_1942
   birthday: 1942
   elections:
   - year: 1998
@@ -7456,7 +7456,7 @@
     party: 中國國民黨
     elected: 1
 - name: 黃中媄
-  id: id_黃中媄
+  id: id_黃中媄_1951
   birthday: 1951
   elections:
   - year: 1998
@@ -7471,7 +7471,7 @@
     party: 無黨籍
     elected: 0
 - name: 周錫瑋
-  id: id_周錫瑋
+  id: id_周錫瑋_1958
   birthday: 1958
   elections:
   - year: 1998
@@ -7498,7 +7498,7 @@
     party: 中國國民黨
     elected: 1
 - name: 陳誠鈞
-  id: id_陳誠鈞
+  id: id_陳誠鈞_1955
   birthday: 1955
   elections:
   - year: 1998
@@ -7531,7 +7531,7 @@
     elected: 0
     session: 7
 - name: 江炳輝
-  id: id_江炳輝
+  id: id_江炳輝_1929
   birthday: 1929
   elections:
   - year: 1998
@@ -7546,7 +7546,7 @@
     party: 無黨籍
     elected: 0
 - name: 邱太三
-  id: id_邱太三
+  id: id_邱太三_1956
   birthday: 1956
   elections:
   - year: 1998
@@ -7567,7 +7567,7 @@
     party: 民主進步黨
     elected: 0
 - name: 陳進丁
-  id: id_陳進丁
+  id: id_陳進丁_1946
   birthday: 1946
   elections:
   - year: 1998
@@ -7606,7 +7606,7 @@
     elected: 0
     session: 8
 - name: 林益世
-  id: id_林益世
+  id: id_林益世_1968
   birthday: 1968
   elections:
   - year: 1998
@@ -7645,7 +7645,7 @@
     elected: 0
     session: 8
 - name: 曹啟鴻
-  id: id_曹啟鴻
+  id: id_曹啟鴻_1948
   birthday: 1948
   elections:
   - year: 1998
@@ -7671,7 +7671,7 @@
     party: 民主進步黨
     elected: 1
 - name: 王拓
-  id: id_王拓
+  id: id_王拓_1944
   birthday: 1944
   elections:
   - year: 1998
@@ -7698,7 +7698,7 @@
     party: 民主進步黨
     elected: 0
 - name: 黃敏惠
-  id: id_黃敏惠
+  id: id_黃敏惠_1959
   birthday: 1959
   elections:
   - year: 1998
@@ -7740,7 +7740,7 @@
     party: 中國國民黨
     elected: 1
 - name: 錢林慧君
-  id: id_錢林慧君
+  id: id_錢林慧君_1947
   birthday: 1947
   elections:
   - year: 1998
@@ -7767,7 +7767,7 @@
     party: 台灣團結聯盟
     elected: 0
 - name: 羅志明
-  id: id_羅志明
+  id: id_羅志明_1957
   birthday: 1957
   elections:
   - year: 1998
@@ -7800,7 +7800,7 @@
     elected: 0
     session: 8
 - name: 李文忠
-  id: id_李文忠
+  id: id_李文忠_1958
   birthday: 1958
   elections:
   - year: 1998
@@ -7838,7 +7838,7 @@
     party: 民主進步黨
     elected: 0
 - name: 賴清德
-  id: id_賴清德
+  id: id_賴清德_1959
   birthday: 1959
   elections:
   - year: 1998
@@ -7888,7 +7888,7 @@
     elected: 1
     ticket: 2
 - name: 江鑒育
-  id: id_江鑒育
+  id: id_江鑒育_1960
   birthday: 1960
   elections:
   - year: 1998
@@ -7903,7 +7903,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳學聖
-  id: id_陳學聖
+  id: id_陳學聖_1957
   birthday: 1957
   elections:
   - year: 1998
@@ -7948,7 +7948,7 @@
     elected: 0
     session: 10
 - name: 盧秀燕
-  id: id_盧秀燕
+  id: id_盧秀燕_1961
   birthday: 1961
   elections:
   - year: 1998
@@ -11466,7 +11466,7 @@
     elected: 0
     session: 7
 - name: 宋楚瑜
-  id: id_宋楚瑜
+  id: id_宋楚瑜_1942
   birthday: 1942
   elections:
   - year: 2000
@@ -11505,7 +11505,7 @@
     elected: 0
     ticket: 1
 - name: 張昭雄
-  id: id_張昭雄
+  id: id_張昭雄_1944
   birthday: 1944
   elections:
   - year: 2000
@@ -11515,7 +11515,7 @@
     elected: 0
     ticket: 1
 - name: 李敖
-  id: id_李敖
+  id: id_李敖_1937
   birthday: 1937
   elections:
   - year: 2000
@@ -11542,7 +11542,7 @@
     elected: 0
     session: 8
 - name: 許信良
-  id: id_許信良
+  id: id_許信良_1941
   birthday: 1941
   elections:
   - year: 2000
@@ -11558,7 +11558,7 @@
     elected: 0
     session: 6
 - name: 邵建興
-  id: id_邵建興
+  id: id_邵建興_1959
   birthday: 1959
   elections:
   - year: 2001
@@ -11573,7 +11573,7 @@
     elected: 0
     session: 6
 - name: 朱振東
-  id: id_朱振東
+  id: id_朱振東_1953
   birthday: 1953
   elections:
   - year: 2001
@@ -11587,7 +11587,7 @@
     party: 天一黨
     elected: 0
 - name: 林錦坤
-  id: id_林錦坤
+  id: id_林錦坤_1964
   birthday: 1964
   elections:
   - year: 2001
@@ -11607,7 +11607,7 @@
     elected: 0
     session: 11
 - name: 呂國華
-  id: id_呂國華
+  id: id_呂國華_1956
   birthday: 1956
   elections:
   - year: 2001
@@ -11632,7 +11632,7 @@
     elected: 0
     session: 10
 - name: 莊志忠
-  id: id_莊志忠
+  id: id_莊志忠_1934
   birthday: 1934
   elections:
   - year: 2001
@@ -11641,7 +11641,7 @@
     party: 無黨籍
     elected: 0
 - name: 魏早炳
-  id: id_魏早炳
+  id: id_魏早炳_1941
   birthday: 1941
   elections:
   - year: 2001
@@ -11650,7 +11650,7 @@
     party: 民主進步黨
     elected: 0
 - name: 李佳穆
-  id: id_李佳穆
+  id: id_李佳穆_1950
   birthday: 1950
   elections:
   - year: 2001
@@ -11670,7 +11670,7 @@
     party: 無黨籍
     elected: 0
 - name: 徐享崑
-  id: id_徐享崑
+  id: id_徐享崑_1953
   birthday: 1953
   elections:
   - year: 2001
@@ -11679,7 +11679,7 @@
     party: 中國國民黨
     elected: 0
 - name: 林敏霖
-  id: id_林敏霖
+  id: id_林敏霖_1949
   birthday: 1949
   elections:
   - year: 2001
@@ -11688,7 +11688,7 @@
     party: 無黨籍
     elected: 0
 - name: 黃仲生
-  id: id_黃仲生
+  id: id_黃仲生_1942
   birthday: 1942
   elections:
   - year: 2001
@@ -11702,7 +11702,7 @@
     party: 中國國民黨
     elected: 1
 - name: 鄭秀珠
-  id: id_鄭秀珠
+  id: id_鄭秀珠_1970
   birthday: 1970
   elections:
   - year: 2001
@@ -11711,7 +11711,7 @@
     party: 親民黨
     elected: 0
 - name: 葉金鳳
-  id: id_葉金鳳
+  id: id_葉金鳳_1943
   birthday: 1943
   elections:
   - year: 2001
@@ -11720,7 +11720,7 @@
     party: 中國國民黨
     elected: 0
 - name: 洪參民
-  id: id_洪參民
+  id: id_洪參民_1946
   birthday: 1946
   elections:
   - year: 2001
@@ -11729,7 +11729,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳婉貞
-  id: id_陳婉貞
+  id: id_陳婉貞_1950
   birthday: 1950
   elections:
   - year: 2001
@@ -11738,7 +11738,7 @@
     party: 無黨籍
     elected: 0
 - name: 姜君佩
-  id: id_姜君佩
+  id: id_姜君佩_1955
   birthday: 1955
   elections:
   - year: 2001
@@ -11747,7 +11747,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳胘富
-  id: id_陳胘富
+  id: id_陳胘富_1960
   birthday: 1960
   elections:
   - year: 2001
@@ -11756,7 +11756,7 @@
     party: 無黨籍
     elected: 0
 - name: 林明溱
-  id: id_林明溱
+  id: id_林明溱_1951
   birthday: 1951
   elections:
   - year: 2001
@@ -11792,7 +11792,7 @@
     party: 中國國民黨
     elected: 1
 - name: 林樹山
-  id: id_林樹山
+  id: id_林樹山_1958
   birthday: 1958
   elections:
   - year: 2001
@@ -11807,7 +11807,7 @@
     elected: 1
     session: 6
 - name: 陳勝三
-  id: id_陳勝三
+  id: id_陳勝三_1940
   birthday: 1940
   elections:
   - year: 2001
@@ -11825,7 +11825,7 @@
     party: 無黨籍
     elected: 0
 - name: 蔡炳欽
-  id: id_蔡炳欽
+  id: id_蔡炳欽_1953
   birthday: 1953
   elections:
   - year: 2001
@@ -11834,7 +11834,7 @@
     party: 無黨籍
     elected: 0
 - name: 吳清基
-  id: id_吳清基
+  id: id_吳清基_1951
   birthday: 1951
   elections:
   - year: 2001
@@ -11843,7 +11843,7 @@
     party: 中國國民黨
     elected: 0
 - name: 黃八野
-  id: id_黃八野
+  id: id_黃八野_1943
   birthday: 1943
   elections:
   - year: 2001
@@ -11852,7 +11852,7 @@
     party: 無黨籍
     elected: 0
 - name: 王進士
-  id: id_王進士
+  id: id_王進士_1948
   birthday: 1948
   elections:
   - year: 2001
@@ -11884,7 +11884,7 @@
     elected: 0
     session: 9
 - name: 彭權國
-  id: id_彭權國
+  id: id_彭權國_1963
   birthday: 1963
   elections:
   - year: 2001
@@ -11903,7 +11903,7 @@
     party: 無黨籍
     elected: 0
 - name: 吳俊立
-  id: id_吳俊立
+  id: id_吳俊立_1962
   birthday: 1962
   elections:
   - year: 2001
@@ -11923,7 +11923,7 @@
     elected: 0
     session: 8
 - name: 賴政雄
-  id: id_賴政雄
+  id: id_賴政雄_1943
   birthday: 1943
   elections:
   - year: 2001
@@ -11932,7 +11932,7 @@
     party: 親民黨
     elected: 0
 - name: 莊三修
-  id: id_莊三修
+  id: id_莊三修_1957
   birthday: 1957
   elections:
   - year: 2001
@@ -11941,7 +11941,7 @@
     party: 無黨籍
     elected: 0
 - name: 齊淑英
-  id: id_齊淑英
+  id: id_齊淑英_1950
   birthday: 1950
   elections:
   - year: 2001
@@ -11950,7 +11950,7 @@
     party: 綠黨
     elected: 0
 - name: 許麗音
-  id: id_許麗音
+  id: id_許麗音_1948
   birthday: 1948
   elections:
   - year: 2001
@@ -11959,7 +11959,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳雪生
-  id: id_陳雪生
+  id: id_陳雪生_1952
   birthday: 1952
   elections:
   - year: 2001
@@ -11997,7 +11997,7 @@
     elected: 1
     session: 11
 - name: 翁天慶
-  id: id_翁天慶
+  id: id_翁天慶_1953
   birthday: 1953
   elections:
   - year: 2001
@@ -12011,7 +12011,7 @@
     party: 無黨籍
     elected: 0
 - name: 蔡是民
-  id: id_蔡是民
+  id: id_蔡是民_1947
   birthday: 1947
   elections:
   - year: 2001
@@ -12020,7 +12020,7 @@
     party: 親民黨
     elected: 0
 - name: 陳川青
-  id: id_陳川青
+  id: id_陳川青_1949
   birthday: 1949
   elections:
   - year: 2001
@@ -12029,7 +12029,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳昭南
-  id: id_陳昭南
+  id: id_陳昭南_1942
   birthday: 1942
   elections:
   - year: 2001
@@ -12038,7 +12038,7 @@
     party: 民主進步黨
     elected: 0
 - name: 許金象
-  id: id_許金象
+  id: id_許金象_1955
   birthday: 1955
   elections:
   - year: 2001
@@ -12047,7 +12047,7 @@
     party: 中國國民黨
     elected: 0
 - name: 胡志強
-  id: id_胡志強
+  id: id_胡志強_1948
   birthday: 1948
   elections:
   - year: 2001
@@ -12071,7 +12071,7 @@
     party: 中國國民黨
     elected: 0
 - name: 黃正男
-  id: id_黃正男
+  id: id_黃正男_1941
   birthday: 1941
   elections:
   - year: 2001
@@ -12080,7 +12080,7 @@
     party: 民主進步黨
     elected: 0
 - name: 張榮藏
-  id: id_張榮藏
+  id: id_張榮藏_1942
   birthday: 1942
   elections:
   - year: 2001
@@ -12089,7 +12089,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳麗貞
-  id: id_陳麗貞
+  id: id_陳麗貞_1958
   birthday: 1958
   elections:
   - year: 2001
@@ -12103,7 +12103,7 @@
     party: 民主進步黨
     elected: 0
 - name: 江清馦
-  id: id_江清馦
+  id: id_江清馦_1942
   birthday: 1942
   elections:
   - year: 2001
@@ -12112,7 +12112,7 @@
     party: 中國國民黨
     elected: 0
 - name: 林易煌
-  id: id_林易煌
+  id: id_林易煌_1964
   birthday: 1964
   elections:
   - year: 2001
@@ -12127,7 +12127,7 @@
     elected: 0
     session: 9
 - name: 蘇南成
-  id: id_蘇南成
+  id: id_蘇南成_1936
   birthday: 1936
   elections:
   - year: 2001
@@ -12142,7 +12142,7 @@
     elected: 0
     session: 6
 - name: 羅文嘉
-  id: id_羅文嘉
+  id: id_羅文嘉_1966
   birthday: 1966
   elections:
   - year: 2001
@@ -12163,7 +12163,7 @@
     elected: 0
     session: 7
 - name: 顏培元
-  id: id_顏培元
+  id: id_顏培元_1951
   birthday: 1951
   elections:
   - year: 2001
@@ -12178,7 +12178,7 @@
     party: 無黨籍
     elected: 0
 - name: 徐耀昌
-  id: id_徐耀昌
+  id: id_徐耀昌_1955
   birthday: 1955
   elections:
   - year: 2001
@@ -12221,7 +12221,7 @@
     party: 中國國民黨
     elected: 1
 - name: 卓伯源
-  id: id_卓伯源
+  id: id_卓伯源_1965
   birthday: 1965
   elections:
   - year: 2001
@@ -12247,7 +12247,7 @@
     party: 中國國民黨
     elected: 1
 - name: 蘇治芬
-  id: id_蘇治芬
+  id: id_蘇治芬_1953
   birthday: 1953
   elections:
   - year: 2001
@@ -12285,7 +12285,7 @@
     elected: 0
     session: 11
 - name: 郭添財
-  id: id_郭添財
+  id: id_郭添財_1962
   birthday: 1962
   elections:
   - year: 2001
@@ -12311,7 +12311,7 @@
     party: 中國國民黨
     elected: 0
 - name: 盧博基
-  id: id_盧博基
+  id: id_盧博基_1949
   birthday: 1949
   elections:
   - year: 2001
@@ -12338,7 +12338,7 @@
     elected: 0
     session: 7
 - name: 傅崐萁
-  id: id_傅崐萁
+  id: id_傅崐萁_1962
   birthday: 1962
   elections:
   - year: 2001
@@ -12381,7 +12381,7 @@
     elected: 1
     session: 11
 - name: 吳軾子
-  id: id_吳軾子
+  id: id_吳軾子_1959
   birthday: 1959
   elections:
   - year: 2001
@@ -12396,7 +12396,7 @@
     party: 無黨籍
     elected: 0
 - name: 張花冠
-  id: id_張花冠
+  id: id_張花冠_1954
   birthday: 1954
   elections:
   - year: 2001
@@ -12428,7 +12428,7 @@
     party: 民主進步黨
     elected: 1
 - name: 黃健庭
-  id: id_黃健庭
+  id: id_黃健庭_1959
   birthday: 1959
   elections:
   - year: 2001
@@ -12460,7 +12460,7 @@
     party: 中國國民黨
     elected: 1
 - name: 魏明谷
-  id: id_魏明谷
+  id: id_魏明谷_1963
   birthday: 1963
   elections:
   - year: 2001
@@ -12492,7 +12492,7 @@
     party: 民主進步黨
     elected: 0
 - name: 陳秀麗
-  id: id_陳秀麗
+  id: id_陳秀麗_1948
   birthday: 1948
   elections:
   - year: 2001
@@ -12507,7 +12507,7 @@
     party: 無黨籍
     elected: 0
 - name: 楊麗環
-  id: id_楊麗環
+  id: id_楊麗環_1957
   birthday: 1957
   elections:
   - year: 2001
@@ -12546,7 +12546,7 @@
     party: 無黨籍
     elected: 0
 - name: 璩美鳳
-  id: id_璩美鳳
+  id: id_璩美鳳_1966
   birthday: 1966
   elections:
   - year: 2001
@@ -12561,7 +12561,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳歐珀
-  id: id_陳歐珀
+  id: id_陳歐珀_1962
   birthday: 1962
   elections:
   - year: 2001
@@ -12594,7 +12594,7 @@
     elected: 1
     session: 10
 - name: 王麗萍
-  id: id_王麗萍
+  id: id_王麗萍_1962
   birthday: 1962
   elections:
   - year: 2001
@@ -15834,7 +15834,7 @@
     party: 台灣團結聯盟
     elected: 0
 - name: 黃天生
-  id: id_黃天生
+  id: id_黃天生_1946
   birthday: 1946
   elections:
   - year: 2002
@@ -15843,7 +15843,7 @@
     party: 無黨籍
     elected: 0
 - name: 黃俊英
-  id: id_黃俊英
+  id: id_黃俊英_1941
   birthday: 1941
   elections:
   - year: 2002
@@ -15857,7 +15857,7 @@
     party: 中國國民黨
     elected: 0
 - name: 黃福卿
-  id: id_黃福卿
+  id: id_黃福卿_1937
   birthday: 1937
   elections:
   - year: 2004
@@ -15878,7 +15878,7 @@
     elected: 0
     session: 9
 - name: 林振昌
-  id: id_林振昌
+  id: id_林振昌_1967
   birthday: 1967
   elections:
   - year: 2004
@@ -15893,7 +15893,7 @@
     party: 無黨籍
     elected: 0
 - name: 許敬民
-  id: id_許敬民
+  id: id_許敬民_1949
   birthday: 1949
   elections:
   - year: 2004
@@ -15919,7 +15919,7 @@
     elected: 0
     session: 11
 - name: 吳志揚
-  id: id_吳志揚
+  id: id_吳志揚_1969
   birthday: 1969
   elections:
   - year: 2004
@@ -15951,7 +15951,7 @@
     elected: 0
     session: 10
 - name: 黃文玲
-  id: id_黃文玲
+  id: id_黃文玲_1969
   birthday: 1969
   elections:
   - year: 2004
@@ -15971,7 +15971,7 @@
     party: 無黨籍
     elected: 0
 - name: 林滄敏
-  id: id_林滄敏
+  id: id_林滄敏_1958
   birthday: 1958
   elections:
   - year: 2004
@@ -16004,7 +16004,7 @@
     elected: 0
     session: 9
 - name: 張麗善
-  id: id_張麗善
+  id: id_張麗善_1964
   birthday: 1964
   elections:
   - year: 2004
@@ -16029,7 +16029,7 @@
     party: 中國國民黨
     elected: 1
 - name: 潘孟安
-  id: id_潘孟安
+  id: id_潘孟安_1963
   birthday: 1963
   elections:
   - year: 2004
@@ -16061,7 +16061,7 @@
     party: 民主進步黨
     elected: 1
 - name: 黃偉哲
-  id: id_黃偉哲
+  id: id_黃偉哲_1963
   birthday: 1963
   elections:
   - year: 2004
@@ -16099,7 +16099,7 @@
     party: 民主進步黨
     elected: 1
 - name: 高思博
-  id: id_高思博
+  id: id_高思博_1968
   birthday: 1968
   elections:
   - year: 2004
@@ -16120,7 +16120,7 @@
     party: 中國國民黨
     elected: 0
 - name: 鄭運鵬
-  id: id_鄭運鵬
+  id: id_鄭運鵬_1973
   birthday: 1973
   elections:
   - year: 2004
@@ -16153,7 +16153,7 @@
     elected: 0
     session: 11
 - name: 蔡其昌
-  id: id_蔡其昌
+  id: id_蔡其昌_1969
   birthday: 1969
   elections:
   - year: 2004
@@ -16198,7 +16198,7 @@
     elected: 1
     session: 11
 - name: 吳炳輝
-  id: id_吳炳輝
+  id: id_吳炳輝_1967
   birthday: 1967
   elections:
   - year: 2004
@@ -16225,7 +16225,7 @@
     elected: 0
     session: 11
 - name: 謝國樑
-  id: id_謝國樑
+  id: id_謝國樑_1975
   birthday: 1975
   elections:
   - year: 2004
@@ -16252,7 +16252,7 @@
     party: 中國國民黨
     elected: 1
 - name: 蕭美琴
-  id: id_蕭美琴
+  id: id_蕭美琴_1971
   birthday: 1971
   elections:
   - year: 2004
@@ -18370,7 +18370,7 @@
     elected: 1
     session: 11
 - name: 陳俊傑
-  id: id_陳俊傑
+  id: id_陳俊傑_1967
   birthday: 1967
   elections:
   - year: 2005
@@ -18379,7 +18379,7 @@
     party: 無黨籍
     elected: 0
 - name: 黃茂全
-  id: id_黃茂全
+  id: id_黃茂全_1973
   birthday: 1973
   elections:
   - year: 2005
@@ -18388,7 +18388,7 @@
     party: 無黨籍
     elected: 0
 - name: 謝李靜宜
-  id: id_謝李靜宜
+  id: id_謝李靜宜_1958
   birthday: 1958
   elections:
   - year: 2005
@@ -18403,7 +18403,7 @@
     elected: 0
     session: 7
 - name: 吳家登
-  id: id_吳家登
+  id: id_吳家登_1959
   birthday: 1959
   elections:
   - year: 2005
@@ -18412,7 +18412,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳秀龍
-  id: id_陳秀龍
+  id: id_陳秀龍_1937
   birthday: 1937
   elections:
   - year: 2005
@@ -18421,7 +18421,7 @@
     party: 無黨籍
     elected: 0
 - name: 邱炳坤
-  id: id_邱炳坤
+  id: id_邱炳坤_1950
   birthday: 1950
   elections:
   - year: 2005
@@ -18430,7 +18430,7 @@
     party: 民主進步黨
     elected: 0
 - name: 李朝卿
-  id: id_李朝卿
+  id: id_李朝卿_1950
   birthday: 1950
   elections:
   - year: 2005
@@ -18444,7 +18444,7 @@
     party: 中國國民黨
     elected: 1
 - name: 林佳瑜
-  id: id_林佳瑜
+  id: id_林佳瑜_1959
   birthday: 1959
   elections:
   - year: 2005
@@ -18463,7 +18463,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳明振
-  id: id_陳明振
+  id: id_陳明振_1960
   birthday: 1960
   elections:
   - year: 2005
@@ -18472,7 +18472,7 @@
     party: 中國國民黨
     elected: 0
 - name: 張博森
-  id: id_張博森
+  id: id_張博森_1948
   birthday: 1948
   elections:
   - year: 2005
@@ -18481,7 +18481,7 @@
     party: 無黨籍
     elected: 0
 - name: 蔡四結
-  id: id_蔡四結
+  id: id_蔡四結_1943
   birthday: 1943
   elections:
   - year: 2005
@@ -18490,7 +18490,7 @@
     party: 無黨籍
     elected: 0
 - name: 宋麗華
-  id: id_宋麗華
+  id: id_宋麗華_1968
   birthday: 1968
   elections:
   - year: 2005
@@ -18499,7 +18499,7 @@
     party: 無黨籍
     elected: 0
 - name: 劉櫂豪
-  id: id_劉櫂豪
+  id: id_劉櫂豪_1967
   birthday: 1967
   elections:
   - year: 2005
@@ -18552,7 +18552,7 @@
     elected: 0
     session: 11
 - name: 王乾發
-  id: id_王乾發
+  id: id_王乾發_1949
   birthday: 1949
   elections:
   - year: 2005
@@ -18566,7 +18566,7 @@
     party: 中國國民黨
     elected: 1
 - name: 楊綏生
-  id: id_楊綏生
+  id: id_楊綏生_1954
   birthday: 1954
   elections:
   - year: 2005
@@ -18585,7 +18585,7 @@
     party: 中國國民黨
     elected: 0
 - name: 陳福海
-  id: id_陳福海
+  id: id_陳福海_1963
   birthday: 1963
   elections:
   - year: 2005
@@ -18627,7 +18627,7 @@
     party: 無黨籍
     elected: 1
 - name: 陳平
-  id: id_陳平
+  id: id_陳平_1957
   birthday: 1957
   elections:
   - year: 2005
@@ -18636,7 +18636,7 @@
     party: 無黨籍
     elected: 0
 - name: 鄭貴元
-  id: id_鄭貴元
+  id: id_鄭貴元_1952
   birthday: 1952
   elections:
   - year: 2005
@@ -18645,7 +18645,7 @@
     party: 民主進步黨
     elected: 0
 - name: 李貴富
-  id: id_李貴富
+  id: id_李貴富_1961
   birthday: 1961
   elections:
   - year: 2005
@@ -18654,7 +18654,7 @@
     party: 無黨籍
     elected: 0
 - name: 林佳龍
-  id: id_林佳龍
+  id: id_林佳龍_1964
   birthday: 1964
   elections:
   - year: 2005
@@ -18684,7 +18684,7 @@
     party: 民主進步黨
     elected: 0
 - name: 周玉蔻
-  id: id_周玉蔻
+  id: id_周玉蔻_1953
   birthday: 1953
   elections:
   - year: 2006
@@ -18693,7 +18693,7 @@
     party: 台灣團結聯盟
     elected: 0
 - name: 林志昇
-  id: id_林志昇
+  id: id_林志昇_1950
   birthday: 1950
   elections:
   - year: 2006
@@ -18702,7 +18702,7 @@
     party: 保護台灣大聯盟
     elected: 0
 - name: 陳菊
-  id: id_陳菊
+  id: id_陳菊_1950
   birthday: 1950
   elections:
   - year: 2006
@@ -18721,7 +18721,7 @@
     party: 民主進步黨
     elected: 1
 - name: 李沃士
-  id: id_李沃士
+  id: id_李沃士_1960
   birthday: 1960
   elections:
   - year: 2008
@@ -18741,7 +18741,7 @@
     party: 中國國民黨
     elected: 0
 - name: 徐欣瑩
-  id: id_徐欣瑩
+  id: id_徐欣瑩_1972
   birthday: 1972
   elections:
   - year: 2008
@@ -18774,7 +18774,7 @@
     elected: 1
     session: 11
 - name: 姚文智
-  id: id_姚文智
+  id: id_姚文智_1965
   birthday: 1965
   elections:
   - year: 2008
@@ -18801,7 +18801,7 @@
     party: 民主進步黨
     elected: 0
 - name: 蘇清泉
-  id: id_蘇清泉
+  id: id_蘇清泉_1957
   birthday: 1957
   elections:
   - year: 2008
@@ -18821,7 +18821,7 @@
     party: 中國國民黨
     elected: 0
 - name: 劉建國
-  id: id_劉建國
+  id: id_劉建國_1969
   birthday: 1969
   elections:
   - year: 2008
@@ -20580,7 +20580,7 @@
     elected: 0
     session: 7
 - name: 林聰賢
-  id: id_林聰賢
+  id: id_林聰賢_1962
   birthday: 1962
   elections:
   - year: 2009
@@ -20594,7 +20594,7 @@
     party: 民主進步黨
     elected: 1
 - name: 吳富彤
-  id: id_吳富彤
+  id: id_吳富彤_1959
   birthday: 1959
   elections:
   - year: 2009
@@ -20608,7 +20608,7 @@
     party: 無黨籍
     elected: 0
 - name: 鄭文燦
-  id: id_鄭文燦
+  id: id_鄭文燦_1967
   birthday: 1967
   elections:
   - year: 2009
@@ -20633,7 +20633,7 @@
     party: 民主進步黨
     elected: 1
 - name: 張碧琴
-  id: id_張碧琴
+  id: id_張碧琴_1965
   birthday: 1965
   elections:
   - year: 2009
@@ -20642,7 +20642,7 @@
     party: 無黨籍
     elected: 0
 - name: 曾錦祥
-  id: id_曾錦祥
+  id: id_曾錦祥_1952
   birthday: 1952
   elections:
   - year: 2009
@@ -20651,7 +20651,7 @@
     party: 無黨籍
     elected: 0
 - name: 楊長鎮
-  id: id_楊長鎮
+  id: id_楊長鎮_1963
   birthday: 1963
   elections:
   - year: 2009
@@ -20666,7 +20666,7 @@
     elected: 0
     session: 8
 - name: 張春男
-  id: id_張春男
+  id: id_張春男_1941
   birthday: 1941
   elections:
   - year: 2009
@@ -20675,7 +20675,7 @@
     party: 無黨籍
     elected: 0
 - name: 張俊宏
-  id: id_張俊宏
+  id: id_張俊宏_1938
   birthday: 1938
   elections:
   - year: 2009
@@ -20684,7 +20684,7 @@
     party: 無黨籍
     elected: 0
 - name: 吳威志
-  id: id_吳威志
+  id: id_吳威志_1965
   birthday: 1965
   elections:
   - year: 2009
@@ -20699,7 +20699,7 @@
     elected: 0
     session: 9
 - name: 翁玉隆
-  id: id_翁玉隆
+  id: id_翁玉隆_1947
   birthday: 1947
   elections:
   - year: 2009
@@ -20708,7 +20708,7 @@
     party: 無黨籍
     elected: 0
 - name: 蕭登標
-  id: id_蕭登標
+  id: id_蕭登標_1957
   birthday: 1957
   elections:
   - year: 2009
@@ -20717,7 +20717,7 @@
     party: 無黨籍
     elected: 0
 - name: 周典論
-  id: id_周典論
+  id: id_周典論_1955
   birthday: 1955
   elections:
   - year: 2009
@@ -20726,7 +20726,7 @@
     party: 中國國民黨
     elected: 0
 - name: 張志明
-  id: id_張志明
+  id: id_張志明_1964
   birthday: 1964
   elections:
   - year: 2009
@@ -20741,7 +20741,7 @@
     elected: 0
     session: 10
 - name: 杜麗華
-  id: id_杜麗華
+  id: id_杜麗華_1961
   birthday: 1961
   elections:
   - year: 2009
@@ -20750,7 +20750,7 @@
     party: 中國國民黨
     elected: 0
 - name: 蔡見興
-  id: id_蔡見興
+  id: id_蔡見興_1952
   birthday: 1952
   elections:
   - year: 2009
@@ -20759,7 +20759,7 @@
     party: 民主進步黨
     elected: 0
 - name: 曾坤炳
-  id: id_曾坤炳
+  id: id_曾坤炳_1950
   birthday: 1950
   elections:
   - year: 2009
@@ -20774,7 +20774,7 @@
     elected: 0
     session: 8
 - name: 陳財能
-  id: id_陳財能
+  id: id_陳財能_1965
   birthday: 1965
   elections:
   - year: 2009
@@ -20789,7 +20789,7 @@
     elected: 0
     session: 8
 - name: 劉增應
-  id: id_劉增應
+  id: id_劉增應_1958
   birthday: 1958
   elections:
   - year: 2009
@@ -20808,7 +20808,7 @@
     party: 中國國民黨
     elected: 1
 - name: 梁國棟
-  id: id_梁國棟
+  id: id_梁國棟_1956
   birthday: 1956
   elections:
   - year: 2009
@@ -20817,7 +20817,7 @@
     party: 無黨籍
     elected: 0
 - name: 楊榮祥
-  id: id_楊榮祥
+  id: id_楊榮祥_1953
   birthday: 1953
   elections:
   - year: 2009
@@ -20831,7 +20831,7 @@
     party: 無黨籍
     elected: 0
 - name: 林右昌
-  id: id_林右昌
+  id: id_林右昌_1971
   birthday: 1971
   elections:
   - year: 2009
@@ -20856,7 +20856,7 @@
     party: 民主進步黨
     elected: 1
 - name: 李步輝
-  id: id_李步輝
+  id: id_李步輝_1968
   birthday: 1968
   elections:
   - year: 2009
@@ -20865,7 +20865,7 @@
     party: 無黨籍
     elected: 0
 - name: 張通榮
-  id: id_張通榮
+  id: id_張通榮_1949
   birthday: 1949
   elections:
   - year: 2009
@@ -20874,7 +20874,7 @@
     party: 中國國民黨
     elected: 1
 - name: 許明財
-  id: id_許明財
+  id: id_許明財_1953
   birthday: 1953
   elections:
   - year: 2009
@@ -20893,7 +20893,7 @@
     party: 中國國民黨
     elected: 0
 - name: 林修二
-  id: id_林修二
+  id: id_林修二_1941
   birthday: 1941
   elections:
   - year: 2009
@@ -20902,7 +20902,7 @@
     party: 無黨籍
     elected: 0
 - name: 劉俊秀
-  id: id_劉俊秀
+  id: id_劉俊秀_1952
   birthday: 1952
   elections:
   - year: 2009
@@ -20911,7 +20911,7 @@
     party: 民主進步黨
     elected: 0
 - name: 林聖芬
-  id: id_林聖芬
+  id: id_林聖芬_1976
   birthday: 1976
   elections:
   - year: 2009
@@ -20920,7 +20920,7 @@
     party: 無黨籍
     elected: 0
 - name: 涂醒哲
-  id: id_涂醒哲
+  id: id_涂醒哲_1951
   birthday: 1951
   elections:
   - year: 2009
@@ -20939,7 +20939,7 @@
     party: 民主進步黨
     elected: 0
 - name: 蔡英文
-  id: id_蔡英文
+  id: id_蔡英文_1956
   birthday: 1956
   elections:
   - year: 2010
@@ -20966,7 +20966,7 @@
     elected: 1
     ticket: 3
 - name: 吳炎成
-  id: id_吳炎成
+  id: id_吳炎成_1942
   birthday: 1942
   elections:
   - year: 2010
@@ -20975,7 +20975,7 @@
     party: 無黨籍
     elected: 0
 - name: 蕭淑華
-  id: id_蕭淑華
+  id: id_蕭淑華_1961
   birthday: 1961
   elections:
   - year: 2010
@@ -20984,7 +20984,7 @@
     party: 無黨籍
     elected: 0
 - name: 林瑞雄
-  id: id_林瑞雄
+  id: id_林瑞雄_1940
   birthday: 1940
   elections:
   - year: 2012
@@ -20994,7 +20994,7 @@
     elected: 0
     ticket: 3
 - name: 趙衍慶
-  id: id_趙衍慶
+  id: id_趙衍慶_1936
   birthday: 1936
   elections:
   - year: 2012
@@ -21015,7 +21015,7 @@
     elected: 0
     session: 9
 - name: 許乃權
-  id: id_許乃權
+  id: id_許乃權_1956
   birthday: 1956
   elections:
   - year: 2012
@@ -21030,7 +21030,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳以真
-  id: id_陳以真
+  id: id_陳以真_1977
   birthday: 1977
   elections:
   - year: 2012
@@ -21045,7 +21045,7 @@
     party: 中國國民黨
     elected: 0
 - name: 黃玉燕
-  id: id_黃玉燕
+  id: id_黃玉燕_1961
   birthday: 1961
   elections:
   - year: 2012
@@ -21066,7 +21066,7 @@
     party: 無黨籍
     elected: 0
 - name: 王惠美
-  id: id_王惠美
+  id: id_王惠美_1968
   birthday: 1968
   elections:
   - year: 2012
@@ -21092,7 +21092,7 @@
     party: 中國國民黨
     elected: 1
 - name: 饒慶鈴
-  id: id_饒慶鈴
+  id: id_饒慶鈴_1969
   birthday: 1969
   elections:
   - year: 2012
@@ -21112,7 +21112,7 @@
     party: 中國國民黨
     elected: 1
 - name: 黃珊珊
-  id: id_黃珊珊
+  id: id_黃珊珊_1969
   birthday: 1969
   elections:
   - year: 2012
@@ -21133,7 +21133,7 @@
     party: 無黨籍
     elected: 0
 - name: 謝龍介
-  id: id_謝龍介
+  id: id_謝龍介_1961
   birthday: 1961
   elections:
   - year: 2012
@@ -21154,7 +21154,7 @@
     party: 中國國民黨
     elected: 0
 - name: 黃秀芳
-  id: id_黃秀芳
+  id: id_黃秀芳_1971
   birthday: 1971
   elections:
   - year: 2012
@@ -21187,7 +21187,7 @@
     elected: 1
     session: 11
 - name: 李俊俋
-  id: id_李俊俋
+  id: id_李俊俋_1965
   birthday: 1965
   elections:
   - year: 2012
@@ -22880,7 +22880,7 @@
     elected: 0
     session: 8
 - name: 柯文哲
-  id: id_柯文哲
+  id: id_柯文哲_1959
   birthday: 1959
   elections:
   - year: 2014
@@ -22900,7 +22900,7 @@
     elected: 0
     ticket: 1
 - name: 陳汝斌
-  id: id_陳汝斌
+  id: id_陳汝斌_1937
   birthday: 1937
   elections:
   - year: 2014
@@ -22909,7 +22909,7 @@
     party: 三等國民公義人權自救黨
     elected: 0
 - name: 李宏信
-  id: id_李宏信
+  id: id_李宏信_1940
   birthday: 1940
   elections:
   - year: 2014
@@ -22918,7 +22918,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳永昌
-  id: id_陳永昌
+  id: id_陳永昌_1952
   birthday: 1952
   elections:
   - year: 2014
@@ -22927,7 +22927,7 @@
     party: 無黨籍
     elected: 0
 - name: 馮光遠
-  id: id_馮光遠
+  id: id_馮光遠_1953
   birthday: 1953
   elections:
   - year: 2014
@@ -22936,7 +22936,7 @@
     party: 無黨籍
     elected: 0
 - name: 連勝文
-  id: id_連勝文
+  id: id_連勝文_1970
   birthday: 1970
   elections:
   - year: 2014
@@ -22945,7 +22945,7 @@
     party: 中國國民黨
     elected: 0
 - name: 游錫堃
-  id: id_游錫堃
+  id: id_游錫堃_1948
   birthday: 1948
   elections:
   - year: 2014
@@ -22954,7 +22954,7 @@
     party: 民主進步黨
     elected: 0
 - name: 李進順
-  id: id_李進順
+  id: id_李進順_1960
   birthday: 1960
   elections:
   - year: 2014
@@ -22963,7 +22963,7 @@
     party: 無黨籍
     elected: 0
 - name: 許睿智
-  id: id_許睿智
+  id: id_許睿智_1938
   birthday: 1938
   elections:
   - year: 2014
@@ -22972,7 +22972,7 @@
     party: 無黨籍
     elected: 0
 - name: 黃秀霜
-  id: id_黃秀霜
+  id: id_黃秀霜_1961
   birthday: 1961
   elections:
   - year: 2014
@@ -22981,7 +22981,7 @@
     party: 中國國民黨
     elected: 0
 - name: 周可盛
-  id: id_周可盛
+  id: id_周可盛_1957
   birthday: 1957
   elections:
   - year: 2014
@@ -22990,7 +22990,7 @@
     party: 無黨籍
     elected: 0
 - name: 邱淑媞
-  id: id_邱淑媞
+  id: id_邱淑媞_1962
   birthday: 1962
   elections:
   - year: 2014
@@ -22999,7 +22999,7 @@
     party: 中國國民黨
     elected: 0
 - name: 葉芳棟
-  id: id_葉芳棟
+  id: id_葉芳棟_1969
   birthday: 1969
   elections:
   - year: 2014
@@ -23013,7 +23013,7 @@
     party: 無黨籍
     elected: 0
 - name: 莊作兵
-  id: id_莊作兵
+  id: id_莊作兵_1933
   birthday: 1933
   elections:
   - year: 2014
@@ -23022,7 +23022,7 @@
     party: 無黨籍
     elected: 0
 - name: 康世儒
-  id: id_康世儒
+  id: id_康世儒_1964
   birthday: 1964
   elections:
   - year: 2014
@@ -23037,7 +23037,7 @@
     elected: 0
     session: 9
 - name: 江明修
-  id: id_江明修
+  id: id_江明修_1959
   birthday: 1959
   elections:
   - year: 2014
@@ -23046,7 +23046,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳淑芬
-  id: id_陳淑芬
+  id: id_陳淑芬_1960
   birthday: 1960
   elections:
   - year: 2014
@@ -23055,7 +23055,7 @@
     party: 無黨籍
     elected: 0
 - name: 曾國良
-  id: id_曾國良
+  id: id_曾國良_1962
   birthday: 1962
   elections:
   - year: 2014
@@ -23070,7 +23070,7 @@
     elected: 0
     session: 10
 - name: 吳宜臻
-  id: id_吳宜臻
+  id: id_吳宜臻_1970
   birthday: 1970
   elections:
   - year: 2014
@@ -23085,7 +23085,7 @@
     elected: 0
     session: 9
 - name: 洪敏雄
-  id: id_洪敏雄
+  id: id_洪敏雄_1961
   birthday: 1961
   elections:
   - year: 2014
@@ -23099,7 +23099,7 @@
     party: 無黨籍
     elected: 0
 - name: 黃宏成台灣阿成世界偉人
-  id: id_黃宏成台灣阿成世界偉人
+  id: id_黃宏成台灣阿成世界偉人_1968
   birthday: 1968
   elections:
   - year: 2014
@@ -23108,7 +23108,7 @@
     party: 無黨籍
     elected: 0
 - name: 簡太郎
-  id: id_簡太郎
+  id: id_簡太郎_1947
   birthday: 1947
   elections:
   - year: 2014
@@ -23117,7 +23117,7 @@
     party: 中國國民黨
     elected: 0
 - name: 徐榛蔚
-  id: id_徐榛蔚
+  id: id_徐榛蔚_1968
   birthday: 1968
   elections:
   - year: 2014
@@ -23136,7 +23136,7 @@
     party: 中國國民黨
     elected: 1
 - name: 黄師鵬
-  id: id_黄師鵬
+  id: id_黄師鵬_1957
   birthday: 1957
   elections:
   - year: 2014
@@ -23161,7 +23161,7 @@
     party: 無黨籍
     elected: 0
 - name: 朱國華
-  id: id_朱國華
+  id: id_朱國華_1959
   birthday: 1959
   elections:
   - year: 2014
@@ -23170,7 +23170,7 @@
     party: 無黨籍
     elected: 0
 - name: 蔡啟塔
-  id: id_蔡啟塔
+  id: id_蔡啟塔_1958
   birthday: 1958
   elections:
   - year: 2014
@@ -23179,7 +23179,7 @@
     party: 中國國民黨
     elected: 0
 - name: 蘇崑雄
-  id: id_蘇崑雄
+  id: id_蘇崑雄_1956
   birthday: 1956
   elections:
   - year: 2014
@@ -23188,7 +23188,7 @@
     party: 中國國民黨
     elected: 0
 - name: 蘇龍科
-  id: id_蘇龍科
+  id: id_蘇龍科_1960
   birthday: 1960
   elections:
   - year: 2014
@@ -23197,7 +23197,7 @@
     party: 無黨籍
     elected: 0
 - name: 雷由靖
-  id: id_雷由靖
+  id: id_雷由靖_1961
   birthday: 1961
   elections:
   - year: 2014
@@ -23206,7 +23206,7 @@
     party: 無黨籍
     elected: 0
 - name: 汪成華
-  id: id_汪成華
+  id: id_汪成華_1960
   birthday: 1960
   elections:
   - year: 2014
@@ -23221,7 +23221,7 @@
     elected: 0
     session: 9
 - name: 洪志恒
-  id: id_洪志恒
+  id: id_洪志恒_1968
   birthday: 1968
   elections:
   - year: 2014
@@ -23252,7 +23252,7 @@
     party: 無黨籍
     elected: 0
 - name: 莊育民
-  id: id_莊育民
+  id: id_莊育民_1970
   birthday: 1970
   elections:
   - year: 2014
@@ -23261,7 +23261,7 @@
     party: 無黨籍
     elected: 0
 - name: 林水泉
-  id: id_林水泉
+  id: id_林水泉_1948
   birthday: 1948
   elections:
   - year: 2014
@@ -23270,7 +23270,7 @@
     party: 無黨籍
     elected: 0
 - name: 謝立功
-  id: id_謝立功
+  id: id_謝立功_1961
   birthday: 1961
   elections:
   - year: 2014
@@ -23284,7 +23284,7 @@
     party: 中國國民黨
     elected: 0
 - name: 黃景泰
-  id: id_黃景泰
+  id: id_黃景泰_1965
   birthday: 1965
   elections:
   - year: 2014
@@ -23293,7 +23293,7 @@
     party: 無黨籍
     elected: 0
 - name: 何燕堂
-  id: id_何燕堂
+  id: id_何燕堂_1965
   birthday: 1965
   elections:
   - year: 2014
@@ -23302,7 +23302,7 @@
     party: 人民民主陣線
     elected: 0
 - name: 劉正幸
-  id: id_劉正幸
+  id: id_劉正幸_1955
   birthday: 1955
   elections:
   - year: 2014
@@ -23311,7 +23311,7 @@
     party: 無黨籍
     elected: 0
 - name: 林智堅
-  id: id_林智堅
+  id: id_林智堅_1975
   birthday: 1975
   elections:
   - year: 2014
@@ -23325,7 +23325,7 @@
     party: 民主進步黨
     elected: 1
 - name: 吳淑敏
-  id: id_吳淑敏
+  id: id_吳淑敏_1965
   birthday: 1965
   elections:
   - year: 2014
@@ -23340,7 +23340,7 @@
     elected: 0
     session: 9
 - name: 陳泰山
-  id: id_陳泰山
+  id: id_陳泰山_1949
   birthday: 1949
   elections:
   - year: 2014
@@ -23360,7 +23360,7 @@
     party: 無黨籍
     elected: 0
 - name: 許文建
-  id: id_許文建
+  id: id_許文建_1960
   birthday: 1960
   elections:
   - year: 2014
@@ -23369,7 +23369,7 @@
     party: 無黨籍
     elected: 0
 - name: 林詩涵
-  id: id_林詩涵
+  id: id_林詩涵_1981
   birthday: 1981
   elections:
   - year: 2014
@@ -23378,7 +23378,7 @@
     party: 人民民主陣線
     elected: 0
 - name: 王如玄
-  id: id_王如玄
+  id: id_王如玄_1961
   birthday: 1961
   elections:
   - year: 2016
@@ -23388,7 +23388,7 @@
     elected: 0
     ticket: 1
 - name: 陳建仁
-  id: id_陳建仁
+  id: id_陳建仁_1951
   birthday: 1951
   elections:
   - year: 2016
@@ -23398,7 +23398,7 @@
     elected: 1
     ticket: 2
 - name: 吳育仁
-  id: id_吳育仁
+  id: id_吳育仁_1969
   birthday: 1969
   elections:
   - year: 2016
@@ -23413,7 +23413,7 @@
     party: 中國國民黨
     elected: 0
 - name: 蘇柏豪
-  id: id_蘇柏豪
+  id: id_蘇柏豪_1986
   birthday: 1986
   elections:
   - year: 2016
@@ -23428,7 +23428,7 @@
     party: 樹黨
     elected: 0
 - name: 楊鎮浯
-  id: id_楊鎮浯
+  id: id_楊鎮浯_1972
   birthday: 1972
   elections:
   - year: 2016
@@ -23448,7 +23448,7 @@
     party: 中國國民黨
     elected: 0
 - name: 黃源甫
-  id: id_黃源甫
+  id: id_黃源甫_1954
   birthday: 1954
   elections:
   - year: 2016
@@ -23468,7 +23468,7 @@
     party: 無黨籍
     elected: 0
 - name: 黃宏成台灣阿成世界偉人財神總統
-  id: id_黃宏成台灣阿成世界偉人財神總統
+  id: id_黃宏成台灣阿成世界偉人財神總統_1968
   birthday: 1968
   elections:
   - year: 2016
@@ -23494,7 +23494,7 @@
     party: 無黨籍
     elected: 0
 - name: 蔣萬安
-  id: id_蔣萬安
+  id: id_蔣萬安_1978
   birthday: 1978
   elections:
   - year: 2016
@@ -23515,7 +23515,7 @@
     party: 中國國民黨
     elected: 1
 - name: 黃秀龍
-  id: id_黃秀龍
+  id: id_黃秀龍_1960
   birthday: 1960
   elections:
   - year: 2016
@@ -23536,7 +23536,7 @@
     party: 無黨籍
     elected: 0
 - name: 范振揆
-  id: id_范振揆
+  id: id_范振揆_1971
   birthday: 1971
   elections:
   - year: 2016
@@ -23572,7 +23572,7 @@
     party: 中國國民黨
     elected: 1
 - name: 蔡適應
-  id: id_蔡適應
+  id: id_蔡適應_1973
   birthday: 1973
   elections:
   - year: 2016
@@ -23593,7 +23593,7 @@
     party: 民主進步黨
     elected: 0
 - name: 龔偉綸
-  id: id_龔偉綸
+  id: id_龔偉綸_1982
   birthday: 1982
   elections:
   - year: 2016
@@ -26396,7 +26396,7 @@
     elected: 0
     session: 9
 - name: 侯友宜
-  id: id_侯友宜
+  id: id_侯友宜_1957
   birthday: 1957
   elections:
   - year: 2018
@@ -26416,7 +26416,7 @@
     elected: 0
     ticket: 3
 - name: 吳蕚洋
-  id: id_吳蕚洋
+  id: id_吳蕚洋_1960
   birthday: 1960
   elections:
   - year: 2018
@@ -26425,7 +26425,7 @@
     party: 無黨籍
     elected: 0
 - name: 朱梅雪
-  id: id_朱梅雪
+  id: id_朱梅雪_1964
   birthday: 1964
   elections:
   - year: 2018
@@ -26434,7 +26434,7 @@
     party: 無黨籍
     elected: 0
 - name: 宋原通
-  id: id_宋原通
+  id: id_宋原通_1959
   birthday: 1959
   elections:
   - year: 2018
@@ -26443,7 +26443,7 @@
     party: 無黨籍
     elected: 0
 - name: 林義豐
-  id: id_林義豐
+  id: id_林義豐_1948
   birthday: 1948
   elections:
   - year: 2018
@@ -26463,7 +26463,7 @@
     party: 無黨籍
     elected: 0
 - name: 許忠信
-  id: id_許忠信
+  id: id_許忠信_1965
   birthday: 1965
   elections:
   - year: 2018
@@ -26477,7 +26477,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳永和
-  id: id_陳永和
+  id: id_陳永和_1960
   birthday: 1960
   elections:
   - year: 2018
@@ -26492,7 +26492,7 @@
     elected: 0
     session: 11
 - name: 林信華
-  id: id_林信華
+  id: id_林信華_1967
   birthday: 1967
   elections:
   - year: 2018
@@ -26501,7 +26501,7 @@
     party: 無黨籍
     elected: 0
 - name: 林姿妙
-  id: id_林姿妙
+  id: id_林姿妙_1952
   birthday: 1952
   elections:
   - year: 2018
@@ -26515,7 +26515,7 @@
     party: 中國國民黨
     elected: 1
 - name: 陳秋境
-  id: id_陳秋境
+  id: id_陳秋境_1963
   birthday: 1963
   elections:
   - year: 2018
@@ -26529,7 +26529,7 @@
     party: 無黨籍
     elected: 0
 - name: 楊文科
-  id: id_楊文科
+  id: id_楊文科_1951
   birthday: 1951
   elections:
   - year: 2018
@@ -26543,7 +26543,7 @@
     party: 中國國民黨
     elected: 1
 - name: 鄭朝方
-  id: id_鄭朝方
+  id: id_鄭朝方_1980
   birthday: 1980
   elections:
   - year: 2018
@@ -26558,7 +26558,7 @@
     elected: 0
     session: 10
 - name: 朱泰平
-  id: id_朱泰平
+  id: id_朱泰平_1955
   birthday: 1955
   elections:
   - year: 2018
@@ -26567,7 +26567,7 @@
     party: 無黨籍
     elected: 0
 - name: 徐定禎
-  id: id_徐定禎
+  id: id_徐定禎_1961
   birthday: 1961
   elections:
   - year: 2018
@@ -26587,7 +26587,7 @@
     party: 民主進步黨
     elected: 0
 - name: 白雅燦
-  id: id_白雅燦
+  id: id_白雅燦_1945
   birthday: 1945
   elections:
   - year: 2018
@@ -26596,7 +26596,7 @@
     party: 無黨籍
     elected: 0
 - name: 洪國浩
-  id: id_洪國浩
+  id: id_洪國浩_1958
   birthday: 1958
   elections:
   - year: 2018
@@ -26605,7 +26605,7 @@
     party: 民主進步黨
     elected: 0
 - name: 翁章梁
-  id: id_翁章梁
+  id: id_翁章梁_1965
   birthday: 1965
   elections:
   - year: 2018
@@ -26619,7 +26619,7 @@
     party: 民主進步黨
     elected: 1
 - name: 吳芳銘
-  id: id_吳芳銘
+  id: id_吳芳銘_1971
   birthday: 1971
   elections:
   - year: 2018
@@ -26637,7 +26637,7 @@
     party: 無黨籍
     elected: 0
 - name: 李鎔任
-  id: id_李鎔任
+  id: id_李鎔任_1952
   birthday: 1952
   elections:
   - year: 2018
@@ -26652,7 +26652,7 @@
     elected: 0
     session: 10
 - name: 鄺麗貞
-  id: id_鄺麗貞
+  id: id_鄺麗貞_1963
   birthday: 1963
   elections:
   - year: 2018
@@ -26661,7 +26661,7 @@
     party: 無黨籍
     elected: 0
 - name: 黃裕斌
-  id: id_黃裕斌
+  id: id_黃裕斌_1949
   birthday: 1949
   elections:
   - year: 2018
@@ -26670,7 +26670,7 @@
     party: 無黨籍
     elected: 0
 - name: 劉曉玫
-  id: id_劉曉玫
+  id: id_劉曉玫_1973
   birthday: 1973
   elections:
   - year: 2018
@@ -26679,7 +26679,7 @@
     party: 民主進步黨
     elected: 0
 - name: 翁珍聖
-  id: id_翁珍聖
+  id: id_翁珍聖_1970
   birthday: 1970
   elections:
   - year: 2018
@@ -26688,7 +26688,7 @@
     party: 無黨籍
     elected: 0
 - name: 鄭清發
-  id: id_鄭清發
+  id: id_鄭清發_1958
   birthday: 1958
   elections:
   - year: 2018
@@ -26697,7 +26697,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳大松
-  id: id_陳大松
+  id: id_陳大松_1958
   birthday: 1958
   elections:
   - year: 2018
@@ -26706,7 +26706,7 @@
     party: 無黨籍
     elected: 0
 - name: 吳政隆
-  id: id_吳政隆
+  id: id_吳政隆_1966
   birthday: 1966
   elections:
   - year: 2018
@@ -26715,7 +26715,7 @@
     party: 無黨籍
     elected: 0
 - name: 呂華苑
-  id: id_呂華苑
+  id: id_呂華苑_1959
   birthday: 1959
   elections:
   - year: 2018
@@ -26724,7 +26724,7 @@
     party: 無黨籍
     elected: 0
 - name: 朱秀珍
-  id: id_朱秀珍
+  id: id_朱秀珍_1966
   birthday: 1966
   elections:
   - year: 2018
@@ -26733,7 +26733,7 @@
     party: 無黨籍
     elected: 0
 - name: 汪承樺
-  id: id_汪承樺
+  id: id_汪承樺_1960
   birthday: 1960
   elections:
   - year: 2018
@@ -26742,7 +26742,7 @@
     party: 教科文預算保障e聯盟
     elected: 0
 - name: 謝宜璋
-  id: id_謝宜璋
+  id: id_謝宜璋_1967
   birthday: 1967
   elections:
   - year: 2018
@@ -26751,7 +26751,7 @@
     party: 無黨籍
     elected: 0
 - name: 洪和成
-  id: id_洪和成
+  id: id_洪和成_1961
   birthday: 1961
   elections:
   - year: 2018
@@ -26772,7 +26772,7 @@
     elected: 0
     session: 11
 - name: 謝文進
-  id: id_謝文進
+  id: id_謝文進_1954
   birthday: 1954
   elections:
   - year: 2018
@@ -26781,7 +26781,7 @@
     party: 無黨籍
     elected: 0
 - name: 李驥羣
-  id: id_李驥羣
+  id: id_李驥羣_1956
   birthday: 1956
   elections:
   - year: 2018
@@ -26795,7 +26795,7 @@
     party: 無黨籍
     elected: 0
 - name: 郭榮睿
-  id: id_郭榮睿
+  id: id_郭榮睿_1954
   birthday: 1954
   elections:
   - year: 2018
@@ -26804,7 +26804,7 @@
     party: 無黨籍
     elected: 0
 - name: 蕭淑麗
-  id: id_蕭淑麗
+  id: id_蕭淑麗_1967
   birthday: 1967
   elections:
   - year: 2018
@@ -26813,7 +26813,7 @@
     party: 無黨籍
     elected: 0
 - name: 余湘
-  id: id_余湘
+  id: id_余湘_1959
   birthday: 1959
   elections:
   - year: 2020
@@ -26823,7 +26823,7 @@
     elected: 0
     ticket: 1
 - name: 張善政
-  id: id_張善政
+  id: id_張善政_1954
   birthday: 1954
   elections:
   - year: 2020
@@ -26838,7 +26838,7 @@
     party: 中國國民黨
     elected: 1
 - name: 吳益政
-  id: id_吳益政
+  id: id_吳益政_1963
   birthday: 1963
   elections:
   - year: 2020
@@ -26853,7 +26853,7 @@
     elected: 0
     session: 10
 - name: 李眉蓁
-  id: id_李眉蓁
+  id: id_李眉蓁_1979
   birthday: 1979
   elections:
   - year: 2020
@@ -26868,7 +26868,7 @@
     elected: 0
     session: 11
 - name: 柯志恩
-  id: id_柯志恩
+  id: id_柯志恩_1962
   birthday: 1962
   elections:
   - year: 2020
@@ -26883,7 +26883,7 @@
     party: 中國國民黨
     elected: 0
 - name: 周江杰
-  id: id_周江杰
+  id: id_周江杰_1980
   birthday: 1980
   elections:
   - year: 2020
@@ -26898,7 +26898,7 @@
     party: 民主進步黨
     elected: 0
 - name: 劉復嵐
-  id: id_劉復嵐
+  id: id_劉復嵐_1974
   birthday: 1974
   elections:
   - year: 2020
@@ -26919,7 +26919,7 @@
     elected: 0
     session: 11
 - name: 蔡培慧
-  id: id_蔡培慧
+  id: id_蔡培慧_1971
   birthday: 1971
   elections:
   - year: 2020
@@ -26940,7 +26940,7 @@
     elected: 0
     session: 11
 - name: 李問
-  id: id_李問
+  id: id_李問_1989
   birthday: 1989
   elections:
   - year: 2020
@@ -26961,7 +26961,7 @@
     elected: 0
     session: 11
 - name: 林志錦
-  id: id_林志錦
+  id: id_林志錦_1972
   birthday: 1972
   elections:
   - year: 2020
@@ -30072,7 +30072,7 @@
     elected: 0
     session: 11
 - name: 張家豪
-  id: id_張家豪
+  id: id_張家豪_1985
   birthday: 1985
   elections:
   - year: 2022
@@ -30081,7 +30081,7 @@
     party: 台灣動物保護黨
     elected: 0
 - name: 王文娟
-  id: id_王文娟
+  id: id_王文娟_1963
   birthday: 1963
   elections:
   - year: 2022
@@ -30090,7 +30090,7 @@
     party: 無黨籍
     elected: 0
 - name: 鄭匡宇
-  id: id_鄭匡宇
+  id: id_鄭匡宇_1976
   birthday: 1976
   elections:
   - year: 2022
@@ -30099,7 +30099,7 @@
     party: 無黨籍
     elected: 0
 - name: 黃聖峰
-  id: id_黃聖峰
+  id: id_黃聖峰_1979
   birthday: 1979
   elections:
   - year: 2022
@@ -30108,7 +30108,7 @@
     party: 台澎黨
     elected: 0
 - name: 童文薰
-  id: id_童文薰
+  id: id_童文薰_1965
   birthday: 1965
   elections:
   - year: 2022
@@ -30117,7 +30117,7 @@
     party: 無黨籍
     elected: 0
 - name: 施奉先
-  id: id_施奉先
+  id: id_施奉先_1958
   birthday: 1958
   elections:
   - year: 2022
@@ -30126,7 +30126,7 @@
     party: 無黨籍
     elected: 0
 - name: 唐新民
-  id: id_唐新民
+  id: id_唐新民_1950
   birthday: 1950
   elections:
   - year: 2022
@@ -30135,7 +30135,7 @@
     party: 共和黨
     elected: 0
 - name: 謝立康
-  id: id_謝立康
+  id: id_謝立康_1970
   birthday: 1970
   elections:
   - year: 2022
@@ -30144,7 +30144,7 @@
     party: 無黨籍
     elected: 0
 - name: 陳時中
-  id: id_陳時中
+  id: id_陳時中_1952
   birthday: 1952
   elections:
   - year: 2022
@@ -30153,7 +30153,7 @@
     party: 民主進步黨
     elected: 0
 - name: 賴香伶
-  id: id_賴香伶
+  id: id_賴香伶_1968
   birthday: 1968
   elections:
   - year: 2022
@@ -30168,7 +30168,7 @@
     elected: 0
     session: 11
 - name: 陳美妃
-  id: id_陳美妃
+  id: id_陳美妃_1971
   birthday: 1971
   elections:
   - year: 2022
@@ -30177,7 +30177,7 @@
     party: 無黨籍
     elected: 0
 - name: 鄭宇翔
-  id: id_鄭宇翔
+  id: id_鄭宇翔_1981
   birthday: 1981
   elections:
   - year: 2022
@@ -30186,7 +30186,7 @@
     party: 無黨籍
     elected: 0
 - name: 曾尹儷
-  id: id_曾尹儷
+  id: id_曾尹儷_1963
   birthday: 1963
   elections:
   - year: 2022
@@ -30201,7 +30201,7 @@
     elected: 0
     session: 11
 - name: 許鋐哲
-  id: id_許鋐哲
+  id: id_許鋐哲_1949
   birthday: 1949
   elections:
   - year: 2022
@@ -30210,7 +30210,7 @@
     party: 無黨籍
     elected: 0
 - name: 江@2F97F@淵
-  id: id_江@2F97F@淵
+  id: id_江@2F97F@淵_1969
   birthday: 1969
   elections:
   - year: 2022
@@ -30219,7 +30219,7 @@
     party: 民主進步黨
     elected: 0
 - name: 陳琬惠
-  id: id_陳琬惠
+  id: id_陳琬惠_1974
   birthday: 1974
   elections:
   - year: 2022
@@ -30234,7 +30234,7 @@
     elected: 0
     session: 11
 - name: 鍾東錦
-  id: id_鍾東錦
+  id: id_鍾東錦_1963
   birthday: 1963
   elections:
   - year: 2022
@@ -30243,7 +30243,7 @@
     party: 無黨籍
     elected: 1
 - name: 謝福弘
-  id: id_謝福弘
+  id: id_謝福弘_1956
   birthday: 1956
   elections:
   - year: 2022
@@ -30252,7 +30252,7 @@
     party: 中國國民黨
     elected: 0
 - name: 吳盛聖
-  id: id_吳盛聖
+  id: id_吳盛聖_1979
   birthday: 1979
   elections:
   - year: 2022
@@ -30261,7 +30261,7 @@
     party: 無黨籍
     elected: 0
 - name: 宋國鼎
-  id: id_宋國鼎
+  id: id_宋國鼎_1981
   birthday: 1981
   elections:
   - year: 2022
@@ -30270,7 +30270,7 @@
     party: 時代力量
     elected: 0
 - name: 蕭仁正
-  id: id_蕭仁正
+  id: id_蕭仁正_1953
   birthday: 1953
   elections:
   - year: 2022
@@ -30279,7 +30279,7 @@
     party: 無黨籍
     elected: 0
 - name: 王永慶
-  id: id_王永慶
+  id: id_王永慶_1962
   birthday: 1962
   elections:
   - year: 2022
@@ -30288,7 +30288,7 @@
     party: 無黨籍
     elected: 0
 - name: 王育敏
-  id: id_王育敏
+  id: id_王育敏_1971
   birthday: 1971
   elections:
   - year: 2022
@@ -30297,7 +30297,7 @@
     party: 中國國民黨
     elected: 0
 - name: 詹智鈞
-  id: id_詹智鈞
+  id: id_詹智鈞_1976
   birthday: 1976
   elections:
   - year: 2022
@@ -30306,7 +30306,7 @@
     party: 時代力量
     elected: 0
 - name: 周春米
-  id: id_周春米
+  id: id_周春米_1966
   birthday: 1966
   elections:
   - year: 2022
@@ -30315,7 +30315,7 @@
     party: 民主進步黨
     elected: 1
 - name: 陳長宏
-  id: id_陳長宏
+  id: id_陳長宏_1965
   birthday: 1965
   elections:
   - year: 2022
@@ -30330,7 +30330,7 @@
     elected: 0
     session: 11
 - name: 谷辣斯．尤達卡 Kolas Yotaka
-  id: id_谷辣斯．尤達卡KolasYotaka
+  id: id_谷辣斯．尤達卡KolasYotaka_1974
   birthday: 1974
   elections:
   - year: 2022
@@ -30339,7 +30339,7 @@
     party: 民主進步黨
     elected: 0
 - name: 葉竹林
-  id: id_葉竹林
+  id: id_葉竹林_1962
   birthday: 1962
   elections:
   - year: 2022
@@ -30348,7 +30348,7 @@
     party: 無黨籍
     elected: 0
 - name: 曹爾元
-  id: id_曹爾元
+  id: id_曹爾元_1958
   birthday: 1958
   elections:
   - year: 2022
@@ -30357,7 +30357,7 @@
     party: 中國國民黨
     elected: 0
 - name: 王忠銘
-  id: id_王忠銘
+  id: id_王忠銘_1958
   birthday: 1958
   elections:
   - year: 2022
@@ -30366,7 +30366,7 @@
     party: 中國國民黨
     elected: 1
 - name: 李應文
-  id: id_李應文
+  id: id_李應文_1979
   birthday: 1979
   elections:
   - year: 2022
@@ -30375,7 +30375,7 @@
     party: 無黨籍
     elected: 0
 - name: 朱紀瑋
-  id: id_朱紀瑋
+  id: id_朱紀瑋_1961
   birthday: 1961
   elections:
   - year: 2022
@@ -30384,7 +30384,7 @@
     party: 龍黨
     elected: 0
 - name: 陳薇仲
-  id: id_陳薇仲
+  id: id_陳薇仲_1990
   birthday: 1990
   elections:
   - year: 2022
@@ -30393,7 +30393,7 @@
     party: 時代力量
     elected: 0
 - name: 曾國民
-  id: id_曾國民
+  id: id_曾國民_1962
   birthday: 1962
   elections:
   - year: 2022
@@ -30402,7 +30402,7 @@
     party: 無黨籍
     elected: 0
 - name: 黃希賢
-  id: id_黃希賢
+  id: id_黃希賢_1965
   birthday: 1965
   elections:
   - year: 2022
@@ -30411,7 +30411,7 @@
     party: 無黨籍
     elected: 0
 - name: 林耕仁
-  id: id_林耕仁
+  id: id_林耕仁_1960
   birthday: 1960
   elections:
   - year: 2022
@@ -30420,7 +30420,7 @@
     party: 中國國民黨
     elected: 0
 - name: 沈慧虹
-  id: id_沈慧虹
+  id: id_沈慧虹_1967
   birthday: 1967
   elections:
   - year: 2022
@@ -30429,7 +30429,7 @@
     party: 民主進步黨
     elected: 0
 - name: 高虹安
-  id: id_高虹安
+  id: id_高虹安_1984
   birthday: 1984
   elections:
   - year: 2022
@@ -30438,7 +30438,7 @@
     party: 台灣民眾黨
     elected: 1
 - name: 鄭凱升
-  id: id_鄭凱升
+  id: id_鄭凱升_1978
   birthday: 1978
   elections:
   - year: 2022
@@ -30447,7 +30447,7 @@
     party: 無黨籍
     elected: 0
 - name: 吳欣盈
-  id: id_吳欣盈
+  id: id_吳欣盈_1978
   birthday: 1978
   elections:
   - year: 2024
