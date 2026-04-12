@@ -36,7 +36,7 @@
 # uv run python main.py --type legislator --session 11
 
 ## ---------------------- 立法委員(不分區) ----------------------
-uv run python main.py --type party-list --session 7
+# uv run python main.py --type party-list --session 7
 uv run python main.py --type party-list --session 8
 uv run python main.py --type party-list --session 9
 uv run python main.py --type party-list --session 10
