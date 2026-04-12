@@ -22,17 +22,14 @@ def test_keep_english():
     assert normalize_name("SaidhaiTahovecahe") == "SaidhaiTahovecahe"
 
 
-def test_generate_id_no_conflict():
+def test_generate_id_no_birthday():
     assert generate_id("許淑華") == "id_許淑華"
 
 
-def test_generate_id_with_birth_year():
+def test_generate_id_int_birthday():
     assert generate_id("許淑華", birthday=1973) == "id_許淑華_1973"
 
 
-def test_generate_id_with_birth_yearmonth():
-    assert generate_id("許淑華", birthday="1973/05") == "id_許淑華_197305"
-
-
-def test_generate_id_with_full_birthday():
-    assert generate_id("許淑華", birthday="1973/05/22") == "id_許淑華_19730522"
+def test_generate_id_str_birthday_year_only():
+    # str "1973" → only year used
+    assert generate_id("許淑華", birthday="1973") == "id_許淑華_1973"

@@ -1,6 +1,5 @@
 import re
 
-# 先移除括號及其內容，再移除其餘特殊符號與空白
 _BRACKET_PATTERN = re.compile(r'[(\（][^)\）]*[)\）]|[【][^】]*[】]')
 _REMOVE_PATTERN = re.compile(r'[\s\u3000‧·•]')
 
@@ -14,13 +13,11 @@ def normalize_name(name: str) -> str:
 def generate_id(name: str, birthday=None) -> str:
     """
     產生候選人唯一 ID。
-    birthday 可為 int（僅年份）、str "yyyy/mm" 或 "yyyy/mm/dd"、或 None。
+    birthday 可為 int（僅年份）、str（任意格式，只取前 4 碼）、或 None。
+    ID 格式：id_{正規化姓名} 或 id_{正規化姓名}_{yyyy}
     """
     base = normalize_name(name)
     if birthday is None:
         return f"id_{base}"
-    if isinstance(birthday, int):
-        return f"id_{base}_{birthday}"
-    parts = str(birthday).split('/')
-    suffix = ''.join(parts)
-    return f"id_{base}_{suffix}"
+    year = int(str(birthday)[:4])
+    return f"id_{base}_{year}"
