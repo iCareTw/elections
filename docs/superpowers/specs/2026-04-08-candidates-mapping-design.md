@@ -31,7 +31,7 @@ elections/
 ```yaml
 - name: string        # 完整原始姓名（含英文、原住民族名）
   id: string          # 唯一識別碼（見 ID 規則）
-  birthday: string|integer|null  # yyyy/mm/dd（完整）或 yyyy（僅年份）或 null
+  birthday: integer|null  # yyyy（僅年份整數）或 null
   elections:
     - year: integer   # 西元年份
       type: string    # 必須是 election_types.yaml 中的合法值
@@ -45,7 +45,7 @@ elections/
 
 ```yaml
 - name: 柯文哲
-  id: id_柯文哲
+  id: id_柯文哲_1959
   birthday: 1959
   elections:
     - year: 2014
@@ -65,7 +65,7 @@ elections/
       elected: 0
 
 - name: 賴清德
-  id: id_賴清德
+  id: id_賴清德_1959
   birthday: 1959
   elections:
     - year: 2024
@@ -75,7 +75,7 @@ elections/
       elected: 1
 
 - name: 蔣萬安
-  id: id_蔣萬安
+  id: id_蔣萬安_1978
   birthday: 1978
   elections:
     - year: 2022
@@ -139,17 +139,15 @@ id_<正規化姓名>
 
 | 情況 | ID 格式 |
 |------|---------|
-| 無衝突 | `id_許淑華` |
-| 同名，不同生年 | `id_許淑華_1973` / `id_許淑華_1975` |
-| 同名，同年，不同月 | `id_許淑華_197305` / `id_許淑華_197310` |
-| 同名，同年月，不同日 | `id_許淑華_19730522` / `id_許淑華_19731015` |
-| 同名，同生日 | 人工處理 |
+| 有 birthday | `id_許淑華_1973` |
+| 無 birthday | `id_許淑華` |
+| 同名同年（罕見） | 人工處理 |
 
 ---
 
 ## 生日格式（birthday）
 
-原始資料有完整日期時填 `yyyy/mm/dd`；僅有年份時填 `yyyy`（整數）；無資料時填 `null`。自動化程序會盡量從原始資料填入，不足之處可事後人工補齊。
+birthday 一律填整數年份 `yyyy`；無資料時填 `null`。
 
 ---
 
@@ -222,7 +220,7 @@ uv run python main.py --type president --year 2024
 |------|---------|
 | **NEW** — 現有 yaml 找不到此人 | 自動新增 |
 | **EXISTS** — 找到同一人，新增一筆 election | 自動合併 |
-| **CONFLICT** — 同名多人，或 birthday 不符 | 暫停，請使用者人工判斷 |
+| **CONFLICT** — 同名，但 birthday 年份或 party 不符 | 暫停，請使用者人工判斷 |
 
 自動處理的筆數會列出摘要；CONFLICT 才會逐一詢問使用者選擇：
 - 合併至現有某人
