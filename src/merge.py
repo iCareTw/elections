@@ -7,6 +7,8 @@ def _build_election(r: dict) -> dict:
         base['session'] = r['session']
     if 'ticket' in r:
         base['ticket'] = r['ticket']
+    if 'order_id' in r:
+        base['order_id'] = r['order_id']
     return base
 
 

@@ -22,6 +22,20 @@ PARSERS = {
     'legislator': (parse_legislator, DATA_DIR / 'legislator'),
 }
 
+PARTY_LIST_TYPES = {'party-list'}
+
+
+def load_party_list_yaml(session: int) -> list[dict]:
+    path = Path(f'{session}th.yaml')
+    if not path.exists():
+        print(f'找不到 {path}', file=sys.stderr)
+        sys.exit(1)
+    with open(path, encoding='utf-8') as f:
+        records = yaml.safe_load(f) or []
+    for r in records:
+        r['elected'] = None
+    return records
+
 
 def _president_year(path: Path) -> int:
     m = re.search(r'第(\d+)任', path.stem)
@@ -66,6 +80,8 @@ def _make_election(r: dict) -> dict:
         base['session'] = r['session']
     if 'ticket' in r:
         base['ticket'] = r['ticket']
+    if 'order_id' in r:
+        base['order_id'] = r['order_id']
     return base
 
 
@@ -102,7 +118,11 @@ def _resolve_birthday(c: dict, r: dict) -> None:
 
 
 def _fmt_elected(elected) -> str:
-    return '\033[32m當選\033[0m' if elected == 1 else '未當選'
+    if elected == 1:
+        return '\033[32m當選\033[0m'
+    if elected is None:
+        return '（待確認）'
+    return '未當選'
 
 
 def _fmt_election_label(e: dict) -> str:
@@ -152,7 +172,26 @@ def _print_conflict_panel(r: dict, matches: list[dict]) -> None:
     print()
 
 
-def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]:
+def _merge_birthday(c: dict, r: dict, auto_upgrade: bool) -> None:
+    """合併時更新生日。auto_upgrade=True 時直接採用新資料，不互動詢問。"""
+    if not r['birthday']:
+        return
+    if c['birthday'] == r['birthday']:
+        return
+    if auto_upgrade:
+        c['birthday'] = r['birthday']
+        c['id'] = generate_id(c['name'], c['birthday'])
+    elif not c['birthday']:
+        upd = input(f'  現有生年為空，是否補上 {r["birthday"]}？[y/n] > ').strip().lower()
+        if upd == 'y':
+            c['birthday'] = r['birthday']
+            c['id'] = generate_id(c['name'], c['birthday'])
+    else:
+        _resolve_birthday(c, r)
+
+
+def resolve_conflicts(conflicts: list[dict], existing: list[dict],
+                      auto_upgrade_birthday: bool = False) -> list[dict]:
     """互動式處理 conflicts，回傳需要追加至 existing 的新候選人。"""
     to_add = []
 
@@ -170,13 +209,7 @@ def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]
                     c = matches[0]
                     c['elections'].append(_make_election(r))
                     c['elections'].sort(key=lambda e: e['year'])
-                    if r['birthday'] and c['birthday'] != r['birthday']:
-                        _resolve_birthday(c, r)
-                    elif r['birthday'] and not c['birthday']:
-                        upd = input(f'  現有生年為空，是否補上 {r["birthday"]}？[y/n] > ').strip().lower()
-                        if upd == 'y':
-                            c['birthday'] = r['birthday']
-                            c['id'] = generate_id(c['name'], c['birthday'])
+                    _merge_birthday(c, r, auto_upgrade_birthday)
                     break
                 elif ans == 'n':
                     _add_as_new(r, matches, to_add)
@@ -194,13 +227,7 @@ def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]
                     c = matches[int(ans) - 1]
                     c['elections'].append(_make_election(r))
                     c['elections'].sort(key=lambda e: e['year'])
-                    if r['birthday'] and c['birthday'] != r['birthday']:
-                        _resolve_birthday(c, r)
-                    elif r['birthday'] and not c['birthday']:
-                        upd = input(f'  現有生年為空，是否補上 {r["birthday"]}？[y/n] > ').strip().lower()
-                        if upd == 'y':
-                            c['birthday'] = r['birthday']
-                            c['id'] = generate_id(c['name'], c['birthday'])
+                    _merge_birthday(c, r, auto_upgrade_birthday)
                     break
                 elif ans == 'n':
                     _add_as_new(r, matches, to_add)
@@ -213,33 +240,43 @@ def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]
 
 
 def main():
+    all_types = list(PARSERS.keys()) + list(PARTY_LIST_TYPES)
     parser = argparse.ArgumentParser(description='解析選舉資料並更新 candidates.yaml')
-    parser.add_argument('--type', required=True, choices=list(PARSERS.keys()), help='選舉類型')
+    parser.add_argument('--type', required=True, choices=all_types, help='選舉類型')
     parser.add_argument('--year', type=int, help='西元年份 (president/mayor)')
-    parser.add_argument('--session', type=int, help='屆次 (legislator)')
+    parser.add_argument('--session', type=int, help='屆次 (legislator/party-list)')
     args = parser.parse_args()
 
-    if args.type == 'legislator':
+    is_party_list = args.type in PARTY_LIST_TYPES
+
+    if is_party_list:
         if not args.session:
-            print('--type legislator 需要 --session', file=sys.stderr)
+            print('--type party-list 需要 --session', file=sys.stderr)
             sys.exit(1)
+        records = load_party_list_yaml(args.session)
+        print(f'載入第 {args.session} 屆不分區立委名單，共 {len(records)} 筆')
     else:
-        if not args.year:
-            print(f'--type {args.type} 需要 --year', file=sys.stderr)
+        if args.type in ('legislator',):
+            if not args.session:
+                print('--type legislator 需要 --session', file=sys.stderr)
+                sys.exit(1)
+        else:
+            if not args.year:
+                print(f'--type {args.type} 需要 --year', file=sys.stderr)
+                sys.exit(1)
+
+        parse_fn, _ = PARSERS[args.type]
+        xlsx_files = find_xlsx(args.type, year=args.year or 0, session=args.session or 0)
+        if not xlsx_files:
+            label = f'session {args.session}' if args.type == 'legislator' else str(args.year)
+            print(f'找不到 {args.type} {label} 的資料檔', file=sys.stderr)
             sys.exit(1)
 
-    parse_fn, _ = PARSERS[args.type]
-    xlsx_files = find_xlsx(args.type, year=args.year or 0, session=args.session or 0)
-    if not xlsx_files:
-        label = f'session {args.session}' if args.type == 'legislator' else str(args.year)
-        print(f'找不到 {args.type} {label} 的資料檔', file=sys.stderr)
-        sys.exit(1)
-
-    print(f'解析 {len(xlsx_files)} 個檔案 ...')
-    records = []
-    for f in xlsx_files:
-        records.extend(parse_fn(f))
-    print(f'共 {len(records)} 筆記錄')
+        print(f'解析 {len(xlsx_files)} 個檔案 ...')
+        records = []
+        for f in xlsx_files:
+            records.extend(parse_fn(f))
+        print(f'共 {len(records)} 筆記錄')
 
     existing = load_yaml(CANDIDATES_FILE)
 
@@ -261,7 +298,8 @@ def main():
         result = apply_auto(classified['auto'], existing)
 
         if classified['conflicts']:
-            extra = resolve_conflicts(classified['conflicts'], result)
+            extra = resolve_conflicts(classified['conflicts'], result,
+                                      auto_upgrade_birthday=is_party_list)
             result.extend(extra)
 
     valid_types = load_valid_types()
