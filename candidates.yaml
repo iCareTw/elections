@@ -190,6 +190,13 @@
     region: 臺北市
     party: 民主進步黨
     elected: 0
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 18
   - year: 2018
     type: 縣市首長
     region: 新北市
@@ -488,6 +495,13 @@
     region: 彰化縣
     party: 民主進步黨
     elected: 0
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 15
 - name: 彭百顯
   id: id_彭百顯_1949
   birthday: 1949
@@ -1271,6 +1285,13 @@
     region: 臺北市
     party: 民主進步黨
     elected: 0
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 4
 - name: 施明德
   id: id_施明德_1941
   birthday: 1941
@@ -1435,6 +1456,13 @@
     elected: null
     session: 7
     order_id: 2
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 6
   - year: 2016
     type: 立法委員
     region: 南投縣 第02選舉區
@@ -1826,6 +1854,13 @@
     party: 民主進步黨
     elected: 1
     session: 5
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 8
   - year: 2018
     type: 縣市首長
     region: 高雄市
@@ -1981,6 +2016,13 @@
     elected: null
     session: 7
     order_id: 13
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 22
 - name: 曾振農
   id: id_曾振農_1951
   birthday: 1951
@@ -2098,6 +2140,13 @@
     elected: null
     session: 7
     order_id: 20
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 14
 - name: 何聖隆
   id: id_何聖隆_1954
   birthday: 1954
@@ -2583,6 +2632,13 @@
     elected: null
     session: 7
     order_id: 5
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 2
   - year: 2016
     type: 立法委員
     region: 新竹市選舉區
@@ -2668,6 +2724,13 @@
     elected: null
     session: 7
     order_id: 10
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 新黨
+    elected: null
+    session: 8
+    order_id: 1
 - name: 翁仁彥
   id: id_翁仁彥_1954
   birthday: 1954
@@ -3572,6 +3635,13 @@
     elected: null
     session: 7
     order_id: 4
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 8
 - name: 趙寧
   id: id_趙寧_1943
   birthday: 1943
@@ -4260,6 +4330,13 @@
     elected: null
     session: 7
     order_id: 2
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 6
   - year: 2020
     type: 立法委員
     region: 臺南市 第06選舉區
@@ -4617,6 +4694,13 @@
     party: 民主進步黨
     elected: 0
     session: 7
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 24
 - name: 鄭逢時
   id: id_鄭逢時_1941
   birthday: 1941
@@ -5787,6 +5871,13 @@
     elected: null
     session: 7
     order_id: 1
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 1
 - name: 葉發欉
   id: id_葉發欉_1957
   birthday: 1957
@@ -5833,6 +5924,13 @@
     party: 民主進步黨
     elected: 0
     session: 3
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 32
 - name: 蕭金蘭
   id: id_蕭金蘭_1948
   birthday: 1948
@@ -5877,6 +5975,13 @@
     party: 紅黨
     elected: null
     session: 7
+    order_id: 2
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣國民會議
+    elected: null
+    session: 8
     order_id: 2
 - name: 胡建新
   id: id_胡建新_1926
@@ -6354,6 +6459,13 @@
     party: 民主進步黨
     elected: 0
     ticket: 1
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 20
 - name: 林洋港
   id: id_林洋港_1927
   birthday: 1927
@@ -6579,6 +6691,13 @@
     region: 苗栗縣
     party: 無黨籍
     elected: 1
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 3
 - name: 何智輝
   id: id_何智輝_1950
   birthday: 1950
@@ -7309,6 +7428,13 @@
     elected: null
     session: 7
     order_id: 3
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 新黨
+    elected: null
+    session: 8
+    order_id: 4
 - name: 林南生
   id: id_林南生_1952
   birthday: 1952
@@ -9921,6 +10047,13 @@
     party: 中國國民黨
     elected: 1
     session: 7
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 21
 - name: 張清芳
   id: id_張清芳_1952
   birthday: 1952
@@ -9953,6 +10086,13 @@
     party: 無黨籍
     elected: 0
     session: 4
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣團結聯盟
+    elected: null
+    session: 8
+    order_id: 5
 - name: 黃聲鏞
   id: id_黃聲鏞_1947
   birthday: 1947
@@ -10246,6 +10386,13 @@
     party: 民主進步黨
     elected: 1
     session: 6
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 28
 - name: 劉銘龍
   id: id_劉銘龍_1964
   birthday: 1964
@@ -10851,6 +10998,13 @@
     party: 民主進步黨
     elected: 0
     session: 7
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 12
   - year: 2016
     type: 立法委員
     region: 新北市 第04選舉區
@@ -13106,6 +13260,13 @@
     party: 親民黨
     elected: 0
     session: 6
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 8
 - name: 陳世慶
   id: id_陳世慶_1933
   birthday: 1933
@@ -13993,6 +14154,13 @@
     party: 台灣團結聯盟
     elected: 0
     session: 6
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中華民國臺灣基本法連線
+    elected: null
+    session: 8
+    order_id: 2
 - name: 紀國棟
   id: id_紀國棟_1960
   birthday: 1960
@@ -14016,6 +14184,13 @@
     elected: null
     session: 7
     order_id: 13
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 15
   - year: 2016
     type: 立法委員
     region: 臺中市 第02選舉區
@@ -14446,6 +14621,13 @@
     party: 民主進步黨
     elected: 0
     session: 7
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 10
 - name: 林信賢
   id: id_林信賢_1947
   birthday: 1947
@@ -16261,6 +16443,13 @@
     party: 無黨籍
     elected: 0
     session: 6
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣團結聯盟
+    elected: null
+    session: 8
+    order_id: 2
   - year: 2014
     type: 縣市首長
     region: 彰化縣
@@ -16562,6 +16751,13 @@
     party: 民主進步黨
     elected: 1
     session: 6
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 7
   - year: 2016
     type: 立法委員
     region: 花蓮縣選舉區
@@ -17112,6 +17308,13 @@
     party: 中國國民黨
     elected: 0
     session: 6
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 新黨
+    elected: null
+    session: 8
+    order_id: 5
 - name: 黃德隆
   id: id_黃德隆_1950
   birthday: 1950
@@ -17280,6 +17483,13 @@
     party: 民主進步黨
     elected: 1
     session: 6
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 25
 - name: 莊喬松
   id: id_莊喬松_1962
   birthday: 1962
@@ -18349,6 +18559,13 @@
     party: 無黨籍
     elected: 0
     session: 7
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 31
 - name: 管碧玲
   id: id_管碧玲_1956
   birthday: 1956
@@ -18694,6 +18911,13 @@
     elected: null
     session: 7
     order_id: 10
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 17
   - year: 2016
     type: 立法委員
     region: 平地原住民 全國
@@ -19153,6 +19377,13 @@
     party: 中國國民黨
     elected: 0
     session: 7
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 11
   - year: 2018
     type: 縣市首長
     region: 屏東縣
@@ -19716,6 +19947,13 @@
     party: 台灣團結聯盟
     elected: 0
     session: 7
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣團結聯盟
+    elected: null
+    session: 8
+    order_id: 9
 - name: 張歷元
   id: id_張歷元_1961
   birthday: 1961
@@ -20066,6 +20304,13 @@
     party: 民主進步黨
     elected: 1
     session: 7
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 14
   - year: 2020
     type: 立法委員
     region: 新北市 第03選舉區
@@ -20220,6 +20465,13 @@
     party: 台灣團結聯盟
     elected: 0
     session: 7
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣團結聯盟
+    elected: null
+    session: 8
+    order_id: 8
 - name: 洪一平
   id: id_洪一平_1945
   birthday: 1945
@@ -20354,6 +20606,13 @@
     party: 綠黨
     elected: 0
     session: 7
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 綠黨
+    elected: null
+    session: 8
+    order_id: 2
 - name: 何智弘
   id: id_何智弘_1979
   birthday: 1979
@@ -20922,6 +21181,13 @@
     party: 民主進步黨
     elected: 0
     session: 7
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 29
 - name: 涂醒哲
   id: id_涂醒哲_1951
   birthday: 1951
@@ -20938,6 +21204,13 @@
     region: 嘉義市
     party: 民主進步黨
     elected: 0
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 33
   - year: 2014
     type: 縣市首長
     region: 嘉義市
@@ -20999,6 +21272,13 @@
     elected: null
     session: 7
     order_id: 19
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 16
   - year: 2014
     type: 縣市首長
     region: 新北市
@@ -21032,6 +21312,13 @@
     elected: null
     session: 7
     order_id: 22
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 16
   - year: 2016
     type: 立法委員
     region: 臺南市 第04選舉區
@@ -21093,6 +21380,13 @@
     elected: null
     session: 7
     order_id: 2
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中華民國臺灣基本法連線
+    elected: null
+    session: 8
+    order_id: 4
 - name: 黃千明
   id: id_黃千明_1942
   birthday: 1942
@@ -21104,6 +21398,13 @@
     elected: null
     session: 7
     order_id: 3
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中華民國臺灣基本法連線
+    elected: null
+    session: 8
+    order_id: 1
 - name: 陳玉峯
   id: id_陳玉峯_1953
   birthday: 1953
@@ -21159,6 +21460,13 @@
     elected: null
     session: 7
     order_id: 7
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣團結聯盟
+    elected: null
+    session: 8
+    order_id: 3
 - name: 李宜潔
   id: id_李宜潔_1970
   birthday: 1970
@@ -21214,6 +21522,13 @@
     elected: null
     session: 7
     order_id: 14
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣團結聯盟
+    elected: null
+    session: 8
+    order_id: 6
 - name: 李安妮
   id: id_李安妮_1954
   birthday: 1954
@@ -21269,6 +21584,13 @@
     elected: null
     session: 7
     order_id: 1
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 1
 - name: 黃淑英
   id: id_黃淑英_1951
   birthday: 1951
@@ -21280,6 +21602,13 @@
     elected: null
     session: 7
     order_id: 6
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 19
 - name: 薛凌
   id: id_薛凌_1954
   birthday: 1954
@@ -21291,6 +21620,13 @@
     elected: null
     session: 7
     order_id: 8
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 13
 - name: 田秋堇
   id: id_田秋堇_1954
   birthday: 1954
@@ -21302,6 +21638,13 @@
     elected: null
     session: 7
     order_id: 14
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 5
 - name: 張富美
   id: id_張富美_1938
   birthday: 1938
@@ -21324,6 +21667,13 @@
     elected: null
     session: 7
     order_id: 18
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 人民最大黨
+    elected: null
+    session: 8
+    order_id: 1
 - name: 楊芳婉
   id: id_楊芳婉_1956
   birthday: 1956
@@ -21335,6 +21685,13 @@
     elected: null
     session: 7
     order_id: 20
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 21
 - name: 吳明敏
   id: id_吳明敏_1948
   birthday: 1948
@@ -21412,6 +21769,13 @@
     elected: null
     session: 7
     order_id: 30
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 26
 - name: 麗依京．尤瑪
   id: id_麗依京．尤瑪_1954
   birthday: 1954
@@ -21676,6 +22040,13 @@
     elected: null
     session: 7
     order_id: 24
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 20
 - name: 黃良華
   id: id_黃良華_1948
   birthday: 1948
@@ -21708,6 +22079,13 @@
     party: 中國國民黨
     elected: null
     session: 7
+    order_id: 28
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
     order_id: 28
 - name: 邱美瑞
   id: id_邱美瑞_1952
@@ -21753,6 +22131,13 @@
     elected: null
     session: 7
     order_id: 1
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 4
 - name: 陳耀昌
   id: id_陳耀昌_1949
   birthday: 1949
@@ -21785,6 +22170,13 @@
     party: 紅黨
     elected: null
     session: 7
+    order_id: 5
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣國民會議
+    elected: null
+    session: 8
     order_id: 5
 - name: 宗景宜
   id: id_宗景宜_1952
@@ -21954,6 +22346,13 @@
     region: 雲林縣
     party: 中國國民黨
     elected: 0
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 33
   - year: 2016
     type: 立法委員
     region: 雲林縣 第02選舉區
@@ -24096,6 +24495,831 @@
     party: 無黨籍
     elected: 0
     session: 8
+- name: 吳宜臻
+  id: id_吳宜臻_1970
+  birthday: 1970
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 3
+  - year: 2014
+    type: 縣市首長
+    region: 苗栗縣
+    party: 民主進步黨
+    elected: 0
+  - year: 2016
+    type: 立法委員
+    region: 苗栗縣 第02選舉區
+    party: 民主進步黨
+    elected: 0
+    session: 9
+- name: 吳育仁
+  id: id_吳育仁_1969
+  birthday: 1969
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 7
+  - year: 2016
+    type: 立法委員
+    region: 嘉義市選舉區
+    party: 中國國民黨
+    elected: 0
+    session: 9
+  - year: 2018
+    type: 縣市首長
+    region: 嘉義縣
+    party: 中國國民黨
+    elected: 0
+- name: 劉國隆
+  id: id_劉國隆_1959
+  birthday: 1959
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣團結聯盟
+    elected: null
+    session: 8
+    order_id: 7
+  - year: 2016
+    type: 立法委員
+    region: 臺中市 第05選舉區
+    party: 台灣團結聯盟
+    elected: 0
+    session: 9
+- name: 許忠信
+  id: id_許忠信_1965
+  birthday: 1965
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣團結聯盟
+    elected: null
+    session: 8
+    order_id: 1
+  - year: 2018
+    type: 縣市首長
+    region: 臺南市
+    party: 無黨籍
+    elected: 0
+  - year: 2022
+    type: 縣市首長
+    region: 臺南市
+    party: 無黨籍
+    elected: 0
+- name: 康淑敏
+  id: id_康淑敏_1959
+  birthday: 1959
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中華民國臺灣基本法連線
+    elected: null
+    session: 8
+    order_id: 6
+  - year: 2020
+    type: 立法委員
+    region: 臺南市 第01選舉區
+    party: 中華聯合黨
+    elected: 0
+    session: 10
+- name: 王育敏
+  id: id_王育敏_1971
+  birthday: 1971
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 2
+  - year: 2022
+    type: 縣市首長
+    region: 嘉義縣
+    party: 中國國民黨
+    elected: 0
+- name: 王鴻薇
+  id: id_王鴻薇_1964
+  birthday: 1964
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 新黨
+    elected: null
+    session: 8
+    order_id: 2
+  - year: 2024
+    type: 立法委員
+    region: 臺北市第03選區
+    party: 中國國民黨
+    elected: 1
+    session: 11
+- name: 陳嘉君
+  id: id_陳嘉君_1968
+  birthday: 1968
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣國民會議
+    elected: null
+    session: 8
+    order_id: 1
+- name: 張裕泰
+  id: id_張裕泰_1952
+  birthday: 1952
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣國民會議
+    elected: null
+    session: 8
+    order_id: 3
+- name: 許達夫
+  id: id_許達夫_1949
+  birthday: 1949
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣國民會議
+    elected: null
+    session: 8
+    order_id: 4
+- name: 林守一
+  id: id_林守一_1951
+  birthday: 1951
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 人民最大黨
+    elected: null
+    session: 8
+    order_id: 2
+- name: 鄭麗君
+  id: id_鄭麗君_1969
+  birthday: 1969
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 9
+- name: 尤美女
+  id: id_尤美女_1955
+  birthday: 1955
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 11
+- name: 卓春英
+  id: id_卓春英_1955
+  birthday: 1955
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 23
+- name: 余莓莓
+  id: id_余莓莓_1964
+  birthday: 1964
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 27
+- name: 賴萬枝
+  id: id_賴萬枝_1953
+  birthday: 1953
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 民主進步黨
+    elected: null
+    session: 8
+    order_id: 30
+- name: 林世嘉
+  id: id_林世嘉_1969
+  birthday: 1969
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣團結聯盟
+    elected: null
+    session: 8
+    order_id: 4
+- name: 丁玉玲
+  id: id_丁玉玲_1954
+  birthday: 1954
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣團結聯盟
+    elected: null
+    session: 8
+    order_id: 10
+- name: 曾巨威
+  id: id_曾巨威_1951
+  birthday: 1951
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 3
+- name: 邱文彥
+  id: id_邱文彥_1953
+  birthday: 1953
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 5
+- name: 陳鎮湘
+  id: id_陳鎮湘_1942
+  birthday: 1942
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 9
+- name: 李貴敏
+  id: id_李貴敏_1959
+  birthday: 1959
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 10
+- name: 陳碧涵
+  id: id_陳碧涵_1960
+  birthday: 1960
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 12
+- name: 詹凱臣
+  id: id_詹凱臣_1951
+  birthday: 1951
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 13
+- name: 尹啓銘
+  id: id_尹啓銘_1952
+  birthday: 1952
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 17
+- name: 詹滿容
+  id: id_詹滿容_1956
+  birthday: 1956
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 18
+- name: 楊志良
+  id: id_楊志良_1946
+  birthday: 1946
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 19
+- name: 王美只
+  id: id_王美只_1951
+  birthday: 1951
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 22
+- name: 林萬福
+  id: id_林萬福_1953
+  birthday: 1953
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 23
+- name: 張瓊玲
+  id: id_張瓊玲_1965
+  birthday: 1965
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 24
+- name: 簡明哲
+  id: id_簡明哲_1960
+  birthday: 1960
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 25
+- name: 賴素如
+  id: id_賴素如_1964
+  birthday: 1964
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 26
+- name: 徐德馨
+  id: id_徐德馨_1954
+  birthday: 1954
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 27
+- name: 李德維
+  id: id_李德維_1969
+  birthday: 1969
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 29
+- name: 邱素蘭
+  id: id_邱素蘭_1954
+  birthday: 1954
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 30
+- name: 詹澈
+  id: id_詹澈_1954
+  birthday: 1954
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 31
+- name: 吳陳瓊秋
+  id: id_吳陳瓊秋_1953
+  birthday: 1953
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 32
+- name: 顏嬋娟
+  id: id_顏嬋娟_1949
+  birthday: 1949
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中國國民黨
+    elected: null
+    session: 8
+    order_id: 34
+- name: 王亞男
+  id: id_王亞男_1952
+  birthday: 1952
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 新黨
+    elected: null
+    session: 8
+    order_id: 3
+- name: 戴德成
+  id: id_戴德成_1962
+  birthday: 1962
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 新黨
+    elected: null
+    session: 8
+    order_id: 6
+- name: 梅
+  id: id_梅_1957
+  birthday: 1957
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 健保免費連線
+    elected: null
+    session: 8
+    order_id: 1
+- name: 廖美燕
+  id: id_廖美燕_1959
+  birthday: 1959
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 健保免費連線
+    elected: null
+    session: 8
+    order_id: 2
+- name: 王老養
+  id: id_王老養_1949
+  birthday: 1949
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 健保免費連線
+    elected: null
+    session: 8
+    order_id: 3
+- name: 賴美惠
+  id: id_賴美惠_1973
+  birthday: 1973
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 綠黨
+    elected: null
+    session: 8
+    order_id: 1
+- name: 李桐豪
+  id: id_李桐豪_1955
+  birthday: 1955
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 1
+- name: 張曉風
+  id: id_張曉風_1941
+  birthday: 1941
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 2
+- name: 陳怡潔
+  id: id_陳怡潔_1979
+  birthday: 1979
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 4
+- name: 林錫維
+  id: id_林錫維_1951
+  birthday: 1951
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 5
+- name: 何偉真
+  id: id_何偉真_1951
+  birthday: 1951
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 6
+- name: 傅慰孤
+  id: id_傅慰孤_1943
+  birthday: 1943
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 7
+- name: 胡祖慶
+  id: id_胡祖慶_1962
+  birthday: 1962
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 9
+- name: 李培芬
+  id: id_李培芬_1967
+  birthday: 1967
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 10
+- name: 任睦杉
+  id: id_任睦杉_1964
+  birthday: 1964
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 11
+- name: 高士晴
+  id: id_高士晴_1977
+  birthday: 1977
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 12
+- name: 李繼生
+  id: id_李繼生_1951
+  birthday: 1951
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 13
+- name: 李蕙蕙
+  id: id_李蕙蕙_1963
+  birthday: 1963
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 14
+- name: 劉瀚宇
+  id: id_劉瀚宇_1953
+  birthday: 1953
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 15
+- name: 周怡廷
+  id: id_周怡廷_1971
+  birthday: 1971
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 16
+- name: 陳振訓
+  id: id_陳振訓_1956
+  birthday: 1956
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 17
+- name: 余書華
+  id: id_余書華_1961
+  birthday: 1961
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 親民黨
+    elected: null
+    session: 8
+    order_id: 18
+- name: 陳祖祥
+  id: id_陳祖祥_1976
+  birthday: 1976
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中華民國臺灣基本法連線
+    elected: null
+    session: 8
+    order_id: 3
+- name: 謝正一
+  id: id_謝正一_1943
+  birthday: 1943
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 中華民國臺灣基本法連線
+    elected: null
+    session: 8
+    order_id: 5
+- name: 姜水浪
+  id: id_姜水浪_1957
+  birthday: 1957
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣主義黨
+    elected: null
+    session: 8
+    order_id: 1
+- name: 東膺涵
+  id: id_東膺涵_1966
+  birthday: 1966
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣主義黨
+    elected: null
+    session: 8
+    order_id: 2
+- name: 何棋生
+  id: id_何棋生_1954
+  birthday: 1954
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣主義黨
+    elected: null
+    session: 8
+    order_id: 3
+- name: 陳俞蓁
+  id: id_陳俞蓁_1966
+  birthday: 1966
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣主義黨
+    elected: null
+    session: 8
+    order_id: 4
+- name: 温程顯
+  id: id_温程顯_1960
+  birthday: 1960
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣主義黨
+    elected: null
+    session: 8
+    order_id: 5
+- name: 顏文儷
+  id: id_顏文儷_1968
+  birthday: 1968
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣主義黨
+    elected: null
+    session: 8
+    order_id: 6
+- name: 林能達
+  id: id_林能達_1957
+  birthday: 1957
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣主義黨
+    elected: null
+    session: 8
+    order_id: 7
+- name: 王小玉
+  id: id_王小玉_1952
+  birthday: 1952
+  elections:
+  - year: 2012
+    type: 立法委員
+    region: 全國
+    party: 台灣主義黨
+    elected: null
+    session: 8
+    order_id: 8
 - name: 柯文哲
   id: id_柯文哲_1959
   birthday: 1959
@@ -24277,21 +25501,6 @@
     party: 無黨籍
     elected: 0
     session: 10
-- name: 吳宜臻
-  id: id_吳宜臻_1970
-  birthday: 1970
-  elections:
-  - year: 2014
-    type: 縣市首長
-    region: 苗栗縣
-    party: 民主進步黨
-    elected: 0
-  - year: 2016
-    type: 立法委員
-    region: 苗栗縣 第02選舉區
-    party: 民主進步黨
-    elected: 0
-    session: 9
 - name: 洪敏雄
   id: id_洪敏雄_1961
   birthday: 1961
@@ -24605,21 +25814,6 @@
     party: 民主進步黨
     elected: 1
     ticket: 2
-- name: 吳育仁
-  id: id_吳育仁_1969
-  birthday: 1969
-  elections:
-  - year: 2016
-    type: 立法委員
-    region: 嘉義市選舉區
-    party: 中國國民黨
-    elected: 0
-    session: 9
-  - year: 2018
-    type: 縣市首長
-    region: 嘉義縣
-    party: 中國國民黨
-    elected: 0
 - name: 蘇柏豪
   id: id_蘇柏豪_1986
   birthday: 1986
@@ -26117,16 +27311,6 @@
     party: 無黨籍
     elected: 0
     session: 11
-- name: 劉國隆
-  id: id_劉國隆_1959
-  birthday: 1959
-  elections:
-  - year: 2016
-    type: 立法委員
-    region: 臺中市 第05選舉區
-    party: 台灣團結聯盟
-    elected: 0
-    session: 9
 - name: 黃國書
   id: id_黃國書_1964
   birthday: 1964
@@ -27645,20 +28829,6 @@
     party: 無黨籍
     elected: 0
     session: 10
-  - year: 2022
-    type: 縣市首長
-    region: 臺南市
-    party: 無黨籍
-    elected: 0
-- name: 許忠信
-  id: id_許忠信_1965
-  birthday: 1965
-  elections:
-  - year: 2018
-    type: 縣市首長
-    region: 臺南市
-    party: 無黨籍
-    elected: 0
   - year: 2022
     type: 縣市首長
     region: 臺南市
@@ -30251,16 +31421,6 @@
     party: 台灣民眾黨
     elected: 0
     session: 10
-- name: 康淑敏
-  id: id_康淑敏_1959
-  birthday: 1959
-  elections:
-  - year: 2020
-    type: 立法委員
-    region: 臺南市 第01選舉區
-    party: 中華聯合黨
-    elected: 0
-    session: 10
 - name: 顏耀星
   id: id_顏耀星_1958
   birthday: 1958
@@ -31474,15 +32634,6 @@
     type: 縣市首長
     region: 南投縣
     party: 無黨籍
-    elected: 0
-- name: 王育敏
-  id: id_王育敏_1971
-  birthday: 1971
-  elections:
-  - year: 2022
-    type: 縣市首長
-    region: 嘉義縣
-    party: 中國國民黨
     elected: 0
 - name: 詹智鈞
   id: id_詹智鈞_1976
@@ -32873,16 +34024,6 @@
     region: 臺北市第03選區
     party: 無黨籍
     elected: 0
-    session: 11
-- name: 王鴻薇
-  id: id_王鴻薇_1964
-  birthday: 1964
-  elections:
-  - year: 2024
-    type: 立法委員
-    region: 臺北市第03選區
-    party: 中國國民黨
-    elected: 1
     session: 11
 - name: 楊時睿
   id: id_楊時睿_1988
