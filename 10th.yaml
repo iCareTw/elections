@@ -1,5 +1,5 @@
 - name: 彭迦智
-  birthday: 1964/10/01
+  birthday: 1964
   order_id: 1
   party: 合一行動聯盟
   year: 2020
@@ -7,7 +7,7 @@
   region: 全國
   type: 立法委員
 - name: 龍傅若瑋
-  birthday: 1972/05/25
+  birthday: 1972
   order_id: 2
   party: 合一行動聯盟
   year: 2020
@@ -15,7 +15,7 @@
   region: 全國
   type: 立法委員
 - name: 郝淑薏
-  birthday: 1970/04/10
+  birthday: 1970
   order_id: 3
   party: 合一行動聯盟
   year: 2020
@@ -23,7 +23,7 @@
   region: 全國
   type: 立法委員
 - name: 廖金河
-  birthday: 1963/04/28
+  birthday: 1963
   order_id: 4
   party: 合一行動聯盟
   year: 2020
@@ -31,7 +31,7 @@
   region: 全國
   type: 立法委員
 - name: 孫成玉
-  birthday: 1966/08/10
+  birthday: 1966
   order_id: 5
   party: 合一行動聯盟
   year: 2020
@@ -39,7 +39,7 @@
   region: 全國
   type: 立法委員
 - name: 張宜興
-  birthday: 1977/03/11
+  birthday: 1977
   order_id: 6
   party: 合一行動聯盟
   year: 2020
@@ -47,7 +47,7 @@
   region: 全國
   type: 立法委員
 - name: 周美雲
-  birthday: 1979/09/13
+  birthday: 1979
   order_id: 7
   party: 合一行動聯盟
   year: 2020
@@ -55,7 +55,7 @@
   region: 全國
   type: 立法委員
 - name: 林傑忠
-  birthday: 1962/08/25
+  birthday: 1962
   order_id: 8
   party: 合一行動聯盟
   year: 2020
@@ -63,7 +63,7 @@
   region: 全國
   type: 立法委員
 - name: 謝啟大
-  birthday: 1949/02/10
+  birthday: 1949
   order_id: 1
   party: 中華統一促進黨
   year: 2020
@@ -71,7 +71,7 @@
   region: 全國
   type: 立法委員
 - name: 丁炳仁
-  birthday: 1959/03/28
+  birthday: 1959
   order_id: 2
   party: 中華統一促進黨
   year: 2020
@@ -79,7 +79,7 @@
   region: 全國
   type: 立法委員
 - name: 何建華
-  birthday: 1963/01/11
+  birthday: 1963
   order_id: 3
   party: 中華統一促進黨
   year: 2020
@@ -87,7 +87,7 @@
   region: 全國
   type: 立法委員
 - name: 馬銀海
-  birthday: 1972/05/02
+  birthday: 1972
   order_id: 4
   party: 中華統一促進黨
   year: 2020
@@ -95,7 +95,7 @@
   region: 全國
   type: 立法委員
 - name: 李承龍
-  birthday: 1958/02/13
+  birthday: 1958
   order_id: 5
   party: 中華統一促進黨
   year: 2020
@@ -103,7 +103,7 @@
   region: 全國
   type: 立法委員
 - name: 張瑜庭
-  birthday: 1987/05/16
+  birthday: 1987
   order_id: 6
   party: 中華統一促進黨
   year: 2020
@@ -111,7 +111,7 @@
   region: 全國
   type: 立法委員
 - name: 張安樂
-  birthday: 1948/03/13
+  birthday: 1948
   order_id: 7
   party: 中華統一促進黨
   year: 2020
@@ -119,7 +119,7 @@
   region: 全國
   type: 立法委員
 - name: 滕西華
-  birthday: 1973/01/23
+  birthday: 1973
   order_id: 1
   party: 親民黨
   year: 2020
@@ -127,7 +127,7 @@
   region: 全國
   type: 立法委員
 - name: 李鴻鈞
-  birthday: 1959/05/11
+  birthday: 1959
   order_id: 2
   party: 親民黨
   year: 2020
@@ -135,7 +135,7 @@
   region: 全國
   type: 立法委員
 - name: 宣明智
-  birthday: 1952/02/26
+  birthday: 1952
   order_id: 3
   party: 親民黨
   year: 2020
@@ -143,7 +143,7 @@
   region: 全國
   type: 立法委員
 - name: 劉宥彤
-  birthday: 1971/01/10
+  birthday: 1971
   order_id: 4
   party: 親民黨
   year: 2020
@@ -151,7 +151,7 @@
   region: 全國
   type: 立法委員
 - name: 陳怡潔
-  birthday: 1979/09/09
+  birthday: 1979
   order_id: 5
   party: 親民黨
   year: 2020
@@ -159,7 +159,7 @@
   region: 全國
   type: 立法委員
 - name: 張碩文
-  birthday: 1971/05/07
+  birthday: 1971
   order_id: 6
   party: 親民黨
   year: 2020
@@ -167,7 +167,7 @@
   region: 全國
   type: 立法委員
 - name: 施壽全
-  birthday: 1952/11/03
+  birthday: 1952
   order_id: 7
   party: 親民黨
   year: 2020
@@ -175,7 +175,7 @@
   region: 全國
   type: 立法委員
 - name: 李海同
-  birthday: 1955/04/08
+  birthday: 1955
   order_id: 8
   party: 親民黨
   year: 2020
@@ -183,7 +183,7 @@
   region: 全國
   type: 立法委員
 - name: 蔡沁瑜
-  birthday: 1974/08/17
+  birthday: 1974
   order_id: 9
   party: 親民黨
   year: 2020
@@ -191,7 +191,7 @@
   region: 全國
   type: 立法委員
 - name: 高瀚
-  birthday: 1980/04/10
+  birthday: 1980
   order_id: 10
   party: 親民黨
   year: 2020
@@ -199,7 +199,7 @@
   region: 全國
   type: 立法委員
 - name: 游文人
-  birthday: 1967/06/04
+  birthday: 1967
   order_id: 11
   party: 親民黨
   year: 2020
@@ -207,7 +207,7 @@
   region: 全國
   type: 立法委員
 - name: 陳秀玲
-  birthday: 1961/04/17
+  birthday: 1961
   order_id: 12
   party: 親民黨
   year: 2020
@@ -215,7 +215,7 @@
   region: 全國
   type: 立法委員
 - name: 黃文卿
-  birthday: 1974/04/16
+  birthday: 1974
   order_id: 13
   party: 親民黨
   year: 2020
@@ -223,7 +223,7 @@
   region: 全國
   type: 立法委員
 - name: 李本玠
-  birthday: 1947/10/15
+  birthday: 1947
   order_id: 14
   party: 親民黨
   year: 2020
@@ -231,7 +231,7 @@
   region: 全國
   type: 立法委員
 - name: 黎淑慧
-  birthday: 1960/11/10
+  birthday: 1960
   order_id: 15
   party: 親民黨
   year: 2020
@@ -239,7 +239,7 @@
   region: 全國
   type: 立法委員
 - name: 彭瓊芳
-  birthday: 1957/08/18
+  birthday: 1957
   order_id: 16
   party: 親民黨
   year: 2020
@@ -247,7 +247,7 @@
   region: 全國
   type: 立法委員
 - name: 劉宗夏
-  birthday: 1979/06/28
+  birthday: 1979
   order_id: 17
   party: 親民黨
   year: 2020
@@ -255,7 +255,7 @@
   region: 全國
   type: 立法委員
 - name: 林昊宜
-  birthday: 1982/03/22
+  birthday: 1982
   order_id: 18
   party: 親民黨
   year: 2020
@@ -263,7 +263,7 @@
   region: 全國
   type: 立法委員
 - name: 趙偉伶
-  birthday: 1972/11/06
+  birthday: 1972
   order_id: 19
   party: 親民黨
   year: 2020
@@ -271,7 +271,7 @@
   region: 全國
   type: 立法委員
 - name: 蕭涵方
-  birthday: 1975/01/28
+  birthday: 1975
   order_id: 20
   party: 親民黨
   year: 2020
@@ -279,7 +279,7 @@
   region: 全國
   type: 立法委員
 - name: 陳一夫
-  birthday: 1986/10/09
+  birthday: 1986
   order_id: 21
   party: 親民黨
   year: 2020
@@ -287,7 +287,7 @@
   region: 全國
   type: 立法委員
 - name: 吳方宜
-  birthday: 1991/10/02
+  birthday: 1991
   order_id: 22
   party: 親民黨
   year: 2020
@@ -295,7 +295,7 @@
   region: 全國
   type: 立法委員
 - name: 朱竹元
-  birthday: 1958/02/28
+  birthday: 1958
   order_id: 1
   party: 安定力量
   year: 2020
@@ -303,7 +303,7 @@
   region: 全國
   type: 立法委員
 - name: 陳曉虹
-  birthday: 1960/05/11
+  birthday: 1960
   order_id: 2
   party: 安定力量
   year: 2020
@@ -311,7 +311,7 @@
   region: 全國
   type: 立法委員
 - name: 毛嘉慶
-  birthday: 1976/06/03
+  birthday: 1976
   order_id: 3
   party: 安定力量
   year: 2020
@@ -319,7 +319,7 @@
   region: 全國
   type: 立法委員
 - name: 馮瑞珠
-  birthday: 1958/11/29
+  birthday: 1958
   order_id: 4
   party: 安定力量
   year: 2020
@@ -327,7 +327,7 @@
   region: 全國
   type: 立法委員
 - name: 裘佩恩
-  birthday: 1971/01/26
+  birthday: 1971
   order_id: 5
   party: 安定力量
   year: 2020
@@ -335,7 +335,7 @@
   region: 全國
   type: 立法委員
 - name: 林秋屏
-  birthday: 1976/10/15
+  birthday: 1976
   order_id: 6
   party: 安定力量
   year: 2020
@@ -343,7 +343,7 @@
   region: 全國
   type: 立法委員
 - name: 吳蕚洋
-  birthday: 1960/08/15
+  birthday: 1960
   order_id: 7
   party: 安定力量
   year: 2020
@@ -351,7 +351,7 @@
   region: 全國
   type: 立法委員
 - name: 李允佳
-  birthday: 1983/07/09
+  birthday: 1983
   order_id: 8
   party: 安定力量
   year: 2020
@@ -359,7 +359,7 @@
   region: 全國
   type: 立法委員
 - name: 洪正一
-  birthday: 1970/07/10
+  birthday: 1970
   order_id: 9
   party: 安定力量
   year: 2020
@@ -367,7 +367,7 @@
   region: 全國
   type: 立法委員
 - name: 蘇美玲
-  birthday: 1966/03/02
+  birthday: 1966
   order_id: 10
   party: 安定力量
   year: 2020
@@ -375,7 +375,7 @@
   region: 全國
   type: 立法委員
 - name: 成令方
-  birthday: 1951/12/24
+  birthday: 1951
   order_id: 1
   party: 台灣基進
   year: 2020
@@ -383,7 +383,7 @@
   region: 全國
   type: 立法委員
 - name: 陳奕齊
-  birthday: 1972/08/27
+  birthday: 1972
   order_id: 2
   party: 台灣基進
   year: 2020
@@ -391,7 +391,7 @@
   region: 全國
   type: 立法委員
 - name: 吳欣岱
-  birthday: 1987/07/01
+  birthday: 1987
   order_id: 3
   party: 台灣基進
   year: 2020
@@ -399,7 +399,7 @@
   region: 全國
   type: 立法委員
 - name: 陳冠榮
-  birthday: 1980/11/22
+  birthday: 1980
   order_id: 4
   party: 台灣基進
   year: 2020
@@ -407,7 +407,7 @@
   region: 全國
   type: 立法委員
 - name: 何澄輝
-  birthday: 1971/06/23
+  birthday: 1971
   order_id: 5
   party: 台灣基進
   year: 2020
@@ -415,7 +415,7 @@
   region: 全國
   type: 立法委員
 - name: 李雨蓁
-  birthday: 1987/12/15
+  birthday: 1987
   order_id: 6
   party: 台灣基進
   year: 2020
@@ -423,7 +423,7 @@
   region: 全國
   type: 立法委員
 - name: 陳椒華
-  birthday: 1959/10/29
+  birthday: 1959
   order_id: 1
   party: 時代力量
   year: 2020
@@ -431,7 +431,7 @@
   region: 全國
   type: 立法委員
 - name: 邱顯智
-  birthday: 1976/04/29
+  birthday: 1976
   order_id: 2
   party: 時代力量
   year: 2020
@@ -439,7 +439,7 @@
   region: 全國
   type: 立法委員
 - name: 王婉諭
-  birthday: 1979/04/26
+  birthday: 1979
   order_id: 3
   party: 時代力量
   year: 2020
@@ -447,7 +447,7 @@
   region: 全國
   type: 立法委員
 - name: 黃國昌
-  birthday: 1973/08/19
+  birthday: 1973
   order_id: 4
   party: 時代力量
   year: 2020
@@ -455,7 +455,7 @@
   region: 全國
   type: 立法委員
 - name: 翟本喬
-  birthday: 1966/05/18
+  birthday: 1966
   order_id: 5
   party: 時代力量
   year: 2020
@@ -463,7 +463,7 @@
   region: 全國
   type: 立法委員
 - name: 關心羚
-  birthday: 1982/06/04
+  birthday: 1982
   order_id: 6
   party: 時代力量
   year: 2020
@@ -471,7 +471,7 @@
   region: 全國
   type: 立法委員
 - name: 王幗英
-  birthday: 1963/09/03
+  birthday: 1963
   order_id: 7
   party: 時代力量
   year: 2020
@@ -479,7 +479,7 @@
   region: 全國
   type: 立法委員
 - name: 吳佩芸
-  birthday: 1992/04/10
+  birthday: 1992
   order_id: 8
   party: 時代力量
   year: 2020
@@ -487,7 +487,7 @@
   region: 全國
   type: 立法委員
 - name: 白卿芬
-  birthday: 1970/11/25
+  birthday: 1970
   order_id: 9
   party: 時代力量
   year: 2020
@@ -495,7 +495,7 @@
   region: 全國
   type: 立法委員
 - name: 趙芸菁
-  birthday: 1982/12/12
+  birthday: 1982
   order_id: 10
   party: 時代力量
   year: 2020
@@ -503,7 +503,7 @@
   region: 全國
   type: 立法委員
 - name: 詹智鈞
-  birthday: 1976/09/01
+  birthday: 1976
   order_id: 11
   party: 時代力量
   year: 2020
@@ -511,7 +511,7 @@
   region: 全國
   type: 立法委員
 - name: 邱毅
-  birthday: 1956/05/08
+  birthday: 1956
   order_id: 1
   party: 新黨
   year: 2020
@@ -519,7 +519,7 @@
   region: 全國
   type: 立法委員
 - name: 陳麗玲
-  birthday: 1969/07/27
+  birthday: 1969
   order_id: 2
   party: 新黨
   year: 2020
@@ -527,7 +527,7 @@
   region: 全國
   type: 立法委員
 - name: 沈采穎
-  birthday: 1961/01/07
+  birthday: 1961
   order_id: 3
   party: 新黨
   year: 2020
@@ -535,7 +535,7 @@
   region: 全國
   type: 立法委員
 - name: 王炳忠
-  birthday: 1987/08/31
+  birthday: 1987
   order_id: 4
   party: 新黨
   year: 2020
@@ -543,7 +543,7 @@
   region: 全國
   type: 立法委員
 - name: 賀樺
-  birthday: 1972/09/04
+  birthday: 1972
   order_id: 5
   party: 新黨
   year: 2020
@@ -551,7 +551,7 @@
   region: 全國
   type: 立法委員
 - name: 林明正
-  birthday: 1978/12/02
+  birthday: 1978
   order_id: 6
   party: 新黨
   year: 2020
@@ -559,7 +559,7 @@
   region: 全國
   type: 立法委員
 - name: 黃乃芸
-  birthday: 1968/02/10
+  birthday: 1968
   order_id: 7
   party: 新黨
   year: 2020
@@ -567,7 +567,7 @@
   region: 全國
   type: 立法委員
 - name: 龐文楚
-  birthday: 1981/03/02
+  birthday: 1981
   order_id: 8
   party: 新黨
   year: 2020
@@ -575,7 +575,7 @@
   region: 全國
   type: 立法委員
 - name: 郝永瑞
-  birthday: 1966/08/05
+  birthday: 1966
   order_id: 9
   party: 新黨
   year: 2020
@@ -583,7 +583,7 @@
   region: 全國
   type: 立法委員
 - name: 楊世光
-  birthday: 1976/10/24
+  birthday: 1976
   order_id: 10
   party: 新黨
   year: 2020
@@ -591,7 +591,7 @@
   region: 全國
   type: 立法委員
 - name: 林秀霞
-  birthday: 1960/02/02
+  birthday: 1960
   order_id: 1
   party: 喜樂島聯盟
   year: 2020
@@ -599,7 +599,7 @@
   region: 全國
   type: 立法委員
 - name: 施正鋒
-  birthday: 1958/02/24
+  birthday: 1958
   order_id: 2
   party: 喜樂島聯盟
   year: 2020
@@ -607,7 +607,7 @@
   region: 全國
   type: 立法委員
 - name: 高大成
-  birthday: 1950/11/20
+  birthday: 1950
   order_id: 3
   party: 喜樂島聯盟
   year: 2020
@@ -615,7 +615,7 @@
   region: 全國
   type: 立法委員
 - name: 李素貞
-  birthday: 1951/06/25
+  birthday: 1951
   order_id: 4
   party: 喜樂島聯盟
   year: 2020
@@ -623,7 +623,7 @@
   region: 全國
   type: 立法委員
 - name: 張君瑜
-  birthday: 1984/11/26
+  birthday: 1984
   order_id: 5
   party: 喜樂島聯盟
   year: 2020
@@ -631,7 +631,7 @@
   region: 全國
   type: 立法委員
 - name: 林東徵
-  birthday: 1982/12/07
+  birthday: 1982
   order_id: 6
   party: 喜樂島聯盟
   year: 2020
@@ -639,7 +639,7 @@
   region: 全國
   type: 立法委員
 - name: 曾銘宗
-  birthday: 1959/01/22
+  birthday: 1959
   order_id: 1
   party: 中國國民黨
   year: 2020
@@ -647,7 +647,7 @@
   region: 全國
   type: 立法委員
 - name: 葉毓蘭
-  birthday: 1958/02/27
+  birthday: 1958
   order_id: 2
   party: 中國國民黨
   year: 2020
@@ -655,7 +655,7 @@
   region: 全國
   type: 立法委員
 - name: 李貴敏
-  birthday: 1959/12/11
+  birthday: 1959
   order_id: 3
   party: 中國國民黨
   year: 2020
@@ -663,7 +663,7 @@
   region: 全國
   type: 立法委員
 - name: 吳斯懷
-  birthday: 1952/12/15
+  birthday: 1952
   order_id: 4
   party: 中國國民黨
   year: 2020
@@ -671,7 +671,7 @@
   region: 全國
   type: 立法委員
 - name: 鄭麗文
-  birthday: 1969/11/12
+  birthday: 1969
   order_id: 5
   party: 中國國民黨
   year: 2020
@@ -679,7 +679,7 @@
   region: 全國
   type: 立法委員
 - name: 林文瑞
-  birthday: 1959/09/15
+  birthday: 1959
   order_id: 6
   party: 中國國民黨
   year: 2020
@@ -687,7 +687,7 @@
   region: 全國
   type: 立法委員
 - name: 廖婉汝
-  birthday: 1960/01/27
+  birthday: 1960
   order_id: 7
   party: 中國國民黨
   year: 2020
@@ -695,7 +695,7 @@
   region: 全國
   type: 立法委員
 - name: 翁重鈞
-  birthday: 1955/05/31
+  birthday: 1955
   order_id: 8
   party: 中國國民黨
   year: 2020
@@ -703,7 +703,7 @@
   region: 全國
   type: 立法委員
 - name: 吳怡玎
-  birthday: 1979/11/13
+  birthday: 1979
   order_id: 9
   party: 中國國民黨
   year: 2020
@@ -711,7 +711,7 @@
   region: 全國
   type: 立法委員
 - name: 陳以信
-  birthday: 1972/10/31
+  birthday: 1972
   order_id: 10
   party: 中國國民黨
   year: 2020
@@ -719,7 +719,7 @@
   region: 全國
   type: 立法委員
 - name: 張育美
-  birthday: 1957/05/12
+  birthday: 1957
   order_id: 11
   party: 中國國民黨
   year: 2020
@@ -727,7 +727,7 @@
   region: 全國
   type: 立法委員
 - name: 李德維
-  birthday: 1969/09/01
+  birthday: 1969
   order_id: 12
   party: 中國國民黨
   year: 2020
@@ -735,7 +735,7 @@
   region: 全國
   type: 立法委員
 - name: 溫玉霞
-  birthday: 1955/08/05
+  birthday: 1955
   order_id: 13
   party: 中國國民黨
   year: 2020
@@ -743,7 +743,7 @@
   region: 全國
   type: 立法委員
 - name: 吳敦義
-  birthday: 1948/01/30
+  birthday: 1948
   order_id: 14
   party: 中國國民黨
   year: 2020
@@ -751,7 +751,7 @@
   region: 全國
   type: 立法委員
 - name: 謝龍介
-  birthday: 1961/10/03
+  birthday: 1961
   order_id: 15
   party: 中國國民黨
   year: 2020
@@ -759,7 +759,7 @@
   region: 全國
   type: 立法委員
 - name: 車宜靜
-  birthday: 1967/03/21
+  birthday: 1967
   order_id: 16
   party: 中國國民黨
   year: 2020
@@ -767,7 +767,7 @@
   region: 全國
   type: 立法委員
 - name: 牛春茹
-  birthday: 1970/04/21
+  birthday: 1970
   order_id: 17
   party: 中國國民黨
   year: 2020
@@ -775,7 +775,7 @@
   region: 全國
   type: 立法委員
 - name: 曾文培
-  birthday: 1973/01/11
+  birthday: 1973
   order_id: 18
   party: 中國國民黨
   year: 2020
@@ -783,7 +783,7 @@
   region: 全國
   type: 立法委員
 - name: 李玉嬋
-  birthday: 1965/02/26
+  birthday: 1965
   order_id: 19
   party: 中國國民黨
   year: 2020
@@ -791,7 +791,7 @@
   region: 全國
   type: 立法委員
 - name: 王裕文
-  birthday: 1969/07/22
+  birthday: 1969
   order_id: 20
   party: 中國國民黨
   year: 2020
@@ -799,7 +799,7 @@
   region: 全國
   type: 立法委員
 - name: 王桂芸
-  birthday: 1952/10/12
+  birthday: 1952
   order_id: 21
   party: 中國國民黨
   year: 2020
@@ -807,7 +807,7 @@
   region: 全國
   type: 立法委員
 - name: 耿繼文
-  birthday: 1951/04/14
+  birthday: 1951
   order_id: 22
   party: 中國國民黨
   year: 2020
@@ -815,7 +815,7 @@
   region: 全國
   type: 立法委員
 - name: 侯佳齡
-  birthday: 1975/08/05
+  birthday: 1975
   order_id: 23
   party: 中國國民黨
   year: 2020
@@ -823,7 +823,7 @@
   region: 全國
   type: 立法委員
 - name: 謝瀛華
-  birthday: 1958/01/19
+  birthday: 1958
   order_id: 24
   party: 中國國民黨
   year: 2020
@@ -831,7 +831,7 @@
   region: 全國
   type: 立法委員
 - name: 邱素蘭
-  birthday: 1954/02/08
+  birthday: 1954
   order_id: 25
   party: 中國國民黨
   year: 2020
@@ -839,7 +839,7 @@
   region: 全國
   type: 立法委員
 - name: 張智倫
-  birthday: 1983/11/24
+  birthday: 1983
   order_id: 26
   party: 中國國民黨
   year: 2020
@@ -847,7 +847,7 @@
   region: 全國
   type: 立法委員
 - name: 李惠蘭
-  birthday: 1966/08/09
+  birthday: 1966
   order_id: 27
   party: 中國國民黨
   year: 2020
@@ -855,7 +855,7 @@
   region: 全國
   type: 立法委員
 - name: 連元章
-  birthday: 1954/07/25
+  birthday: 1954
   order_id: 28
   party: 中國國民黨
   year: 2020
@@ -863,7 +863,7 @@
   region: 全國
   type: 立法委員
 - name: 許謹如
-  birthday: 1971/12/29
+  birthday: 1971
   order_id: 29
   party: 中國國民黨
   year: 2020
@@ -871,7 +871,7 @@
   region: 全國
   type: 立法委員
 - name: 林有志
-  birthday: 1967/02/02
+  birthday: 1967
   order_id: 30
   party: 中國國民黨
   year: 2020
@@ -879,7 +879,7 @@
   region: 全國
   type: 立法委員
 - name: 黃璉華
-  birthday: 1953/01/28
+  birthday: 1953
   order_id: 31
   party: 中國國民黨
   year: 2020
@@ -887,7 +887,7 @@
   region: 全國
   type: 立法委員
 - name: 陳昭姿
-  birthday: 1956/09/03
+  birthday: 1956
   order_id: 1
   party: 一邊一國行動黨
   year: 2020
@@ -895,7 +895,7 @@
   region: 全國
   type: 立法委員
 - name: 鄭新助
-  birthday: 1941/02/21
+  birthday: 1941
   order_id: 2
   party: 一邊一國行動黨
   year: 2020
@@ -903,7 +903,7 @@
   region: 全國
   type: 立法委員
 - name: 朱孟庠
-  birthday: 1962/09/08
+  birthday: 1962
   order_id: 3
   party: 一邊一國行動黨
   year: 2020
@@ -911,7 +911,7 @@
   region: 全國
   type: 立法委員
 - name: 楊其文
-  birthday: 1953/05/02
+  birthday: 1953
   order_id: 4
   party: 一邊一國行動黨
   year: 2020
@@ -919,7 +919,7 @@
   region: 全國
   type: 立法委員
 - name: 張文翊
-  birthday: 1951/12/30
+  birthday: 1951
   order_id: 5
   party: 一邊一國行動黨
   year: 2020
@@ -927,7 +927,7 @@
   region: 全國
   type: 立法委員
 - name: 羅美文
-  birthday: 1951/09/05
+  birthday: 1951
   order_id: 1
   party: 勞動黨
   year: 2020
@@ -935,7 +935,7 @@
   region: 全國
   type: 立法委員
 - name: 王娟萍
-  birthday: 1960/04/17
+  birthday: 1960
   order_id: 2
   party: 勞動黨
   year: 2020
@@ -943,7 +943,7 @@
   region: 全國
   type: 立法委員
 - name: 鄧惠文
-  birthday: 1971/08/12
+  birthday: 1971
   order_id: 1
   party: 綠黨
   year: 2020
@@ -951,7 +951,7 @@
   region: 全國
   type: 立法委員
 - name: 高成炎
-  birthday: 1948/10/03
+  birthday: 1948
   order_id: 2
   party: 綠黨
   year: 2020
@@ -959,7 +959,7 @@
   region: 全國
   type: 立法委員
 - name: 王浩宇
-  birthday: 1988/10/29
+  birthday: 1988
   order_id: 3
   party: 綠黨
   year: 2020
@@ -967,7 +967,7 @@
   region: 全國
   type: 立法委員
 - name: 李菁琪
-  birthday: 1988/04/02
+  birthday: 1988
   order_id: 4
   party: 綠黨
   year: 2020
@@ -975,7 +975,7 @@
   region: 全國
   type: 立法委員
 - name: 張佑輔
-  birthday: 1977/09/03
+  birthday: 1977
   order_id: 5
   party: 綠黨
   year: 2020
@@ -983,7 +983,7 @@
   region: 全國
   type: 立法委員
 - name: 張竹芩
-  birthday: 1985/01/10
+  birthday: 1985
   order_id: 6
   party: 綠黨
   year: 2020
@@ -991,7 +991,7 @@
   region: 全國
   type: 立法委員
 - name: 朱武獻
-  birthday: 1950/06/10
+  birthday: 1950
   order_id: 1
   party: 宗教聯盟
   year: 2020
@@ -999,7 +999,7 @@
   region: 全國
   type: 立法委員
 - name: 翁瑋鍼
-  birthday: 1981/02/23
+  birthday: 1981
   order_id: 2
   party: 宗教聯盟
   year: 2020
@@ -1007,7 +1007,7 @@
   region: 全國
   type: 立法委員
 - name: 呂玲玲
-  birthday: 1957/03/07
+  birthday: 1957
   order_id: 3
   party: 宗教聯盟
   year: 2020
@@ -1015,7 +1015,7 @@
   region: 全國
   type: 立法委員
 - name: 閔代璽
-  birthday: 1970/04/07
+  birthday: 1970
   order_id: 4
   party: 宗教聯盟
   year: 2020
@@ -1023,7 +1023,7 @@
   region: 全國
   type: 立法委員
 - name: 呂錫勲
-  birthday: 1956/04/10
+  birthday: 1956
   order_id: 5
   party: 宗教聯盟
   year: 2020
@@ -1031,7 +1031,7 @@
   region: 全國
   type: 立法委員
 - name: 袁慧心
-  birthday: 1965/06/22
+  birthday: 1965
   order_id: 6
   party: 宗教聯盟
   year: 2020
@@ -1039,7 +1039,7 @@
   region: 全國
   type: 立法委員
 - name: 吳亮儀
-  birthday: 1966/03/08
+  birthday: 1966
   order_id: 7
   party: 宗教聯盟
   year: 2020
@@ -1047,7 +1047,7 @@
   region: 全國
   type: 立法委員
 - name: 陳建平
-  birthday: 1946/05/11
+  birthday: 1946
   order_id: 8
   party: 宗教聯盟
   year: 2020
@@ -1055,7 +1055,7 @@
   region: 全國
   type: 立法委員
 - name: 吳玉琴
-  birthday: 1964/08/15
+  birthday: 1964
   order_id: 1
   party: 民主進步黨
   year: 2020
@@ -1063,7 +1063,7 @@
   region: 全國
   type: 立法委員
 - name: 洪申翰
-  birthday: 1984/10/18
+  birthday: 1984
   order_id: 2
   party: 民主進步黨
   year: 2020
@@ -1071,7 +1071,7 @@
   region: 全國
   type: 立法委員
 - name: 范雲
-  birthday: 1968/07/09
+  birthday: 1968
   order_id: 3
   party: 民主進步黨
   year: 2020
@@ -1079,7 +1079,7 @@
   region: 全國
   type: 立法委員
 - name: 羅美玲
-  birthday: 1969/05/01
+  birthday: 1969
   order_id: 4
   party: 民主進步黨
   year: 2020
@@ -1087,7 +1087,7 @@
   region: 全國
   type: 立法委員
 - name: 邱泰源
-  birthday: 1956/10/30
+  birthday: 1956
   order_id: 5
   party: 民主進步黨
   year: 2020
@@ -1095,7 +1095,7 @@
   region: 全國
   type: 立法委員
 - name: 周春米
-  birthday: 1966/11/01
+  birthday: 1966
   order_id: 6
   party: 民主進步黨
   year: 2020
@@ -1103,7 +1103,7 @@
   region: 全國
   type: 立法委員
 - name: 游錫堃
-  birthday: 1948/04/25
+  birthday: 1948
   order_id: 7
   party: 民主進步黨
   year: 2020
@@ -1111,7 +1111,7 @@
   region: 全國
   type: 立法委員
 - name: 柯建銘
-  birthday: 1951/09/08
+  birthday: 1951
   order_id: 8
   party: 民主進步黨
   year: 2020
@@ -1119,7 +1119,7 @@
   region: 全國
   type: 立法委員
 - name: 管碧玲
-  birthday: 1956/12/09
+  birthday: 1956
   order_id: 9
   party: 民主進步黨
   year: 2020
@@ -1127,7 +1127,7 @@
   region: 全國
   type: 立法委員
 - name: 莊瑞雄
-  birthday: 1963/04/20
+  birthday: 1963
   order_id: 10
   party: 民主進步黨
   year: 2020
@@ -1135,7 +1135,7 @@
   region: 全國
   type: 立法委員
 - name: 沈發惠
-  birthday: 1966/11/02
+  birthday: 1966
   order_id: 11
   party: 民主進步黨
   year: 2020
@@ -1143,7 +1143,7 @@
   region: 全國
   type: 立法委員
 - name: 林楚茵
-  birthday: 1972/10/10
+  birthday: 1972
   order_id: 12
   party: 民主進步黨
   year: 2020
@@ -1151,7 +1151,7 @@
   region: 全國
   type: 立法委員
 - name: 施義芳
-  birthday: 1962/02/10
+  birthday: 1962
   order_id: 13
   party: 民主進步黨
   year: 2020
@@ -1159,7 +1159,7 @@
   region: 全國
   type: 立法委員
 - name: 游萬豐
-  birthday: 1968/07/03
+  birthday: 1968
   order_id: 14
   party: 民主進步黨
   year: 2020
@@ -1167,7 +1167,7 @@
   region: 全國
   type: 立法委員
 - name: 歐蜜‧偉浪
-  birthday: 1963/10/10
+  birthday: 1963
   order_id: 15
   party: 民主進步黨
   year: 2020
@@ -1175,7 +1175,7 @@
   region: 全國
   type: 立法委員
 - name: 湯蕙禎
-  birthday: 1954/10/03
+  birthday: 1954
   order_id: 16
   party: 民主進步黨
   year: 2020
@@ -1183,7 +1183,7 @@
   region: 全國
   type: 立法委員
 - name: 陳靜敏
-  birthday: 1966/05/02
+  birthday: 1966
   order_id: 17
   party: 民主進步黨
   year: 2020
@@ -1191,7 +1191,7 @@
   region: 全國
   type: 立法委員
 - name: 黃奕睿
-  birthday: 1967/07/21
+  birthday: 1967
   order_id: 18
   party: 民主進步黨
   year: 2020
@@ -1199,7 +1199,7 @@
   region: 全國
   type: 立法委員
 - name: 許忠富
-  birthday: 1968/12/26
+  birthday: 1968
   order_id: 19
   party: 民主進步黨
   year: 2020
@@ -1207,7 +1207,7 @@
   region: 全國
   type: 立法委員
 - name: 張菊芳
-  birthday: 1963/01/19
+  birthday: 1963
   order_id: 20
   party: 民主進步黨
   year: 2020
@@ -1215,7 +1215,7 @@
   region: 全國
   type: 立法委員
 - name: 呂建德
-  birthday: 1966/06/13
+  birthday: 1966
   order_id: 21
   party: 民主進步黨
   year: 2020
@@ -1223,7 +1223,7 @@
   region: 全國
   type: 立法委員
 - name: 陳培瑜
-  birthday: 1977/08/09
+  birthday: 1977
   order_id: 22
   party: 民主進步黨
   year: 2020
@@ -1231,7 +1231,7 @@
   region: 全國
   type: 立法委員
 - name: 顏聖冠
-  birthday: 1968/06/20
+  birthday: 1968
   order_id: 23
   party: 民主進步黨
   year: 2020
@@ -1239,7 +1239,7 @@
   region: 全國
   type: 立法委員
 - name: 李淑芬
-  birthday: 1957/11/12
+  birthday: 1957
   order_id: 24
   party: 民主進步黨
   year: 2020
@@ -1247,7 +1247,7 @@
   region: 全國
   type: 立法委員
 - name: 柯富揚
-  birthday: 1970/01/01
+  birthday: 1970
   order_id: 25
   party: 民主進步黨
   year: 2020
@@ -1255,7 +1255,7 @@
   region: 全國
   type: 立法委員
 - name: 黃金舜
-  birthday: 1959/03/02
+  birthday: 1959
   order_id: 26
   party: 民主進步黨
   year: 2020
@@ -1263,7 +1263,7 @@
   region: 全國
   type: 立法委員
 - name: 林愛龍
-  birthday: 1981/07/13
+  birthday: 1981
   order_id: 27
   party: 民主進步黨
   year: 2020
@@ -1271,7 +1271,7 @@
   region: 全國
   type: 立法委員
 - name: 董建宏
-  birthday: 1971/08/31
+  birthday: 1971
   order_id: 28
   party: 民主進步黨
   year: 2020
@@ -1279,7 +1279,7 @@
   region: 全國
   type: 立法委員
 - name: 林世嘉
-  birthday: 1969/04/15
+  birthday: 1969
   order_id: 29
   party: 民主進步黨
   year: 2020
@@ -1287,7 +1287,7 @@
   region: 全國
   type: 立法委員
 - name: 黃帝穎
-  birthday: 1984/01/23
+  birthday: 1984
   order_id: 30
   party: 民主進步黨
   year: 2020
@@ -1295,7 +1295,7 @@
   region: 全國
   type: 立法委員
 - name: 趙心瑜
-  birthday: 1972/04/30
+  birthday: 1972
   order_id: 31
   party: 民主進步黨
   year: 2020
@@ -1303,7 +1303,7 @@
   region: 全國
   type: 立法委員
 - name: 蔣念祖
-  birthday: 1968/10/04
+  birthday: 1968
   order_id: 32
   party: 民主進步黨
   year: 2020
@@ -1311,7 +1311,7 @@
   region: 全國
   type: 立法委員
 - name: 楊懿珊
-  birthday: 1979/04/08
+  birthday: 1979
   order_id: 33
   party: 民主進步黨
   year: 2020
@@ -1319,7 +1319,7 @@
   region: 全國
   type: 立法委員
 - name: 賴香伶
-  birthday: 1968/01/05
+  birthday: 1968
   order_id: 1
   party: 台灣民眾黨
   year: 2020
@@ -1327,7 +1327,7 @@
   region: 全國
   type: 立法委員
 - name: 張其祿
-  birthday: 1968/03/28
+  birthday: 1968
   order_id: 2
   party: 台灣民眾黨
   year: 2020
@@ -1335,7 +1335,7 @@
   region: 全國
   type: 立法委員
 - name: 高虹安
-  birthday: 1984/01/25
+  birthday: 1984
   order_id: 3
   party: 台灣民眾黨
   year: 2020
@@ -1343,7 +1343,7 @@
   region: 全國
   type: 立法委員
 - name: 邱臣遠
-  birthday: 1981/12/11
+  birthday: 1981
   order_id: 4
   party: 台灣民眾黨
   year: 2020
@@ -1351,7 +1351,7 @@
   region: 全國
   type: 立法委員
 - name: 蔡壁如
-  birthday: 1964/03/11
+  birthday: 1964
   order_id: 5
   party: 台灣民眾黨
   year: 2020
@@ -1359,7 +1359,7 @@
   region: 全國
   type: 立法委員
 - name: 楊博宇
-  birthday: 1980/09/08
+  birthday: 1980
   order_id: 6
   party: 台灣民眾黨
   year: 2020
@@ -1367,7 +1367,7 @@
   region: 全國
   type: 立法委員
 - name: 吳欣盈
-  birthday: 1978/05/18
+  birthday: 1978
   order_id: 7
   party: 台灣民眾黨
   year: 2020
@@ -1375,7 +1375,7 @@
   region: 全國
   type: 立法委員
 - name: 詹翔欽
-  birthday: 1993/02/16
+  birthday: 1993
   order_id: 8
   party: 台灣民眾黨
   year: 2020
@@ -1383,7 +1383,7 @@
   region: 全國
   type: 立法委員
 - name: 陳琬惠
-  birthday: 1974/09/11
+  birthday: 1974
   order_id: 9
   party: 台灣民眾黨
   year: 2020
@@ -1391,7 +1391,7 @@
   region: 全國
   type: 立法委員
 - name: 林國成
-  birthday: 1957/08/20
+  birthday: 1957
   order_id: 10
   party: 台灣民眾黨
   year: 2020
@@ -1399,7 +1399,7 @@
   region: 全國
   type: 立法委員
 - name: 孫智麗
-  birthday: 1968/10/01
+  birthday: 1968
   order_id: 11
   party: 台灣民眾黨
   year: 2020
@@ -1407,7 +1407,7 @@
   region: 全國
   type: 立法委員
 - name: 楊弘仁
-  birthday: 1968/09/04
+  birthday: 1968
   order_id: 12
   party: 台灣民眾黨
   year: 2020
@@ -1415,7 +1415,7 @@
   region: 全國
   type: 立法委員
 - name: 黃瀞瑩
-  birthday: 1992/06/10
+  birthday: 1992
   order_id: 13
   party: 台灣民眾黨
   year: 2020
@@ -1423,7 +1423,7 @@
   region: 全國
   type: 立法委員
 - name: 馮啟彥
-  birthday: 1970/06/12
+  birthday: 1970
   order_id: 14
   party: 台灣民眾黨
   year: 2020
@@ -1431,7 +1431,7 @@
   region: 全國
   type: 立法委員
 - name: 江惠儀
-  birthday: 1984/01/11
+  birthday: 1984
   order_id: 15
   party: 台灣民眾黨
   year: 2020
@@ -1439,7 +1439,7 @@
   region: 全國
   type: 立法委員
 - name: 羅義興
-  birthday: 1972/08/18
+  birthday: 1972
   order_id: 16
   party: 台灣民眾黨
   year: 2020
@@ -1447,7 +1447,7 @@
   region: 全國
   type: 立法委員
 - name: 陳思宇
-  birthday: 1986/09/04
+  birthday: 1986
   order_id: 17
   party: 台灣民眾黨
   year: 2020
@@ -1455,7 +1455,7 @@
   region: 全國
   type: 立法委員
 - name: 魏安國
-  birthday: 1973/07/31
+  birthday: 1973
   order_id: 18
   party: 台灣民眾黨
   year: 2020
@@ -1463,7 +1463,7 @@
   region: 全國
   type: 立法委員
 - name: 李思慧
-  birthday: 1982/05/30
+  birthday: 1982
   order_id: 19
   party: 台灣民眾黨
   year: 2020
@@ -1471,7 +1471,7 @@
   region: 全國
   type: 立法委員
 - name: 傅郁揚
-  birthday: 1982/11/23
+  birthday: 1982
   order_id: 20
   party: 台灣民眾黨
   year: 2020
@@ -1479,7 +1479,7 @@
   region: 全國
   type: 立法委員
 - name: 何容君
-  birthday: 1975/12/04
+  birthday: 1975
   order_id: 21
   party: 台灣民眾黨
   year: 2020
@@ -1487,7 +1487,7 @@
   region: 全國
   type: 立法委員
 - name: 端木正
-  birthday: 1970/01/23
+  birthday: 1970
   order_id: 22
   party: 台灣民眾黨
   year: 2020
@@ -1495,7 +1495,7 @@
   region: 全國
   type: 立法委員
 - name: 陳安芃
-  birthday: 1981/01/05
+  birthday: 1981
   order_id: 23
   party: 台灣民眾黨
   year: 2020
@@ -1503,7 +1503,7 @@
   region: 全國
   type: 立法委員
 - name: 何松穎
-  birthday: 1981/10/25
+  birthday: 1981
   order_id: 24
   party: 台灣民眾黨
   year: 2020
@@ -1511,7 +1511,7 @@
   region: 全國
   type: 立法委員
 - name: 吳靜怡
-  birthday: 1984/09/08
+  birthday: 1984
   order_id: 25
   party: 台灣民眾黨
   year: 2020
@@ -1519,7 +1519,7 @@
   region: 全國
   type: 立法委員
 - name: 李家齊
-  birthday: 1991/05/28
+  birthday: 1991
   order_id: 26
   party: 台灣民眾黨
   year: 2020
@@ -1527,7 +1527,7 @@
   region: 全國
   type: 立法委員
 - name: 周芳如
-  birthday: 1966/03/28
+  birthday: 1966
   order_id: 27
   party: 台灣民眾黨
   year: 2020
@@ -1535,7 +1535,7 @@
   region: 全國
   type: 立法委員
 - name: 張學瀚
-  birthday: 1991/11/27
+  birthday: 1991
   order_id: 28
   party: 台灣民眾黨
   year: 2020
@@ -1543,7 +1543,7 @@
   region: 全國
   type: 立法委員
 - name: 賀德芬
-  birthday: 1945/05/26
+  birthday: 1945
   order_id: 1
   party: 台灣維新
   year: 2020
@@ -1551,7 +1551,7 @@
   region: 全國
   type: 立法委員
 - name: 萬淑娟
-  birthday: 1964/01/01
+  birthday: 1964
   order_id: 2
   party: 台灣維新
   year: 2020
@@ -1559,7 +1559,7 @@
   region: 全國
   type: 立法委員
 - name: 曾吉郎
-  birthday: 1958/04/10
+  birthday: 1958
   order_id: 3
   party: 台灣維新
   year: 2020
@@ -1567,7 +1567,7 @@
   region: 全國
   type: 立法委員
 - name: 蔡惠蘭
-  birthday: 1973/07/02
+  birthday: 1973
   order_id: 4
   party: 台灣維新
   year: 2020
@@ -1575,7 +1575,7 @@
   region: 全國
   type: 立法委員
 - name: 詹昭能
-  birthday: 1960/04/10
+  birthday: 1960
   order_id: 5
   party: 台灣維新
   year: 2020
@@ -1583,7 +1583,7 @@
   region: 全國
   type: 立法委員
 - name: 蘇煥智
-  birthday: 1956/07/20
+  birthday: 1956
   order_id: 6
   party: 台灣維新
   year: 2020
@@ -1591,7 +1591,7 @@
   region: 全國
   type: 立法委員
 - name: 鄭自才
-  birthday: 1936/12/01
+  birthday: 1936
   order_id: 1
   party: 台澎黨
   year: 2020
@@ -1599,7 +1599,7 @@
   region: 全國
   type: 立法委員
 - name: 黃聖峰
-  birthday: 1979/06/30
+  birthday: 1979
   order_id: 2
   party: 台澎黨
   year: 2020
@@ -1607,7 +1607,7 @@
   region: 全國
   type: 立法委員
 - name: 楊神龍
-  birthday: 1948/01/06
+  birthday: 1948
   order_id: 3
   party: 台澎黨
   year: 2020
@@ -1615,7 +1615,7 @@
   region: 全國
   type: 立法委員
 - name: 林碧如
-  birthday: 1973/12/20
+  birthday: 1973
   order_id: 4
   party: 台澎黨
   year: 2020
@@ -1623,7 +1623,7 @@
   region: 全國
   type: 立法委員
 - name: 徐欣瑩
-  birthday: 1972/04/23
+  birthday: 1972
   order_id: 1
   party: 國會政黨聯盟
   year: 2020
@@ -1631,7 +1631,7 @@
   region: 全國
   type: 立法委員
 - name: 張宗傑
-  birthday: 1965/02/04
+  birthday: 1965
   order_id: 2
   party: 國會政黨聯盟
   year: 2020
@@ -1639,7 +1639,7 @@
   region: 全國
   type: 立法委員
 - name: 王靜亞
-  birthday: 1973/10/14
+  birthday: 1973
   order_id: 3
   party: 國會政黨聯盟
   year: 2020
@@ -1647,7 +1647,7 @@
   region: 全國
   type: 立法委員
 - name: 陳漢洲
-  birthday: 1955/01/21
+  birthday: 1955
   order_id: 4
   party: 國會政黨聯盟
   year: 2020
@@ -1655,7 +1655,7 @@
   region: 全國
   type: 立法委員
 - name: 李宗芹
-  birthday: 1955/10/07
+  birthday: 1955
   order_id: 5
   party: 國會政黨聯盟
   year: 2020
@@ -1663,7 +1663,7 @@
   region: 全國
   type: 立法委員
 - name: 余艇
-  birthday: 1954/08/27
+  birthday: 1954
   order_id: 6
   party: 國會政黨聯盟
   year: 2020
@@ -1671,7 +1671,7 @@
   region: 全國
   type: 立法委員
 - name: 潘建志
-  birthday: 1966/07/30
+  birthday: 1966
   order_id: 1
   party: 台灣團結聯盟
   year: 2020
@@ -1679,7 +1679,7 @@
   region: 全國
   type: 立法委員
 - name: 周倪安
-  birthday: 1972/10/07
+  birthday: 1972
   order_id: 2
   party: 台灣團結聯盟
   year: 2020
@@ -1687,7 +1687,7 @@
   region: 全國
   type: 立法委員
 - name: 劉一德
-  birthday: 1960/04/15
+  birthday: 1960
   order_id: 3
   party: 台灣團結聯盟
   year: 2020
@@ -1695,7 +1695,7 @@
   region: 全國
   type: 立法委員
 - name: 蔡以新
-  birthday: 1975/09/23
+  birthday: 1975
   order_id: 4
   party: 台灣團結聯盟
   year: 2020
@@ -1703,7 +1703,7 @@
   region: 全國
   type: 立法委員
 - name: 潘厚勳
-  birthday: 1981/04/16
+  birthday: 1981
   order_id: 5
   party: 台灣團結聯盟
   year: 2020
@@ -1711,7 +1711,7 @@
   region: 全國
   type: 立法委員
 - name: 歐陽瑞蓮
-  birthday: 1976/02/26
+  birthday: 1976
   order_id: 6
   party: 台灣團結聯盟
   year: 2020
@@ -1719,7 +1719,7 @@
   region: 全國
   type: 立法委員
 - name: 高基讚
-  birthday: 1957/11/13
+  birthday: 1957
   order_id: 7
   party: 台灣團結聯盟
   year: 2020

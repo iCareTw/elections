@@ -1,5 +1,5 @@
 - name: 雷僑雲
-  birthday: 1957/07/06
+  birthday: 1957
   order_id: 1
   party: 公民黨
   year: 2008
@@ -7,7 +7,7 @@
   region: 全國
   type: 立法委員
 - name: 錢漢清
-  birthday: 1956/12/26
+  birthday: 1956
   order_id: 2
   party: 公民黨
   year: 2008
@@ -15,7 +15,7 @@
   region: 全國
   type: 立法委員
 - name: 陳華足
-  birthday: 1958/12/13
+  birthday: 1958
   order_id: 3
   party: 公民黨
   year: 2008
@@ -23,7 +23,7 @@
   region: 全國
   type: 立法委員
 - name: 孔仁奕
-  birthday: 1970/03/24
+  birthday: 1970
   order_id: 4
   party: 公民黨
   year: 2008
@@ -31,7 +31,7 @@
   region: 全國
   type: 立法委員
 - name: 吳景祥
-  birthday: 1928/02/28
+  birthday: 1928
   order_id: 1
   party: 制憲聯盟
   year: 2008
@@ -39,7 +39,7 @@
   region: 全國
   type: 立法委員
 - name: 黃馨主
-  birthday: 1974/08/12
+  birthday: 1974
   order_id: 2
   party: 制憲聯盟
   year: 2008
@@ -47,7 +47,7 @@
   region: 全國
   type: 立法委員
 - name: 黃千明
-  birthday: 1942/10/07
+  birthday: 1942
   order_id: 3
   party: 制憲聯盟
   year: 2008
@@ -55,7 +55,7 @@
   region: 全國
   type: 立法委員
 - name: 陳永興
-  birthday: 1950/08/12
+  birthday: 1950
   order_id: 1
   party: 台灣團結聯盟
   year: 2008
@@ -63,7 +63,7 @@
   region: 全國
   type: 立法委員
 - name: 陳玉峯
-  birthday: 1953/12/20
+  birthday: 1953
   order_id: 2
   party: 台灣團結聯盟
   year: 2008
@@ -71,7 +71,7 @@
   region: 全國
   type: 立法委員
 - name: 賴幸媛
-  birthday: 1956/11/09
+  birthday: 1956
   order_id: 3
   party: 台灣團結聯盟
   year: 2008
@@ -79,7 +79,7 @@
   region: 全國
   type: 立法委員
 - name: 施朝賢
-  birthday: 1955/03/03
+  birthday: 1955
   order_id: 4
   party: 台灣團結聯盟
   year: 2008
@@ -87,7 +87,7 @@
   region: 全國
   type: 立法委員
 - name: 錢林慧君
-  birthday: 1947/12/18
+  birthday: 1947
   order_id: 5
   party: 台灣團結聯盟
   year: 2008
@@ -95,7 +95,7 @@
   region: 全國
   type: 立法委員
 - name: 江偉君
-  birthday: 1973/05/25
+  birthday: 1973
   order_id: 6
   party: 台灣團結聯盟
   year: 2008
@@ -103,7 +103,7 @@
   region: 全國
   type: 立法委員
 - name: 黃昆輝
-  birthday: 1936/11/08
+  birthday: 1936
   order_id: 7
   party: 台灣團結聯盟
   year: 2008
@@ -111,7 +111,7 @@
   region: 全國
   type: 立法委員
 - name: 羅志明
-  birthday: 1957/11/13
+  birthday: 1957
   order_id: 8
   party: 台灣團結聯盟
   year: 2008
@@ -119,7 +119,7 @@
   region: 全國
   type: 立法委員
 - name: 李宜潔
-  birthday: 1970/08/08
+  birthday: 1970
   order_id: 9
   party: 台灣團結聯盟
   year: 2008
@@ -127,7 +127,7 @@
   region: 全國
   type: 立法委員
 - name: 范盛保
-  birthday: 1969/11/17
+  birthday: 1969
   order_id: 10
   party: 台灣團結聯盟
   year: 2008
@@ -135,7 +135,7 @@
   region: 全國
   type: 立法委員
 - name: 張金生
-  birthday: 1951/11/28
+  birthday: 1951
   order_id: 11
   party: 台灣團結聯盟
   year: 2008
@@ -143,7 +143,7 @@
   region: 全國
   type: 立法委員
 - name: 傅馨儀
-  birthday: 1978/02/27
+  birthday: 1978
   order_id: 12
   party: 台灣團結聯盟
   year: 2008
@@ -151,7 +151,7 @@
   region: 全國
   type: 立法委員
 - name: 黃昭展
-  birthday: 1956/03/20
+  birthday: 1956
   order_id: 13
   party: 台灣團結聯盟
   year: 2008
@@ -159,7 +159,7 @@
   region: 全國
   type: 立法委員
 - name: 葉津鈴
-  birthday: 1947/03/14
+  birthday: 1947
   order_id: 14
   party: 台灣團結聯盟
   year: 2008
@@ -167,7 +167,7 @@
   region: 全國
   type: 立法委員
 - name: 李安妮
-  birthday: 1954/06/09
+  birthday: 1954
   order_id: 15
   party: 台灣團結聯盟
   year: 2008
@@ -175,7 +175,7 @@
   region: 全國
   type: 立法委員
 - name: 呂秀菊
-  birthday: 1951/06/20
+  birthday: 1951
   order_id: 1
   party: 第三社會黨
   year: 2008
@@ -183,7 +183,7 @@
   region: 全國
   type: 立法委員
 - name: 楊偉中
-  birthday: 1971/05/29
+  birthday: 1971
   order_id: 2
   party: 第三社會黨
   year: 2008
@@ -191,7 +191,7 @@
   region: 全國
   type: 立法委員
 - name: 林致真
-  birthday: 1976/05/01
+  birthday: 1976
   order_id: 3
   party: 第三社會黨
   year: 2008
@@ -199,7 +199,7 @@
   region: 全國
   type: 立法委員
 - name: 楊靜華
-  birthday: 1969/10/13
+  birthday: 1969
   order_id: 4
   party: 第三社會黨
   year: 2008
@@ -207,7 +207,7 @@
   region: 全國
   type: 立法委員
 - name: 林志成
-  birthday: 1958/11/29
+  birthday: 1958
   order_id: 5
   party: 第三社會黨
   year: 2008
@@ -215,7 +215,7 @@
   region: 全國
   type: 立法委員
 - name: 陳節如
-  birthday: 1944/03/03
+  birthday: 1944
   order_id: 1
   party: 民主進步黨
   year: 2008
@@ -223,7 +223,7 @@
   region: 全國
   type: 立法委員
 - name: 蔡煌瑯
-  birthday: 1960/07/05
+  birthday: 1960
   order_id: 2
   party: 民主進步黨
   year: 2008
@@ -231,7 +231,7 @@
   region: 全國
   type: 立法委員
 - name: 涂醒哲
-  birthday: 1951/06/17
+  birthday: 1951
   order_id: 3
   party: 民主進步黨
   year: 2008
@@ -239,7 +239,7 @@
   region: 全國
   type: 立法委員
 - name: 邱議瑩
-  birthday: 1971/06/01
+  birthday: 1971
   order_id: 4
   party: 民主進步黨
   year: 2008
@@ -247,7 +247,7 @@
   region: 全國
   type: 立法委員
 - name: 柯建銘
-  birthday: 1951/09/08
+  birthday: 1951
   order_id: 5
   party: 民主進步黨
   year: 2008
@@ -255,7 +255,7 @@
   region: 全國
   type: 立法委員
 - name: 黃淑英
-  birthday: 1951/04/12
+  birthday: 1951
   order_id: 6
   party: 民主進步黨
   year: 2008
@@ -263,7 +263,7 @@
   region: 全國
   type: 立法委員
 - name: 王幸男
-  birthday: 1941/06/27
+  birthday: 1941
   order_id: 7
   party: 民主進步黨
   year: 2008
@@ -271,7 +271,7 @@
   region: 全國
   type: 立法委員
 - name: 薛凌
-  birthday: 1954/01/02
+  birthday: 1954
   order_id: 8
   party: 民主進步黨
   year: 2008
@@ -279,7 +279,7 @@
   region: 全國
   type: 立法委員
 - name: 高志鵬
-  birthday: 1963/08/08
+  birthday: 1963
   order_id: 9
   party: 民主進步黨
   year: 2008
@@ -287,7 +287,7 @@
   region: 全國
   type: 立法委員
 - name: 陳瑩
-  birthday: 1972/11/15
+  birthday: 1972
   order_id: 10
   party: 民主進步黨
   year: 2008
@@ -295,7 +295,7 @@
   region: 全國
   type: 立法委員
 - name: 余政道
-  birthday: 1963/09/27
+  birthday: 1963
   order_id: 11
   party: 民主進步黨
   year: 2008
@@ -303,7 +303,7 @@
   region: 全國
   type: 立法委員
 - name: 翁金珠
-  birthday: 1947/01/31
+  birthday: 1947
   order_id: 12
   party: 民主進步黨
   year: 2008
@@ -311,7 +311,7 @@
   region: 全國
   type: 立法委員
 - name: 蔡同榮
-  birthday: 1935/06/13
+  birthday: 1935
   order_id: 13
   party: 民主進步黨
   year: 2008
@@ -319,7 +319,7 @@
   region: 全國
   type: 立法委員
 - name: 田秋堇
-  birthday: 1954/05/27
+  birthday: 1954
   order_id: 14
   party: 民主進步黨
   year: 2008
@@ -327,7 +327,7 @@
   region: 全國
   type: 立法委員
 - name: 洪奇昌
-  birthday: 1951/08/23
+  birthday: 1951
   order_id: 15
   party: 民主進步黨
   year: 2008
@@ -335,7 +335,7 @@
   region: 全國
   type: 立法委員
 - name: 張富美
-  birthday: 1938/10/10
+  birthday: 1938
   order_id: 16
   party: 民主進步黨
   year: 2008
@@ -343,7 +343,7 @@
   region: 全國
   type: 立法委員
 - name: 游盈隆
-  birthday: 1956/11/23
+  birthday: 1956
   order_id: 17
   party: 民主進步黨
   year: 2008
@@ -351,7 +351,7 @@
   region: 全國
   type: 立法委員
 - name: 許榮淑
-  birthday: 1939/12/27
+  birthday: 1939
   order_id: 18
   party: 民主進步黨
   year: 2008
@@ -359,7 +359,7 @@
   region: 全國
   type: 立法委員
 - name: 游錫堃
-  birthday: 1948/04/25
+  birthday: 1948
   order_id: 19
   party: 民主進步黨
   year: 2008
@@ -367,7 +367,7 @@
   region: 全國
   type: 立法委員
 - name: 楊芳婉
-  birthday: 1956/02/27
+  birthday: 1956
   order_id: 20
   party: 民主進步黨
   year: 2008
@@ -375,7 +375,7 @@
   region: 全國
   type: 立法委員
 - name: 周清玉
-  birthday: 1944/06/12
+  birthday: 1944
   order_id: 21
   party: 民主進步黨
   year: 2008
@@ -383,7 +383,7 @@
   region: 全國
   type: 立法委員
 - name: 陳茂男
-  birthday: 1941/05/23
+  birthday: 1941
   order_id: 22
   party: 民主進步黨
   year: 2008
@@ -391,7 +391,7 @@
   region: 全國
   type: 立法委員
 - name: 吳明敏
-  birthday: 1948/10/12
+  birthday: 1948
   order_id: 23
   party: 民主進步黨
   year: 2008
@@ -399,7 +399,7 @@
   region: 全國
   type: 立法委員
 - name: 張秀珍
-  birthday: 1951/08/01
+  birthday: 1951
   order_id: 24
   party: 民主進步黨
   year: 2008
@@ -407,7 +407,7 @@
   region: 全國
   type: 立法委員
 - name: 范巽綠
-  birthday: 1952/10/03
+  birthday: 1952
   order_id: 25
   party: 民主進步黨
   year: 2008
@@ -415,7 +415,7 @@
   region: 全國
   type: 立法委員
 - name: 王塗發
-  birthday: 1948/04/10
+  birthday: 1948
   order_id: 26
   party: 民主進步黨
   year: 2008
@@ -423,7 +423,7 @@
   region: 全國
   type: 立法委員
 - name: 張慶惠
-  birthday: 1942/06/19
+  birthday: 1942
   order_id: 27
   party: 民主進步黨
   year: 2008
@@ -431,7 +431,7 @@
   region: 全國
   type: 立法委員
 - name: 周光宙
-  birthday: 1947/06/08
+  birthday: 1947
   order_id: 28
   party: 民主進步黨
   year: 2008
@@ -439,7 +439,7 @@
   region: 全國
   type: 立法委員
 - name: 劉美德
-  birthday: 1951/12/08
+  birthday: 1951
   order_id: 29
   party: 民主進步黨
   year: 2008
@@ -447,7 +447,7 @@
   region: 全國
   type: 立法委員
 - name: 施義芳
-  birthday: 1962/02/10
+  birthday: 1962
   order_id: 30
   party: 民主進步黨
   year: 2008
@@ -455,7 +455,7 @@
   region: 全國
   type: 立法委員
 - name: 麗依京．尤瑪
-  birthday: 1954/12/27
+  birthday: 1954
   order_id: 31
   party: 民主進步黨
   year: 2008
@@ -463,7 +463,7 @@
   region: 全國
   type: 立法委員
 - name: 梁禎祥
-  birthday: 1947/01/06
+  birthday: 1947
   order_id: 32
   party: 民主進步黨
   year: 2008
@@ -471,7 +471,7 @@
   region: 全國
   type: 立法委員
 - name: 陳慧玲
-  birthday: 1962/06/16
+  birthday: 1962
   order_id: 33
   party: 民主進步黨
   year: 2008
@@ -479,7 +479,7 @@
   region: 全國
   type: 立法委員
 - name: 周陽山
-  birthday: 1957/08/24
+  birthday: 1957
   order_id: 1
   party: 新黨
   year: 2008
@@ -487,7 +487,7 @@
   region: 全國
   type: 立法委員
 - name: 雷倩
-  birthday: 1958/11/28
+  birthday: 1958
   order_id: 2
   party: 新黨
   year: 2008
@@ -495,7 +495,7 @@
   region: 全國
   type: 立法委員
 - name: 高家俊
-  birthday: 1950/01/22
+  birthday: 1950
   order_id: 3
   party: 新黨
   year: 2008
@@ -503,7 +503,7 @@
   region: 全國
   type: 立法委員
 - name: 林美倫
-  birthday: 1958/03/17
+  birthday: 1958
   order_id: 4
   party: 新黨
   year: 2008
@@ -511,7 +511,7 @@
   region: 全國
   type: 立法委員
 - name: 徐宗懋
-  birthday: 1958/10/02
+  birthday: 1958
   order_id: 5
   party: 新黨
   year: 2008
@@ -519,7 +519,7 @@
   region: 全國
   type: 立法委員
 - name: 郭家芬
-  birthday: 1967/05/20
+  birthday: 1967
   order_id: 6
   party: 新黨
   year: 2008
@@ -527,7 +527,7 @@
   region: 全國
   type: 立法委員
 - name: 葛建埔
-  birthday: 1957/10/26
+  birthday: 1957
   order_id: 7
   party: 新黨
   year: 2008
@@ -535,7 +535,7 @@
   region: 全國
   type: 立法委員
 - name: 孫吉珍
-  birthday: 1954/05/31
+  birthday: 1954
   order_id: 8
   party: 新黨
   year: 2008
@@ -543,7 +543,7 @@
   region: 全國
   type: 立法委員
 - name: 李勝峰
-  birthday: 1954/07/10
+  birthday: 1954
   order_id: 9
   party: 新黨
   year: 2008
@@ -551,7 +551,7 @@
   region: 全國
   type: 立法委員
 - name: 郁慕明
-  birthday: 1940/07/19
+  birthday: 1940
   order_id: 10
   party: 新黨
   year: 2008
@@ -559,7 +559,7 @@
   region: 全國
   type: 立法委員
 - name: 陳曼麗
-  birthday: 1955/02/05
+  birthday: 1955
   order_id: 1
   party: 綠黨
   year: 2008
@@ -567,7 +567,7 @@
   region: 全國
   type: 立法委員
 - name: 張輝山
-  birthday: 1961/07/14
+  birthday: 1961
   order_id: 2
   party: 綠黨
   year: 2008
@@ -575,7 +575,7 @@
   region: 全國
   type: 立法委員
 - name: 張宏林
-  birthday: 1971/07/26
+  birthday: 1971
   order_id: 3
   party: 綠黨
   year: 2008
@@ -583,7 +583,7 @@
   region: 全國
   type: 立法委員
 - name: 王芳萍
-  birthday: 1966/08/02
+  birthday: 1966
   order_id: 4
   party: 綠黨
   year: 2008
@@ -591,7 +591,7 @@
   region: 全國
   type: 立法委員
 - name: 錢小鳳
-  birthday: 1953/01/09
+  birthday: 1953
   order_id: 1
   party: 台灣農民黨
   year: 2008
@@ -599,7 +599,7 @@
   region: 全國
   type: 立法委員
 - name: 柯俊雄
-  birthday: 1945/01/15
+  birthday: 1945
   order_id: 2
   party: 台灣農民黨
   year: 2008
@@ -607,7 +607,7 @@
   region: 全國
   type: 立法委員
 - name: 馬國清
-  birthday: 1974/02/11
+  birthday: 1974
   order_id: 3
   party: 台灣農民黨
   year: 2008
@@ -615,7 +615,7 @@
   region: 全國
   type: 立法委員
 - name: 陳信宏
-  birthday: 1959/06/06
+  birthday: 1959
   order_id: 4
   party: 台灣農民黨
   year: 2008
@@ -623,7 +623,7 @@
   region: 全國
   type: 立法委員
 - name: 范姜秀珍
-  birthday: 1962/07/13
+  birthday: 1962
   order_id: 5
   party: 台灣農民黨
   year: 2008
@@ -631,7 +631,7 @@
   region: 全國
   type: 立法委員
 - name: 陳重光
-  birthday: 1945/07/13
+  birthday: 1945
   order_id: 6
   party: 台灣農民黨
   year: 2008
@@ -639,7 +639,7 @@
   region: 全國
   type: 立法委員
 - name: 洪美珍
-  birthday: 1959/01/05
+  birthday: 1959
   order_id: 7
   party: 台灣農民黨
   year: 2008
@@ -647,7 +647,7 @@
   region: 全國
   type: 立法委員
 - name: 張文正
-  birthday: 1956/04/10
+  birthday: 1956
   order_id: 8
   party: 台灣農民黨
   year: 2008
@@ -655,7 +655,7 @@
   region: 全國
   type: 立法委員
 - name: 劉憶如
-  birthday: 1955/04/07
+  birthday: 1955
   order_id: 1
   party: 無黨團結聯盟
   year: 2008
@@ -663,7 +663,7 @@
   region: 全國
   type: 立法委員
 - name: 陳傑儒
-  birthday: 1937/11/25
+  birthday: 1937
   order_id: 2
   party: 無黨團結聯盟
   year: 2008
@@ -671,7 +671,7 @@
   region: 全國
   type: 立法委員
 - name: 王金平
-  birthday: 1941/03/17
+  birthday: 1941
   order_id: 1
   party: 中國國民黨
   year: 2008
@@ -679,7 +679,7 @@
   region: 全國
   type: 立法委員
 - name: 洪秀柱
-  birthday: 1948/04/07
+  birthday: 1948
   order_id: 2
   party: 中國國民黨
   year: 2008
@@ -687,7 +687,7 @@
   region: 全國
   type: 立法委員
 - name: 曾永權
-  birthday: 1947/09/10
+  birthday: 1947
   order_id: 3
   party: 中國國民黨
   year: 2008
@@ -695,7 +695,7 @@
   region: 全國
   type: 立法委員
 - name: 潘維剛
-  birthday: 1957/03/31
+  birthday: 1957
   order_id: 4
   party: 中國國民黨
   year: 2008
@@ -703,7 +703,7 @@
   region: 全國
   type: 立法委員
 - name: 邱毅
-  birthday: 1956/05/08
+  birthday: 1956
   order_id: 5
   party: 中國國民黨
   year: 2008
@@ -711,7 +711,7 @@
   region: 全國
   type: 立法委員
 - name: 鄭金玲
-  birthday: 1946/08/06
+  birthday: 1946
   order_id: 6
   party: 中國國民黨
   year: 2008
@@ -719,7 +719,7 @@
   region: 全國
   type: 立法委員
 - name: 陳杰
-  birthday: 1957/10/06
+  birthday: 1957
   order_id: 7
   party: 中國國民黨
   year: 2008
@@ -727,7 +727,7 @@
   region: 全國
   type: 立法委員
 - name: 李紀珠
-  birthday: 1960/04/22
+  birthday: 1960
   order_id: 8
   party: 中國國民黨
   year: 2008
@@ -735,7 +735,7 @@
   region: 全國
   type: 立法委員
 - name: 張顯耀
-  birthday: 1963/11/06
+  birthday: 1963
   order_id: 9
   party: 中國國民黨
   year: 2008
@@ -743,7 +743,7 @@
   region: 全國
   type: 立法委員
 - name: 趙麗雲
-  birthday: 1952/08/08
+  birthday: 1952
   order_id: 10
   party: 中國國民黨
   year: 2008
@@ -751,7 +751,7 @@
   region: 全國
   type: 立法委員
 - name: 李嘉進
-  birthday: 1957/03/06
+  birthday: 1957
   order_id: 11
   party: 中國國民黨
   year: 2008
@@ -759,7 +759,7 @@
   region: 全國
   type: 立法委員
 - name: 廖婉汝
-  birthday: 1960/01/27
+  birthday: 1960
   order_id: 12
   party: 中國國民黨
   year: 2008
@@ -767,7 +767,7 @@
   region: 全國
   type: 立法委員
 - name: 紀國棟
-  birthday: 1960/05/16
+  birthday: 1960
   order_id: 13
   party: 中國國民黨
   year: 2008
@@ -775,7 +775,7 @@
   region: 全國
   type: 立法委員
 - name: 羅淑蕾
-  birthday: 1952/11/28
+  birthday: 1952
   order_id: 14
   party: 中國國民黨
   year: 2008
@@ -783,7 +783,7 @@
   region: 全國
   type: 立法委員
 - name: 李明星
-  birthday: 1955/02/06
+  birthday: 1955
   order_id: 15
   party: 中國國民黨
   year: 2008
@@ -791,7 +791,7 @@
   region: 全國
   type: 立法委員
 - name: 郭素春
-  birthday: 1955/12/11
+  birthday: 1955
   order_id: 16
   party: 中國國民黨
   year: 2008
@@ -799,7 +799,7 @@
   region: 全國
   type: 立法委員
 - name: 劉盛良
-  birthday: 1939/03/18
+  birthday: 1939
   order_id: 17
   party: 中國國民黨
   year: 2008
@@ -807,7 +807,7 @@
   region: 全國
   type: 立法委員
 - name: 鄭麗文
-  birthday: 1969/11/12
+  birthday: 1969
   order_id: 18
   party: 中國國民黨
   year: 2008
@@ -815,7 +815,7 @@
   region: 全國
   type: 立法委員
 - name: 帥化民
-  birthday: 1943/04/28
+  birthday: 1943
   order_id: 19
   party: 中國國民黨
   year: 2008
@@ -823,7 +823,7 @@
   region: 全國
   type: 立法委員
 - name: 徐少萍
-  birthday: 1941/05/16
+  birthday: 1941
   order_id: 20
   party: 中國國民黨
   year: 2008
@@ -831,7 +831,7 @@
   region: 全國
   type: 立法委員
 - name: 許舒博
-  birthday: 1963/07/10
+  birthday: 1963
   order_id: 21
   party: 中國國民黨
   year: 2008
@@ -839,7 +839,7 @@
   region: 全國
   type: 立法委員
 - name: 陳淑慧
-  birthday: 1957/10/06
+  birthday: 1957
   order_id: 22
   party: 中國國民黨
   year: 2008
@@ -847,7 +847,7 @@
   region: 全國
   type: 立法委員
 - name: 李全教
-  birthday: 1960/02/25
+  birthday: 1960
   order_id: 23
   party: 中國國民黨
   year: 2008
@@ -855,7 +855,7 @@
   region: 全國
   type: 立法委員
 - name: 許宇甄
-  birthday: 1968/10/20
+  birthday: 1968
   order_id: 24
   party: 中國國民黨
   year: 2008
@@ -863,7 +863,7 @@
   region: 全國
   type: 立法委員
 - name: 黃良華
-  birthday: 1948/01/24
+  birthday: 1948
   order_id: 25
   party: 中國國民黨
   year: 2008
@@ -871,7 +871,7 @@
   region: 全國
   type: 立法委員
 - name: 楊玉珍
-  birthday: 1961/10/02
+  birthday: 1961
   order_id: 26
   party: 中國國民黨
   year: 2008
@@ -879,7 +879,7 @@
   region: 全國
   type: 立法委員
 - name: 林正峰
-  birthday: 1949/12/01
+  birthday: 1949
   order_id: 27
   party: 中國國民黨
   year: 2008
@@ -887,7 +887,7 @@
   region: 全國
   type: 立法委員
 - name: 華真
-  birthday: 1966/04/07
+  birthday: 1966
   order_id: 28
   party: 中國國民黨
   year: 2008
@@ -895,7 +895,7 @@
   region: 全國
   type: 立法委員
 - name: 姚江臨
-  birthday: 1950/07/17
+  birthday: 1950
   order_id: 29
   party: 中國國民黨
   year: 2008
@@ -903,7 +903,7 @@
   region: 全國
   type: 立法委員
 - name: 邱美瑞
-  birthday: 1952/08/19
+  birthday: 1952
   order_id: 30
   party: 中國國民黨
   year: 2008
@@ -911,7 +911,7 @@
   region: 全國
   type: 立法委員
 - name: 江綺雯
-  birthday: 1949/03/20
+  birthday: 1949
   order_id: 31
   party: 中國國民黨
   year: 2008
@@ -919,7 +919,7 @@
   region: 全國
   type: 立法委員
 - name: 呂春霖
-  birthday: 1953/04/21
+  birthday: 1953
   order_id: 32
   party: 中國國民黨
   year: 2008
@@ -927,7 +927,7 @@
   region: 全國
   type: 立法委員
 - name: 邱潤容
-  birthday: 1957/05/31
+  birthday: 1957
   order_id: 33
   party: 中國國民黨
   year: 2008
@@ -935,7 +935,7 @@
   region: 全國
   type: 立法委員
 - name: 謝坤宏
-  birthday: 1971/12/22
+  birthday: 1971
   order_id: 34
   party: 中國國民黨
   year: 2008
@@ -943,7 +943,7 @@
   region: 全國
   type: 立法委員
 - name: 楊玉欣
-  birthday: 1974/12/31
+  birthday: 1974
   order_id: 1
   party: 紅黨
   year: 2008
@@ -951,7 +951,7 @@
   region: 全國
   type: 立法委員
 - name: 姚立明
-  birthday: 1952/01/15
+  birthday: 1952
   order_id: 2
   party: 紅黨
   year: 2008
@@ -959,7 +959,7 @@
   region: 全國
   type: 立法委員
 - name: 陳耀昌
-  birthday: 1949/02/09
+  birthday: 1949
   order_id: 3
   party: 紅黨
   year: 2008
@@ -967,7 +967,7 @@
   region: 全國
   type: 立法委員
 - name: 胡德夫
-  birthday: 1950/11/10
+  birthday: 1950
   order_id: 4
   party: 紅黨
   year: 2008
@@ -975,7 +975,7 @@
   region: 全國
   type: 立法委員
 - name: 黃惠君
-  birthday: 1966/12/06
+  birthday: 1966
   order_id: 5
   party: 紅黨
   year: 2008
@@ -983,7 +983,7 @@
   region: 全國
   type: 立法委員
 - name: 宗景宜
-  birthday: 1952/02/28
+  birthday: 1952
   order_id: 6
   party: 紅黨
   year: 2008
@@ -991,7 +991,7 @@
   region: 全國
   type: 立法委員
 - name: 魏耀乾
-  birthday: 1950/02/05
+  birthday: 1950
   order_id: 7
   party: 紅黨
   year: 2008
@@ -999,7 +999,7 @@
   region: 全國
   type: 立法委員
 - name: 宋楚瑜
-  birthday: 1950/08/02
+  birthday: 1950
   order_id: 1
   party: 客家黨
   year: 2008
@@ -1007,7 +1007,7 @@
   region: 全國
   type: 立法委員
 - name: 鐘棖婷
-  birthday: 1965/11/28
+  birthday: 1965
   order_id: 2
   party: 客家黨
   year: 2008
@@ -1015,7 +1015,7 @@
   region: 全國
   type: 立法委員
 - name: 彭雲煌
-  birthday: 1956/01/27
+  birthday: 1956
   order_id: 3
   party: 客家黨
   year: 2008
