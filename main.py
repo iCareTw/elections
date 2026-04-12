@@ -99,21 +99,15 @@ def _add_as_new(r: dict, matches: list[dict], to_add: list[dict]) -> None:
 
 
 def _resolve_birthday(c: dict, r: dict) -> None:
-    """當生日不同時，互動式詢問要以哪個生日為主。"""
+    """生年衝突時，詢問保留哪個。"""
     print(f'  生年不同：現有 \033[1m{c["birthday"]}\033[0m，新資料 \033[1m{r["birthday"]}\033[0m')
     while True:
-        ans = input('  以哪個為主？[1] 保留現有  [2] 採用新資料  [m] 手動輸入 > ').strip().lower()
+        ans = input('  以哪個為主？[1] 保留現有  [2] 採用新資料 > ').strip()
         if ans == '1':
             break
         elif ans == '2':
             c['birthday'] = r['birthday']
             c['id'] = generate_id(c['name'], c['birthday'])
-            break
-        elif ans == 'm':
-            val = input('  請輸入生日（yyyy 或 yyyy/mm 或 yyyy/mm/dd）> ').strip()
-            if val:
-                c['birthday'] = val
-                c['id'] = generate_id(c['name'], c['birthday'])
             break
 
 
@@ -172,16 +166,13 @@ def _print_conflict_panel(r: dict, matches: list[dict]) -> None:
     print()
 
 
-def _merge_birthday(c: dict, r: dict, auto_upgrade: bool) -> None:
-    """合併時更新生日。auto_upgrade=True 時直接採用新資料，不互動詢問。"""
+def _merge_birthday(c: dict, r: dict) -> None:
+    """當生日不同時，互動式詢問要以哪個生日為主。"""
     if not r['birthday']:
         return
     if c['birthday'] == r['birthday']:
         return
-    if auto_upgrade:
-        c['birthday'] = r['birthday']
-        c['id'] = generate_id(c['name'], c['birthday'])
-    elif not c['birthday']:
+    if not c['birthday']:
         upd = input(f'  現有生年為空，是否補上 {r["birthday"]}？[y/n] > ').strip().lower()
         if upd == 'y':
             c['birthday'] = r['birthday']
@@ -190,8 +181,7 @@ def _merge_birthday(c: dict, r: dict, auto_upgrade: bool) -> None:
         _resolve_birthday(c, r)
 
 
-def resolve_conflicts(conflicts: list[dict], existing: list[dict],
-                      auto_upgrade_birthday: bool = False) -> list[dict]:
+def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]:
     """互動式處理 conflicts，回傳需要追加至 existing 的新候選人。"""
     to_add = []
 
@@ -209,7 +199,7 @@ def resolve_conflicts(conflicts: list[dict], existing: list[dict],
                     c = matches[0]
                     c['elections'].append(_make_election(r))
                     c['elections'].sort(key=lambda e: e['year'])
-                    _merge_birthday(c, r, auto_upgrade_birthday)
+                    _merge_birthday(c, r)
                     break
                 elif ans == 'n':
                     _add_as_new(r, matches, to_add)
@@ -227,7 +217,7 @@ def resolve_conflicts(conflicts: list[dict], existing: list[dict],
                     c = matches[int(ans) - 1]
                     c['elections'].append(_make_election(r))
                     c['elections'].sort(key=lambda e: e['year'])
-                    _merge_birthday(c, r, auto_upgrade_birthday)
+                    _merge_birthday(c, r)
                     break
                 elif ans == 'n':
                     _add_as_new(r, matches, to_add)
@@ -298,8 +288,7 @@ def main():
         result = apply_auto(classified['auto'], existing)
 
         if classified['conflicts']:
-            extra = resolve_conflicts(classified['conflicts'], result,
-                                      auto_upgrade_birthday=is_party_list)
+            extra = resolve_conflicts(classified['conflicts'], result)
             result.extend(extra)
 
     valid_types = load_valid_types()
