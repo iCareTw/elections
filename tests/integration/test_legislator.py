@@ -1,4 +1,8 @@
-"""Integration test: candidates.yaml 立法委員資料 vs _data/legislator/ xlsx 原始資料。"""
+"""Integration test: candidates.yaml 立法委員資料 vs 原始資料。
+
+區域立委 — 來源：_data/legislator/district-legislator/{session}th/*.xlsx
+不分區立委 — 來源：{session}th.yaml（專案根目錄）
+"""
 
 import yaml
 import pytest
@@ -20,8 +24,16 @@ def _available_sessions() -> list[int]:
     )
 
 
+def _available_party_list_sessions() -> list[int]:
+    return sorted(
+        int(p.stem.replace("th", ""))
+        for p in Path(".").glob("*th.yaml")
+        if p.stem.replace("th", "").isdigit()
+    )
+
+
 def _parse_xlsx_session(session: int) -> dict:
-    """解析該屆所有 xlsx，以 (normalized_name, region) 為 key 回傳 dict（重名同選區時保留多筆）。"""
+    """解析該屆所有 xlsx，以 (normalized_name, region) 為 key 回傳 dict。"""
     session_dir = LEGISLATOR_DIR / f"{session}th"
     records: dict[tuple, list[dict]] = {}
     for xlsx in sorted(session_dir.glob("*.xlsx")):
@@ -48,38 +60,37 @@ def _load_yaml_entries() -> list[dict]:
                     "region": election.get("region"),
                     "party": election["party"],
                     "elected": election["elected"],
+                    "order_id": election.get("order_id"),
                 })
     return entries
 
 
-def _get_yaml_sessions() -> list[int]:
-    return sorted({e["session"] for e in _load_yaml_entries() if e["session"]})
-
+# ── 區域立委測試 ───────────────────────────────────────────────────────────────
 
 @pytest.mark.parametrize("session", _available_sessions())
-def test_legislator_candidates_match_xlsx(session: int) -> None:
+def test_district_legislator_candidates_match_xlsx(session: int) -> None:
+    """區域立委：candidates.yaml 的非全國選區筆數需與 xlsx 完全吻合。"""
     xlsx = _parse_xlsx_session(session)
+
     yaml_entries: dict[tuple, list[dict]] = {}
     for e in _load_yaml_entries():
-        if e["session"] == session:
+        if e["session"] == session and e["region"] != "全國":
             yaml_entries.setdefault((e["name"], e["region"]), []).append(e)
 
     xlsx_keys = set(xlsx.keys())
     yaml_keys = set(yaml_entries.keys())
 
     if not yaml_keys:
-        pytest.skip(f"第{session}屆尚未匯入")
+        pytest.skip(f"第{session}屆區域立委尚未匯入")
 
     assert yaml_keys == xlsx_keys, (
-        f"第{session}屆立法委員資料不完整\n"
+        f"第{session}屆區域立委資料不完整\n"
         f"  xlsx 筆數: {len(xlsx_keys)}\n"
         f"  yaml 筆數: {len(yaml_keys)}\n"
         f"  缺漏（前10筆）: {sorted(xlsx_keys - yaml_keys)[:10]}"
     )
 
     # xlsx 生年有誤，經人工確認後略過比對
-    # 徐能安 xlsx=1949，確認為 1944；吳光訓 xlsx=1947，確認為 1950；林志隆 xlsx=1947，確認為 1959
-    # 葉宜津 xlsx=1959，確認為 1960；林建榮 xlsx=1956，確認為 1946
     birthday_skip = {
         ("徐能安", "新竹縣選舉區"),
         ("吳光訓", "高雄縣選舉區"),
@@ -94,7 +105,6 @@ def test_legislator_candidates_match_xlsx(session: int) -> None:
         y_list = yaml_entries[key]
         name, region = key
         for x in x_list:
-            # 重名同選區：以生年配對；birthday_skip 等單一候選人則直接取唯一項
             y = next((e for e in y_list if e["birthday"] == x["birthday"]), None)
             if y is None and len(y_list) == 1:
                 y = y_list[0]
@@ -110,3 +120,34 @@ def test_legislator_candidates_match_xlsx(session: int) -> None:
                 assert x["birthday"] == y["birthday"], (
                     f"第{session}屆 {name} ({region}): 生年不符 xlsx={x['birthday']} yaml={y['birthday']}"
                 )
+
+
+# ── 不分區立委測試 ─────────────────────────────────────────────────────────────
+
+@pytest.mark.parametrize("session", _available_party_list_sessions())
+def test_party_list_candidates_match_yaml(session: int) -> None:
+    """不分區立委：{N}th.yaml 裡每一筆都應出現在 candidates.yaml 的 region='全國' 選舉中。"""
+    source_path = Path(f"{session}th.yaml")
+    with source_path.open(encoding="utf-8") as f:
+        source = yaml.safe_load(f) or []
+
+    # 以 (normalized_name, party, order_id) 建立來源 set
+    source_keys = {
+        (normalize_name(r["name"]), r["party"], r.get("order_id"))
+        for r in source
+    }
+
+    yaml_keys = {
+        (e["name"], e["party"], e["order_id"])
+        for e in _load_yaml_entries()
+        if e["session"] == session and e["region"] == "全國"
+    }
+
+    if not yaml_keys:
+        pytest.skip(f"第{session}屆不分區立委尚未匯入")
+
+    missing = source_keys - yaml_keys
+    assert not missing, (
+        f"第{session}屆不分區立委缺漏 {len(missing)} 筆（前10）：\n"
+        + "\n".join(f"  {m}" for m in sorted(missing)[:10])
+    )
