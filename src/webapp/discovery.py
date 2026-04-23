@@ -42,7 +42,7 @@ def _record(
         "election_id": election_id,
         "type": type_,
         "label": path.stem,
-        "path": str(path.relative_to(root)),
+        "path": path.relative_to(root),
         "status": "todo",
     }
     if year is not None:
@@ -117,7 +117,7 @@ def _discover_legislator_party_list(root: Path) -> list[dict]:
         return []
 
     elections = []
-    for path in sorted(data_dir.glob("*.yaml")):
+    for path in sorted(data_dir.glob("*th.yaml")):
         session = _session_from_text(path.stem)
         year = SESSION_YEARS.get(session) if session is not None else None
         elections.append(

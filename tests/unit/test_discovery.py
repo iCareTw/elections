@@ -34,6 +34,7 @@ def test_discover_elections_includes_current_source_types(tmp_path: Path) -> Non
     party_list_dir = tmp_path / "_data" / "legislator" / "party-list-legislator"
     party_list_dir.mkdir(parents=True)
     (party_list_dir / "11th.yaml").write_text("[]", encoding="utf-8")
+    (party_list_dir / "spec.yaml").write_text("type: spec\n", encoding="utf-8")
 
     (tmp_path / "_data" / "unknown").mkdir(parents=True)
 
@@ -50,7 +51,9 @@ def test_discover_elections_includes_current_source_types(tmp_path: Path) -> Non
     assert by_id["party-list/11th.yaml"]["status"] == "todo"
     assert by_id["party-list/11th.yaml"]["session"] == 11
     assert by_id["party-list/11th.yaml"]["year"] == 2024
+    assert isinstance(by_id["party-list/11th.yaml"]["path"], Path)
     assert by_id["president/第16任總統副總統選舉.xlsx"]["year"] == 2024
     assert by_id["mayor/111年直轄市長選舉.xlsx"]["year"] == 2022
     assert by_id["legislator/district-legislator/11th/區域_臺北市.xlsx"]["session"] == 11
     assert by_id["legislator/district-legislator/11th/區域_臺北市.xlsx"]["year"] == 2024
+    assert "legislator/party-list-legislator/spec.yaml" not in by_id
