@@ -46,7 +46,9 @@ def test_discover_elections_includes_current_source_types(tmp_path: Path) -> Non
     assert by_id["party-list/11th.yaml"]["session"] == 11
     assert by_id["party-list/11th.yaml"]["year"] == 2024
     assert isinstance(by_id["party-list/11th.yaml"]["path"], Path)
+    assert by_id["party-list/11th.yaml"]["path"] == tmp_path / "11th.yaml"
     assert by_id["president/第16任總統副總統選舉.xlsx"]["year"] == 2024
     assert by_id["mayor/111年直轄市長選舉.xlsx"]["year"] == 2022
     assert by_id["legislator/district-legislator/11th/區域_臺北市.xlsx"]["session"] == 11
     assert by_id["legislator/district-legislator/11th/區域_臺北市.xlsx"]["year"] == 2024
+    assert by_id["legislator/district-legislator/11th/區域_臺北市.xlsx"]["path"] == district_dir / "區域_臺北市.xlsx"

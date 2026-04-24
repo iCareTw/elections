@@ -42,7 +42,7 @@ def _record(
         "election_id": election_id,
         "type": type_,
         "label": path.stem,
-        "path": path.relative_to(root),
+        "path": path,
         "status": "todo",
     }
     if year is not None:
