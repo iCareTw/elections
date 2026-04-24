@@ -3,10 +3,7 @@ from pathlib import Path
 
 import openpyxl
 
-SESSION_YEARS = {
-    3: 1995, 4: 1998, 5: 2001,  6: 2004,
-    7: 2008, 8: 2012, 9: 2016, 10: 2020, 11: 2024,
-}
+from src.session_years import SESSION_YEARS
 
 
 def _session_from_path(path: Path) -> int:

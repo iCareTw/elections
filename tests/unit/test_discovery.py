@@ -52,3 +52,15 @@ def test_discover_elections_includes_current_source_types(tmp_path: Path) -> Non
     assert by_id["legislator/district-legislator/11th/區域_臺北市.xlsx"]["session"] == 11
     assert by_id["legislator/district-legislator/11th/區域_臺北市.xlsx"]["year"] == 2024
     assert by_id["legislator/district-legislator/11th/區域_臺北市.xlsx"]["path"] == district_dir / "區域_臺北市.xlsx"
+
+
+def test_discover_elections_ignores_nested_party_list_lookalikes(tmp_path: Path) -> None:
+    (tmp_path / "11th.yaml").write_text("[]", encoding="utf-8")
+
+    nested_dir = tmp_path / "_data" / "legislator" / "party-list-legislator"
+    nested_dir.mkdir(parents=True)
+    (nested_dir / "11th.yaml").write_text("[]", encoding="utf-8")
+
+    elections = discover_elections(tmp_path)
+
+    assert [e["election_id"] for e in elections] == ["party-list/11th.yaml"]

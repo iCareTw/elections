@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from src.parse_legislator import SESSION_YEARS
+from src.session_years import SESSION_YEARS
 
 _SESSION_RE = re.compile(r"(\d+)th")
 
@@ -30,7 +30,6 @@ def _mayor_year(filename: str) -> int | None:
 
 
 def _record(
-    root: Path,
     *,
     type_: str,
     election_id: str,
@@ -60,7 +59,6 @@ def _discover_president(root: Path) -> list[dict]:
     for path in sorted(data_dir.glob("*.xlsx")):
         elections.append(
             _record(
-                root,
                 type_="president",
                 election_id=f"president/{path.name}",
                 path=path,
@@ -78,7 +76,6 @@ def _discover_mayor(root: Path) -> list[dict]:
     for path in sorted(data_dir.glob("*.xlsx")):
         elections.append(
             _record(
-                root,
                 type_="mayor",
                 election_id=f"mayor/{path.name}",
                 path=path,
@@ -100,7 +97,6 @@ def _discover_legislator_district(root: Path) -> list[dict]:
         for path in sorted(session_dir.glob("*.xlsx")):
             elections.append(
                 _record(
-                    root,
                     type_="legislator",
                     election_id=f"legislator/district-legislator/{session_dir.name}/{path.name}",
                     path=path,
@@ -118,7 +114,6 @@ def _discover_party_list(root: Path) -> list[dict]:
         year = SESSION_YEARS.get(session) if session is not None else None
         elections.append(
             _record(
-                root,
                 type_="party-list",
                 election_id=f"party-list/{path.name}",
                 path=path,
