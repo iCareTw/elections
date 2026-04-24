@@ -111,28 +111,6 @@ def _discover_legislator_district(root: Path) -> list[dict]:
     return elections
 
 
-def _discover_legislator_party_list(root: Path) -> list[dict]:
-    data_dir = root / "_data" / "legislator" / "party-list-legislator"
-    if not data_dir.exists():
-        return []
-
-    elections = []
-    for path in sorted(data_dir.glob("*th.yaml")):
-        session = _session_from_text(path.stem)
-        year = SESSION_YEARS.get(session) if session is not None else None
-        elections.append(
-            _record(
-                root,
-                type_="legislator",
-                election_id=f"legislator/party-list-legislator/{path.name}",
-                path=path,
-                year=year,
-                session=session,
-            )
-        )
-    return elections
-
-
 def _discover_party_list(root: Path) -> list[dict]:
     elections = []
     for path in sorted(root.glob("*th.yaml")):
@@ -157,5 +135,4 @@ def discover_elections(root: Path) -> list[dict]:
     elections.extend(_discover_president(root))
     elections.extend(_discover_mayor(root))
     elections.extend(_discover_legislator_district(root))
-    elections.extend(_discover_legislator_party_list(root))
     return sorted(elections, key=lambda election: election["election_id"])
