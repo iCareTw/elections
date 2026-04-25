@@ -2,3 +2,5 @@
 .claude
 **/*.pyc
 _data
+.env
+.superpowers/
