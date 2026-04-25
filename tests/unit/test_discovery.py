@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.webapp.discovery import discover_elections
+from src.webapp.discovery import discover_elections, load_election_records
 
 
 def test_discover_elections_groups_known_sources(tmp_path: Path) -> None:
@@ -64,3 +64,20 @@ def test_discover_elections_ignores_nested_party_list_lookalikes(tmp_path: Path)
     elections = discover_elections(tmp_path)
 
     assert [e["election_id"] for e in elections] == ["party-list/11th.yaml"]
+
+
+def test_load_election_records_assigns_stable_source_record_ids(tmp_path: Path) -> None:
+    path = tmp_path / "11th.yaml"
+    path.write_text("- name: 測試\n  party: 測試黨\n  birthday: 1970\n", encoding="utf-8")
+    election = {
+        "election_id": "party-list/11th.yaml",
+        "type": "party-list",
+        "path": path,
+        "session": 11,
+    }
+
+    rows = load_election_records(election)
+
+    assert rows[0]["source_record_id"] == "party-list/11th.yaml:0"
+    assert rows[0]["election_id"] == "party-list/11th.yaml"
+    assert rows[0]["name"] == "測試"

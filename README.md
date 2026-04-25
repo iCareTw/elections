@@ -24,6 +24,29 @@
 | `candidates.yaml`     | 候選人主 mapping (姓名、id、參選紀錄) |
 | `election_types.yaml` | 合法選別 enum 清單                 |
 
+## 候選人合併 UI
+
+本地 UI 用來處理跨選舉同名候選人的身分合併判斷。
+
+啟動前需要 `.env` 提供 PostgreSQL 連線設定：
+
+- `DATABASE_URL`
+- `POSTGRES_SCHEMA`
+
+啟動：
+
+```bash
+uv run python -m src.webapp.server
+```
+
+Server 啟動時會先驗證 PostgreSQL 可連線，並確認 `POSTGRES_SCHEMA` 存在；驗證失敗時不會啟用 UI。
+
+開啟 `http://127.0.0.1:8000` 後：
+
+1. 選擇左側 election。
+2. 按 `Load Election` 匯入來源 records 並自動處理明確 match/new。
+3. 對右側 manual review item 選擇既有人物、建立新人物或 skip。
+
 ## 免責聲明
 
 - 本資料庫以中選會公開資料為基礎整理而成, 僅供研究、學術及非商業用途參考.

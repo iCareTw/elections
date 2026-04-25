@@ -1,0 +1,63 @@
+from __future__ import annotations
+
+from uuid import uuid4
+
+import pytest
+
+from src.webapp.store import Store, load_database_config
+
+
+def test_store_saves_resolution_decision() -> None:
+    config = load_database_config()
+    if not config.database_url:
+        pytest.skip("DATABASE_URL is not configured")
+
+    store = Store(config)
+    try:
+        store.init_schema()
+    except ConnectionError:
+        pytest.skip("PostgreSQL is not reachable")
+    token = uuid4().hex
+    election_id = f"test/election-{token}.yaml"
+    source_record_id = f"{election_id}:3"
+
+    try:
+        store.upsert_election(
+            {
+                "election_id": election_id,
+                "type": "test",
+                "label": "Test Election",
+                "path": f"/tmp/{election_id}",
+                "status": "todo",
+            }
+        )
+        store.insert_source_record(
+            source_record_id=source_record_id,
+            election_id=election_id,
+            payload={"name": "柯文哲", "birthday": 1959},
+        )
+        store.save_resolution(
+            election_id=election_id,
+            source_record_id=source_record_id,
+            candidate_id="id_柯文哲_1959",
+            mode="manual",
+        )
+
+        row = store.get_resolution(source_record_id)
+
+        assert row is not None
+        assert row["candidate_id"] == "id_柯文哲_1959"
+        assert row["mode"] == "manual"
+    finally:
+        store.delete_election(election_id)
+
+
+def test_store_rejects_missing_schema() -> None:
+    config = load_database_config()
+    if not config.database_url:
+        pytest.skip("DATABASE_URL is not configured")
+
+    store = Store(type(config)(database_url=config.database_url, schema="missing_schema_for_test"))
+
+    with pytest.raises(ConnectionError, match="PostgreSQL schema is not available"):
+        store.validate_connection()

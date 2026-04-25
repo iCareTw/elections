@@ -3,6 +3,9 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+import yaml
+
+from src import parse_legislator, parse_mayor, parse_president
 from src.session_years import SESSION_YEARS
 
 _SESSION_RE = re.compile(r"(\d+)th")
@@ -131,3 +134,35 @@ def discover_elections(root: Path) -> list[dict]:
     elections.extend(_discover_mayor(root))
     elections.extend(_discover_legislator_district(root))
     return sorted(elections, key=lambda election: election["election_id"])
+
+
+def _resolve_parser(election: dict):
+    election_type = election["type"]
+    if election_type == "party-list":
+        return _parse_party_list
+    if election_type == "president":
+        return parse_president.parse_file
+    if election_type == "mayor":
+        return parse_mayor.parse_file
+    if election_type == "legislator":
+        return parse_legislator.parse_file
+    raise ValueError(f"Unsupported election type: {election_type}")
+
+
+def _parse_party_list(path: str | Path) -> list[dict]:
+    with Path(path).open(encoding="utf-8") as f:
+        return yaml.safe_load(f) or []
+
+
+def load_election_records(election: dict) -> list[dict]:
+    parser = _resolve_parser(election)
+    rows = []
+    for index, record in enumerate(parser(election["path"])):
+        rows.append(
+            {
+                **record,
+                "election_id": election["election_id"],
+                "source_record_id": f'{election["election_id"]}:{index}',
+            }
+        )
+    return rows

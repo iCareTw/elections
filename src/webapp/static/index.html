@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Election Identity Workbench</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <aside class="navigator">
+        <div class="brand">
+          <span class="eyebrow">Candidate Merge</span>
+          <h1>Identity Workbench</h1>
+        </div>
+        <div class="toolbar">
+          <button id="refresh-elections" class="button secondary">Refresh</button>
+        </div>
+        <div id="election-list" class="election-list"></div>
+      </aside>
+
+      <section class="workspace">
+        <header class="workspace-header">
+          <div>
+            <p id="pathline" class="pathline">Select an election</p>
+            <h2 id="workspace-title">候選人合併審核</h2>
+          </div>
+          <div class="actions">
+            <button id="load-election" class="button primary" disabled>Load Election</button>
+            <button id="build-output" class="button secondary">Build candidates.yaml</button>
+          </div>
+        </header>
+
+        <div id="status" class="status">DB-backed review queue is ready.</div>
+
+        <div class="review-grid">
+          <article class="panel incoming">
+            <h3>Incoming Record</h3>
+            <div id="incoming-record" class="record-card empty">尚未載入待審核資料。</div>
+          </article>
+
+          <article class="panel matches">
+            <h3>Possible Existing Candidates</h3>
+            <div id="match-list" class="match-list"></div>
+            <div class="decision-bar">
+              <button id="use-match" class="button primary" disabled>Use Selected Match</button>
+              <button id="create-new" class="button secondary" disabled>Create New Person</button>
+              <button id="skip-record" class="button ghost" disabled>Skip</button>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
