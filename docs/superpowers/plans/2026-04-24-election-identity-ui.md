@@ -1,66 +1,67 @@
-# Election Identity UI Implementation Plan
+# 選舉身分辨識 UI 實作計畫
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **給 agent worker：** 必須使用 superpowers:subagent-driven-development（建議）或 superpowers:executing-plans，逐項完成這份計畫。步驟使用 checkbox（`- [ ]`）語法追蹤。
 
-**Goal:** Build a local web app that lists elections, auto-resolves obvious same-person matches, shows manual same-name conflicts, records mapping decisions, and regenerates `candidates.yaml`.
+**Goal:** 建立一個本機 web app，用來列出各場選舉、自動處理明顯屬於同一人的配對、顯示需要人工判斷的同名衝突、記錄 mapping 決策，並重新產生 `candidates.yaml`。
 
-**Architecture:** Keep the existing parsers and normalization logic as the source of truth for raw election records. Add a small Python web server plus a SQLite-backed `map-state/app.db` to store election scan results and mapping decisions, then generate `candidates.yaml` from those persisted decisions.
+**Architecture:** 保留現有 parser 與正規化邏輯，作為原始選舉資料的唯一真實來源。新增一個小型 Python web server 與以 PostgreSQL 為後端的儲存層，持久化選舉掃描結果與 mapping 決策，最後再從這些已持久化的決策產生 `candidates.yaml`。
 
-**Tech Stack:** Python 3.14, `sqlite3`, `http.server`, vanilla HTML/CSS/JS, `pyyaml`, `pytest`, existing parser modules in `src/`
+**Tech Stack:** Python 3.14、PostgreSQL、`psycopg`、`http.server`、原生 HTML/CSS/JS、`pyyaml`、`pytest`、既有 `src/` parser 模組
 
 ---
 
-## File Structure
+## 檔案結構
 
-- Create: `src/webapp/__init__.py`
-- Create: `src/webapp/server.py`
-  - Local HTTP server entrypoint, static file serving, JSON API routing.
-- Create: `src/webapp/discovery.py`
-  - Scan `_data/` and root `*th.yaml` sources into normalized `election` rows.
-- Create: `src/webapp/store.py`
-  - SQLite schema creation and CRUD helpers for elections, source records, resolutions, and logs.
-- Create: `src/webapp/matching.py`
-  - V1 identity rules: auto-match, manual-match candidate lookup, new-id creation.
-- Create: `src/webapp/build_candidates.py`
-  - Rebuild `candidates.yaml` from persisted records and resolutions.
-- Create: `src/webapp/static/index.html`
-  - Single-page shell for navigator + compare workspace.
-- Create: `src/webapp/static/app.js`
-  - Fetch elections, load review items, submit decisions, trigger rebuild.
-- Create: `src/webapp/static/styles.css`
-  - Compact tree navigator + simple compare layout.
-- Create: `tests/unit/test_discovery.py`
-- Create: `tests/unit/test_store.py`
-- Create: `tests/unit/test_matching.py`
-- Create: `tests/integration/test_webapp_build_candidates.py`
-- Modify: `main.py`
-  - Add a `serve-ui` command or keep CLI unchanged and add a new runner module.
-- Modify: `pyproject.toml`
-  - Only if a console script entry is added.
-- Modify: `README.md`
-  - Document how to start the UI and where `map-state/app.db` lives.
+- 建立：`src/webapp/__init__.py`
+- 建立：`src/webapp/server.py`
+  - 本機 HTTP server 入口、靜態檔案提供、JSON API 路由。
+- 建立：`src/webapp/discovery.py`
+  - 掃描 `_data/` 與根目錄下的 `*th.yaml`，轉成正規化後的 `election` 列。
+- 建立：`src/webapp/store.py`
+  - PostgreSQL 連線載入、schema/table 建立，以及 elections、source records、resolutions、logs 的 CRUD helper。
+- 建立：`src/webapp/matching.py`
+  - V1 身分比對規則：自動配對、人工比對候選人查找、建立新 id。
+- 建立：`src/webapp/build_candidates.py`
+  - 根據已持久化的 records 與 resolutions 重建 `candidates.yaml`。
+- 建立：`src/webapp/static/index.html`
+  - 單頁殼層，包含導覽區與比對工作區。
+- 建立：`src/webapp/static/app.js`
+  - 取得 elections、載入待審項目、送出決策、觸發重建。
+- 建立：`src/webapp/static/styles.css`
+  - 精簡的樹狀導覽與簡單的比對版面。
+- 建立：`tests/unit/test_discovery.py`
+- 建立：`tests/unit/test_store.py`
+- 建立：`tests/unit/test_matching.py`
+- 建立：`tests/integration/test_webapp_build_candidates.py`
+- 修改：`main.py`
+  - 新增 `serve-ui` 指令，或維持 CLI 不變並新增獨立 runner 模組。
+- 修改：`pyproject.toml`
+  - 加入 PostgreSQL driver 相依套件。
+- 修改：`README.md`
+  - 說明如何啟動 UI，以及 `.env` 需要哪些 PostgreSQL 設定。
 
-## Implementation Notes
+## 實作備註
 
-- Reuse existing parsers from `src.parse_president`, `src.parse_mayor`, `src.parse_legislator`.
-- Treat each source file as one `election`.
-- Use `source_record_id = "{election_id}:{row_index}"`.
-- Persist `mode = auto|manual|new|skip` on each resolution row.
-- For v1 matching rules:
-  - same normalized name + same birthday + exactly one existing candidate => auto
-  - same normalized name + different birthday => manual
-  - same normalized name + missing birthday => manual
-  - no same-name candidate => create new id
-- Keep final output as `candidates.yaml`.
-- Store app state in `map-state/app.db`.
+- 重用既有 `src.parse_president`、`src.parse_mayor`、`src.parse_legislator` parser。
+- 每個來源檔案視為一個 `election`。
+- 使用 `source_record_id = "{election_id}:{row_index}"`。
+- 在每筆 resolution row 持久化 `mode = auto|manual|new|skip`。
+- V1 比對規則：
+  - 正規化後姓名相同 + 生日相同 + 只對應到一位既有候選人 => `auto`
+  - 正規化後姓名相同 + 生日不同 => `manual`
+  - 正規化後姓名相同 + 缺少生日 => `manual`
+  - 沒有同名候選人 => 建立新 id
+- 最終輸出維持為 `candidates.yaml`。
+- app 狀態存放於 PostgreSQL，透過 `.env` 或環境變數提供 `DATABASE_URL` 與 `POSTGRES_SCHEMA`。
+- PostgreSQL database 與 schema namespace 由 app 外部建立。`Store.init_schema()` 只負責在 `POSTGRES_SCHEMA` 內建立或確認 app 所需資料表。
 
-### Task 1: Add Election Discovery
+### 任務 1：新增選舉探索
 
-**Files:**
-- Create: `src/webapp/discovery.py`
-- Test: `tests/unit/test_discovery.py`
+**檔案：**
+- 建立：`src/webapp/discovery.py`
+- 測試：`tests/unit/test_discovery.py`
 
-- [ ] **Step 1: Write the failing test**
+- [ ] **Step 1: 先寫失敗測試**
 
 ```python
 from pathlib import Path
@@ -81,12 +82,12 @@ def test_discover_elections_groups_known_sources(tmp_path: Path) -> None:
     assert elections[1]["election_id"] == "president/第16任總統副總統選舉.xlsx"
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [ ] **Step 2: 執行測試，確認會失敗**
 
-Run: `uv run pytest tests/unit/test_discovery.py -v`
-Expected: FAIL with `ModuleNotFoundError` or missing `discover_elections`
+執行：`uv run pytest tests/unit/test_discovery.py -v`
+預期：因 `ModuleNotFoundError` 或缺少 `discover_elections` 而失敗
 
-- [ ] **Step 3: Write minimal implementation**
+- [ ] **Step 3: 實作最小版本**
 
 ```python
 from pathlib import Path
@@ -111,14 +112,14 @@ def discover_elections(root: Path) -> list[dict]:
     return sorted(elections, key=lambda e: e["election_id"])
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [ ] **Step 4: 再跑一次測試，確認通過**
 
-Run: `uv run pytest tests/unit/test_discovery.py -v`
-Expected: PASS
+執行：`uv run pytest tests/unit/test_discovery.py -v`
+預期：PASS
 
-- [ ] **Step 5: Expand discovery to all current source types**
+- [ ] **Step 5: 擴充探索邏輯到目前所有來源型別**
 
-Add support for `mayor`, `legislator`, future `_data/<type>` folders, and extract minimal display metadata (`year`, `session`, `status='todo'` default).
+加入對 `mayor`、`legislator`、未來 `_data/<type>` 資料夾的支援，並萃取最基本的顯示 metadata（`year`、`session`、預設 `status='todo'`）。
 
 - [ ] **Step 6: Commit**
 
@@ -127,22 +128,27 @@ git add tests/unit/test_discovery.py src/webapp/discovery.py
 git commit -m "feat: add election discovery for web ui"
 ```
 
-### Task 2: Add SQLite Store
+### 任務 2：新增 PostgreSQL 儲存層
 
-**Files:**
-- Create: `src/webapp/store.py`
-- Test: `tests/unit/test_store.py`
+**檔案：**
+- 建立：`src/webapp/store.py`
+- 修改：`pyproject.toml`
+- 測試：`tests/unit/test_store.py`
 
-- [ ] **Step 1: Write the failing test**
+- [ ] **Step 1: 先寫失敗測試**
 
 ```python
-from pathlib import Path
+import pytest
 
-from src.webapp.store import Store
+from src.webapp.store import Store, load_database_config
 
 
-def test_store_saves_resolution_decision(tmp_path: Path) -> None:
-    store = Store(tmp_path / "app.db")
+def test_store_saves_resolution_decision() -> None:
+    config = load_database_config()
+    if not config.database_url:
+        pytest.skip("DATABASE_URL is not configured")
+
+    store = Store(config)
     store.init_schema()
     store.save_resolution(
         election_id="president/第16任總統副總統選舉.xlsx",
@@ -156,29 +162,55 @@ def test_store_saves_resolution_decision(tmp_path: Path) -> None:
     assert row["mode"] == "manual"
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [ ] **Step 2: 執行測試，確認會失敗**
 
-Run: `uv run pytest tests/unit/test_store.py -v`
-Expected: FAIL with missing `Store`
+執行：`uv run pytest tests/unit/test_store.py -v`
+預期：因缺少 `Store` 或 PostgreSQL driver 而失敗
 
-- [ ] **Step 3: Write minimal implementation**
+- [ ] **Step 3: 實作最小版本**
 
 ```python
-import sqlite3
+from dataclasses import dataclass
+import os
+from pathlib import Path
+
+import psycopg
+from psycopg.rows import dict_row
+
+
+@dataclass(frozen=True)
+class DatabaseConfig:
+    database_url: str
+    schema: str
+
+
+def load_database_config(env_path: Path = Path(".env")) -> DatabaseConfig:
+    values = {}
+    if env_path.exists():
+        for line in env_path.read_text(encoding="utf-8").splitlines():
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            values[key.strip()] = value.strip()
+    database_url = os.environ.get("DATABASE_URL") or values.get("DATABASE_URL", "")
+    schema = os.environ.get("POSTGRES_SCHEMA") or values.get("POSTGRES_SCHEMA", "public")
+    return DatabaseConfig(database_url=database_url, schema=schema)
 
 
 class Store:
-    def __init__(self, path):
-        self.path = path
+    def __init__(self, config: DatabaseConfig | None = None):
+        self.config = config or load_database_config()
 
     def connect(self):
-        conn = sqlite3.connect(self.path)
-        conn.row_factory = sqlite3.Row
-        return conn
+        return psycopg.connect(
+            self.config.database_url,
+            row_factory=dict_row,
+            options=f"-c search_path={self.config.schema}",
+        )
 
     def init_schema(self):
         with self.connect() as conn:
-            conn.executescript(
+            conn.execute(
                 """
                 create table if not exists resolutions (
                     source_record_id text primary key,
@@ -207,44 +239,44 @@ class Store:
     def get_resolution(self, source_record_id):
         with self.connect() as conn:
             return conn.execute(
-                "select * from resolutions where source_record_id = ?",
+                "select * from resolutions where source_record_id = %s",
                 (source_record_id,),
             ).fetchone()
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [ ] **Step 4: 再跑一次測試，確認通過**
 
-Run: `uv run pytest tests/unit/test_store.py -v`
-Expected: PASS
+執行：`uv run pytest tests/unit/test_store.py -v`
+預期：PASS
 
-- [ ] **Step 5: Expand schema**
+- [ ] **Step 5: 擴充 schema**
 
-Add tables for:
+加入以下資料表：
 - `elections`
 - `source_records`
 - `resolutions`
 - `operation_logs`
 
-Include helpers for:
-- upserting discovered elections
-- storing parsed source records
-- listing unresolved records for one election
-- appending operation log rows
+並提供以下 helper：
+- discovered elections 的 upsert
+- 已解析 source records 的儲存
+- 列出單一 election 尚未解決的 records
+- 追加 operation log rows
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add tests/unit/test_store.py src/webapp/store.py
-git commit -m "feat: add sqlite store for election ui"
+git add pyproject.toml uv.lock tests/unit/test_store.py src/webapp/store.py
+git commit -m "feat: add postgres store for election ui"
 ```
 
-### Task 3: Add Matching Rules
+### 任務 3：新增比對規則
 
-**Files:**
-- Create: `src/webapp/matching.py`
-- Test: `tests/unit/test_matching.py`
+**檔案：**
+- 建立：`src/webapp/matching.py`
+- 測試：`tests/unit/test_matching.py`
 
-- [ ] **Step 1: Write the failing test**
+- [ ] **Step 1: 先寫失敗測試**
 
 ```python
 from src.webapp.matching import classify_record
@@ -260,12 +292,12 @@ def test_classify_record_auto_matches_same_name_same_birthday() -> None:
     assert result["candidate_id"] == "id_柯文哲_1959"
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [ ] **Step 2: 執行測試，確認會失敗**
 
-Run: `uv run pytest tests/unit/test_matching.py -v`
-Expected: FAIL with missing `classify_record`
+執行：`uv run pytest tests/unit/test_matching.py -v`
+預期：因缺少 `classify_record` 而失敗
 
-- [ ] **Step 3: Write minimal implementation**
+- [ ] **Step 3: 實作最小版本**
 
 ```python
 from src.normalize import normalize_name, generate_id
@@ -283,18 +315,18 @@ def classify_record(record: dict, existing: list[dict]) -> dict:
     return {"kind": "manual", "matches": matches}
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [ ] **Step 4: 再跑一次測試，確認通過**
 
-Run: `uv run pytest tests/unit/test_matching.py -v`
-Expected: PASS
+執行：`uv run pytest tests/unit/test_matching.py -v`
+預期：PASS
 
-- [ ] **Step 5: Add remaining rule coverage**
+- [ ] **Step 5: 補齊其餘規則覆蓋**
 
-Add tests and code for:
-- same name + different birthday => manual
-- same name + missing birthday => manual
-- same name + same birthday + multiple matches => manual
-- no same-name match => new
+新增測試與實作，涵蓋：
+- 同名 + 不同生日 => `manual`
+- 同名 + 缺少生日 => `manual`
+- 同名 + 同生日 + 多個符合 => `manual`
+- 沒有同名符合 => `new`
 
 - [ ] **Step 6: Commit**
 
@@ -303,16 +335,16 @@ git add tests/unit/test_matching.py src/webapp/matching.py
 git commit -m "feat: add v1 identity matching rules"
 ```
 
-### Task 4: Import Source Records Into Store
+### 任務 4：匯入來源紀錄到 Store
 
-**Files:**
-- Modify: `src/webapp/discovery.py`
-- Modify: `src/webapp/store.py`
-- Modify: `src/webapp/matching.py`
-- Test: `tests/unit/test_discovery.py`
-- Test: `tests/unit/test_store.py`
+**檔案：**
+- 修改：`src/webapp/discovery.py`
+- 修改：`src/webapp/store.py`
+- 修改：`src/webapp/matching.py`
+- 測試：`tests/unit/test_discovery.py`
+- 測試：`tests/unit/test_store.py`
 
-- [ ] **Step 1: Write the failing test**
+- [ ] **Step 1: 先寫失敗測試**
 
 ```python
 from pathlib import Path
@@ -334,12 +366,12 @@ def test_load_election_records_assigns_stable_source_record_ids(tmp_path: Path) 
     assert rows[0]["source_record_id"] == "party-list/11th.yaml:0"
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [ ] **Step 2: 執行測試，確認會失敗**
 
-Run: `uv run pytest tests/unit/test_discovery.py tests/unit/test_store.py -v`
-Expected: FAIL with missing `load_election_records`
+執行：`uv run pytest tests/unit/test_discovery.py tests/unit/test_store.py -v`
+預期：因缺少 `load_election_records` 而失敗
 
-- [ ] **Step 3: Write minimal implementation**
+- [ ] **Step 3: 實作最小版本**
 
 ```python
 def load_election_records(election: dict) -> list[dict]:
@@ -355,20 +387,20 @@ def load_election_records(election: dict) -> list[dict]:
     return rows
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [ ] **Step 4: 再跑一次測試，確認通過**
 
-Run: `uv run pytest tests/unit/test_discovery.py tests/unit/test_store.py -v`
-Expected: PASS
+執行：`uv run pytest tests/unit/test_discovery.py tests/unit/test_store.py -v`
+預期：PASS
 
-- [ ] **Step 5: Persist imported rows and auto decisions**
+- [ ] **Step 5: 持久化匯入 rows 與自動決策**
 
-For one election:
+針對單一 election：
 - parse records
-- persist records to `source_records`
-- load existing candidates from current `candidates.yaml`
-- classify each row
-- save `auto` and `new` resolutions immediately
-- leave `manual` rows unresolved for UI review
+- 將 records 存入 `source_records`
+- 從目前的 `candidates.yaml` 載入既有 candidates
+- 對每一列執行 classify
+- 立即寫入 `auto` 與 `new` resolution
+- `manual` 列先保留為未解決，交由 UI 審查
 
 - [ ] **Step 6: Commit**
 
@@ -377,23 +409,21 @@ git add src/webapp/discovery.py src/webapp/store.py src/webapp/matching.py tests
 git commit -m "feat: persist imported source records"
 ```
 
-### Task 5: Build `candidates.yaml` From Resolutions
+### 任務 5：從 Resolutions 建立 `candidates.yaml`
 
-**Files:**
-- Create: `src/webapp/build_candidates.py`
-- Test: `tests/integration/test_webapp_build_candidates.py`
+**檔案：**
+- 建立：`src/webapp/build_candidates.py`
+- 測試：`tests/integration/test_webapp_build_candidates.py`
 
-- [ ] **Step 1: Write the failing integration test**
+- [ ] **Step 1: 先寫失敗的整合測試**
 
 ```python
-from pathlib import Path
-
 from src.webapp.build_candidates import build_candidates_yaml
-from src.webapp.store import Store
+from src.webapp.store import Store, load_database_config
 
 
-def test_build_candidates_yaml_groups_records_by_candidate_id(tmp_path: Path) -> None:
-    store = Store(tmp_path / "app.db")
+def test_build_candidates_yaml_groups_records_by_candidate_id() -> None:
+    store = Store(load_database_config())
     store.init_schema()
     store.insert_source_record(
         source_record_id="president/a.xlsx:0",
@@ -413,12 +443,12 @@ def test_build_candidates_yaml_groups_records_by_candidate_id(tmp_path: Path) ->
     assert rows[0]["elections"][0]["year"] == 2024
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [ ] **Step 2: 執行測試，確認會失敗**
 
-Run: `uv run pytest tests/integration/test_webapp_build_candidates.py -v`
-Expected: FAIL with missing `build_candidates_yaml`
+執行：`uv run pytest tests/integration/test_webapp_build_candidates.py -v`
+預期：因缺少 `build_candidates_yaml` 而失敗
 
-- [ ] **Step 3: Write minimal implementation**
+- [ ] **Step 3: 實作最小版本**
 
 ```python
 def build_candidates_yaml(store):
@@ -440,17 +470,17 @@ def build_candidates_yaml(store):
     return sorted(grouped.values(), key=lambda c: min(e["year"] for e in c["elections"]))
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [ ] **Step 4: 再跑一次測試，確認通過**
 
-Run: `uv run pytest tests/integration/test_webapp_build_candidates.py -v`
-Expected: PASS
+執行：`uv run pytest tests/integration/test_webapp_build_candidates.py -v`
+預期：PASS
 
-- [ ] **Step 5: Add file output + validation**
+- [ ] **Step 5: 補上檔案輸出與驗證**
 
-Write `write_candidates_yaml(store, output_path)` that:
-- builds grouped candidates
-- validates with `validate_candidates`
-- writes `candidates.yaml`
+撰寫 `write_candidates_yaml(store, output_path)`，負責：
+- 建立 grouped candidates
+- 用 `validate_candidates` 驗證
+- 寫出 `candidates.yaml`
 
 - [ ] **Step 6: Commit**
 
@@ -459,13 +489,13 @@ git add src/webapp/build_candidates.py tests/integration/test_webapp_build_candi
 git commit -m "feat: rebuild candidates yaml from resolutions"
 ```
 
-### Task 6: Add Local Web Server API
+### 任務 6：新增本機 Web Server API
 
-**Files:**
-- Create: `src/webapp/server.py`
-- Test: `tests/unit/test_store.py`
+**檔案：**
+- 建立：`src/webapp/server.py`
+- 測試：`tests/unit/test_store.py`
 
-- [ ] **Step 1: Write the failing test**
+- [ ] **Step 1: 先寫失敗測試**
 
 ```python
 from src.webapp.server import build_api
@@ -477,12 +507,12 @@ def test_build_api_lists_elections(tmp_path):
     assert data[0]["election_id"]
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [ ] **Step 2: 執行測試，確認會失敗**
 
-Run: `uv run pytest tests/unit/test_store.py -v`
-Expected: FAIL with missing `build_api`
+執行：`uv run pytest tests/unit/test_store.py -v`
+預期：因缺少 `build_api` 而失敗
 
-- [ ] **Step 3: Write minimal implementation**
+- [ ] **Step 3: 實作最小版本**
 
 ```python
 def build_api(root):
@@ -494,21 +524,21 @@ def build_api(root):
     return API()
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [ ] **Step 4: 再跑一次測試，確認通過**
 
-Run: `uv run pytest tests/unit/test_store.py -v`
-Expected: PASS
+執行：`uv run pytest tests/unit/test_store.py -v`
+預期：PASS
 
-- [ ] **Step 5: Expand real HTTP endpoints**
+- [ ] **Step 5: 擴充為正式 HTTP endpoints**
 
-Implement:
+實作：
 - `GET /api/elections`
 - `POST /api/elections/<id>/load`
 - `GET /api/elections/<id>/review-items`
 - `POST /api/resolutions`
 - `POST /api/build`
 
-Serve `src/webapp/static/` for the frontend shell.
+並提供 `src/webapp/static/` 作為前端殼層的靜態資源。
 
 - [ ] **Step 6: Commit**
 
@@ -517,32 +547,32 @@ git add src/webapp/server.py tests/unit/test_store.py
 git commit -m "feat: add local api server for web ui"
 ```
 
-### Task 7: Add Minimal Frontend
+### 任務 7：新增最小可用前端
 
-**Files:**
-- Create: `src/webapp/static/index.html`
-- Create: `src/webapp/static/app.js`
-- Create: `src/webapp/static/styles.css`
-- Modify: `README.md`
+**檔案：**
+- 建立：`src/webapp/static/index.html`
+- 建立：`src/webapp/static/app.js`
+- 建立：`src/webapp/static/styles.css`
+- 修改：`README.md`
 
-- [ ] **Step 1: Build the HTML shell**
+- [ ] **Step 1: 建立 HTML 殼層**
 
-Create:
-- compact left tree navigator
-- right compare panel
-- buttons for `Use Selected Match`, `Create New Person`, `Skip`
+建立：
+- 左側精簡樹狀導覽
+- 右側比對面板
+- `Use Selected Match`、`Create New Person`、`Skip` 三個按鈕
 
-- [ ] **Step 2: Add failing smoke check**
+- [ ] **Step 2: 補上會失敗的 smoke check**
 
-Document a manual smoke check:
+記錄一個手動 smoke check：
 
-Run: `uv run python -m src.webapp.server`
-Expected:
-- browser opens `http://127.0.0.1:8000`
-- left side lists elections
-- right side loads one review item after selecting an election
+執行：`uv run python -m src.webapp.server`
+預期：
+- browser 開啟 `http://127.0.0.1:8000`
+- 左側列出 elections
+- 選擇某個 election 後，右側載入一筆待審項目
 
-- [ ] **Step 3: Write minimal frontend implementation**
+- [ ] **Step 3: 實作最小前端**
 
 ```js
 async function loadElections() {
@@ -560,20 +590,20 @@ async function saveResolution(payload) {
 }
 ```
 
-- [ ] **Step 4: Verify manual workflow**
+- [ ] **Step 4: 驗證手動流程**
 
-Check:
-- selecting an election loads pending manual items
-- selecting a match submits a resolution
-- `Create New Person` generates and stores a new id
-- `Build` rewrites `candidates.yaml`
+檢查：
+- 選擇某個 election 後，會載入待處理的 `manual` 項目
+- 選擇某個 match 後，會送出 resolution
+- `Create New Person` 會產生並儲存新的 id
+- `Build` 會重寫 `candidates.yaml`
 
-- [ ] **Step 5: Document startup in README**
+- [ ] **Step 5: 在 README 補上啟動方式**
 
-Add:
+新增：
 - `uv run python -m src.webapp.server`
-- what lives in `map-state/app.db`
-- how to rebuild `candidates.yaml`
+- 必要的 `.env` PostgreSQL 設定
+- 如何重建 `candidates.yaml`
 
 - [ ] **Step 6: Commit**
 
@@ -582,33 +612,33 @@ git add src/webapp/static/index.html src/webapp/static/app.js src/webapp/static/
 git commit -m "feat: add election identity web ui"
 ```
 
-### Task 8: End-to-End Verification
+### 任務 8：端對端驗證
 
-**Files:**
-- Modify: `tests/integration/test_webapp_build_candidates.py`
-- Modify: `README.md`
+**檔案：**
+- 修改：`tests/integration/test_webapp_build_candidates.py`
+- 修改：`README.md`
 
-- [ ] **Step 1: Add end-to-end integration coverage**
+- [ ] **Step 1: 補上端對端整合測試覆蓋**
 
-Cover this sequence:
-- discover one election
-- import source records
-- auto-resolve one same-name same-birthday row
-- manually resolve one same-name different-birthday row
-- rebuild `candidates.yaml`
-- assert expected ids and elections exist
+涵蓋以下流程：
+- 探索出一場 election
+- 匯入 source records
+- 自動解決一筆同名同生日資料
+- 手動解決一筆同名不同生日資料
+- 重建 `candidates.yaml`
+- 驗證預期的 ids 與 elections 都存在
 
-- [ ] **Step 2: Run focused tests**
+- [ ] **Step 2: 執行聚焦測試**
 
-Run: `uv run pytest tests/unit/test_discovery.py tests/unit/test_store.py tests/unit/test_matching.py tests/integration/test_webapp_build_candidates.py -v`
-Expected: PASS
+執行：`uv run pytest tests/unit/test_discovery.py tests/unit/test_store.py tests/unit/test_matching.py tests/integration/test_webapp_build_candidates.py -v`
+預期：PASS
 
-- [ ] **Step 3: Run full test suite**
+- [ ] **Step 3: 執行完整測試集**
 
-Run: `make test`
-Expected: all existing and new tests PASS
+執行：`make test`
+預期：既有與新增測試全部 PASS
 
-- [ ] **Step 4: Final commit**
+- [ ] **Step 4: 最後 commit**
 
 ```bash
 git add tests README.md

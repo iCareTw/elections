@@ -90,6 +90,20 @@
 - `auto` 或 `manual`
 - 操作時間
 
+### 儲存方式
+
+- 判斷紀錄儲存在 PostgreSQL，不再使用本地 SQLite 檔案。
+- 連線設定全部從 `.env` 或環境變數讀取：
+  - `DATABASE_URL`
+  - `POSTGRES_SCHEMA`
+- PostgreSQL database 與 schema namespace 由外部先建立。
+- App 的 store layer 負責在 `POSTGRES_SCHEMA` 內建立或確認必要 tables：
+  - `elections`
+  - `source_records`
+  - `resolutions`
+  - `operation_logs`
+- App 啟動與測試時不得在 log 或錯誤訊息中輸出密碼。
+
 ---
 
 ## 輸出
