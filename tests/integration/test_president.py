@@ -15,6 +15,7 @@ PRESIDENT_TYPES = {"國家元首_總統", "國家元首_副總統"}
 # key: (year, election_type, ticket)
 KNOWN_BIRTHDAY_ERRORS: set[tuple] = {
     (2000, "國家元首_副總統", 2),  # 蕭萬長 10th 誤植為 1942, 正確為 1939
+    (2008, "國家元首_副總統", 2),  # 蕭萬長沿用同一筆生日資料
 }
 
 

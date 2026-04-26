@@ -15,7 +15,8 @@ def test_api_loads_election_and_lists_manual_review_items(tmp_path: Path) -> Non
         pytest.skip("DATABASE_URL is not configured")
 
     token = uuid4().hex
-    election_path = tmp_path / f"{token}th.yaml"
+    election_path = tmp_path / "_data" / "legislator" / "party-list-legislator" / f"{token}th.yaml"
+    election_path.parent.mkdir(parents=True)
     election_path.write_text(
         "- name: 測試候選人\n  party: 測試黨\n  birthday: 1970\n"
         "  year: 2024\n  region: 全國\n  type: 立法委員\n  elected: 0\n",
@@ -25,7 +26,7 @@ def test_api_loads_election_and_lists_manual_review_items(tmp_path: Path) -> Non
         "- name: 測試候選人\n  id: id_測試候選人_1960\n  birthday: 1960\n  elections: []\n",
         encoding="utf-8",
     )
-    election_id = f"party-list/{token}th.yaml"
+    election_id = f"legislator/party-list-legislator/{token}th.yaml"
     store = Store(config)
     try:
         api = build_api(tmp_path, store)

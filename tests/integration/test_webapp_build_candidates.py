@@ -9,6 +9,8 @@ import yaml
 from src.webapp.build_candidates import build_candidates_yaml, write_candidates_yaml
 from src.webapp.store import Store, load_database_config
 
+ROOT = Path(__file__).resolve().parents[2]
+
 
 def test_build_candidates_yaml_groups_records_by_candidate_id(tmp_path: Path) -> None:
     config = load_database_config()
@@ -60,10 +62,8 @@ def test_build_candidates_yaml_groups_records_by_candidate_id(tmp_path: Path) ->
 
         assert target["elections"][0]["year"] == 2024
 
-        election_types = tmp_path / "election_types.yaml"
-        election_types.write_text("- id: 立法委員\n", encoding="utf-8")
         output = tmp_path / "candidates.yaml"
-        write_candidates_yaml(store, output, election_types)
+        write_candidates_yaml(store, output, ROOT / "election_types.yaml")
 
         written = yaml.safe_load(output.read_text(encoding="utf-8"))
         assert any(row["id"] == "id_柯文哲_1959" for row in written)

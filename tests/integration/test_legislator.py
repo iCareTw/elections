@@ -1,7 +1,7 @@
 """Integration test: candidates.yaml 立法委員資料 vs 原始資料。
 
 區域立委 — 來源：_data/legislator/district-legislator/{session}th/*.xlsx
-不分區立委 — 來源：{session}th.yaml（專案根目錄）
+不分區立委 — 來源：_data/legislator/party-list-legislator/{session}th.yaml
 """
 
 import yaml
@@ -13,6 +13,7 @@ from src.parse_legislator import parse_file
 
 CANDIDATES_YAML = Path("candidates.yaml")
 LEGISLATOR_DIR = Path("_data/legislator/district-legislator")
+PARTY_LIST_DIR = Path("_data/legislator/party-list-legislator")
 ELECTION_TYPE = "立法委員"
 
 
@@ -27,7 +28,7 @@ def _available_sessions() -> list[int]:
 def _available_party_list_sessions() -> list[int]:
     return sorted(
         int(p.stem.replace("th", ""))
-        for p in Path(".").glob("*th.yaml")
+        for p in PARTY_LIST_DIR.glob("*th.yaml")
         if p.stem.replace("th", "").isdigit()
     )
 
@@ -126,8 +127,8 @@ def test_district_legislator_candidates_match_xlsx(session: int) -> None:
 
 @pytest.mark.parametrize("session", _available_party_list_sessions())
 def test_party_list_candidates_match_yaml(session: int) -> None:
-    """不分區立委：{N}th.yaml 裡每一筆都應出現在 candidates.yaml 的 region='全國' 選舉中。"""
-    source_path = Path(f"{session}th.yaml")
+    """不分區立委：party-list yaml 裡每一筆都應出現在 candidates.yaml 的 region='全國' 選舉中。"""
+    source_path = PARTY_LIST_DIR / f"{session}th.yaml"
     with source_path.open(encoding="utf-8") as f:
         source = yaml.safe_load(f) or []
 

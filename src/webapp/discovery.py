@@ -54,20 +54,34 @@ def _record(
     return record
 
 
+def _visible_children(path: Path) -> list[Path]:
+    return sorted(child for child in path.iterdir() if not child.name.startswith("_"))
+
+
+def _first_existing_dir(root: Path, *parts_options: str) -> Path | None:
+    for part in parts_options:
+        candidate = root / "_data" / "legislator" / part
+        if candidate.exists():
+            return candidate
+    return None
+
+
 def _discover_president(root: Path) -> list[dict]:
     data_dir = root / "_data" / "president"
     if not data_dir.exists():
         return []
+
     elections = []
-    for path in sorted(data_dir.glob("*.xlsx")):
-        elections.append(
-            _record(
-                type_="president",
-                election_id=f"president/{path.name}",
-                path=path,
-                year=_president_year(path.name),
+    for path in _visible_children(data_dir):
+        if path.is_file() and path.suffix.lower() == ".xlsx":
+            elections.append(
+                _record(
+                    type_="president",
+                    election_id=f"president/{path.name}",
+                    path=path,
+                    year=_president_year(path.name),
+                )
             )
-        )
     return elections
 
 
@@ -75,33 +89,60 @@ def _discover_mayor(root: Path) -> list[dict]:
     data_dir = root / "_data" / "mayor"
     if not data_dir.exists():
         return []
+
     elections = []
-    for path in sorted(data_dir.glob("*.xlsx")):
-        elections.append(
-            _record(
-                type_="mayor",
-                election_id=f"mayor/{path.name}",
-                path=path,
-                year=_mayor_year(path.name),
+    for path in _visible_children(data_dir):
+        if path.is_file() and path.suffix.lower() == ".xlsx":
+            elections.append(
+                _record(
+                    type_="mayor",
+                    election_id=f"mayor/{path.name}",
+                    path=path,
+                    year=_mayor_year(path.name),
+                )
             )
-        )
     return elections
 
 
 def _discover_legislator_district(root: Path) -> list[dict]:
-    data_dir = root / "_data" / "legislator" / "district-legislator"
-    if not data_dir.exists():
+    data_dir = _first_existing_dir(root, "district-legislator", "district")
+    if data_dir is None:
         return []
 
     elections = []
-    for session_dir in sorted(p for p in data_dir.iterdir() if p.is_dir()):
+    for session_dir in _visible_children(data_dir):
+        if not session_dir.is_dir():
+            continue
         session = _session_from_text(session_dir.name)
         year = SESSION_YEARS.get(session) if session is not None else None
-        for path in sorted(session_dir.glob("*.xlsx")):
+        for path in _visible_children(session_dir):
+            if path.is_file() and path.suffix.lower() == ".xlsx":
+                elections.append(
+                    _record(
+                        type_="legislator",
+                        election_id=f"legislator/{data_dir.name}/{session_dir.name}/{path.name}",
+                        path=path,
+                        year=year,
+                        session=session,
+                    )
+                )
+    return elections
+
+
+def _discover_legislator_party_list(root: Path) -> list[dict]:
+    data_dir = _first_existing_dir(root, "party-list-legislator", "party-list")
+    if data_dir is None:
+        return []
+
+    elections = []
+    for path in _visible_children(data_dir):
+        if path.is_file() and path.suffix.lower() in {".yaml", ".yml"}:
+            session = _session_from_text(path.stem)
+            year = SESSION_YEARS.get(session) if session is not None else None
             elections.append(
                 _record(
-                    type_="legislator",
-                    election_id=f"legislator/district-legislator/{session_dir.name}/{path.name}",
+                    type_="party-list",
+                    election_id=f"legislator/{data_dir.name}/{path.name}",
                     path=path,
                     year=year,
                     session=session,
@@ -110,36 +151,21 @@ def _discover_legislator_district(root: Path) -> list[dict]:
     return elections
 
 
-def _discover_party_list(root: Path) -> list[dict]:
-    elections = []
-    for path in sorted(root.glob("*th.yaml")):
-        session = _session_from_text(path.stem)
-        year = SESSION_YEARS.get(session) if session is not None else None
-        elections.append(
-            _record(
-                type_="party-list",
-                election_id=f"party-list/{path.name}",
-                path=path,
-                year=year,
-                session=session,
-            )
-        )
-    return elections
-
-
 def discover_elections(root: Path) -> list[dict]:
     elections = []
-    elections.extend(_discover_party_list(root))
     elections.extend(_discover_president(root))
     elections.extend(_discover_mayor(root))
     elections.extend(_discover_legislator_district(root))
+    elections.extend(_discover_legislator_party_list(root))
     return sorted(elections, key=lambda election: election["election_id"])
 
 
 def _resolve_parser(election: dict):
+    path = Path(election["path"])
+    if path.suffix.lower() in {".yaml", ".yml"}:
+        return _parse_yaml_records
+
     election_type = election["type"]
-    if election_type == "party-list":
-        return _parse_party_list
     if election_type == "president":
         return parse_president.parse_file
     if election_type == "mayor":
@@ -149,7 +175,7 @@ def _resolve_parser(election: dict):
     raise ValueError(f"Unsupported election type: {election_type}")
 
 
-def _parse_party_list(path: str | Path) -> list[dict]:
+def _parse_yaml_records(path: str | Path) -> list[dict]:
     with Path(path).open(encoding="utf-8") as f:
         return yaml.safe_load(f) or []
 
