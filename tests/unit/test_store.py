@@ -61,3 +61,59 @@ def test_store_rejects_missing_schema() -> None:
 
     with pytest.raises(ConnectionError, match="PostgreSQL schema is not available"):
         store.validate_connection()
+
+
+def test_store_lists_election_progress_status() -> None:
+    config = load_database_config()
+    if not config.database_url:
+        pytest.skip("DATABASE_URL is not configured")
+
+    store = Store(config)
+    try:
+        store.init_schema()
+    except ConnectionError:
+        pytest.skip("PostgreSQL is not reachable")
+    token = uuid4().hex
+    election_id = f"test/progress-{token}.yaml"
+    source_record_id = f"{election_id}:0"
+
+    try:
+        store.upsert_election(
+            {
+                "election_id": election_id,
+                "type": "test",
+                "label": "Progress Election",
+                "path": f"/tmp/{election_id}",
+                "status": "todo",
+            }
+        )
+
+        row = next(item for item in store.list_elections() if item["election_id"] == election_id)
+        assert row["status"] == "todo"
+        assert row["imported_count"] == 0
+        assert row["unresolved_count"] == 0
+
+        store.insert_source_record(
+            source_record_id=source_record_id,
+            election_id=election_id,
+            payload={"name": "測試候選人", "birthday": 1970},
+        )
+
+        row = next(item for item in store.list_elections() if item["election_id"] == election_id)
+        assert row["status"] == "review"
+        assert row["imported_count"] == 1
+        assert row["unresolved_count"] == 1
+
+        store.save_resolution(
+            election_id=election_id,
+            source_record_id=source_record_id,
+            candidate_id=None,
+            mode="skip",
+        )
+
+        row = next(item for item in store.list_elections() if item["election_id"] == election_id)
+        assert row["status"] == "done"
+        assert row["imported_count"] == 1
+        assert row["unresolved_count"] == 0
+    finally:
+        store.delete_election(election_id)

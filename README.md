@@ -36,6 +36,12 @@
 啟動：
 
 ```bash
+uv run python main.py serve-ui
+```
+
+或：
+
+```bash
 uv run python -m src.webapp.server
 ```
 

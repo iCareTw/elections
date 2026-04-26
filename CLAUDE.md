@@ -34,6 +34,11 @@ uv add <package>
 - region 欄位使用官方全名，`臺` 不寫作 `台`（如 `臺北市`、`臺中市`）
 - `election_types.yaml` 中的合法 type 值：`國家元首_總統`、`國家元首_副總統`、`縣市首長`、`立法委員`、`縣市議員`
 
+## 專案內部稱呼
+
+- `identity ui`、`identity-ui`、`mapping app` 都是指同一個 app，也就是 `src/webapp/` 這個候選人身分判定介面。
+- 日後在文件、commit 訊息、對話中若提到上述名稱，應視為同義，不要當成不同工具或不同功能。
+
 ---
 
 ## Karpathy Skills — 核心開發原則

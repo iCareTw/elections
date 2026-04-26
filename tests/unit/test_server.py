@@ -39,8 +39,30 @@ def test_api_loads_election_and_lists_manual_review_items(tmp_path: Path) -> Non
         summary = api.handle_json("POST", "/api/elections/load", {"election_id": election_id})
         assert summary["manual"] == 1
 
+        elections = api.handle_json("GET", "/api/elections")
+        election = next(e for e in elections if e["election_id"] == election_id)
+        assert election["status"] == "review"
+        assert election["unresolved_count"] == 1
+
         items = api.handle_json("GET", f"/api/review-items?election_id={election_id}")
         assert items[0]["source_record_id"] == f"{election_id}:0"
         assert items[0]["matches"][0]["id"] == "id_測試候選人_1960"
+
+        resolution = api.handle_json(
+            "POST",
+            "/api/resolutions",
+            {
+                "election_id": election_id,
+                "source_record_id": f"{election_id}:0",
+                "candidate_id": "id_測試候選人_1960",
+                "mode": "manual",
+            },
+        )
+        assert resolution["mode"] == "manual"
+
+        elections = api.handle_json("GET", "/api/elections")
+        election = next(e for e in elections if e["election_id"] == election_id)
+        assert election["status"] == "done"
+        assert election["unresolved_count"] == 0
     finally:
         store.delete_election(election_id)

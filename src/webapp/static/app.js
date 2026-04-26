@@ -4,6 +4,13 @@ const state = {
   reviewItems: [],
   currentIndex: 0,
   selectedCandidateId: null,
+  expandedNodes: new Set(),
+};
+
+const STATUS_LABELS = {
+  todo: "未匯入",
+  review: "待審核",
+  done: "已完成",
 };
 
 const els = {
@@ -38,42 +45,163 @@ async function request(path, options = {}) {
   return data;
 }
 
-function groupByType(elections) {
-  return elections.reduce((groups, election) => {
-    groups[election.type] ||= [];
-    groups[election.type].push(election);
-    return groups;
-  }, {});
+function normalizePath(value) {
+  return String(value || "").replaceAll("\\", "/");
 }
 
-function renderElections() {
-  const groups = groupByType(state.elections);
-  els.electionList.innerHTML = "";
+function treeSegments(election) {
+  const parts = normalizePath(election.path).split("/").filter(Boolean);
+  const dataIndex = parts.indexOf("_data");
+  if (dataIndex >= 0) {
+    return parts.slice(dataIndex + 1);
+  }
+  return [];
+}
 
-  for (const [type, elections] of Object.entries(groups)) {
-    const section = document.createElement("section");
-    section.className = "election-group";
-    section.innerHTML = `<h3>${type}</h3>`;
+function buildElectionTree(elections) {
+  const roots = [];
+  const nodeIndex = new Map();
+  const defaultExpanded = new Set();
 
-    for (const election of elections) {
-      const button = document.createElement("button");
-      button.className = "election-item";
-      if (state.selectedElection?.election_id === election.election_id) {
-        button.classList.add("selected");
-      }
-      button.innerHTML = `
-        <span>${election.year || election.session || "?"}</span>
-        <strong>${election.label}</strong>
-        <em>${election.status}</em>
-      `;
-      button.addEventListener("click", () => selectElection(election));
-      section.append(button);
+  for (const election of elections) {
+    const segments = treeSegments(election);
+    if (segments.length === 0) {
+      continue;
     }
-    els.electionList.append(section);
+    let children = roots;
+    let path = "";
+
+    segments.forEach((segment, index) => {
+      path = path ? `${path}/${segment}` : segment;
+      let node = nodeIndex.get(path);
+      const isLeaf = index === segments.length - 1;
+      if (!node) {
+        node = {
+          key: path,
+          label: segment,
+          depth: index,
+          kind: isLeaf ? "file" : "dir",
+          election: null,
+          children: [],
+        };
+        nodeIndex.set(path, node);
+        children.push(node);
+        if (!isLeaf) {
+          if (index <= 2) {
+            defaultExpanded.add(path);
+          }
+        }
+      }
+
+      if (isLeaf) {
+        node.kind = "file";
+        node.election = election;
+      } else {
+        node.kind = "dir";
+      }
+
+      children = node.children;
+    });
+  }
+
+  const collator = new Intl.Collator("zh-Hant", { numeric: true, sensitivity: "base" });
+  const sortNodes = (nodes) => {
+    nodes.sort((left, right) => {
+      if (left.kind !== right.kind) {
+        return left.kind === "dir" ? -1 : 1;
+      }
+      return collator.compare(left.label, right.label);
+    });
+    nodes.forEach((node) => sortNodes(node.children));
+  };
+  sortNodes(roots);
+  if (state.expandedNodes.size === 0) {
+    state.expandedNodes = defaultExpanded;
+  }
+  return roots;
+}
+
+function electionMeta(election) {
+  const statusLabel = STATUS_LABELS[election.status] || election.status;
+  if (election.unresolved_count > 0) {
+    return `${election.unresolved_count}待審`;
+  }
+  if (election.imported_count > 0) {
+    return "完成";
+  }
+  return statusLabel;
+}
+
+function expandElectionParents(election) {
+  const segments = treeSegments(election);
+  let path = "";
+  for (const segment of segments.slice(0, -1)) {
+    path = path ? `${path}/${segment}` : segment;
+    state.expandedNodes.add(path);
   }
 }
 
+function renderTreeNodes(nodes, container) {
+  for (const node of nodes) {
+    const wrapper = document.createElement("div");
+    wrapper.className = `tree-node ${node.kind}`;
+    wrapper.style.setProperty("--depth", node.depth);
+
+    if (node.kind === "dir") {
+      const expanded = state.expandedNodes.has(node.key);
+      const row = document.createElement("button");
+      row.type = "button";
+      row.className = "tree-row tree-dir";
+      row.setAttribute("aria-expanded", String(expanded));
+      row.innerHTML = `
+        <span class="tree-toggle">${expanded ? "▾" : "▸"}</span>
+        <span class="tree-label">${node.label}</span>
+      `;
+      row.addEventListener("click", () => {
+        if (state.expandedNodes.has(node.key)) {
+          state.expandedNodes.delete(node.key);
+        } else {
+          state.expandedNodes.add(node.key);
+        }
+        renderElections();
+      });
+      wrapper.append(row);
+
+      if (expanded) {
+        const children = document.createElement("div");
+        children.className = "tree-children";
+        renderTreeNodes(node.children, children);
+        wrapper.append(children);
+      }
+    } else {
+      const election = node.election;
+      const row = document.createElement("button");
+      row.type = "button";
+      row.className = "tree-row tree-file";
+      if (state.selectedElection?.election_id === election.election_id) {
+        row.classList.add("selected");
+      }
+      row.innerHTML = `
+        <span class="tree-label">${node.label}</span>
+        <span class="tree-meta">${electionMeta(election)}</span>
+      `;
+      row.title = election.election_id;
+      row.addEventListener("click", () => selectElection(election));
+      wrapper.append(row);
+    }
+
+    container.append(wrapper);
+  }
+}
+
+function renderElections() {
+  els.electionList.innerHTML = "";
+  const tree = buildElectionTree(state.elections);
+  renderTreeNodes(tree, els.electionList);
+}
+
 function selectElection(election) {
+  expandElectionParents(election);
   state.selectedElection = election;
   state.reviewItems = [];
   state.currentIndex = 0;
@@ -138,10 +266,13 @@ function renderCurrentItem() {
 }
 
 async function loadElections() {
+  const selectedElectionId = state.selectedElection?.election_id;
   setStatus("Loading elections...");
   state.elections = await request("/api/elections");
+  state.selectedElection =
+    state.elections.find((election) => election.election_id === selectedElectionId && treeSegments(election).length > 0) || null;
   renderElections();
-  setStatus(`Loaded ${state.elections.length} elections.`);
+  setStatus(`Loaded ${state.elections.filter((election) => treeSegments(election).length > 0).length} elections.`);
 }
 
 async function loadSelectedElection() {
@@ -151,6 +282,12 @@ async function loadSelectedElection() {
     method: "POST",
     body: JSON.stringify({ election_id: state.selectedElection.election_id }),
   });
+  state.elections = await request("/api/elections");
+  state.selectedElection =
+    state.elections.find(
+      (election) => election.election_id === state.selectedElection.election_id && treeSegments(election).length > 0,
+    ) || state.selectedElection;
+  renderElections();
   state.reviewItems = await request(`/api/review-items?election_id=${encodeURIComponent(state.selectedElection.election_id)}`);
   state.currentIndex = 0;
   renderCurrentItem();
@@ -172,6 +309,10 @@ async function saveResolution(mode, candidateId = null) {
   });
 
   state.reviewItems.splice(state.currentIndex, 1);
+  state.elections = await request("/api/elections");
+  state.selectedElection =
+    state.elections.find((election) => election.election_id === item.election_id && treeSegments(election).length > 0) || null;
+  renderElections();
   renderCurrentItem();
   setStatus(`Saved ${mode} decision. ${state.reviewItems.length} manual items remain.`);
 }
@@ -184,7 +325,9 @@ els.skipRecord.addEventListener("click", () => saveResolution("skip").catch((err
 els.buildOutput.addEventListener("click", async () => {
   try {
     const result = await request("/api/build", { method: "POST", body: "{}" });
-    setStatus(result.error || "Build complete.");
+    state.elections = await request("/api/elections");
+    renderElections();
+    setStatus(result.error || `Build complete. Wrote ${result.count} candidates.`);
   } catch (error) {
     setStatus(error.message, "error");
   }

@@ -183,9 +183,26 @@ class Store:
         with self.connect() as conn:
             rows = conn.execute(
                 """
-                select election_id, type, label, path, year, session, status
-                from elections
-                order by type, year nulls last, label
+                select
+                    e.election_id,
+                    e.type,
+                    e.label,
+                    e.path,
+                    e.year,
+                    e.session,
+                    case
+                        when count(sr.source_record_id) = 0 then 'todo'
+                        when count(sr.source_record_id) filter (where r.source_record_id is null) > 0 then 'review'
+                        else 'done'
+                    end as status,
+                    count(sr.source_record_id)::int as imported_count,
+                    count(sr.source_record_id) filter (where r.source_record_id is null)::int as unresolved_count,
+                    count(r.source_record_id)::int as resolved_count
+                from elections e
+                left join source_records sr on sr.election_id = e.election_id
+                left join resolutions r on r.source_record_id = sr.source_record_id
+                group by e.election_id, e.type, e.label, e.path, e.year, e.session
+                order by e.type, e.year nulls last, e.label
                 """
             ).fetchall()
         return list(rows)

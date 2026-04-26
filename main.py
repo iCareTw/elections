@@ -229,13 +229,24 @@ def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]
     return to_add
 
 
-def main():
+def _run_identity_ui() -> None:
+    from src.webapp.server import main as serve_ui_main
+
+    serve_ui_main()
+
+
+def main(argv: list[str] | None = None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == 'serve-ui':
+        _run_identity_ui()
+        return
+
     all_types = list(PARSERS.keys()) + list(PARTY_LIST_TYPES)
     parser = argparse.ArgumentParser(description='解析選舉資料並更新 candidates.yaml')
     parser.add_argument('--type', required=True, choices=all_types, help='選舉類型')
     parser.add_argument('--year', type=int, help='西元年份 (president/mayor)')
     parser.add_argument('--session', type=int, help='屆次 (legislator/party-list)')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     is_party_list = args.type in PARTY_LIST_TYPES
 
