@@ -21,13 +21,12 @@
 ```sql
 -- 選舉檔案清單
 CREATE TABLE IF NOT EXISTS elections (
-    election_id TEXT         PRIMARY KEY,
-    type        VARCHAR(32)  NOT NULL,
-    label       TEXT         NOT NULL,
-    path        TEXT         NOT NULL,
+    election_id TEXT        PRIMARY KEY,
+    type        VARCHAR(32) NOT NULL,
+    label       TEXT        NOT NULL,
+    path        TEXT        NOT NULL,
     year        INTEGER,
-    session     INTEGER,
-    updated_at  TIMESTAMPTZ  NOT NULL DEFAULT current_timestamp
+    session     INTEGER
 );
 
 -- 從 Source data 匯入的原始資料列 (raw decision log)
