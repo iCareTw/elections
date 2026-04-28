@@ -65,3 +65,4 @@ def test_build_candidates_yaml_groups_records_by_candidate_id(tmp_path: Path) ->
         assert any(r["id"] == candidate_id for r in written)
     finally:
         store.delete_election(election_id)
+        store.delete_candidate(candidate_id)

@@ -340,3 +340,7 @@ class Store:
     def delete_election(self, election_id: str) -> None:
         with self.connect() as conn:
             conn.execute("delete from elections where election_id = %s", (election_id,))
+
+    def delete_candidate(self, candidate_id: str) -> None:
+        with self.connect() as conn:
+            conn.execute("DELETE FROM candidates WHERE id = %s", (candidate_id,))
