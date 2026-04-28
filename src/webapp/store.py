@@ -284,7 +284,6 @@ class Store:
         Returns (auto_count, manual_count).
         """
         auto = manual = 0
-        _ELECTION_KEYS = ("year", "type", "region", "party", "elected", "session", "ticket", "order_id")
 
         with self.connect() as conn:
             for src_id, decision in decisions.items():
