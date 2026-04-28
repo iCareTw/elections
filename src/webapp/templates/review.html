@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block workspace %}
+
+<div class="workspace-header">
+  <div>
+    <p class="pathline">{{ election.type }} / {{ election.year }}</p>
+    <h2>{{ election.label }}</h2>
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-fill" style="width: {{ progress_pct }}%;"></div>
+      </div>
+      <span class="progress-label">{{ resolved_count }} / {{ total_count }} 已完成</span>
+    </div>
+  </div>
+</div>
+
+<div class="review-grid">
+  <article class="panel">
+    <h3>Incoming Record</h3>
+    {% for key, value in record_fields %}
+    <div class="record-field"><strong>{{ key }}</strong><span>{{ value }}</span></div>
+    {% endfor %}
+  </article>
+
+  <article class="panel">
+    <h3>Possible Existing Candidates</h3>
+    <form method="post" action="/review/{{ election.election_id | urlencode }}/resolve">
+      <input type="hidden" name="source_record_id" value="{{ current_record.source_record_id }}">
+      <input type="hidden" name="i" value="{{ i }}">
+
+      {% for match in matches %}
+      <label class="match-card {% if loop.first %}selected{% endif %}">
+        <input type="radio" name="candidate_id" value="{{ match.id }}"
+               {% if loop.first %}checked{% endif %} style="display:none">
+        <strong>{{ match.name }}</strong>
+        <span>生日：{{ match.birthday }} ｜ {{ match.id }}</span>
+      </label>
+      {% endfor %}
+
+      <div class="decision-bar">
+        <button class="button primary" name="mode" value="use_match"
+                {% if not matches %}disabled{% endif %}>
+          Use Selected Match
+        </button>
+        <button class="button secondary" name="mode" value="new">
+          Create New Person
+        </button>
+      </div>
+    </form>
+  </article>
+</div>
+
+<div class="bottom-bar">
+  <div class="nav-btns">
+    {% if i > 0 %}
+    <a class="button ghost" href="/review/{{ election.election_id | urlencode }}?i={{ i - 1 }}">← 上一筆</a>
+    {% else %}
+    <span class="button ghost disabled">← 上一筆</span>
+    {% endif %}
+    {% if i < total_count - 1 %}
+    <a class="button ghost" href="/review/{{ election.election_id | urlencode }}?i={{ i + 1 }}">下一筆 →</a>
+    {% else %}
+    <span class="button ghost disabled">下一筆 →</span>
+    {% endif %}
+  </div>
+</div>
+
+{% if resolved_count < total_count %}
+<div class="commit-pending">
+  <p>⏳ 仍有 {{ total_count - resolved_count }} 筆待審核</p>
+  <button class="button" disabled>Commit to DB</button>
+</div>
+{% else %}
+<div class="commit-ready">
+  <p>✓ 全部 {{ total_count }} 筆審核完畢，可提交至 DB</p>
+  <form method="post" action="/elections/{{ election.election_id | urlencode }}/commit">
+    <button class="button primary" type="submit">Commit to DB →</button>
+  </form>
+</div>
+{% endif %}
+
+{% endblock %}

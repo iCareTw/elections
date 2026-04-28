@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Identity Workbench</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<main class="shell">
+
+  <aside class="navigator">
+    <div class="brand">
+      <span class="eyebrow">Candidate Merge</span>
+      <h1>Identity Workbench</h1>
+    </div>
+
+    <button class="button ghost" onclick="location.reload()">Refresh</button>
+
+    <div class="election-list">
+      {% for group_name, group_elections in election_groups %}
+      <div class="tree-dir">▾ {{ group_name }}</div>
+      {% for election in group_elections %}
+      <a class="tree-row {% if election.election_id == selected_id %}selected{% endif %}"
+         href="/elections/{{ election.election_id | urlencode }}">
+        <span class="tree-label">{{ election.label }}</span>
+        <span class="badge badge-{{ election.status }}">
+          {% if election.status == 'review' %}{{ election.unresolved_count }} 待審
+          {% else %}{{ election.status }}{% endif %}
+        </span>
+      </a>
+      {% endfor %}
+      {% endfor %}
+    </div>
+
+    <div class="nav-footer">
+      <form method="post" action="/build">
+        <button class="generate-btn" type="submit">⬇ Generate candidates.yaml</button>
+      </form>
+      {% if generated is defined and generated %}
+      <p class="build-result">✓ {{ generated }} 位候選人已匯出</p>
+      {% endif %}
+    </div>
+  </aside>
+
+  <section class="workspace">
+    {% block workspace %}{% endblock %}
+  </section>
+
+</main>
+</body>
+</html>

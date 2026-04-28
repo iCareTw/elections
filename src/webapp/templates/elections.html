@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block workspace %}
+
+{% if not election %}
+  <div class="workspace-empty">
+    <p>← 從左側選取一場選舉開始</p>
+  </div>
+
+{% elif election.status == 'todo' %}
+  <div class="state-todo">
+    <p class="pathline">{{ election.type }} / {{ election.year }}</p>
+    <h2>{{ election.label }}</h2>
+    <p>此選舉尚未匯入資料</p>
+    <form method="post" action="/elections/{{ election.election_id | urlencode }}/load">
+      <button class="button primary load-btn" type="submit">↓ Load Election</button>
+    </form>
+  </div>
+
+{% elif election.status == 'done' %}
+  <div class="workspace-header">
+    <div>
+      <p class="pathline">{{ election.type }} / {{ election.year }}</p>
+      <h2>{{ election.label }}</h2>
+    </div>
+  </div>
+  <div class="status-done">
+    ✓ 已 commit 至 DB
+  </div>
+
+{% endif %}
+
+{% endblock %}
