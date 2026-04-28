@@ -24,7 +24,6 @@ async def lifespan(app: FastAPI):
     # Startup
     store = Store()
     store.open()
-    store.init_schema()
     app.state.store = store
     yield
     # Shutdown
