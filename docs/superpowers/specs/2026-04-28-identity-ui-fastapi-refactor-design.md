@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS elections (
     updated_at  TIMESTAMPTZ  NOT NULL DEFAULT current_timestamp
 );
 
--- 從 xlsx 匯入的原始資料列 (raw decision log)
+-- 從 Source data 匯入的原始資料列 (raw decision log)
 CREATE TABLE IF NOT EXISTS source_records (
     source_record_id TEXT        PRIMARY KEY,
     election_id      TEXT        NOT NULL REFERENCES elections(election_id) ON DELETE CASCADE,
@@ -43,14 +43,14 @@ CREATE TABLE IF NOT EXISTS source_records (
 CREATE INDEX IF NOT EXISTS idx_source_records_election_id
     ON source_records (election_id);
 
--- 人工 / 自動判定結果 (raw decision log)
+-- Source data 匯入以後的整併判斷 - 人工 / 自動 (raw decision log)
 CREATE TABLE IF NOT EXISTS resolutions (
     source_record_id TEXT        PRIMARY KEY REFERENCES source_records(source_record_id) ON DELETE CASCADE,
     election_id      TEXT        NOT NULL    REFERENCES elections(election_id) ON DELETE CASCADE,
     candidate_id     VARCHAR(64),
-    mode             VARCHAR(16) NOT NULL,
-    decided_at       TIMESTAMPTZ NOT NULL DEFAULT current_timestamp
+    mode             VARCHAR(16) NOT NULL
 );
+-- mode: auto / new / manual
 
 -- 候選人身分識別 (業務資料)
 CREATE TABLE IF NOT EXISTS candidates (
