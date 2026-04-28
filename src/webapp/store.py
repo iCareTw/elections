@@ -77,6 +77,7 @@ class Store:
             conn.close()
             raise ConnectionError(f"PostgreSQL schema is not available: {self.config.schema}")
         conn.execute(sql.SQL("set search_path to {}").format(sql.Identifier(self.config.schema)))
+        conn.execute("set timezone to 'Asia/Taipei'")
         return conn
 
     def _schema_exists(self, conn: psycopg.Connection[dict[str, Any]]) -> bool:
@@ -130,6 +131,7 @@ class Store:
                     e.path,
                     e.year,
                     e.session,
+                    e.updated_at,
                     case
                         when count(sr.source_record_id) = 0 then 'todo'
                         when count(sr.source_record_id) filter (where r.source_record_id is null) > 0 then 'review'
@@ -141,7 +143,7 @@ class Store:
                 from elections e
                 left join source_records sr on sr.election_id = e.election_id
                 left join resolutions r on r.source_record_id = sr.source_record_id
-                group by e.election_id, e.type, e.label, e.path, e.year, e.session
+                group by e.election_id, e.type, e.label, e.path, e.year, e.session, e.updated_at
                 order by e.type, e.year nulls last, e.label
                 """
             ).fetchall()

@@ -1,4 +1,4 @@
 interface:
   display_name: "elections-db"
-  short_description: "Debug identity ui DB state"
-  default_prompt: "Use this skill to inspect identity ui DB state, raw decision records, candidate mappings, and local operation logs."
+  short_description: "Inspect or clear identity ui DB state"
+  default_prompt: "Use this skill to inspect or clear identity ui DB state, raw decision records, candidate mappings, and local operation logs."

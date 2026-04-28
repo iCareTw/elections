@@ -5,8 +5,26 @@ CREATE TABLE IF NOT EXISTS elections (
     label       TEXT        NOT NULL,
     path        TEXT        NOT NULL,
     year        INTEGER,
-    session     INTEGER
+    session     INTEGER,
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE elections
+    ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+CREATE OR REPLACE FUNCTION touch_elections_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_elections_updated_at ON elections;
+CREATE TRIGGER trg_elections_updated_at
+BEFORE UPDATE ON elections
+FOR EACH ROW
+EXECUTE FUNCTION touch_elections_updated_at();
 
 -- 從 source data 匯入的原始資料 (raw decision log)
 CREATE TABLE IF NOT EXISTS source_records (

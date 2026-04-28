@@ -1,6 +1,6 @@
 ---
 name: elections-db
-description: Access the local PostgreSQL database for the elections project. Use when Codex needs to inspect the `idontcare` database, the `elections` schema, identity ui DB state, raw source records, committed candidate identity decisions, candidate mappings, or local identity ui operation and error logs for debugging.
+description: Access the local PostgreSQL database for the elections project. Use when Codex needs to inspect or clear the `idontcare` database, the `elections` schema, identity ui DB state, raw source records, committed candidate identity decisions, candidate mappings, or local identity ui operation and error logs for debugging.
 ---
 
 # Idontcare Elections DB
@@ -17,6 +17,16 @@ Expected defaults:
 - Logs: `logs/operations.log`, `logs/errors.log`
 
 Do not print `POSTGRES_PASSWORD` or a full database URL. Do not mutate DB state unless the user explicitly asks for a write.
+
+## Clear Table Data
+
+When the user explicitly asks to clear or reset DB table data, use the bundled script instead of rewriting ad hoc `DELETE FROM` statements:
+
+```bash
+uv run python .agents/skills/elections-db/scripts/clear_table_data.py --yes
+```
+
+The script deletes rows only. It does not drop tables. Without `--yes`, it runs in dry-run mode and prints current row counts.
 
 ## Connect
 

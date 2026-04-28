@@ -1,11 +1,78 @@
 from __future__ import annotations
 
+from datetime import timedelta
+import time
 from uuid import uuid4
 
 import pytest
 
 from src.webapp.store import Store, load_database_config
 
+
+def test_store_uses_taipei_timezone() -> None:
+    config = load_database_config()
+    if not config.database_url:
+        pytest.skip("PostgreSQL connection not configured")
+
+    store = Store(config)
+    try:
+        with store.connect() as conn:
+            assert conn.execute("show timezone").fetchone()["TimeZone"] == "Asia/Taipei"
+            assert conn.execute("select current_timestamp as now").fetchone()["now"].utcoffset() == timedelta(hours=8)
+    except ConnectionError:
+        pytest.skip("PostgreSQL is not reachable")
+
+
+def test_upsert_election_refreshes_updated_at_on_update() -> None:
+    config = load_database_config()
+    if not config.database_url:
+        pytest.skip("PostgreSQL connection not configured")
+
+    store = Store(config)
+    try:
+        store.init_schema()
+    except ConnectionError:
+        pytest.skip("PostgreSQL is not reachable")
+
+    token = uuid4().hex
+    election_id = f"test/updated-at-{token}.yaml"
+
+    try:
+        store.upsert_election(
+            {
+                "election_id": election_id,
+                "type": "test",
+                "label": "Updated At Test",
+                "path": f"/tmp/{election_id}",
+            }
+        )
+        with store.connect() as conn:
+            first = conn.execute(
+                "select updated_at from elections where election_id = %s",
+                (election_id,),
+            ).fetchone()["updated_at"]
+
+        time.sleep(0.01)
+        store.upsert_election(
+            {
+                "election_id": election_id,
+                "type": "test",
+                "label": "Updated At Test Changed",
+                "path": f"/tmp/{election_id}",
+            }
+        )
+
+        with store.connect() as conn:
+            second = conn.execute(
+                "select updated_at from elections where election_id = %s",
+                (election_id,),
+            ).fetchone()["updated_at"]
+
+        assert first.utcoffset() == timedelta(hours=8)
+        assert second.utcoffset() == timedelta(hours=8)
+        assert second > first
+    finally:
+        store.delete_election(election_id)
 
 
 def test_store_rejects_missing_schema() -> None:
@@ -123,3 +190,4 @@ def test_store_commit_election_writes_candidates_and_elections() -> None:
         assert target["elections"][0]["region"] == "臺北市"
     finally:
         store.delete_election(election_id)
+        store.delete_candidate(candidate_id)
