@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+使用繁體中文作為溝通語言
+
 ## 環境
 
 Python 環境使用 `uv` 管理. 執行任何 Python 指令請使用 `uv run`:
