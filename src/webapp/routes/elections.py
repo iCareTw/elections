@@ -41,8 +41,7 @@ async def home(request: Request):
     generated = request.query_params.get("generated")
     election_groups = _election_tree(root, store)
 
-    return templates.TemplateResponse("elections.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "elections.html", {
         "election_groups": election_groups,
         "selected_id": None,
         "election": None,
@@ -62,8 +61,7 @@ async def election_detail(request: Request, election_id: str):
     if election is None:
         return RedirectResponse("/")
 
-    return templates.TemplateResponse("elections.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "elections.html", {
         "election_groups": election_groups,
         "selected_id": election_id,
         "election": election,

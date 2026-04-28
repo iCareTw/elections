@@ -56,8 +56,7 @@ async def review_page(request: Request, election_id: str, i: int = 0):
     db_map = {e["election_id"]: e for _, es in election_groups for e in es}
     election = db_map.get(election_id, {"election_id": election_id, "label": election_id, "type": "", "year": ""})
 
-    return templates.TemplateResponse("review.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "review.html", {
         "election_groups": election_groups,
         "selected_id": election_id,
         "election": election,
