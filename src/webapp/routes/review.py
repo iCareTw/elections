@@ -73,11 +73,11 @@ async def review_page(request: Request, election_id: str, i: int = 0):
 @router.post("/review/{election_id:path}/resolve")
 async def resolve(request: Request, election_id: str):
     form = await request.form()
-    mode = form.get("mode")
-    source_record_id = form.get("source_record_id")
-    candidate_id = form.get("candidate_id")
-    i = int(form.get("i", 0))
-    total_count = int(form.get("total_count", 1))
+    mode = str(form.get("mode", ""))
+    source_record_id = str(form.get("source_record_id", ""))
+    candidate_id = str(form.get("candidate_id", "")) or None
+    i = int(str(form.get("i", 0)))
+    total_count = int(str(form.get("total_count", 1)))
 
     store: Store = request.app.state.store
 
