@@ -3,6 +3,8 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -17,20 +19,28 @@ STATIC_DIR = Path(__file__).parent / "static"
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    store = Store()
+    store.open()
+    store.init_schema()
+    app.state.store = store
+    yield
+    # Shutdown
+    app.state.store.close()
+
+
 def create_app(root: Path = ROOT) -> FastAPI:
     setup_logging(root / "logs")
 
-    app = FastAPI(title="Identity Workbench")
+    app = FastAPI(title="Identity Workbench", lifespan=lifespan)
     app.add_middleware(
         SessionMiddleware,
         secret_key=os.environ.get("SECRET_KEY", "dev-secret-change-in-prod"),
     )
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
-    store = Store()
-    store.init_schema()
-
-    app.state.store = store
     app.state.templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
     app.state.root = root
 
