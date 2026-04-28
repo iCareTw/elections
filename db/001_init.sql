@@ -38,6 +38,18 @@ CREATE TABLE IF NOT EXISTS source_records (
 CREATE INDEX IF NOT EXISTS idx_source_records_election_id
     ON source_records (election_id);
 
+-- 審核期間的草稿判定；Commit 前也必須可恢復
+CREATE TABLE IF NOT EXISTS review_decisions (
+    source_record_id TEXT        PRIMARY KEY REFERENCES source_records(source_record_id) ON DELETE CASCADE,
+    election_id      TEXT        NOT NULL    REFERENCES elections(election_id) ON DELETE CASCADE,
+    candidate_id     VARCHAR(64) NOT NULL,
+    mode             VARCHAR(16) NOT NULL,
+    updated_at       TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_review_decisions_election_id
+    ON review_decisions (election_id);
+
 -- 身分判定結果 (raw decision log)
 CREATE TABLE IF NOT EXISTS resolutions (
     source_record_id TEXT        PRIMARY KEY REFERENCES source_records(source_record_id) ON DELETE CASCADE,

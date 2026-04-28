@@ -34,10 +34,13 @@
         {% for name, child in node.children.items() if child.kind == 'election' %}
           {% set election = child.data %}
           <a class="tree-row {% if election.election_id == selected_id %}selected{% endif %}"
-             href="{% if election.status == 'review' %}/review{% else %}/elections{% endif %}/{{ election.election_id | urlencode }}">
+             href="{% if election.status in ['review', 'ready'] %}/review{% else %}/elections{% endif %}/{{ election.election_id | urlencode }}">
             <span class="tree-label">{{ election.label }}</span>
             <span class="badge badge-{{ election.status }}">
               {% if election.status == 'review' %}{{ election.unresolved_count }} 待審
+              {% elif election.status == 'ready' %}待提交
+              {% elif election.status == 'todo' %}未匯入
+              {% elif election.status == 'done' %}完成
               {% else %}{{ election.status }}{% endif %}
             </span>
           </a>

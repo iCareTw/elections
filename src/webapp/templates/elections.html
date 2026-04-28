@@ -27,11 +27,19 @@
     ✓ 已 commit 至 DB
   </div>
 
+{% elif election.status == 'ready' %}
+  <div class="state-todo">
+    <p class="pathline">{{ election.type }} / {{ election.year }}</p>
+    <h2>{{ election.label }}</h2>
+    <p>全部 {{ election.imported_count }} 筆已完成判斷，尚未正式提交</p>
+    <a class="button primary load-btn" href="/review/{{ election.election_id | urlencode }}">前往提交</a>
+  </div>
+
 {% elif election.status == 'review' %}
   <div class="state-todo">
     <p class="pathline">{{ election.type }} / {{ election.year }}</p>
     <h2>{{ election.label }}</h2>
-    <p>此選舉已匯入, 尚未完成審核</p>
+    <p>此選舉正在審核，仍有 {{ election.unresolved_count }} 筆待判斷</p>
     <a class="button primary load-btn" href="/review/{{ election.election_id | urlencode }}">繼續審核</a>
   </div>
 

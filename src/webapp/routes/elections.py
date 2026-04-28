@@ -89,7 +89,7 @@ async def election_detail(request: Request, election_id: str):
     election = flat.get(election_id)
     if election is None:
         return RedirectResponse("/")
-    if election["status"] == "review":
+    if election["status"] in ("review", "ready"):
         return RedirectResponse(f"/review/{election_id}", status_code=303)
 
     return templates.TemplateResponse(request, "elections.html", {
@@ -111,10 +111,12 @@ async def load_election(request: Request, election_id: str):
 
     store.upsert_election(raw_election)
 
-    session = request.session
-    pending_key = f"pending_{election_id}"
-    decisions: dict[str, dict] = {}
+    existing_decisions = {
+        decision["source_record_id"]: decision
+        for decision in store.list_review_decisions(election_id)
+    }
     total = 0
+    auto_new = 0
 
     for record in load_election_records(raw_election):
         store.insert_source_record(
@@ -122,16 +124,23 @@ async def load_election(request: Request, election_id: str):
             election_id=election_id,
             payload=record,
         )
+        if record["source_record_id"] in existing_decisions:
+            total += 1
+            continue
+
         result = classify_record(record, store)
         if result["kind"] in ("auto", "new"):
-            decisions[record["source_record_id"]] = {
-                "mode": result["kind"],
-                "candidate_id": result["candidate_id"],
-            }
+            store.upsert_review_decision(
+                source_record_id=record["source_record_id"],
+                election_id=election_id,
+                candidate_id=result["candidate_id"],
+                mode=result["kind"],
+            )
+            auto_new += 1
         total += 1
 
-    session[pending_key] = decisions
+    decision_count = len(store.list_review_decisions(election_id))
     logger.info("load election=%s total=%d auto_new=%d manual=%d",
-                election_id, total, len(decisions), total - len(decisions))
+                election_id, total, auto_new, total - decision_count)
 
     return RedirectResponse(f"/review/{election_id}", status_code=303)

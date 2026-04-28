@@ -28,15 +28,16 @@ async def review_page(request: Request, election_id: str, i: int = 0):
     root: Path = request.app.state.root
     templates: Jinja2Templates = request.app.state.templates
 
-    pending_key = f"pending_{election_id}"
-    decisions: dict = request.session.get(pending_key, {})
-
     source_records = store.list_source_records(election_id)
     if not source_records:
         return RedirectResponse(f"/elections/{election_id}", status_code=303)
 
+    decisions = {
+        decision["source_record_id"]: decision
+        for decision in store.list_review_decisions(election_id)
+    }
     total_count = len(source_records)
-    resolved_count = sum(1 for r in source_records if r["source_record_id"] in decisions)
+    resolved_count = len(decisions)
     progress_pct = int(resolved_count / total_count * 100) if total_count else 0
 
     i = max(0, min(i, total_count - 1))
@@ -101,10 +102,12 @@ async def resolve(request: Request, election_id: str):
         mode = "manual"
 
     if source_record_id and mode and candidate_id:
-        pending_key = f"pending_{election_id}"
-        decisions = request.session.get(pending_key, {})
-        decisions[source_record_id] = {"mode": mode, "candidate_id": candidate_id}
-        request.session[pending_key] = decisions
+        store.upsert_review_decision(
+            source_record_id=source_record_id,
+            election_id=election_id,
+            candidate_id=candidate_id,
+            mode=mode,
+        )
 
     next_i = min(i + 1, total_count - 1)
 
@@ -115,9 +118,14 @@ async def resolve(request: Request, election_id: str):
 async def commit(request: Request, election_id: str):
     store: Store = request.app.state.store
 
-    pending_key = f"pending_{election_id}"
-    decisions: dict = request.session.get(pending_key, {})
     source_records = store.list_source_records(election_id)
+    decisions = {
+        decision["source_record_id"]: {
+            "mode": decision["mode"],
+            "candidate_id": decision["candidate_id"],
+        }
+        for decision in store.list_review_decisions(election_id)
+    }
 
     if len(decisions) < len(source_records):
         return RedirectResponse(f"/review/{election_id}", status_code=303)
@@ -132,5 +140,4 @@ async def commit(request: Request, election_id: str):
     logger.info("commit election=%s auto=%d manual=%d total=%d",
                 election_id, auto, manual, auto + manual)
 
-    request.session.pop(pending_key, None)
     return RedirectResponse(f"/elections/{election_id}", status_code=303)
