@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import os
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 
 import psycopg
 from psycopg import OperationalError
@@ -35,10 +36,23 @@ def _parse_env_file(path: Path) -> dict[str, str]:
     return values
 
 
+def _build_database_url(values: dict[str, str]) -> str:
+    user = os.environ.get("POSTGRES_USER") or values.get("POSTGRES_USER", "")
+    password = os.environ.get("POSTGRES_PASSWORD") or values.get("POSTGRES_PASSWORD", "")
+    host = os.environ.get("POSTGRES_HOST") or values.get("POSTGRES_HOST", "")
+    port = os.environ.get("POSTGRES_PORT") or values.get("POSTGRES_PORT", "")
+    db = os.environ.get("POSTGRES_DB") or values.get("POSTGRES_DB", "")
+    if not (user and host and db):
+        return ""
+    userinfo = f"{quote(user, safe='')}:{quote(password, safe='')}@" if password else f"{quote(user, safe='')}@"
+    port_part = f":{port}" if port else ""
+    return f"postgresql://{userinfo}{host}{port_part}/{db}"
+
+
 def load_database_config(env_path: Path = Path(".env")) -> DatabaseConfig:
     values = _parse_env_file(env_path)
     return DatabaseConfig(
-        database_url=os.environ.get("DATABASE_URL") or values.get("DATABASE_URL", ""),
+        database_url=_build_database_url(values),
         schema=os.environ.get("POSTGRES_SCHEMA") or values.get("POSTGRES_SCHEMA", "public"),
     )
 
@@ -49,12 +63,12 @@ class Store:
 
     def connect(self) -> psycopg.Connection[dict[str, Any]]:
         if not self.config.database_url:
-            raise ValueError("DATABASE_URL is not configured")
+            raise ValueError("PostgreSQL connection is not configured")
 
         try:
             conn = psycopg.connect(self.config.database_url, row_factory=dict_row)
-        except OperationalError as exc:
-            raise ConnectionError("Could not connect to PostgreSQL using configured DATABASE_URL") from None
+        except OperationalError:
+            raise ConnectionError("Could not connect to PostgreSQL") from None
         if not self._schema_exists(conn):
             conn.close()
             raise ConnectionError(f"PostgreSQL schema is not available: {self.config.schema}")

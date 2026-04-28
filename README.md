@@ -30,7 +30,7 @@
 
 啟動前需要 `.env` 提供 PostgreSQL 連線設定：
 
-- `DATABASE_URL`
+- `POSTGRES_DB`、`POSTGRES_USER`、`POSTGRES_PASSWORD`、`POSTGRES_HOST`、`POSTGRES_PORT`
 - `POSTGRES_SCHEMA`
 
 啟動：
@@ -47,7 +47,7 @@ uv run python -m src.webapp.server
 
 Server 啟動時會先驗證 PostgreSQL 可連線，並確認 `POSTGRES_SCHEMA` 存在；驗證失敗時不會啟用 UI。
 
-開啟 `http://127.0.0.1:8000` 後：
+開啟 `http://127.0.0.1:23088` 後：
 
 1. 選擇左側 election。
 2. 按 `Load Election` 匯入來源 records 並自動處理明確 match/new。

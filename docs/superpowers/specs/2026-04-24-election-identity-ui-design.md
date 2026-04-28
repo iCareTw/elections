@@ -94,8 +94,9 @@
 
 - 判斷紀錄儲存在 PostgreSQL，不再使用本地 SQLite 檔案。
 - 連線設定全部從 `.env` 或環境變數讀取：
-  - `DATABASE_URL`
+  - `POSTGRES_DB`、`POSTGRES_USER`、`POSTGRES_PASSWORD`、`POSTGRES_HOST`、`POSTGRES_PORT`
   - `POSTGRES_SCHEMA`
+  - `DATABASE_URL` 由程式從上述參數自動組裝，不需手動填寫
 - PostgreSQL database 與 schema namespace 由外部先建立。
 - App 的 store layer 負責在 `POSTGRES_SCHEMA` 內建立或確認必要 tables：
   - `elections`

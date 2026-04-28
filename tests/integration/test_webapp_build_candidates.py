@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[2]
 def test_build_candidates_yaml_groups_records_by_candidate_id(tmp_path: Path) -> None:
     config = load_database_config()
     if not config.database_url:
-        pytest.skip("DATABASE_URL is not configured")
+        pytest.skip("PostgreSQL connection not configured")
 
     store = Store(config)
     try:

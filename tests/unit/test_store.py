@@ -10,7 +10,7 @@ from src.webapp.store import Store, load_database_config
 def test_store_saves_resolution_decision() -> None:
     config = load_database_config()
     if not config.database_url:
-        pytest.skip("DATABASE_URL is not configured")
+        pytest.skip("PostgreSQL connection not configured")
 
     store = Store(config)
     try:
@@ -55,7 +55,7 @@ def test_store_saves_resolution_decision() -> None:
 def test_store_rejects_missing_schema() -> None:
     config = load_database_config()
     if not config.database_url:
-        pytest.skip("DATABASE_URL is not configured")
+        pytest.skip("PostgreSQL connection not configured")
 
     store = Store(type(config)(database_url=config.database_url, schema="missing_schema_for_test"))
 
@@ -66,7 +66,7 @@ def test_store_rejects_missing_schema() -> None:
 def test_store_lists_election_progress_status() -> None:
     config = load_database_config()
     if not config.database_url:
-        pytest.skip("DATABASE_URL is not configured")
+        pytest.skip("PostgreSQL connection not configured")
 
     store = Store(config)
     try:

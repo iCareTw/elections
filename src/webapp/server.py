@@ -16,6 +16,7 @@ from src.webapp.store import Store
 
 ROOT = Path(__file__).resolve().parents[2]
 STATIC_ROOT = Path(__file__).resolve().parent / "static"
+DEFAULT_PORT = 23088
 
 
 def _load_candidates(root: Path) -> list[dict]:
@@ -204,8 +205,8 @@ def main() -> None:
     api.store.validate_connection()
 
     Handler.api = api
-    server = ThreadingHTTPServer(("127.0.0.1", 8000), Handler)
-    print("Serving election identity UI at http://127.0.0.1:8000")
+    server = ThreadingHTTPServer(("127.0.0.1", DEFAULT_PORT), Handler)
+    print(f"Serving election identity UI at http://127.0.0.1:{DEFAULT_PORT}")
     server.serve_forever()
 
 

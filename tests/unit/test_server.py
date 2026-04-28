@@ -12,7 +12,7 @@ from src.webapp.store import Store, load_database_config
 def test_api_loads_election_and_lists_manual_review_items(tmp_path: Path) -> None:
     config = load_database_config()
     if not config.database_url:
-        pytest.skip("DATABASE_URL is not configured")
+        pytest.skip("PostgreSQL connection not configured")
 
     token = uuid4().hex
     election_path = tmp_path / "_data" / "legislator" / "party-list-legislator" / f"{token}th.yaml"

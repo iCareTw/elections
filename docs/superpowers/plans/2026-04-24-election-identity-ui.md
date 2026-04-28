@@ -52,7 +52,7 @@
   - 正規化後姓名相同 + 缺少生日 => `manual`
   - 沒有同名候選人 => 建立新 id
 - 最終輸出維持為 `candidates.yaml`。
-- app 狀態存放於 PostgreSQL，透過 `.env` 或環境變數提供 `DATABASE_URL` 與 `POSTGRES_SCHEMA`。
+- app 狀態存放於 PostgreSQL，透過 `.env` 或環境變數提供 `POSTGRES_*` 連線參數與 `POSTGRES_SCHEMA`；`DATABASE_URL` 由程式自動組裝。
 - PostgreSQL database 與 schema namespace 由 app 外部建立。`Store.init_schema()` 只負責在 `POSTGRES_SCHEMA` 內建立或確認 app 所需資料表。
 
 ### 任務 1：新增選舉探索
@@ -146,7 +146,7 @@ from src.webapp.store import Store, load_database_config
 def test_store_saves_resolution_decision() -> None:
     config = load_database_config()
     if not config.database_url:
-        pytest.skip("DATABASE_URL is not configured")
+        pytest.skip("PostgreSQL connection not configured")
 
     store = Store(config)
     store.init_schema()
@@ -192,9 +192,8 @@ def load_database_config(env_path: Path = Path(".env")) -> DatabaseConfig:
                 continue
             key, value = line.split("=", 1)
             values[key.strip()] = value.strip()
-    database_url = os.environ.get("DATABASE_URL") or values.get("DATABASE_URL", "")
     schema = os.environ.get("POSTGRES_SCHEMA") or values.get("POSTGRES_SCHEMA", "public")
-    return DatabaseConfig(database_url=database_url, schema=schema)
+    return DatabaseConfig(database_url=_build_database_url(values), schema=schema)
 
 
 class Store:
