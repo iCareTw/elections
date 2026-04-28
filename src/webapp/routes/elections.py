@@ -83,6 +83,7 @@ async def load_election(request: Request, election_id: str):
     session = request.session
     pending_key = f"pending_{election_id}"
     decisions: dict[str, dict] = {}
+    total = 0
 
     for record in load_election_records(raw_election):
         store.insert_source_record(
@@ -96,10 +97,9 @@ async def load_election(request: Request, election_id: str):
                 "mode": result["kind"],
                 "candidate_id": result["candidate_id"],
             }
+        total += 1
 
     session[pending_key] = decisions
-
-    total = len(store.list_source_records(election_id))
     logger.info("load election=%s total=%d auto_new=%d manual=%d",
                 election_id, total, len(decisions), total - len(decisions))
 

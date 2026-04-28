@@ -119,34 +119,6 @@ class Store:
                 ),
             )
 
-    def save_resolution(
-        self,
-        *,
-        election_id: str,
-        source_record_id: str,
-        candidate_id: str | None,
-        mode: str,
-    ) -> None:
-        with self.connect() as conn:
-            conn.execute(
-                """
-                insert into resolutions(source_record_id, election_id, candidate_id, mode)
-                values (%s, %s, %s, %s)
-                on conflict(source_record_id) do update set
-                    election_id = excluded.election_id,
-                    candidate_id = excluded.candidate_id,
-                    mode = excluded.mode
-                """,
-                (source_record_id, election_id, candidate_id, mode),
-            )
-
-    def get_resolution(self, source_record_id: str) -> dict[str, Any] | None:
-        with self.connect() as conn:
-            return conn.execute(
-                "select * from resolutions where source_record_id = %s",
-                (source_record_id,),
-            ).fetchone()
-
     def list_elections(self) -> list[dict[str, Any]]:
         with self.connect() as conn:
             rows = conn.execute(
@@ -222,17 +194,6 @@ class Store:
                 (election_id,),
             ).fetchall()
         return [dict(r) for r in rows]
-
-    def upsert_candidate(self, id: str, name: str, birthday: int | None) -> None:
-        with self.connect() as conn:
-            conn.execute(
-                """
-                INSERT INTO candidates(id, name, birthday)
-                VALUES (%s, %s, %s)
-                ON CONFLICT(id) DO NOTHING
-                """,
-                (id, _normalize_name(name), birthday),
-            )
 
     def list_candidates_by_name(self, name: str) -> list[dict[str, Any]]:
         normalized = _normalize_name(name)

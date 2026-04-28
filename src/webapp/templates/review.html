@@ -27,6 +27,7 @@
     <form method="post" action="/review/{{ election.election_id | urlencode }}/resolve">
       <input type="hidden" name="source_record_id" value="{{ current_record.source_record_id }}">
       <input type="hidden" name="i" value="{{ i }}">
+      <input type="hidden" name="total_count" value="{{ total_count }}">
 
       {% for match in matches %}
       <label class="match-card {% if loop.first %}selected{% endif %}">

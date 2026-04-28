@@ -77,6 +77,7 @@ async def resolve(request: Request, election_id: str):
     source_record_id = form.get("source_record_id")
     candidate_id = form.get("candidate_id")
     i = int(form.get("i", 0))
+    total_count = int(form.get("total_count", 1))
 
     store: Store = request.app.state.store
 
@@ -84,7 +85,6 @@ async def resolve(request: Request, election_id: str):
         record = store.get_source_record(source_record_id)
         if record:
             candidate_id = generate_id(record["name"], record.get("birthday"))
-        mode = "new"
 
     if mode == "use_match":
         mode = "manual"
@@ -95,8 +95,7 @@ async def resolve(request: Request, election_id: str):
         decisions[source_record_id] = {"mode": mode, "candidate_id": candidate_id}
         request.session[pending_key] = decisions
 
-    source_records = store.list_source_records(election_id)
-    next_i = min(i + 1, len(source_records) - 1)
+    next_i = min(i + 1, total_count - 1)
 
     return RedirectResponse(f"/review/{election_id}?i={next_i}", status_code=303)
 

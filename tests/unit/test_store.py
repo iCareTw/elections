@@ -7,49 +7,6 @@ import pytest
 from src.webapp.store import Store, load_database_config
 
 
-def test_store_saves_resolution_decision() -> None:
-    config = load_database_config()
-    if not config.database_url:
-        pytest.skip("PostgreSQL connection not configured")
-
-    store = Store(config)
-    try:
-        store.init_schema()
-    except ConnectionError:
-        pytest.skip("PostgreSQL is not reachable")
-    token = uuid4().hex
-    election_id = f"test/election-{token}.yaml"
-    source_record_id = f"{election_id}:3"
-
-    try:
-        store.upsert_election(
-            {
-                "election_id": election_id,
-                "type": "test",
-                "label": "Test Election",
-                "path": f"/tmp/{election_id}",
-            }
-        )
-        store.insert_source_record(
-            source_record_id=source_record_id,
-            election_id=election_id,
-            payload={"name": "柯文哲", "birthday": 1959},
-        )
-        store.save_resolution(
-            election_id=election_id,
-            source_record_id=source_record_id,
-            candidate_id="id_柯文哲_1959",
-            mode="manual",
-        )
-
-        row = store.get_resolution(source_record_id)
-
-        assert row is not None
-        assert row["candidate_id"] == "id_柯文哲_1959"
-        assert row["mode"] == "manual"
-    finally:
-        store.delete_election(election_id)
-
 
 def test_store_rejects_missing_schema() -> None:
     config = load_database_config()
@@ -91,10 +48,11 @@ def test_store_lists_election_progress_status() -> None:
         assert row["imported_count"] == 0
         assert row["unresolved_count"] == 0
 
+        payload = {"name": "測試候選人", "birthday": 1970, "year": 2024, "type": "縣市首長", "region": "臺北市"}
         store.insert_source_record(
             source_record_id=source_record_id,
             election_id=election_id,
-            payload={"name": "測試候選人", "birthday": 1970},
+            payload=payload,
         )
 
         row = next(item for item in store.list_elections() if item["election_id"] == election_id)
@@ -102,11 +60,11 @@ def test_store_lists_election_progress_status() -> None:
         assert row["imported_count"] == 1
         assert row["unresolved_count"] == 1
 
-        store.save_resolution(
+        candidate_id = f"id_測試候選人_{token[:8]}"
+        store.commit_election(
             election_id=election_id,
-            source_record_id=source_record_id,
-            candidate_id=None,
-            mode="skip",
+            decisions={source_record_id: {"mode": "auto", "candidate_id": candidate_id}},
+            source_records_map={source_record_id: payload},
         )
 
         row = next(item for item in store.list_elections() if item["election_id"] == election_id)
@@ -115,6 +73,7 @@ def test_store_lists_election_progress_status() -> None:
         assert row["unresolved_count"] == 0
     finally:
         store.delete_election(election_id)
+        store.delete_candidate(candidate_id)
 
 
 def test_store_commit_election_writes_candidates_and_elections() -> None:
