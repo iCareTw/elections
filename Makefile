@@ -8,4 +8,4 @@ test-integration:
 	uv run pytest tests/integration -v
 
 ui:
-	uv run python main.py serve-ui
+	uv run python -m src.webapp.app
