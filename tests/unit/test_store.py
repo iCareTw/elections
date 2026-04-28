@@ -28,7 +28,6 @@ def test_store_saves_resolution_decision() -> None:
                 "type": "test",
                 "label": "Test Election",
                 "path": f"/tmp/{election_id}",
-                "status": "todo",
             }
         )
         store.insert_source_record(
@@ -84,7 +83,6 @@ def test_store_lists_election_progress_status() -> None:
                 "type": "test",
                 "label": "Progress Election",
                 "path": f"/tmp/{election_id}",
-                "status": "todo",
             }
         )
 
@@ -115,5 +113,54 @@ def test_store_lists_election_progress_status() -> None:
         assert row["status"] == "done"
         assert row["imported_count"] == 1
         assert row["unresolved_count"] == 0
+    finally:
+        store.delete_election(election_id)
+
+
+def test_store_commit_election_writes_candidates_and_elections() -> None:
+    from uuid import uuid4
+    config = load_database_config()
+    if not config.database_url:
+        pytest.skip("PostgreSQL connection not configured")
+
+    store = Store(config)
+    try:
+        store.init_schema()
+    except ConnectionError:
+        pytest.skip("PostgreSQL is not reachable")
+
+    token = uuid4().hex
+    election_id = f"test/commit-{token}.yaml"
+    src_id = f"{election_id}:0"
+    candidate_id = f"id_測試人_{token[:8]}"
+
+    try:
+        store.upsert_election({
+            "election_id": election_id,
+            "type": "test",
+            "label": "Commit Test",
+            "path": f"/tmp/{election_id}",
+        })
+        store.insert_source_record(
+            source_record_id=src_id,
+            election_id=election_id,
+            payload={"name": "測試人", "birthday": 1970, "year": 2024,
+                     "type": "縣市首長", "region": "臺北市", "party": "無黨籍", "elected": 0},
+        )
+        auto, manual = store.commit_election(
+            election_id=election_id,
+            decisions={src_id: {"mode": "auto", "candidate_id": candidate_id}},
+            source_records_map={src_id: {"name": "測試人", "birthday": 1970, "year": 2024,
+                                         "type": "縣市首長", "region": "臺北市",
+                                         "party": "無黨籍", "elected": 0}},
+        )
+
+        assert auto == 1 and manual == 0
+
+        candidates = store.list_candidates_with_elections()
+        target = next((c for c in candidates if c["id"] == candidate_id), None)
+        assert target is not None
+        assert target["elections"][0]["year"] == 2024
+        assert target["elections"][0]["region"] == "臺北市"
     finally:
         store.delete_election(election_id)

@@ -12,6 +12,10 @@ from psycopg import sql
 from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
+from src.normalize import normalize_name as _normalize_name
+
+ROOT = Path(__file__).resolve().parents[2]
+
 
 @dataclass(frozen=True)
 class DatabaseConfig:
@@ -87,71 +91,23 @@ class Store:
             conn.execute("select 1").fetchone()
 
     def init_schema(self) -> None:
+        sql_path = ROOT / "db" / "001_init.sql"
+        ddl = sql_path.read_text(encoding="utf-8")
         with self.connect() as conn:
-            conn.execute(
-                """
-                create table if not exists elections (
-                    election_id text primary key,
-                    type text not null,
-                    label text not null,
-                    path text not null,
-                    year integer,
-                    session integer,
-                    status text not null default 'todo',
-                    updated_at timestamptz not null default current_timestamp
-                )
-                """
-            )
-            conn.execute(
-                """
-                create table if not exists source_records (
-                    source_record_id text primary key,
-                    election_id text not null references elections(election_id) on delete cascade,
-                    name text not null,
-                    birthday integer,
-                    payload jsonb not null,
-                    imported_at timestamptz not null default current_timestamp
-                )
-                """
-            )
-            conn.execute(
-                """
-                create table if not exists resolutions (
-                    source_record_id text primary key references source_records(source_record_id) on delete cascade,
-                    election_id text not null references elections(election_id) on delete cascade,
-                    candidate_id text,
-                    mode text not null,
-                    decided_at timestamptz not null default current_timestamp
-                )
-                """
-            )
-            conn.execute(
-                """
-                create table if not exists operation_logs (
-                    id bigserial primary key,
-                    election_id text references elections(election_id) on delete set null,
-                    source_record_id text,
-                    action text not null,
-                    payload jsonb not null default '{}'::jsonb,
-                    created_at timestamptz not null default current_timestamp
-                )
-                """
-            )
+            conn.execute(ddl)
 
     def upsert_election(self, election: dict[str, Any]) -> None:
         with self.connect() as conn:
             conn.execute(
                 """
-                insert into elections(election_id, type, label, path, year, session, status)
-                values (%s, %s, %s, %s, %s, %s, %s)
-                on conflict(election_id) do update set
-                    type = excluded.type,
-                    label = excluded.label,
-                    path = excluded.path,
-                    year = excluded.year,
-                    session = excluded.session,
-                    status = excluded.status,
-                    updated_at = current_timestamp
+                INSERT INTO elections(election_id, type, label, path, year, session)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON CONFLICT(election_id) DO UPDATE SET
+                    type    = EXCLUDED.type,
+                    label   = EXCLUDED.label,
+                    path    = EXCLUDED.path,
+                    year    = EXCLUDED.year,
+                    session = EXCLUDED.session
                 """,
                 (
                     election["election_id"],
@@ -160,7 +116,6 @@ class Store:
                     str(election["path"]),
                     election.get("year"),
                     election.get("session"),
-                    election.get("status", "todo"),
                 ),
             )
 
@@ -180,8 +135,7 @@ class Store:
                 on conflict(source_record_id) do update set
                     election_id = excluded.election_id,
                     candidate_id = excluded.candidate_id,
-                    mode = excluded.mode,
-                    decided_at = current_timestamp
+                    mode = excluded.mode
                 """,
                 (source_record_id, election_id, candidate_id, mode),
             )
@@ -231,14 +185,13 @@ class Store:
         with self.connect() as conn:
             conn.execute(
                 """
-                insert into source_records(source_record_id, election_id, name, birthday, payload)
-                values (%s, %s, %s, %s, %s)
-                on conflict(source_record_id) do update set
-                    election_id = excluded.election_id,
-                    name = excluded.name,
-                    birthday = excluded.birthday,
-                    payload = excluded.payload,
-                    imported_at = current_timestamp
+                INSERT INTO source_records(source_record_id, election_id, name, birthday, payload)
+                VALUES (%s, %s, %s, %s, %s)
+                ON CONFLICT(source_record_id) DO UPDATE SET
+                    election_id = EXCLUDED.election_id,
+                    name        = EXCLUDED.name,
+                    birthday    = EXCLUDED.birthday,
+                    payload     = EXCLUDED.payload
                 """,
                 (
                     source_record_id,
@@ -251,65 +204,139 @@ class Store:
 
     def get_source_record(self, source_record_id: str) -> dict[str, Any] | None:
         with self.connect() as conn:
-            return conn.execute(
-                """
-                select source_record_id, election_id, name, birthday, payload
-                from source_records
-                where source_record_id = %s
-                """,
+            row = conn.execute(
+                "SELECT source_record_id, election_id, name, birthday, payload FROM source_records WHERE source_record_id = %s",
                 (source_record_id,),
             ).fetchone()
+        return dict(row) if row else None
 
-    def list_unresolved_records(self, election_id: str) -> list[dict[str, Any]]:
+    def list_source_records(self, election_id: str) -> list[dict[str, Any]]:
         with self.connect() as conn:
             rows = conn.execute(
                 """
-                select sr.source_record_id, sr.election_id, sr.name, sr.birthday, sr.payload
-                from source_records sr
-                left join resolutions r on r.source_record_id = sr.source_record_id
-                where sr.election_id = %s and r.source_record_id is null
-                order by sr.source_record_id
+                SELECT source_record_id, election_id, name, birthday, payload
+                FROM source_records
+                WHERE election_id = %s
+                ORDER BY source_record_id
                 """,
                 (election_id,),
             ).fetchall()
-        return list(rows)
+        return [dict(r) for r in rows]
 
-    def iter_resolved_records(self) -> list[dict[str, Any]]:
-        with self.connect() as conn:
-            rows = conn.execute(
-                """
-                select
-                    r.candidate_id,
-                    r.mode,
-                    sr.source_record_id,
-                    sr.election_id,
-                    sr.name,
-                    sr.birthday,
-                    sr.payload
-                from resolutions r
-                join source_records sr on sr.source_record_id = r.source_record_id
-                where r.candidate_id is not null
-                order by sr.election_id, sr.source_record_id
-                """
-            ).fetchall()
-        return list(rows)
-
-    def append_operation_log(
-        self,
-        *,
-        action: str,
-        election_id: str | None = None,
-        source_record_id: str | None = None,
-        payload: dict[str, Any] | None = None,
-    ) -> None:
+    def upsert_candidate(self, id: str, name: str, birthday: int | None) -> None:
         with self.connect() as conn:
             conn.execute(
                 """
-                insert into operation_logs(election_id, source_record_id, action, payload)
-                values (%s, %s, %s, %s)
+                INSERT INTO candidates(id, name, birthday)
+                VALUES (%s, %s, %s)
+                ON CONFLICT(id) DO NOTHING
                 """,
-                (election_id, source_record_id, action, Jsonb(payload or {})),
+                (id, _normalize_name(name), birthday),
             )
+
+    def list_candidates_by_name(self, name: str) -> list[dict[str, Any]]:
+        normalized = _normalize_name(name)
+        with self.connect() as conn:
+            rows = conn.execute(
+                "SELECT id, name, birthday FROM candidates WHERE name = %s",
+                (normalized,),
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    def list_candidates_with_elections(self) -> list[dict[str, Any]]:
+        with self.connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT
+                    c.id, c.name, c.birthday,
+                    ce.year, ce.type, ce.region, ce.party,
+                    ce.elected, ce.session, ce.ticket, ce.order_id
+                FROM candidates c
+                LEFT JOIN candidate_elections ce ON ce.candidate_id = c.id
+                ORDER BY c.id, ce.year NULLS LAST
+                """
+            ).fetchall()
+
+        grouped: dict[str, dict[str, Any]] = {}
+        for row in rows:
+            cid = row["id"]
+            if cid not in grouped:
+                grouped[cid] = {
+                    "id": cid,
+                    "name": row["name"],
+                    "birthday": row["birthday"],
+                    "elections": [],
+                }
+            if row["year"] is not None:
+                election = {k: row[k] for k in ("year", "type", "region", "party", "elected", "session", "ticket", "order_id") if row[k] is not None}
+                grouped[cid]["elections"].append(election)
+
+        return list(grouped.values())
+
+    def commit_election(
+        self,
+        *,
+        election_id: str,
+        decisions: dict[str, dict[str, Any]],
+        source_records_map: dict[str, dict[str, Any]],
+    ) -> tuple[int, int]:
+        """Batch write resolutions + candidates + candidate_elections in one transaction.
+        Returns (auto_count, manual_count).
+        """
+        auto = manual = 0
+        _ELECTION_KEYS = ("year", "type", "region", "party", "elected", "session", "ticket", "order_id")
+
+        with self.connect() as conn:
+            for src_id, decision in decisions.items():
+                candidate_id = decision["candidate_id"]
+                mode = decision["mode"]
+                payload = source_records_map[src_id]
+
+                conn.execute(
+                    """
+                    INSERT INTO resolutions(source_record_id, election_id, candidate_id, mode)
+                    VALUES (%s, %s, %s, %s)
+                    ON CONFLICT(source_record_id) DO UPDATE SET
+                        candidate_id = EXCLUDED.candidate_id,
+                        mode         = EXCLUDED.mode
+                    """,
+                    (src_id, election_id, candidate_id, mode),
+                )
+                conn.execute(
+                    """
+                    INSERT INTO candidates(id, name, birthday)
+                    VALUES (%s, %s, %s)
+                    ON CONFLICT(id) DO NOTHING
+                    """,
+                    (candidate_id, _normalize_name(payload["name"]), payload.get("birthday")),
+                )
+                conn.execute(
+                    """
+                    INSERT INTO candidate_elections
+                        (candidate_id, year, type, region, party, elected, session, ticket, order_id)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    ON CONFLICT(candidate_id, year, type, region) DO UPDATE SET
+                        party   = EXCLUDED.party,
+                        elected = EXCLUDED.elected
+                    """,
+                    (
+                        candidate_id,
+                        payload.get("year"),
+                        payload.get("type"),
+                        payload.get("region"),
+                        payload.get("party"),
+                        payload.get("elected"),
+                        payload.get("session"),
+                        payload.get("ticket"),
+                        payload.get("order_id"),
+                    ),
+                )
+                if mode in ("auto", "new"):
+                    auto += 1
+                else:
+                    manual += 1
+
+        return auto, manual
 
     def delete_election(self, election_id: str) -> None:
         with self.connect() as conn:
