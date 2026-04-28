@@ -11,6 +11,12 @@ from src.session_years import SESSION_YEARS
 _SESSION_RE = re.compile(r"(\d+)th")
 
 
+def natural_sort_key(s: str):
+    """Natural sort key to match VSCode behavior (e.g., 4th before 10th)."""
+    return [int(text) if text.isdigit() else text.lower()
+            for text in re.split(r"([0-9]+)", str(s))]
+
+
 def _session_from_text(text: str) -> int | None:
     match = _SESSION_RE.search(text)
     if not match:
@@ -55,7 +61,8 @@ def _record(
 
 
 def _visible_children(path: Path) -> list[Path]:
-    return sorted(child for child in path.iterdir() if not child.name.startswith("_"))
+    children = [child for child in path.iterdir() if not child.name.startswith("_")]
+    return sorted(children, key=lambda p: natural_sort_key(p.name))
 
 
 def _first_existing_dir(root: Path, *parts_options: str) -> Path | None:
@@ -157,7 +164,7 @@ def discover_elections(root: Path) -> list[dict]:
     elections.extend(_discover_mayor(root))
     elections.extend(_discover_legislator_district(root))
     elections.extend(_discover_legislator_party_list(root))
-    return sorted(elections, key=lambda election: election["election_id"])
+    return sorted(elections, key=lambda e: [natural_sort_key(p) for p in e["election_id"].split("/")])
 
 
 def _resolve_parser(election: dict):
