@@ -27,6 +27,14 @@
     ✓ 已 commit 至 DB
   </div>
 
+{% elif election.status == 'review' %}
+  <div class="state-todo">
+    <p class="pathline">{{ election.type }} / {{ election.year }}</p>
+    <h2>{{ election.label }}</h2>
+    <p>此選舉已匯入, 尚未完成審核</p>
+    <a class="button primary load-btn" href="/review/{{ election.election_id | urlencode }}">繼續審核</a>
+  </div>
+
 {% endif %}
 
 {% endblock %}

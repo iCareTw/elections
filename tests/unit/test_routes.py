@@ -6,8 +6,10 @@ from uuid import uuid4
 import pytest
 import yaml
 from fastapi.testclient import TestClient
+from jinja2 import Environment, FileSystemLoader
 
 from src.webapp.app import create_app
+from src.webapp.routes.elections import _election_tree
 from src.webapp.store import Store, load_database_config
 
 
@@ -15,6 +17,117 @@ def _make_app(tmp_path: Path, store: Store):
     app = create_app(root=tmp_path)
     app.state.store = store
     return app
+
+
+def test_election_tree_does_not_write_discovered_elections(tmp_path: Path) -> None:
+    class ReadOnlyStore:
+        def upsert_election(self, election: dict) -> None:
+            raise AssertionError("GET navigator must not write elections")
+
+        def list_elections(self) -> list[dict]:
+            return []
+
+    election_path = tmp_path / "_data" / "president" / "第16任總統副總統選舉.xlsx"
+    election_path.parent.mkdir(parents=True)
+    election_path.write_text("")
+
+    tree = _election_tree(tmp_path, ReadOnlyStore())  # type: ignore[arg-type]
+
+    assert tree["children"]["president"]["children"]["第16任總統副總統選舉.xlsx"]["kind"] == "election"
+
+
+def test_navigator_does_not_expand_unselected_top_level_dirs() -> None:
+    templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
+    env = Environment(loader=FileSystemLoader(str(templates_dir)))
+    template = env.get_template("elections.html")
+    election_tree = {
+        "children": {
+            "president": {
+                "kind": "dir",
+                "path": "president",
+                "children": {
+                    "第16任總統副總統選舉.xlsx": {
+                        "kind": "election",
+                        "data": {
+                            "election_id": "president/第16任總統副總統選舉.xlsx",
+                            "label": "第16任總統副總統選舉.xlsx",
+                            "status": "todo",
+                        },
+                    },
+                },
+            },
+            "mayor": {
+                "kind": "dir",
+                "path": "mayor",
+                "children": {
+                    "111年直轄市長選舉.xlsx": {
+                        "kind": "election",
+                        "data": {
+                            "election_id": "mayor/111年直轄市長選舉.xlsx",
+                            "label": "111年直轄市長選舉.xlsx",
+                            "status": "todo",
+                        },
+                    },
+                },
+            },
+            "legislator": {
+                "kind": "dir",
+                "path": "legislator",
+                "children": {
+                    "party-list-legislator": {
+                        "kind": "dir",
+                        "path": "legislator/party-list-legislator",
+                        "children": {
+                            "11th.yaml": {
+                                "kind": "election",
+                                "data": {
+                                    "election_id": "legislator/party-list-legislator/11th.yaml",
+                                    "label": "11th.yaml",
+                                    "status": "todo",
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    }
+
+    home_html = template.render(
+        election_tree=election_tree,
+        selected_id=None,
+        election=None,
+    )
+    selected_html = template.render(
+        election_tree=election_tree,
+        selected_id="president/第16任總統副總統選舉.xlsx",
+        election=None,
+    )
+
+    assert home_html.count('class="tree-node dir" open') == 0
+    assert selected_html.count('class="tree-node dir" open') == 1
+    assert '<details class="tree-node dir" open>\n            <summary class="tree-dir">president</summary>' in selected_html
+
+
+def test_election_detail_template_handles_review_status() -> None:
+    templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
+    env = Environment(loader=FileSystemLoader(str(templates_dir)))
+    template = env.get_template("elections.html")
+
+    html = template.render(
+        election_tree={"children": {}},
+        selected_id="president/第09任總統副總統選舉.xlsx",
+        election={
+            "election_id": "president/第09任總統副總統選舉.xlsx",
+            "type": "president",
+            "year": 1996,
+            "label": "第09任總統副總統選舉",
+            "status": "review",
+        },
+    )
+
+    assert "此選舉已匯入, 尚未完成審核" in html
+    assert "/review/president/" in html
 
 
 def test_home_returns_200(tmp_path: Path) -> None:
