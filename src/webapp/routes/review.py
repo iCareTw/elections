@@ -52,12 +52,23 @@ async def review_page(request: Request, election_id: str, i: int = 0):
         if k in payload
     ]
 
-    election_groups = _election_tree(root, store)
-    db_map = {e["election_id"]: e for _, es in election_groups for e in es}
-    election = db_map.get(election_id, {"election_id": election_id, "label": election_id, "type": "", "year": ""})
+    election_tree = _election_tree(root, store)
+    
+    # Flatten to find the selected election
+    from src.webapp.discovery import discover_elections
+    raw = discover_elections(root)
+    db_elections = {e["election_id"]: e for e in store.list_elections()}
+    flat = {}
+    for e in raw:
+        eid = e["election_id"]
+        merged = {**e, **db_elections.get(eid, {})}
+        merged.setdefault("status", "todo")
+        flat[eid] = merged
+
+    election = flat.get(election_id, {"election_id": election_id, "label": election_id, "type": "", "year": ""})
 
     return templates.TemplateResponse(request, "review.html", {
-        "election_groups": election_groups,
+        "election_tree": election_tree,
         "selected_id": election_id,
         "election": election,
         "current_record": current_record,

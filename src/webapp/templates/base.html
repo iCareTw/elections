@@ -18,19 +18,29 @@
     <button class="button ghost" onclick="location.reload()">Refresh</button>
 
     <div class="election-list">
-      {% for group_name, group_elections in election_groups %}
-      <div class="tree-dir">▾ {{ group_name }}</div>
-      {% for election in group_elections %}
-      <a class="tree-row {% if election.election_id == selected_id %}selected{% endif %}"
-         href="/elections/{{ election.election_id | urlencode }}">
-        <span class="tree-label">{{ election.label }}</span>
-        <span class="badge badge-{{ election.status }}">
-          {% if election.status == 'review' %}{{ election.unresolved_count }} 待審
-          {% else %}{{ election.status }}{% endif %}
-        </span>
-      </a>
-      {% endfor %}
-      {% endfor %}
+      {% macro render_tree(node) %}
+        {% for name, child in node.children.items() | sort %}
+          {% if child.kind == 'dir' %}
+            <details class="tree-node dir" {% if (selected_id and selected_id.startswith(child.path)) or child.path in ['legislator', 'president', 'mayor'] %}open{% endif %}>
+              <summary class="tree-dir">{{ name }}</summary>
+              <div class="tree-children">
+                {{ render_tree(child) }}
+              </div>
+            </details>
+          {% else %}
+            {% set election = child.data %}
+            <a class="tree-row {% if election.election_id == selected_id %}selected{% endif %}"
+               href="/elections/{{ election.election_id | urlencode }}">
+              <span class="tree-label">{{ election.label }}</span>
+              <span class="badge badge-{{ election.status }}">
+                {% if election.status == 'review' %}{{ election.unresolved_count }} 待審
+                {% else %}{{ election.status }}{% endif %}
+              </span>
+            </a>
+          {% endif %}
+        {% endfor %}
+      {% endmacro %}
+      {{ render_tree(election_tree) }}
     </div>
 
     <div class="nav-footer">

@@ -15,21 +15,43 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-def _election_tree(root: Path, store: Store) -> list[tuple[str, list[dict]]]:
+def _election_tree(root: Path, store: Store) -> dict:
     raw = discover_elections(root)
     for e in raw:
         store.upsert_election(e)
 
     db_elections = {e["election_id"]: e for e in store.list_elections()}
-    groups: dict[str, list[dict]] = {}
+    
+    tree = {"name": "root", "children": {}}
+
     for e in raw:
         eid = e["election_id"]
-        group = eid.split("/")[0]
         merged = {**e, **db_elections.get(eid, {})}
         merged.setdefault("status", "todo")
-        groups.setdefault(group, []).append(merged)
+        
+        parts = eid.split("/")
+        current = tree
+        path_acc = ""
+        for i, part in enumerate(parts):
+            path_acc = f"{path_acc}/{part}" if path_acc else part
+            if i == len(parts) - 1:
+                # Leaf node (election)
+                current["children"][part] = {
+                    "kind": "election",
+                    "data": merged
+                }
+            else:
+                # Directory node
+                if part not in current["children"]:
+                    current["children"][part] = {
+                        "kind": "dir",
+                        "name": part,
+                        "path": path_acc,
+                        "children": {}
+                    }
+                current = current["children"][part]
 
-    return list(groups.items())
+    return tree
 
 
 @router.get("/")
@@ -39,10 +61,10 @@ async def home(request: Request):
     templates: Jinja2Templates = request.app.state.templates
 
     generated = request.query_params.get("generated")
-    election_groups = _election_tree(root, store)
+    election_tree = _election_tree(root, store)
 
     return templates.TemplateResponse(request, "elections.html", {
-        "election_groups": election_groups,
+        "election_tree": election_tree,
         "selected_id": None,
         "election": None,
         "generated": int(generated) if generated else None,
@@ -55,14 +77,24 @@ async def election_detail(request: Request, election_id: str):
     root: Path = request.app.state.root
     templates: Jinja2Templates = request.app.state.templates
 
-    election_groups = _election_tree(root, store)
-    flat = {e["election_id"]: e for _, es in election_groups for e in es}
+    election_tree = _election_tree(root, store)
+    
+    # Flatten to find the selected election
+    raw = discover_elections(root)
+    db_elections = {e["election_id"]: e for e in store.list_elections()}
+    flat = {}
+    for e in raw:
+        eid = e["election_id"]
+        merged = {**e, **db_elections.get(eid, {})}
+        merged.setdefault("status", "todo")
+        flat[eid] = merged
+
     election = flat.get(election_id)
     if election is None:
         return RedirectResponse("/")
 
     return templates.TemplateResponse(request, "elections.html", {
-        "election_groups": election_groups,
+        "election_tree": election_tree,
         "selected_id": election_id,
         "election": election,
     })
