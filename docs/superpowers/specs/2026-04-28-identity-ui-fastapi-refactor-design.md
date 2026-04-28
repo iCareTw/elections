@@ -35,8 +35,7 @@ CREATE TABLE IF NOT EXISTS source_records (
     election_id      TEXT        NOT NULL REFERENCES elections(election_id) ON DELETE CASCADE,
     name             VARCHAR(64) NOT NULL,
     birthday         INTEGER,
-    payload          JSONB       NOT NULL,
-    imported_at      TIMESTAMPTZ NOT NULL DEFAULT current_timestamp
+    payload          JSONB       NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_source_records_election_id
