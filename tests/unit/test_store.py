@@ -99,6 +99,7 @@ def test_store_lists_election_progress_status() -> None:
     token = uuid4().hex
     election_id = f"test/progress-{token}.yaml"
     source_record_id = f"{election_id}:0"
+    candidate_id = None
 
     try:
         store.upsert_election(
@@ -128,6 +129,19 @@ def test_store_lists_election_progress_status() -> None:
         assert row["unresolved_count"] == 1
 
         candidate_id = f"id_測試候選人_{token[:8]}"
+        store.upsert_review_decision(
+            source_record_id=source_record_id,
+            election_id=election_id,
+            candidate_id=candidate_id,
+            mode="new",
+        )
+
+        row = next(item for item in store.list_elections() if item["election_id"] == election_id)
+        assert row["status"] == "ready"
+        assert row["imported_count"] == 1
+        assert row["unresolved_count"] == 0
+        assert row["resolved_count"] == 1
+
         store.commit_election(
             election_id=election_id,
             decisions={source_record_id: {"mode": "auto", "candidate_id": candidate_id}},
@@ -138,9 +152,11 @@ def test_store_lists_election_progress_status() -> None:
         assert row["status"] == "done"
         assert row["imported_count"] == 1
         assert row["unresolved_count"] == 0
+        assert store.list_review_decisions(election_id) == []
     finally:
         store.delete_election(election_id)
-        store.delete_candidate(candidate_id)
+        if candidate_id:
+            store.delete_candidate(candidate_id)
 
 
 def test_store_commit_election_writes_candidates_and_elections() -> None:

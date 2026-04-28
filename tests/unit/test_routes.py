@@ -126,7 +126,29 @@ def test_election_detail_template_handles_review_status() -> None:
         },
     )
 
-    assert "此選舉已匯入, 尚未完成審核" in html
+    assert "此選舉正在審核" in html
+    assert "/review/president/" in html
+
+
+def test_election_detail_template_handles_ready_status() -> None:
+    templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
+    env = Environment(loader=FileSystemLoader(str(templates_dir)))
+    template = env.get_template("elections.html")
+
+    html = template.render(
+        election_tree={"children": {}},
+        selected_id="president/第16任總統副總統選舉.xlsx",
+        election={
+            "election_id": "president/第16任總統副總統選舉.xlsx",
+            "type": "president",
+            "year": 2024,
+            "label": "第16任總統副總統選舉",
+            "status": "ready",
+            "imported_count": 6,
+        },
+    )
+
+    assert "尚未正式提交" in html
     assert "/review/president/" in html
 
 
@@ -208,3 +230,52 @@ def test_load_and_review_flow(tmp_path: Path) -> None:
         store.delete_election(election_id)
         if candidate_id:
             store.delete_candidate(candidate_id)
+
+
+def test_auto_decisions_survive_without_browser_session(tmp_path: Path) -> None:
+    config = load_database_config()
+    if not config.database_url:
+        pytest.skip("PostgreSQL connection not configured")
+
+    store = Store(config)
+    try:
+        store.init_schema()
+    except ConnectionError:
+        pytest.skip("PostgreSQL is not reachable")
+
+    token = uuid4().hex
+    election_path = (
+        tmp_path / "_data" / "legislator" / "party-list-legislator" / f"{token}th.yaml"
+    )
+    election_path.parent.mkdir(parents=True)
+    election_path.write_text(
+        "- name: 自動測試候選人\n  party: 測試黨\n  birthday: 1980\n"
+        "  year: 2024\n  region: 全國\n  type: 立法委員\n  elected: 0\n  session: 11\n",
+        encoding="utf-8",
+    )
+    election_id = f"legislator/party-list-legislator/{token}th.yaml"
+    candidate_id = "id_自動測試候選人_1980"
+
+    app = _make_app(tmp_path, store)
+    load_client = TestClient(app, raise_server_exceptions=True)
+    commit_client = TestClient(app, raise_server_exceptions=True)
+
+    try:
+        resp = load_client.post(f"/elections/{election_id}/load", follow_redirects=False)
+        assert resp.status_code == 303
+
+        row = next(item for item in store.list_elections() if item["election_id"] == election_id)
+        assert row["status"] == "ready"
+        assert row["resolved_count"] == 1
+        assert row["unresolved_count"] == 0
+        assert len(store.list_review_decisions(election_id)) == 1
+
+        resp = commit_client.post(f"/elections/{election_id}/commit", follow_redirects=False)
+        assert resp.status_code == 303
+
+        row = next(item for item in store.list_elections() if item["election_id"] == election_id)
+        assert row["status"] == "done"
+        assert store.list_review_decisions(election_id) == []
+    finally:
+        store.delete_election(election_id)
+        store.delete_candidate(candidate_id)

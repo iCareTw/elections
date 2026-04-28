@@ -26,6 +26,7 @@ def _client(tmp_path: Path, store: Store) -> TestClient:
 
 
 def test_loaded_review_election_can_be_reopened_after_switching(tmp_path: Path) -> None:
+    # Load election 後, 使用者若先切到另一場選舉, 再點回已 Load 的選舉, 應進入 /review 頁
     config = load_database_config(ROOT / ".env")
     if not config.database_url:
         pytest.skip("PostgreSQL connection not configured")

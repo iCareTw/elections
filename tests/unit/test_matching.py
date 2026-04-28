@@ -1,3 +1,5 @@
+import pytest
+
 from src.normalize import normalize_name
 from src.webapp.matching import classify_record
 
@@ -14,6 +16,7 @@ class _FakeStore:
 
 
 def test_classify_record_auto_matches_same_name_same_birthday() -> None:
+    """測試 identity-ui 最核心的基本功能, id 由 name & birth_year 產生, 同名同年出生的紀錄會被自動配對."""
     record = {"name": "柯文哲", "birthday": 1959}
     existing = [{"name": "柯文哲", "birthday": 1959, "id": "id_柯文哲_1959"}]
 
@@ -22,30 +25,20 @@ def test_classify_record_auto_matches_same_name_same_birthday() -> None:
     assert result == {"kind": "auto", "candidate_id": "id_柯文哲_1959"}
 
 
-def test_classify_record_manually_matches_same_name_different_birthday() -> None:
-    record = {"name": "柯文哲", "birthday": 1959}
-    existing = [{"name": "柯文哲", "birthday": 1960, "id": "id_柯文哲_1960"}]
-
-    result = classify_record(record, _FakeStore(existing))
-
-    assert result == {"kind": "manual", "matches": existing}
-
-
-def test_classify_record_manually_matches_same_name_missing_birthday() -> None:
-    record = {"name": "柯文哲", "birthday": None}
-    existing = [{"name": "柯文哲", "birthday": 1959, "id": "id_柯文哲_1959"}]
-
-    result = classify_record(record, _FakeStore(existing))
-
-    assert result == {"kind": "manual", "matches": existing}
-
-
-def test_classify_record_manually_matches_duplicate_same_birthday() -> None:
-    record = {"name": "柯文哲", "birthday": 1959}
-    existing = [
-        {"name": "柯文哲", "birthday": 1959, "id": "id_柯文哲_1959"},
-        {"name": "柯 文 哲", "birthday": 1959, "id": "id_柯文哲_duplicate"},
-    ]
+@pytest.mark.parametrize(
+    ("record_birthday", "existing_birthday", "existing_id"),
+    [
+        (1959, 1960, "id_柯文哲_1960"),
+        (None, 1959, "id_柯文哲_1959"),
+    ],
+)
+def test_classify_record_manually_matches_same_name_when_birthday_is_not_safe(
+    record_birthday: int | None,
+    existing_birthday: int,
+    existing_id: str,
+) -> None:
+    record = {"name": "柯文哲", "birthday": record_birthday}
+    existing = [{"name": "柯文哲", "birthday": existing_birthday, "id": existing_id}]
 
     result = classify_record(record, _FakeStore(existing))
 

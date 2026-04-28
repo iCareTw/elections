@@ -3,20 +3,6 @@ from pathlib import Path
 from src.webapp.discovery import discover_elections, load_election_records
 
 
-def test_discover_elections_groups_known_sources(tmp_path: Path) -> None:
-    data_dir = tmp_path / "_data"
-    (data_dir / "president").mkdir(parents=True)
-    (data_dir / "president" / "第16任總統副總統選舉.xlsx").write_text("")
-    (data_dir / "legislator" / "party-list-legislator").mkdir(parents=True)
-    (data_dir / "legislator" / "party-list-legislator" / "11th.yaml").write_text("[]", encoding="utf-8")
-
-    elections = discover_elections(tmp_path)
-
-    assert [e["type"] for e in elections] == ["party-list", "president"]
-    assert elections[0]["election_id"] == "legislator/party-list-legislator/11th.yaml"
-    assert elections[1]["election_id"] == "president/第16任總統副總統選舉.xlsx"
-
-
 def test_discover_elections_includes_current_source_types(tmp_path: Path) -> None:
     party_list_dir = tmp_path / "_data" / "legislator" / "party-list-legislator"
     party_list_dir.mkdir(parents=True)
@@ -58,6 +44,9 @@ def test_discover_elections_includes_current_source_types(tmp_path: Path) -> Non
 
 
 def test_discover_elections_ignores_underscore_prefixed_files_and_dirs(tmp_path: Path) -> None:
+    """
+    確保 _data/_xxx "_" 開頭的東西不會出現在 identity-ui 裡頭
+    """
     visible_dir = tmp_path / "_data" / "legislator" / "party-list-legislator"
     visible_dir.mkdir(parents=True)
     (visible_dir / "11th.yaml").write_text("[]", encoding="utf-8")

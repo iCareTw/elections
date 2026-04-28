@@ -168,6 +168,12 @@ def discover_elections(root: Path) -> list[dict]:
 
 
 def _resolve_parser(election: dict):
+    """
+    根據 election 的類型與檔案格式決定要使用哪個 parser 來讀取原始資料.
+    邏輯必須寫死中選會揭露的原始資料混亂所導致.
+        - president & mayor 是 xlsx, 且歷史資料格式一致
+        - legislator 的區域與不分區及 council 資料格式完全不同, 歷屆立委/議員由人工處理以後整理成 yaml
+    """
     path = Path(election["path"])
     if path.suffix.lower() in {".yaml", ".yml"}:
         return _parse_yaml_records
@@ -188,6 +194,10 @@ def _parse_yaml_records(path: str | Path) -> list[dict]:
 
 
 def load_election_records(election: dict) -> list[dict]:
+    """
+    依 選舉設定(ex: 11th.yaml) 讀取原始資料, 並補上 election_id 與 source_record_id
+    """
+
     parser = _resolve_parser(election)
     rows = []
     for index, record in enumerate(parser(election["path"])):
