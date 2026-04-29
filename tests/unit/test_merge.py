@@ -2,15 +2,20 @@ from src.merge import classify_records
 
 EXISTING = [
     {
-        'name': '柯文哲', 'id': 'id_柯文哲_1959', 'birthday': 1959,
-        'elections': [
+        'name': '柯文哲', 'id': 'id_柯文哲_1959', 'birthday': 1959, 'elections': [
             {'year': 2014, 'type': '縣市首長', 'region': '臺北市', 'party': '無黨籍', 'elected': 1},
         ]
     },
-    {'name': '許淑華', 'id': 'id_許淑華_1973', 'birthday': 1973,
-     'elections': [{'year': 2016, 'type': '縣市議員', 'region': '臺北市', 'party': '民主進步黨', 'elected': 1}]},
-    {'name': '許淑華', 'id': 'id_許淑華_1975', 'birthday': 1975,
-     'elections': [{'year': 2014, 'type': '縣市首長', 'region': '南投縣', 'party': '中國國民黨', 'elected': 0}]},
+    {
+        'name': '許淑華', 'id': 'id_許淑華_1973', 'birthday': 1973, 'elections': [
+            {'year': 2016, 'type': '縣市議員', 'region': '臺北市', 'party': '民主進步黨', 'elected': 1}
+        ]
+    },
+    {
+        'name': '許淑華', 'id': 'id_許淑華_1975', 'birthday': 1975, 'elections': [
+            {'year': 2014, 'type': '縣市首長', 'region': '南投縣', 'party': '中國國民黨', 'elected': 0}
+        ]
+    },
 ]
 
 
