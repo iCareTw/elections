@@ -194,10 +194,12 @@ function renderTreeNodes(nodes, container) {
   }
 }
 
-function renderElections() {
+function renderElections({ preserveScroll = false } = {}) {
+  const scrollTop = preserveScroll ? els.electionList.scrollTop : 0;
   els.electionList.innerHTML = "";
   const tree = buildElectionTree(state.elections);
   renderTreeNodes(tree, els.electionList);
+  if (preserveScroll) els.electionList.scrollTop = scrollTop;
 }
 
 function selectElection(election) {
@@ -209,7 +211,7 @@ function selectElection(election) {
   els.loadElection.disabled = false;
   els.pathline.textContent = election.election_id;
   els.title.textContent = election.label;
-  renderElections();
+  renderElections({ preserveScroll: true });
   renderCurrentItem();
 }
 
