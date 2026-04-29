@@ -22,7 +22,10 @@ def test_build_candidates_yaml_groups_records_by_candidate_id(tmp_path: Path) ->
         store.open()
         store.init_schema()
     except ConnectionError:
+        store.close()
         pytest.skip("PostgreSQL is not reachable")
+    except Exception:
+        store.close()
 
     token = uuid4().hex
     election_id = f"test/build-{token}.yaml"
