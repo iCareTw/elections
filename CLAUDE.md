@@ -35,11 +35,28 @@ FastAPI + Jinja2 候選人身分判定介面. 以 DB 作為 single source of tru
 
 ---
 
-## Karpathy Skills — 核心開發原則
+## 核心開發原則
 
 Behavioral guidelines to reduce common LLM coding mistakes.
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+
+### 0. Read-Only Gate
+
+**Consultation overrides execution when intent is mixed.**
+
+Before changing files, running write operations, or touching external state:
+- If the user asks for advice, evaluation, review, "is this a good approach", "think about it first", or similar wording, treat the request as read-only consultation.
+- If a message contains both an apparent command and consultation wording, do not execute the command yet. Explain the possible interpretations, give the recommendation, and wait for an explicit follow-up such as "please change it", "do it", or "apply this".
+- Do not rely on the first sentence alone when the later text narrows the request to advice or decision support.
+- A brief "I will not edit files yet" statement is required when answering a mixed-intent request.
+
+Before any edit is allowed, the assistant must be able to state:
+- what files or state will be changed,
+- why the user's latest message clearly authorizes that change,
+- what success condition will be checked.
+
+If any of these cannot be stated clearly, stop and ask or answer read-only.
 
 ### 1. Think Before Coding
 
