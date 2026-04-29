@@ -19,6 +19,7 @@ def test_build_candidates_yaml_groups_records_by_candidate_id(tmp_path: Path) ->
 
     store = Store(config)
     try:
+        store.open()
         store.init_schema()
     except ConnectionError:
         pytest.skip("PostgreSQL is not reachable")
@@ -26,9 +27,9 @@ def test_build_candidates_yaml_groups_records_by_candidate_id(tmp_path: Path) ->
     token = uuid4().hex
     election_id = f"test/build-{token}.yaml"
     src_id = f"{election_id}:0"
-    candidate_id = "id_柯文哲_1959"
+    candidate_id = f"id_測試建置候選人_{token[:8]}"
     payload = {
-        "name": "柯文哲",
+        "name": "測試建置候選人",
         "birthday": 1959,
         "year": 2024,
         "type": "立法委員",
@@ -66,3 +67,4 @@ def test_build_candidates_yaml_groups_records_by_candidate_id(tmp_path: Path) ->
     finally:
         store.delete_election(election_id)
         store.delete_candidate(candidate_id)
+        store.close()
