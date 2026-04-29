@@ -203,7 +203,10 @@ function renderElections({ preserveScroll = false } = {}) {
 }
 
 function selectElection(election) {
+  const sizeBefore = state.expandedNodes.size;
   expandElectionParents(election);
+  const parentsExpanded = state.expandedNodes.size !== sizeBefore;
+
   state.selectedElection = election;
   state.reviewItems = [];
   state.currentIndex = 0;
@@ -211,7 +214,15 @@ function selectElection(election) {
   els.loadElection.disabled = false;
   els.pathline.textContent = election.election_id;
   els.title.textContent = election.label;
-  renderElections({ preserveScroll: true });
+
+  if (parentsExpanded) {
+    renderElections({ preserveScroll: true });
+  } else {
+    els.electionList.querySelectorAll(".tree-file").forEach((row) => {
+      row.classList.toggle("selected", row.title === election.election_id);
+    });
+  }
+
   renderCurrentItem();
 }
 

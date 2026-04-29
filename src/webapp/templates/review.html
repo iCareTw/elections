@@ -27,7 +27,7 @@
     <form method="post" action="/review/{{ election.election_id | urlencode }}/resolve">
       <input type="hidden" name="source_record_id" value="{{ current_record.source_record_id }}">
       <input type="hidden" name="i" value="{{ i }}">
-      <input type="hidden" name="total_count" value="{{ total_count }}">
+      <input type="hidden" name="total_count" value="{{ pending_count }}">
 
       {% for match in matches %}
       <label class="match-card {% if loop.first %}selected{% endif %}">
@@ -58,7 +58,8 @@
     {% else %}
     <span class="button ghost disabled">← 上一筆</span>
     {% endif %}
-    {% if i < total_count - 1 %}
+    <span class="nav-count">{{ i + 1 }} / {{ pending_count }} 待審</span>
+    {% if i < pending_count - 1 %}
     <a class="button ghost" href="/review/{{ election.election_id | urlencode }}?i={{ i + 1 }}">下一筆 →</a>
     {% else %}
     <span class="button ghost disabled">下一筆 →</span>

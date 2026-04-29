@@ -40,8 +40,12 @@ async def review_page(request: Request, election_id: str, i: int = 0):
     resolved_count = len(decisions)
     progress_pct = int(resolved_count / total_count * 100) if total_count else 0
 
-    i = max(0, min(i, total_count - 1))
-    current_record = source_records[i]
+    pending_records = [r for r in source_records if r["source_record_id"] not in decisions]
+    if not pending_records:
+        return RedirectResponse(f"/elections/{election_id}", status_code=303)
+
+    i = max(0, min(i, len(pending_records) - 1))
+    current_record = pending_records[i]
     payload = current_record["payload"]
 
     result = classify_record(payload, store)
@@ -76,6 +80,7 @@ async def review_page(request: Request, election_id: str, i: int = 0):
         "record_fields": record_fields,
         "matches": matches,
         "i": i,
+        "pending_count": len(pending_records),
         "total_count": total_count,
         "resolved_count": resolved_count,
         "progress_pct": progress_pct,
@@ -109,7 +114,7 @@ async def resolve(request: Request, election_id: str):
             mode=mode,
         )
 
-    next_i = min(i + 1, total_count - 1)
+    next_i = max(0, min(i, total_count - 2))
 
     return RedirectResponse(f"/review/{election_id}?i={next_i}", status_code=303)
 
