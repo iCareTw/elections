@@ -46,3 +46,14 @@
 {% endif %}
 
 {% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      const loadForm = document.querySelector('.state-todo form[action$="/load"]');
+      if (loadForm) loadForm.submit();
+    }
+  });
+</script>
+{% endblock %}

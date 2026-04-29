@@ -81,3 +81,15 @@
 {% endif %}
 
 {% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Enter') return;
+    const tag = document.activeElement.tagName;
+    if (['INPUT', 'BUTTON', 'SELECT', 'TEXTAREA', 'A'].includes(tag)) return;
+    const commitForm = document.querySelector('.commit-ready form[action$="/commit"]');
+    if (commitForm) commitForm.submit();
+  });
+</script>
+{% endblock %}
