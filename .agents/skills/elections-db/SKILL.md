@@ -16,6 +16,10 @@ Expected defaults:
 - Tables: `elections`, `source_records`, `resolutions`, `candidates`, `candidate_elections`
 - Logs: `logs/operations.log`, `logs/errors.log`
 
+**Schema 對應規則：**
+- 正式環境（identity ui 執行時）使用 `elections` schema
+- 測試時（`uv run pytest`）使用 `test_elections` schema
+
 Do not print `POSTGRES_PASSWORD` or a full database URL. Do not mutate DB state unless the user explicitly asks for a write.
 
 ## Clear Table Data
@@ -30,33 +34,46 @@ The script deletes rows only. It does not drop tables. Without `--yes`, it runs 
 
 ## Connect
 
-Prefer the project Store because it already parses `.env`, builds the PostgreSQL URL, checks the schema, and sets `search_path` to `POSTGRES_SCHEMA`:
+Use the project Store to connect. **必須先呼叫 `open()`，並在拿到 connection 後呼叫 `_setup_conn(conn)`**，才會正確設定 `search_path`。若省略 `_setup_conn`，`current_schema()` 會停留在 `public`，所有不帶 schema prefix 的 table 查詢都會失敗。
+
+驗證連線與 schema：
 
 ```bash
 uv run python - <<'PY'
 from src.webapp.store import Store
 
-with Store().connect() as conn:
-    print(conn.execute("select current_database() as db, current_schema() as schema").fetchone())
+store = Store()
+store.open()
+try:
+    with store.connect() as conn:
+        store._setup_conn(conn)
+        print(conn.execute("select current_database() as db, current_schema() as schema").fetchone())
+finally:
+    store.close()
 PY
 ```
 
-If you need an ad hoc query, keep it parameterized:
+Ad hoc 查詢範本（parameterized）：
 
 ```bash
 uv run python - <<'PY'
 from src.webapp.store import Store
 
-sql = """
-select election_id, type, label, year, session
-from elections
-order by type, year nulls last, label
-limit %s
-"""
-
-with Store().connect() as conn:
-    for row in conn.execute(sql, (20,)).fetchall():
-        print(dict(row))
+store = Store()
+store.open()
+try:
+    with store.connect() as conn:
+        store._setup_conn(conn)
+        sql = """
+        select election_id, type, label, year, session
+        from elections
+        order by type, year nulls last, label
+        limit %s
+        """
+        for row in conn.execute(sql, (20,)).fetchall():
+            print(dict(row))
+finally:
+    store.close()
 PY
 ```
 
