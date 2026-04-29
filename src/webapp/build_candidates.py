@@ -9,11 +9,17 @@ from src.validate import validate_candidates
 from src.webapp.store import Store
 
 
+def _candidate_sort_key(c: dict[str, Any]) -> tuple:
+    bd = c.get("birthday")
+    bkey = (0, 0) if bd is None else (1, -bd.toordinal())
+    return (bkey, c.get("name", ""), c.get("id", ""))
+
+
 def build_candidates_yaml(store: Store) -> list[dict[str, Any]]:
     candidates = store.list_candidates_with_elections()
     for candidate in candidates:
         candidate["elections"].sort(key=lambda e: e["year"])
-    return sorted(candidates, key=lambda c: (c["elections"][0]["year"] if c["elections"] else 9999, c["id"]))
+    return sorted(candidates, key=_candidate_sort_key)
 
 
 def _load_valid_types(path: Path) -> set[str]:
