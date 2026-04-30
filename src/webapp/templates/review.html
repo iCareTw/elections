@@ -58,7 +58,7 @@
     {% else %}
     <span class="button ghost disabled">← 上一筆</span>
     {% endif %}
-    <span class="nav-count">{{ i + 1 }} / {{ pending_count }} 待審</span>
+    <span class="nav-count">{{ 0 if pending_count == 0 else i + 1 }} / {{ pending_count }} 待審</span>
     {% if i < pending_count - 1 %}
     <a class="button ghost" href="/review/{{ election.election_id | urlencode }}?i={{ i + 1 }}">下一筆 →</a>
     {% else %}
