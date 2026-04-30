@@ -5,3 +5,5 @@ _data
 .env
 .superpowers/
 logs/
+.coverage
+htmlcov/

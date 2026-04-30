@@ -17,3 +17,14 @@ dependencies = [
     "pyyaml>=6.0.3",
     "uvicorn>=0.46.0",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest-cov>=7.1.0",
+]
+
+[tool.pytest.ini_options]
+addopts = "--cov=src --cov-report=term-missing --cov-report=html"
+
+[tool.coverage.run]
+omit = ["src/webapp/static/*"]
