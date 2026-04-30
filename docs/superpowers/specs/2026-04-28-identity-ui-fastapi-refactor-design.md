@@ -169,7 +169,7 @@ logs/                 ← gitignore
 - Brand header
 - Refresh 按鈕
 - `_data/` 鏡像樹狀清單 (緊湊列高, `padding: 1px`, `line-height: 1.5`)
-  - 目錄節點: `president/`, `mayor/`
+  - 目錄節點: `president/`, `mayor/`, `legislator/`, `council/`
   - 檔案列: 檔名 + status badge (todo / review / done)
   - 點選後 navigate 到對應頁面 (full-page render)
 - 底部: **Generate candidates.yaml** 按鈕 (project-level 操作, 與選舉操作明確分離)
@@ -250,6 +250,5 @@ classify_record(record: dict, store: Store) -> dict
 
 ## 不在本次範疇
 
-- Legislator, council 資料處理.
 - 使用者認證 / 多人協作.
 - htmx 或任何 JS framework.
