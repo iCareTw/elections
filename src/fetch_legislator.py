@@ -114,8 +114,13 @@ async def _scrape_entry(
 
 
 async def _run(sessions: list[int], force: bool) -> None:
+    """
+    補齊指定屆次的 區域/平地原住民/山地原住民 立委 的原始資料
+    ex: uv run src/fetch_legislator.py --session 11
+    """
     async with httpx.AsyncClient(timeout=30, verify=False) as client:
         raw = await _fetch_json(client, f'{BASE_URL}/static/elections/list/ELC_L0.json')
+        # https://db.cec.gov.tw/static/elections/list/ELC_L0.json
         session_map = parse_session_map(raw)
         for s in sorted(sessions):
             print(f'\n=== 第{s}屆 ===')
