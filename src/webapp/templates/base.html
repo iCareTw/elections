@@ -55,6 +55,21 @@
         const details = tree.querySelectorAll('details');
         details.forEach(d => d.removeAttribute('open'));
       }
+
+      const navList = document.querySelector('.election-list');
+
+      // Restore scroll position on page load
+      const savedScroll = sessionStorage.getItem('nav-scroll');
+      if (savedScroll !== null) {
+        navList.scrollTop = parseInt(savedScroll, 10);
+      }
+
+      // Save scroll position before navigating
+      navList.querySelectorAll('a.tree-row').forEach(a => {
+        a.addEventListener('click', () => {
+          sessionStorage.setItem('nav-scroll', navList.scrollTop);
+        });
+      });
     </script>
 
     <div class="nav-footer">
