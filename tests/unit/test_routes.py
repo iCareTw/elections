@@ -242,6 +242,7 @@ def test_load_and_review_flow(tmp_path: Path) -> None:
 
 
 def test_auto_decisions_survive_without_browser_session(tmp_path: Path) -> None:
+    # Load with one client, commit with another — confirms decisions are persisted in DB, not tied to session.
     config = load_database_config()
     if not config.database_url:
         pytest.skip("PostgreSQL connection not configured")
