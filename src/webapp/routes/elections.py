@@ -89,7 +89,7 @@ async def election_detail(request: Request, election_id: str):
     election = flat.get(election_id)
     if election is None:
         return RedirectResponse("/")
-    if election["status"] in ("review", "ready"):
+    if election["status"] == "review":
         return RedirectResponse(f"/review/{election_id}", status_code=303)
 
     return templates.TemplateResponse(request, "elections.html", {

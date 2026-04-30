@@ -159,16 +159,19 @@ def test_home_returns_200(tmp_path: Path) -> None:
 
     store = Store(config)
     try:
-        store.init_schema()
-    except ConnectionError:
+        store.open()
+    except Exception:
         pytest.skip("PostgreSQL is not reachable")
-
-    (tmp_path / "_data" / "president").mkdir(parents=True)
-    app = _make_app(tmp_path, store)
-    client = TestClient(app, raise_server_exceptions=True)
-    resp = client.get("/")
-    assert resp.status_code == 200
-    assert "Identity Workbench" in resp.text
+    try:
+        store.init_schema()
+        (tmp_path / "_data" / "president").mkdir(parents=True)
+        app = _make_app(tmp_path, store)
+        client = TestClient(app, raise_server_exceptions=True)
+        resp = client.get("/")
+        assert resp.status_code == 200
+        assert "Identity Workbench" in resp.text
+    finally:
+        store.close()
 
 
 def test_load_and_review_flow(tmp_path: Path) -> None:
@@ -178,8 +181,13 @@ def test_load_and_review_flow(tmp_path: Path) -> None:
 
     store = Store(config)
     try:
+        store.open()
+    except Exception:
+        pytest.skip("PostgreSQL is not reachable")
+    try:
         store.init_schema()
     except ConnectionError:
+        store.close()
         pytest.skip("PostgreSQL is not reachable")
 
     token = uuid4().hex
@@ -230,6 +238,7 @@ def test_load_and_review_flow(tmp_path: Path) -> None:
         store.delete_election(election_id)
         if candidate_id:
             store.delete_candidate(candidate_id)
+        store.close()
 
 
 def test_auto_decisions_survive_without_browser_session(tmp_path: Path) -> None:
@@ -239,8 +248,13 @@ def test_auto_decisions_survive_without_browser_session(tmp_path: Path) -> None:
 
     store = Store(config)
     try:
+        store.open()
+    except Exception:
+        pytest.skip("PostgreSQL is not reachable")
+    try:
         store.init_schema()
     except ConnectionError:
+        store.close()
         pytest.skip("PostgreSQL is not reachable")
 
     token = uuid4().hex
@@ -279,3 +293,4 @@ def test_auto_decisions_survive_without_browser_session(tmp_path: Path) -> None:
     finally:
         store.delete_election(election_id)
         store.delete_candidate(candidate_id)
+        store.close()

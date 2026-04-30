@@ -82,6 +82,7 @@ class Store:
                 "row_factory": dict_row,
                 "autocommit": True,
             },
+            configure=self._setup_conn,
             open=True,
         )
 
@@ -104,8 +105,12 @@ class Store:
 
     def validate_connection(self) -> None:
         with self.connect() as conn:
-            self._setup_conn(conn)
-            conn.execute("select 1").fetchone()
+            row = conn.execute(
+                "select count(*) as n from information_schema.schemata where schema_name = %s",
+                (self.config.schema,),
+            ).fetchone()
+            if row["n"] == 0:
+                raise ConnectionError("PostgreSQL schema is not available")
 
     def init_schema(self) -> None:
         sql_path = ROOT / "db" / "001_init.sql"

@@ -41,11 +41,9 @@ async def review_page(request: Request, election_id: str, i: int = 0):
     progress_pct = int(resolved_count / total_count * 100) if total_count else 0
 
     pending_records = [r for r in source_records if r["source_record_id"] not in decisions]
-    if not pending_records:
-        return RedirectResponse(f"/elections/{election_id}", status_code=303)
-
-    i = max(0, min(i, len(pending_records) - 1))
-    current_record = pending_records[i]
+    display_records = pending_records if pending_records else source_records
+    i = max(0, min(i, len(display_records) - 1))
+    current_record = display_records[i]
     payload = current_record["payload"]
 
     result = classify_record(payload, store)

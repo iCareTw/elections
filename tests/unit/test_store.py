@@ -16,11 +16,15 @@ def test_store_uses_taipei_timezone() -> None:
 
     store = Store(config)
     try:
+        store.open()
+    except Exception:
+        pytest.skip("PostgreSQL is not reachable")
+    try:
         with store.connect() as conn:
             assert conn.execute("show timezone").fetchone()["TimeZone"] == "Asia/Taipei"
             assert conn.execute("select current_timestamp as now").fetchone()["now"].utcoffset() == timedelta(hours=8)
-    except ConnectionError:
-        pytest.skip("PostgreSQL is not reachable")
+    finally:
+        store.close()
 
 
 def test_upsert_election_refreshes_updated_at_on_update() -> None:
@@ -30,8 +34,13 @@ def test_upsert_election_refreshes_updated_at_on_update() -> None:
 
     store = Store(config)
     try:
+        store.open()
+    except Exception:
+        pytest.skip("PostgreSQL is not reachable")
+    try:
         store.init_schema()
     except ConnectionError:
+        store.close()
         pytest.skip("PostgreSQL is not reachable")
 
     token = uuid4().hex
@@ -73,6 +82,7 @@ def test_upsert_election_refreshes_updated_at_on_update() -> None:
         assert second > first
     finally:
         store.delete_election(election_id)
+        store.close()
 
 
 def test_store_rejects_missing_schema() -> None:
@@ -81,9 +91,15 @@ def test_store_rejects_missing_schema() -> None:
         pytest.skip("PostgreSQL connection not configured")
 
     store = Store(type(config)(database_url=config.database_url, schema="missing_schema_for_test"))
-
-    with pytest.raises(ConnectionError, match="PostgreSQL schema is not available"):
-        store.validate_connection()
+    try:
+        store.open()
+    except Exception:
+        pytest.skip("PostgreSQL is not reachable")
+    try:
+        with pytest.raises(ConnectionError, match="PostgreSQL schema is not available"):
+            store.validate_connection()
+    finally:
+        store.close()
 
 
 def test_store_lists_election_progress_status() -> None:
@@ -93,8 +109,13 @@ def test_store_lists_election_progress_status() -> None:
 
     store = Store(config)
     try:
+        store.open()
+    except Exception:
+        pytest.skip("PostgreSQL is not reachable")
+    try:
         store.init_schema()
     except ConnectionError:
+        store.close()
         pytest.skip("PostgreSQL is not reachable")
     token = uuid4().hex
     election_id = f"test/progress-{token}.yaml"
@@ -157,6 +178,7 @@ def test_store_lists_election_progress_status() -> None:
         store.delete_election(election_id)
         if candidate_id:
             store.delete_candidate(candidate_id)
+        store.close()
 
 
 def test_store_commit_election_writes_candidates_and_elections() -> None:
@@ -167,8 +189,13 @@ def test_store_commit_election_writes_candidates_and_elections() -> None:
 
     store = Store(config)
     try:
+        store.open()
+    except Exception:
+        pytest.skip("PostgreSQL is not reachable")
+    try:
         store.init_schema()
     except ConnectionError:
+        store.close()
         pytest.skip("PostgreSQL is not reachable")
 
     token = uuid4().hex
@@ -207,3 +234,4 @@ def test_store_commit_election_writes_candidates_and_elections() -> None:
     finally:
         store.delete_election(election_id)
         store.delete_candidate(candidate_id)
+        store.close()
