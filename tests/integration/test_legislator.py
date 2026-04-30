@@ -18,6 +18,8 @@ ELECTION_TYPE = "立法委員"
 
 
 def _available_sessions() -> list[int]:
+    if not LEGISLATOR_DIR.exists():
+        return []
     return sorted(
         int(p.name.replace("th", ""))
         for p in LEGISLATOR_DIR.iterdir()
@@ -26,6 +28,8 @@ def _available_sessions() -> list[int]:
 
 
 def _available_party_list_sessions() -> list[int]:
+    if not PARTY_LIST_DIR.exists():
+        return []
     return sorted(
         int(p.stem.replace("th", ""))
         for p in PARTY_LIST_DIR.glob("*th.yaml")
@@ -46,6 +50,8 @@ def _parse_xlsx_session(session: int) -> dict:
 
 def _load_yaml_entries() -> list[dict]:
     """從 candidates.yaml 取出所有立法委員參選紀錄。"""
+    if not CANDIDATES_YAML.exists():
+        return []
     with open(CANDIDATES_YAML, encoding="utf-8") as f:
         data = yaml.safe_load(f)
 

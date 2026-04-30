@@ -31,6 +31,8 @@ def _parse_xlsx(year: int) -> list[dict]:
 
 def _load_yaml_entries() -> list[dict]:
     """從 candidates.yaml 取出所有總統副總統參選紀錄。"""
+    if not CANDIDATES_YAML.exists():
+        return []
     with open(CANDIDATES_YAML, encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
@@ -57,6 +59,8 @@ def _get_yaml_years() -> list[int]:
 @pytest.mark.parametrize("year", _get_yaml_years())
 @pytest.mark.parametrize("election_type", sorted(PRESIDENT_TYPES))
 def test_president_candidates_match_xlsx(year: int, election_type: str) -> None:
+    if not PRESIDENT_DIR.exists():
+        pytest.skip("_data/president/ 不存在")
     xlsx = {
         c["ticket"]: c
         for c in _parse_xlsx(year)
