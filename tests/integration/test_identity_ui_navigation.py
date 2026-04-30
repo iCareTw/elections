@@ -31,10 +31,18 @@ def test_loaded_review_election_can_be_reopened_after_switching(tmp_path: Path) 
     if not config.database_url:
         pytest.skip("PostgreSQL connection not configured")
 
+    if not (ROOT / "_data" / "president").exists():
+        pytest.skip("_data/president/ 不存在")
+
     store = Store(config)
+    try:
+        store.open()
+    except Exception:
+        pytest.skip("PostgreSQL is not reachable")
     try:
         store.init_schema()
     except ConnectionError:
+        store.close()
         pytest.skip("PostgreSQL is not reachable")
 
     data_dir = tmp_path / "_data" / "president"
@@ -71,3 +79,4 @@ def test_loaded_review_election_can_be_reopened_after_switching(tmp_path: Path) 
     finally:
         store.delete_election(loaded_id)
         store.delete_election(other_id)
+        store.close()
