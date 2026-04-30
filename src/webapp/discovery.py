@@ -5,7 +5,7 @@ from pathlib import Path
 
 import yaml
 
-from src import parse_legislator, parse_mayor, parse_president
+from src import parse_council, parse_legislator, parse_mayor, parse_president
 from src.session_years import SESSION_YEARS
 
 _SESSION_RE = re.compile(r"(\d+)th")
@@ -158,12 +158,39 @@ def _discover_legislator_party_list(root: Path) -> list[dict]:
     return elections
 
 
+def _discover_council(root: Path) -> list[dict]:
+    data_dir = root / "_data" / "council"
+    if not data_dir.exists():
+        return []
+
+    elections = []
+    for year_dir in _visible_children(data_dir):
+        if not year_dir.is_dir():
+            continue
+        try:
+            year = int(year_dir.name)
+        except ValueError:
+            continue
+        for path in _visible_children(year_dir):
+            if path.is_file() and path.suffix.lower() == ".xlsx":
+                elections.append(
+                    _record(
+                        type_="council",
+                        election_id=f"council/{year_dir.name}/{path.name}",
+                        path=path,
+                        year=year,
+                    )
+                )
+    return elections
+
+
 def discover_elections(root: Path) -> list[dict]:
     elections = []
     elections.extend(_discover_president(root))
     elections.extend(_discover_mayor(root))
     elections.extend(_discover_legislator_district(root))
     elections.extend(_discover_legislator_party_list(root))
+    elections.extend(_discover_council(root))
     return sorted(elections, key=lambda e: [natural_sort_key(p) for p in e["election_id"].split("/")])
 
 
@@ -185,6 +212,8 @@ def _resolve_parser(election: dict):
         return parse_mayor.parse_file
     if election_type == "legislator":
         return parse_legislator.parse_file
+    if election_type == "council":
+        return parse_council.parse_file
     raise ValueError(f"Unsupported election type: {election_type}")
 
 
