@@ -35,6 +35,15 @@
                {% if loop.first %}checked{% endif %} style="display:none">
         <strong>{{ match.name }}</strong>
         <span>生日：{{ match.birthday }} ｜ {{ match.id }}</span>
+        {% if match.elections %}
+        <ul class="match-elections">
+          {% for e in match.elections %}
+          <li>{{ e.year }} {{ e.type }} · {{ e.region }}{% if e.party %} · {{ e.party }}{% endif %}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <span class="match-no-elections">尚無參選紀錄</span>
+        {% endif %}
       </label>
       {% endfor %}
 

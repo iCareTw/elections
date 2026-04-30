@@ -282,6 +282,28 @@ button {
   font-style: normal;
 }
 
+.match-elections {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
+  display: grid;
+  gap: 2px;
+}
+
+.match-elections li {
+  font-size: 11px;
+  color: var(--muted);
+  padding: 2px 6px;
+  background: rgba(0,0,0,.04);
+  border-radius: 4px;
+}
+
+.match-no-elections {
+  font-size: 11px;
+  color: var(--muted);
+  font-style: italic;
+}
+
 @media (max-width: 900px) {
   .shell,
   .review-grid {
@@ -404,6 +426,8 @@ button { font: inherit; cursor: pointer; border: 0; }
 .match-card:has(input:checked) { border-color: var(--accent); background: #e2f4ed; }
 .match-card strong { font-size: 12.5px; }
 .match-card span { color: var(--muted); font-size: 11px; }
+.match-card .match-elections { list-style: none; padding: 0; margin: 3px 0 0; display: grid; gap: 2px; }
+.match-card .match-elections li { font-size: 10.5px; color: var(--muted); padding: 2px 5px; background: rgba(0,0,0,.04); border-radius: 3px; }
 .decision-bar { display: flex; gap: 8px; margin-top: 12px; }
 
 /* ── Progress ── */

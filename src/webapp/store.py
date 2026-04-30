@@ -274,10 +274,35 @@ class Store:
         with self.connect() as conn:
             self._setup_conn(conn)
             rows = conn.execute(
-                "SELECT id, name, birthday FROM candidates WHERE name = %s",
+                """
+                SELECT c.id, c.name, c.birthday,
+                       ce.year, ce.type, ce.region, ce.party
+                FROM candidates c
+                LEFT JOIN candidate_elections ce ON ce.candidate_id = c.id
+                WHERE c.name = %s
+                ORDER BY c.id, ce.year NULLS LAST
+                """,
                 (normalized,),
             ).fetchall()
-        return [dict(r) for r in rows]
+
+        grouped: dict[str, dict[str, Any]] = {}
+        for row in rows:
+            cid = row["id"]
+            if cid not in grouped:
+                grouped[cid] = {
+                    "id": row["id"],
+                    "name": row["name"],
+                    "birthday": row["birthday"],
+                    "elections": [],
+                }
+            if row["year"] is not None:
+                grouped[cid]["elections"].append({
+                    "year": row["year"],
+                    "type": row["type"],
+                    "region": row["region"],
+                    "party": row["party"],
+                })
+        return list(grouped.values())
 
     def list_candidates_with_elections(self) -> list[dict[str, Any]]:
         with self.connect() as conn:
