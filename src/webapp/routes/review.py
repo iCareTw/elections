@@ -77,6 +77,7 @@ async def review_page(request: Request, election_id: str, i: int = 0):
         "current_record": current_record,
         "record_fields": record_fields,
         "matches": matches,
+        "incoming_birthday": payload.get("birthday"),
         "i": i,
         "pending_count": len(pending_records),
         "total_count": total_count,
@@ -101,8 +102,19 @@ async def resolve(request: Request, election_id: str):
         if record:
             candidate_id = generate_id(record["name"], record.get("birthday"))
 
+    birthday_override_raw = str(form.get("birthday_override", "")).strip()
+    birthday_override = int(birthday_override_raw) if birthday_override_raw.isdigit() else None
+
     if mode == "use_match":
         mode = "manual"
+
+    if birthday_override is not None and mode == "manual" and candidate_id:
+        with store.connect() as conn:
+            store._setup_conn(conn)
+            conn.execute(
+                "UPDATE candidates SET birthday = %s WHERE id = %s",
+                (birthday_override, candidate_id),
+            )
 
     if source_record_id and mode and candidate_id:
         store.upsert_review_decision(

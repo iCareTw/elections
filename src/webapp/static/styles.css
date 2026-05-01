@@ -429,6 +429,13 @@ button { font: inherit; cursor: pointer; border: 0; }
 .match-card .match-elections { list-style: none; padding: 0; margin: 3px 0 0; display: grid; gap: 2px; }
 .match-card .match-elections li { font-size: 10.5px; color: var(--muted); padding: 2px 5px; background: rgba(0,0,0,.04); border-radius: 3px; }
 .decision-bar { display: flex; gap: 8px; margin-top: 12px; }
+.bday-warn { cursor: pointer; color: #b45309; font-size: 10px; margin-left: 4px; padding: 1px 5px; border-radius: 4px; background: #fef3c7; border: 1px solid #fcd34d; white-space: nowrap; }
+.bday-warn:hover { background: #fde68a; }
+.bday-panel { display: none; margin: -4px 0 6px; padding: 8px 10px; border-radius: 8px; background: #fffbeb; border: 1px solid #fcd34d; font-size: 11px; }
+.bday-panel--open { display: grid; gap: 4px; }
+.bday-panel-title { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+.bday-opt { display: flex; align-items: center; gap: 5px; color: #374151; }
+.bday-custom { width: 70px; padding: 2px 5px; border: 1px solid var(--line); border-radius: 4px; font-size: 11px; }
 
 /* ── Progress ── */
 .progress-wrap { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
