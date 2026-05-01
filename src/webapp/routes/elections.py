@@ -140,7 +140,23 @@ async def load_election(request: Request, election_id: str):
         total += 1
 
     decision_count = len(store.list_review_decisions(election_id))
-    logger.info("load election=%s total=%d auto_new=%d manual=%d",
-                election_id, total, auto_new, total - decision_count)
+    pending_count = total - decision_count
+    logger.info("load election=%s total=%d auto_new=%d pending=%d",
+                election_id, total, auto_new, pending_count)
+
+    if pending_count == 0:
+        source_records = store.list_source_records(election_id)
+        decisions = {
+            d["source_record_id"]: {"mode": d["mode"], "candidate_id": d["candidate_id"]}
+            for d in store.list_review_decisions(election_id)
+        }
+        source_records_map = {r["source_record_id"]: r["payload"] for r in source_records}
+        auto_c, manual_c = store.commit_election(
+            election_id=election_id,
+            decisions=decisions,
+            source_records_map=source_records_map,
+        )
+        logger.info("auto-commit election=%s auto=%d manual=%d", election_id, auto_c, manual_c)
+        return RedirectResponse(f"/elections/{election_id}", status_code=303)
 
     return RedirectResponse(f"/review/{election_id}", status_code=303)
