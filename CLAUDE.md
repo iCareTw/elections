@@ -21,6 +21,10 @@ uv add <package>
 
 `_data/` 資料類型: `president/`, `mayor/`, `legislator/`, `council/`
 
+## DB Schema
+
+欄位細部說明見 `docs/db-schema.md`. 新增 migration 後必須同步更新此文件.
+
 ## Identity UI (`src/webapp/`)
 
 FastAPI + Jinja2 候選人身分判定介面. 以 DB 作為 single source of truth, `candidates.yaml` 由 Build 操作產生.

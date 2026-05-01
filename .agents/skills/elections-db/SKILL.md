@@ -14,6 +14,7 @@ Expected defaults:
 - Database: `POSTGRES_DB=idontcare`
 - Schema: `POSTGRES_SCHEMA=elections`
 - Tables: `elections`, `source_records`, `resolutions`, `candidates`, `candidate_elections`
+- Schema reference: `docs/db-schema.md` — 各表欄位的細部說明
 - Logs: `logs/operations.log`, `logs/errors.log`
 
 **Schema 對應規則：**
@@ -161,6 +162,10 @@ left join candidate_elections ce on ce.candidate_id = c.id
 where c.name = %s
 order by c.id, ce.year nulls last;
 ```
+
+## After Migration
+
+新增或修改 `db/` migration 後, 必須同步更新 `docs/db-schema.md` 以反映最新 schema 狀態. 此文件記錄所有 migration 套用後的最終結果, 而非各 migration 檔案的內容.
 
 ## Operation Logs
 
