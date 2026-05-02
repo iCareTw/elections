@@ -42,11 +42,14 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
     progress_pct = int(resolved_count / total_count * 100) if total_count else 0
 
     pending_records = [r for r in source_records if r["source_record_id"] not in decisions]
-    display_records = pending_records if pending_records else source_records
+    display_records = [r for r in source_records if r.get("original_kind") == "manual"]
+    if not display_records:
+        display_records = pending_records or source_records
     i = max(0, min(i, len(display_records) - 1))
     current_record = display_records[i]
     payload = current_record["payload"]
 
+    current_decision = decisions.get(current_record["source_record_id"])
     result = classify_record(payload, store)
     matches = result.get("matches", [])
 
@@ -71,6 +74,20 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
 
     election = flat.get(election_id, {"election_id": election_id, "label": election_id, "type": "", "year": ""})
 
+    display_count = len(display_records)
+    sr_lookup = {r["source_record_id"]: r["name"] for r in source_records}
+    _MODE_LABELS = {"new": "自動建立", "manual_new": "新建人物", "manual": "人工合併"}
+    decision_log = [
+        {
+            "name": sr_lookup.get(d["source_record_id"], d["source_record_id"]),
+            "mode_label": _MODE_LABELS.get(d["mode"], d["mode"]),
+            "candidate_id": d["candidate_id"],
+            "updated_at": d["updated_at"],
+        }
+        for d in store.list_review_decisions(election_id)
+        if d["mode"] != "auto"
+    ]
+
     return templates.TemplateResponse(request, "review.html", {
         "election_tree": election_tree,
         "selected_id": election_id,
@@ -81,10 +98,13 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
         "incoming_birthday": payload.get("birthday"),
         "i": i,
         "pending_count": len(pending_records),
+        "display_count": display_count,
         "total_count": total_count,
         "resolved_count": resolved_count,
         "progress_pct": progress_pct,
         "error": error,
+        "decision_log": decision_log,
+        "current_decision": current_decision,
     })
 
 
@@ -103,6 +123,7 @@ async def resolve(request: Request, election_id: str):
         record = store.get_source_record(source_record_id)
         if record:
             candidate_id = generate_id(record["name"], record.get("birthday"))
+        mode = "manual_new"
 
     birthday_override_raw = str(form.get("birthday_override", "")).strip()
     birthday_override = int(birthday_override_raw) if birthday_override_raw.isdigit() else None
@@ -143,7 +164,7 @@ async def resolve(request: Request, election_id: str):
             mode=mode,
         )
 
-    next_i = max(0, min(i, total_count - 2))
+    next_i = min(i + 1, total_count - 1)
 
     return RedirectResponse(f"/review/{election_id}?i={next_i}", status_code=303)
 

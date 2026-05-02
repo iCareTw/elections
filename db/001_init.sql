@@ -32,8 +32,13 @@ CREATE TABLE IF NOT EXISTS source_records (
     election_id      TEXT        NOT NULL REFERENCES elections(election_id) ON DELETE CASCADE,
     name             VARCHAR(64) NOT NULL,
     birthday         INTEGER,
-    payload          JSONB       NOT NULL
+    payload          JSONB       NOT NULL,
+    original_kind    VARCHAR(16) NOT NULL DEFAULT 'unknown'
+    -- original_kind: auto (生日完全吻合自動匹配) / new (無候選人自動建立) / manual (有模糊候選人須人工判斷)
 );
+
+ALTER TABLE source_records
+    ADD COLUMN IF NOT EXISTS original_kind VARCHAR(16) NOT NULL DEFAULT 'unknown';
 
 CREATE INDEX IF NOT EXISTS idx_source_records_election_id
     ON source_records (election_id);
@@ -56,8 +61,8 @@ CREATE TABLE IF NOT EXISTS resolutions (
     election_id      TEXT        NOT NULL    REFERENCES elections(election_id) ON DELETE CASCADE,
     candidate_id     VARCHAR(64),
     mode             VARCHAR(16) NOT NULL
+    -- mode: auto (自動匹配) / new (自動建新人) / manual_new (人工選擇建新人) / manual (人工選擇合併)
 );
--- mode: auto / new / manual
 
 -- 候選人身分 (業務資料)
 CREATE TABLE IF NOT EXISTS candidates (

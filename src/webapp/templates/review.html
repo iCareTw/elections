@@ -28,10 +28,16 @@
 
   <article class="panel">
     <h3>Possible Existing Candidates</h3>
+    {% if current_decision %}
+    <div class="resolved-banner">
+      ✓ 已決定：{{ {"new": "新建人物", "manual": "人工合併"}.get(current_decision.mode, current_decision.mode) }}
+      → <span class="mono">{{ current_decision.candidate_id }}</span>
+    </div>
+    {% endif %}
     <form method="post" action="/review/{{ election.election_id | urlencode }}/resolve">
       <input type="hidden" name="source_record_id" value="{{ current_record.source_record_id }}">
       <input type="hidden" name="i" value="{{ i }}">
-      <input type="hidden" name="total_count" value="{{ pending_count }}">
+      <input type="hidden" name="total_count" value="{{ display_count }}">
 
       <input type="hidden" name="birthday_override" id="bday-override-field" value="">
 
@@ -89,8 +95,11 @@
     {% else %}
     <span class="button ghost disabled">← 上一筆</span>
     {% endif %}
-    <span class="nav-count">{{ 0 if pending_count == 0 else i + 1 }} / {{ pending_count }} 待審</span>
-    {% if i < pending_count - 1 %}
+    <span class="nav-count">
+      {{ i + 1 }} / {{ display_count }}
+      {% if pending_count > 0 %}<span class="nav-pending-badge">待審 {{ pending_count }}</span>{% endif %}
+    </span>
+    {% if i < display_count - 1 %}
     <a class="button ghost" href="/review/{{ election.election_id | urlencode }}?i={{ i + 1 }}">下一筆 →</a>
     {% else %}
     <span class="button ghost disabled">下一筆 →</span>
@@ -109,6 +118,25 @@
   <form method="post" action="/elections/{{ election.election_id | urlencode }}/commit">
     <button class="button primary" type="submit">Commit to DB →</button>
   </form>
+</div>
+{% endif %}
+
+{% if decision_log %}
+<div class="decision-log">
+  <h4>本場人工決策紀錄（{{ decision_log | length }} 筆）</h4>
+  <table class="log-table">
+    <thead><tr><th>姓名</th><th>決策</th><th>Candidate ID</th><th>時間</th></tr></thead>
+    <tbody>
+      {% for d in decision_log %}
+      <tr>
+        <td>{{ d.name }}</td>
+        <td>{{ d.mode_label }}</td>
+        <td class="mono">{{ d.candidate_id }}</td>
+        <td>{{ d.updated_at.strftime("%m/%d %H:%M") if d.updated_at else "—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endif %}
 

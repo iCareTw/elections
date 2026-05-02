@@ -188,18 +188,20 @@ class Store:
         source_record_id: str,
         election_id: str,
         payload: dict[str, Any],
+        original_kind: str,
     ) -> None:
         with self.connect() as conn:
             self._setup_conn(conn)
             conn.execute(
                 """
-                INSERT INTO source_records(source_record_id, election_id, name, birthday, payload)
-                VALUES (%s, %s, %s, %s, %s)
+                INSERT INTO source_records(source_record_id, election_id, name, birthday, payload, original_kind)
+                VALUES (%s, %s, %s, %s, %s, %s)
                 ON CONFLICT(source_record_id) DO UPDATE SET
-                    election_id = EXCLUDED.election_id,
-                    name        = EXCLUDED.name,
-                    birthday    = EXCLUDED.birthday,
-                    payload     = EXCLUDED.payload
+                    election_id   = EXCLUDED.election_id,
+                    name          = EXCLUDED.name,
+                    birthday      = EXCLUDED.birthday,
+                    payload       = EXCLUDED.payload,
+                    original_kind = EXCLUDED.original_kind
                 """,
                 (
                     source_record_id,
@@ -207,6 +209,7 @@ class Store:
                     payload["name"],
                     payload.get("birthday"),
                     Jsonb(payload),
+                    original_kind,
                 ),
             )
 
@@ -224,7 +227,7 @@ class Store:
             self._setup_conn(conn)
             rows = conn.execute(
                 """
-                SELECT source_record_id, election_id, name, birthday, payload
+                SELECT source_record_id, election_id, name, birthday, payload, original_kind
                 FROM source_records
                 WHERE election_id = %s
                 ORDER BY source_record_id
@@ -405,6 +408,21 @@ class Store:
                 )
 
         return auto, manual
+
+    def list_resolutions(self, election_id: str) -> list[dict[str, Any]]:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            rows = conn.execute(
+                """
+                SELECT r.source_record_id, r.candidate_id, r.mode, sr.name
+                FROM resolutions r
+                JOIN source_records sr ON sr.source_record_id = r.source_record_id
+                WHERE r.election_id = %s
+                ORDER BY sr.name
+                """,
+                (election_id,),
+            ).fetchall()
+        return [dict(r) for r in rows]
 
     def delete_election(self, election_id: str) -> None:
         with self.connect() as conn:

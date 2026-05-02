@@ -92,10 +92,16 @@ async def election_detail(request: Request, election_id: str):
     if election["status"] in ("review", "ready"):
         return RedirectResponse(f"/review/{election_id}", status_code=303)
 
+    resolutions = store.list_resolutions(election_id) if election.get("status") == "done" else []
+    _MODE_LABELS = {"auto": "自動匹配", "new": "自動建立", "manual_new": "新建人物", "manual": "人工合併"}
+    for r in resolutions:
+        r["mode_label"] = _MODE_LABELS.get(r["mode"], r["mode"])
+
     return templates.TemplateResponse(request, "elections.html", {
         "election_tree": election_tree,
         "selected_id": election_id,
         "election": election,
+        "resolutions": resolutions,
     })
 
 
@@ -119,16 +125,25 @@ async def load_election(request: Request, election_id: str):
     auto_new = 0
 
     for record in load_election_records(raw_election):
-        store.insert_source_record(
-            source_record_id=record["source_record_id"],
-            election_id=election_id,
-            payload=record,
-        )
         if record["source_record_id"] in existing_decisions:
+            existing_mode = existing_decisions[record["source_record_id"]]["mode"]
+            original_kind = existing_mode if existing_mode in ("auto", "new") else "manual"
+            store.insert_source_record(
+                source_record_id=record["source_record_id"],
+                election_id=election_id,
+                payload=record,
+                original_kind=original_kind,
+            )
             total += 1
             continue
 
         result = classify_record(record, store)
+        store.insert_source_record(
+            source_record_id=record["source_record_id"],
+            election_id=election_id,
+            payload=record,
+            original_kind=result["kind"],
+        )
         if result["kind"] in ("auto", "new"):
             store.upsert_review_decision(
                 source_record_id=record["source_record_id"],
