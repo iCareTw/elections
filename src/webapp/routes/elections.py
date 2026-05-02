@@ -109,11 +109,27 @@ async def election_detail(request: Request, election_id: str):
 async def load_election(request: Request, election_id: str):
     store: Store = request.app.state.store
     root: Path = request.app.state.root
+    templates: Jinja2Templates = request.app.state.templates
 
     raw_elections = {e["election_id"]: e for e in discover_elections(root)}
     raw_election = raw_elections.get(election_id)
     if raw_election is None:
         return RedirectResponse("/", status_code=303)
+
+    records = load_election_records(raw_election)
+    missing_birthday = [r for r in records if not r.get("birthday")]
+    if missing_birthday:
+        election_tree = _election_tree(root, store)
+        return templates.TemplateResponse(
+            request,
+            "elections.html",
+            {
+                "election_tree": election_tree,
+                "selected_id": election_id,
+                "election": {**raw_election, "status": "invalid_data", "invalid_records": missing_birthday},
+            },
+            status_code=422,
+        )
 
     store.upsert_election(raw_election)
 
@@ -124,7 +140,7 @@ async def load_election(request: Request, election_id: str):
     total = 0
     auto_new = 0
 
-    for record in load_election_records(raw_election):
+    for record in records:
         if record["source_record_id"] in existing_decisions:
             existing_mode = existing_decisions[record["source_record_id"]]["mode"]
             original_kind = existing_mode if existing_mode in ("auto", "new") else "manual"

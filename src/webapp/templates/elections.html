@@ -61,6 +61,29 @@
     <a class="button primary load-btn" href="/review/{{ election.election_id | urlencode }}">繼續審核</a>
   </div>
 
+{% elif election.status == 'invalid_data' %}
+  <div class="state-error">
+    <p class="pathline">{{ election.type }} / {{ election.year }}</p>
+    <h2>{{ election.label }}</h2>
+    <p class="error-title">原始資料異常：下列 {{ election.invalid_records | length }} 筆記錄缺少生日欄位</p>
+    <table class="log-table error-table">
+      <thead><tr><th>#</th><th>姓名</th><th>Source Record ID</th></tr></thead>
+      <tbody>
+        {% for r in election.invalid_records %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ r.name }}</td>
+          <td class="mono">{{ r.source_record_id }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p class="error-hint">修復原始資料後，點下方按鈕重新匯入</p>
+    <form method="post" action="/elections/{{ election.election_id | urlencode }}/load">
+      <button class="button primary load-btn" type="submit">↓ 重新 Load</button>
+    </form>
+  </div>
+
 {% endif %}
 
 {% endblock %}
@@ -69,7 +92,7 @@
 <script>
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
-      const loadForm = document.querySelector('.state-todo form[action$="/load"]');
+      const loadForm = document.querySelector('.state-todo form[action$="/load"], .state-error form[action$="/load"]');
       if (loadForm) loadForm.submit();
     }
   });
