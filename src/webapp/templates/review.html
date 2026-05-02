@@ -75,6 +75,7 @@
       {% endif %}
       {% endfor %}
 
+      {% if not current_decision %}
       <div class="decision-bar">
         <button class="button primary" name="mode" value="use_match"
                 {% if not matches %}disabled{% endif %}>
@@ -84,6 +85,7 @@
           Create New Person
         </button>
       </div>
+      {% endif %}
     </form>
   </article>
 </div>
