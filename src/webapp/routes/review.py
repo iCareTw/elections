@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from urllib.parse import quote
 
 from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse
@@ -23,7 +24,7 @@ _FIELD_LABELS = {
 
 
 @router.get("/review/{election_id:path}")
-async def review_page(request: Request, election_id: str, i: int = 0):
+async def review_page(request: Request, election_id: str, i: int = 0, error: str = ""):
     store: Store = request.app.state.store
     root: Path = request.app.state.root
     templates: Jinja2Templates = request.app.state.templates
@@ -83,6 +84,7 @@ async def review_page(request: Request, election_id: str, i: int = 0):
         "total_count": total_count,
         "resolved_count": resolved_count,
         "progress_pct": progress_pct,
+        "error": error,
     })
 
 
@@ -111,10 +113,27 @@ async def resolve(request: Request, election_id: str):
     if birthday_override is not None and mode == "manual" and candidate_id:
         with store.connect() as conn:
             store._setup_conn(conn)
-            conn.execute(
-                "UPDATE candidates SET birthday = %s WHERE id = %s",
-                (birthday_override, candidate_id),
-            )
+            row = conn.execute(
+                "SELECT name FROM candidates WHERE id = %s", (candidate_id,)
+            ).fetchone()
+        if row:
+            new_id = generate_id(row["name"], birthday_override)
+            if new_id != candidate_id:
+                try:
+                    store.rename_candidate(candidate_id, new_id, birthday_override)
+                    candidate_id = new_id
+                except ValueError as e:
+                    return RedirectResponse(
+                        f"/review/{election_id}?i={i}&error={quote(str(e))}",
+                        status_code=303,
+                    )
+            else:
+                with store.connect() as conn:
+                    store._setup_conn(conn)
+                    conn.execute(
+                        "UPDATE candidates SET birthday = %s WHERE id = %s",
+                        (birthday_override, candidate_id),
+                    )
 
     if source_record_id and mode and candidate_id:
         store.upsert_review_decision(

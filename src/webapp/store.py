@@ -415,3 +415,27 @@ class Store:
         with self.connect() as conn:
             self._setup_conn(conn)
             conn.execute("DELETE FROM candidates WHERE id = %s", (candidate_id,))
+
+    def rename_candidate(self, old_id: str, new_id: str, new_birthday: int) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            if conn.execute("SELECT 1 FROM candidates WHERE id = %s", (new_id,)).fetchone():
+                raise ValueError(f"候選人 {new_id} 已存在，id rename 失敗，需人工處理")
+            with conn.transaction():
+                conn.execute(
+                    "INSERT INTO candidates(id, name, birthday) SELECT %s, name, %s FROM candidates WHERE id = %s",
+                    (new_id, new_birthday, old_id),
+                )
+                conn.execute(
+                    "UPDATE candidate_elections SET candidate_id = %s WHERE candidate_id = %s",
+                    (new_id, old_id),
+                )
+                conn.execute(
+                    "UPDATE resolutions SET candidate_id = %s WHERE candidate_id = %s",
+                    (new_id, old_id),
+                )
+                conn.execute(
+                    "UPDATE review_decisions SET candidate_id = %s WHERE candidate_id = %s",
+                    (new_id, old_id),
+                )
+                conn.execute("DELETE FROM candidates WHERE id = %s", (old_id,))

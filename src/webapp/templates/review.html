@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block workspace %}
 
+{% if error %}
+<div class="error-banner">⚠ {{ error }}</div>
+{% endif %}
+
 <div class="workspace-header">
   <div>
     <p class="pathline">{{ election.type }} / {{ election.year }}</p>
