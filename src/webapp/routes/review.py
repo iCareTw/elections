@@ -42,7 +42,7 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
     progress_pct = int(resolved_count / total_count * 100) if total_count else 0
 
     pending_records = [r for r in source_records if r["source_record_id"] not in decisions]
-    display_records = [r for r in source_records if r.get("original_kind") == "manual"]
+    display_records = [r for r in source_records if r.get("original_kind") == "manual" and r["source_record_id"] not in decisions]
     if not display_records:
         display_records = pending_records or source_records
     i = max(0, min(i, len(display_records) - 1))
