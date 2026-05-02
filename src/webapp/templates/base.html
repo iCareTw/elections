@@ -40,7 +40,8 @@
               {% if election.status == 'review' %}{{ election.unresolved_count }} 待審
               {% elif election.status == 'ready' %}待提交
               {% elif election.status == 'todo' %}未匯入
-              {% elif election.status == 'done' %}完成
+              {% elif election.status == 'done' %}
+                {% if election.manual_count %}{{ election.manual_count }} {% endif %}完成
               {% else %}{{ election.status }}{% endif %}
             </span>
           </a>
@@ -82,11 +83,47 @@
     </div>
   </aside>
 
+  <div class="resize-handle" id="resize-handle"></div>
+
   <section class="workspace">
     {% block workspace %}{% endblock %}
   </section>
 
 </main>
 {% block scripts %}{% endblock %}
+<script>
+(function() {
+  const handle = document.getElementById('resize-handle');
+  const nav = document.querySelector('.navigator');
+  if (!handle || !nav) return;
+
+  const MIN = 200, MAX = 560;
+
+  const saved = sessionStorage.getItem('nav-width');
+  if (saved) nav.style.flexBasis = saved + 'px';
+
+  handle.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = nav.offsetWidth;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+
+    function onMove(e) {
+      const w = Math.max(MIN, Math.min(MAX, startW + e.clientX - startX));
+      nav.style.flexBasis = w + 'px';
+      sessionStorage.setItem('nav-width', w);
+    }
+    function onUp() {
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+})();
+</script>
 </body>
 </html>

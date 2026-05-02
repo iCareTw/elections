@@ -171,7 +171,8 @@ class Store:
                     case
                         when count(r.source_record_id) = count(sr.source_record_id) then count(r.source_record_id)::int
                         else count(rd.source_record_id)::int
-                    end as resolved_count
+                    end as resolved_count,
+                    count(case when r.mode in ('manual', 'manual_new') then 1 end)::int as manual_count
                 from elections e
                 left join source_records sr on sr.election_id = e.election_id
                 left join review_decisions rd on rd.source_record_id = sr.source_record_id

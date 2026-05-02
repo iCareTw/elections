@@ -305,11 +305,15 @@ button {
 }
 
 @media (max-width: 900px) {
-  .shell,
+  .shell {
+    flex-direction: column;
+  }
+  .resize-handle {
+    display: none;
+  }
   .review-grid {
     grid-template-columns: 1fr;
   }
-
   .election-list {
     max-height: 320px;
   }
@@ -336,15 +340,35 @@ body {
 }
 button { font: inherit; cursor: pointer; border: 0; }
 .shell {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 18px;
+  display: flex;
+  align-items: stretch;
   min-height: 100vh;
   padding: 18px;
 }
 
+/* ── Resize handle ── */
+.resize-handle {
+  flex: 0 0 14px;
+  cursor: col-resize;
+  position: relative;
+  margin: 0 2px;
+}
+.resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 20px; bottom: 20px;
+  left: 50%; transform: translateX(-50%);
+  width: 3px;
+  border-radius: 2px;
+  background: transparent;
+  transition: background 0.15s;
+}
+.resize-handle:hover::after { background: var(--line); }
+
 /* ── Navigator ── */
 .navigator {
+  flex: 0 0 280px;
+  min-width: 0;
   border-radius: 24px;
   padding: 16px;
   border: 1px solid rgba(110,96,70,.22);
@@ -393,6 +417,8 @@ button { font: inherit; cursor: pointer; border: 0; }
 
 /* ── Workspace ── */
 .workspace {
+  flex: 1 1 0;
+  min-width: 0;
   border-radius: 28px;
   padding: 22px;
   border: 1px solid rgba(110,96,70,.22);

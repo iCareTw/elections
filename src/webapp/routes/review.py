@@ -85,7 +85,7 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
             "updated_at": d["updated_at"],
         }
         for d in store.list_review_decisions(election_id)
-        if d["mode"] != "auto"
+        if d["mode"] in ("manual", "manual_new")
     ]
 
     return templates.TemplateResponse(request, "review.html", {
