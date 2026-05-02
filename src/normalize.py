@@ -2,7 +2,7 @@ import re
 from typing import Union
 
 _BRACKET_PATTERN = re.compile(r"[(\（][^)\）]*[)\）]|[【][^】]*[】]")
-_REMOVE_PATTERN = re.compile(r"[\s\u3000‧·•]")
+_REMOVE_PATTERN = re.compile(r"[\s　‧·•．]")
 
 
 def normalize_name(name: str) -> str:

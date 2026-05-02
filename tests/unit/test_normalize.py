@@ -12,6 +12,7 @@ def test_remove_special_chars_to_normalize_name():
     assert normalize_name("陳明(阿明)") == "陳明"
     assert normalize_name("陳明（阿明）") == "陳明"
     assert normalize_name("SaidhaiTahovecahe") == "SaidhaiTahovecahe"
+    assert normalize_name("Istanda．Paingav") == "IstandaPaingav"
 
 
 def test_generate_id_error_birthday():
