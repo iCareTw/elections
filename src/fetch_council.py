@@ -142,7 +142,7 @@ async def _run(sessions: list[int], force: bool) -> None:
             await asyncio.sleep(2)
             session_map = parse_session_map(raw)
 
-            target_sessions = sessions if sessions else sorted({s for s, _ in session_map if s + 1911 >= 2000})
+            target_sessions = sessions if sessions else sorted({s for s, _ in session_map})
 
             for s in target_sessions:
                 print(f'\n=== {council_type} 第{s}屆 ===')
