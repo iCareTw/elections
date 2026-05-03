@@ -132,6 +132,9 @@ def test_navigator_does_not_expand_unselected_top_level_dirs() -> None:
     )
 
     assert home_html.count('class="tree-node dir" open') == 0
+    assert 'onclick="goHome()"' in home_html
+    assert 'title="Home">⌂</button>' in home_html
+    assert 'onclick="collapseAll()"' not in home_html
     assert selected_html.count('class="tree-node dir" open') == 1
     assert '<span class="tree-dir-label">president</span>' in selected_html
     assert '<span class="badge badge-pending tree-dir-pending">1</span>' in selected_html

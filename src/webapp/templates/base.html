@@ -17,7 +17,7 @@
 
     <div class="nav-header-row">
       <button class="button ghost" onclick="location.reload()">Refresh</button>
-      <button class="button ghost collapse-btn" onclick="collapseAll()" title="Collapse All">－</button>
+      <button class="button ghost collapse-btn" onclick="goHome()" title="Home">⌂</button>
     </div>
 
     <div class="election-list" id="election-tree">
@@ -56,10 +56,12 @@
     </div>
 
     <script>
-      function collapseAll() {
+      function goHome() {
         const tree = document.getElementById('election-tree');
         const details = tree.querySelectorAll('details');
         details.forEach(d => d.removeAttribute('open'));
+        sessionStorage.setItem('nav-scroll', '0');
+        window.location.href = '/';
       }
 
       const navList = document.querySelector('.election-list');
