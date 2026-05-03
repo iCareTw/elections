@@ -43,39 +43,48 @@
 
       {% for match in matches %}
       {% set bday_diff = incoming_birthday is not none and match.birthday != incoming_birthday %}
-      <label class="match-card {% if loop.first %}selected{% endif %}" data-idx="{{ loop.index }}">
-        <input type="radio" name="candidate_id" value="{{ match.id }}"
-               {% if loop.first %}checked{% endif %} style="display:none">
-        <strong>{{ match.name }}</strong>
-        <span>
-          生日：{{ match.birthday }}
-          {% if bday_diff %}<span class="bday-warn" data-idx="{{ loop.index }}">⚠ 生日不符</span>{% endif %}
-          ｜ {{ match.id }}
-        </span>
-        {% if match.elections %}
-        <ul class="match-elections">
-          {% for e in match.elections %}
-          <li>{{ e.year }} {{ e.type }} · {{ e.region }}{% if e.party %} · {{ e.party }}{% endif %}</li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <span class="match-no-elections">尚無參選紀錄</span>
-        {% endif %}
-      </label>
-      {% if bday_diff %}
-      <div class="bday-panel" id="bday-panel-{{ loop.index }}" data-idx="{{ loop.index }}">
-        <span class="bday-panel-title">選擇合併後的生日：</span>
-        <div class="bday-opt"><input type="radio" class="bday-radio" name="bday_opt_{{ loop.index }}" value="" checked> 保留 {{ match.birthday }}（現有）</div>
-        <div class="bday-opt"><input type="radio" class="bday-radio" name="bday_opt_{{ loop.index }}" value="{{ incoming_birthday }}"> 改為 {{ incoming_birthday }}（incoming）</div>
-        <div class="bday-opt">
-          <input type="radio" class="bday-radio" name="bday_opt_{{ loop.index }}" value="__custom__">
-          自行輸入：<input type="number" class="bday-custom" min="1900" max="2010" placeholder="YYYY">
+      <div class="match-card" data-idx="{{ loop.index }}" data-name="{{ match.name }}" data-id="{{ match.id }}" data-existing-bday="{{ match.birthday }}">
+        <label class="match-card-main">
+          <span class="match-card-head">
+            <input class="match-select" type="radio" name="candidate_id" value="{{ match.id }}"
+                   {% if loop.first %}checked{% endif %}>
+            <strong>{{ match.name }}</strong>
+            <span class="selected-label">目前選取</span>
+          </span>
+          <span>
+            生日：{{ match.birthday }}
+            {% if bday_diff %}<span class="bday-warn">⚠ 生日不符</span>{% endif %}
+            ｜ {{ match.id }}
+          </span>
+          {% if match.elections %}
+          <ul class="match-elections">
+            {% for e in match.elections %}
+            <li>{{ e.year }} {{ e.type }} · {{ e.region }}{% if e.party %} · {{ e.party }}{% endif %}</li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <span class="match-no-elections">尚無參選紀錄</span>
+          {% endif %}
+        </label>
+
+        {% if bday_diff %}
+        <div class="bday-panel" data-idx="{{ loop.index }}">
+          <span class="bday-panel-title">合併到 {{ match.id }} 後的生日</span>
+          <div class="bday-opt"><input type="radio" class="bday-radio" name="bday_opt_{{ loop.index }}" value="" checked> 保留 {{ match.birthday }}，來自既有人 {{ match.id }}</div>
+          <div class="bday-opt"><input type="radio" class="bday-radio" name="bday_opt_{{ loop.index }}" value="{{ incoming_birthday }}"> 改為 {{ incoming_birthday }}，來自 incoming record</div>
+          <div class="bday-opt">
+            <input type="radio" class="bday-radio" name="bday_opt_{{ loop.index }}" value="__custom__">
+            自行輸入：<input type="number" class="bday-custom" min="1900" max="2010" placeholder="YYYY">
+          </div>
         </div>
+        {% endif %}
       </div>
-      {% endif %}
       {% endfor %}
 
       {% if not current_decision %}
+      {% if matches %}
+      <p class="decision-summary" id="decision-summary"></p>
+      {% endif %}
       <div class="decision-bar">
         <button class="button primary" name="mode" value="use_match"
                 {% if not matches %}disabled{% endif %}>
@@ -146,15 +155,42 @@
 
 {% block scripts %}
 <script>
-  // Birthday override panel toggle
-  document.querySelectorAll('.bday-warn').forEach(el => {
-    el.addEventListener('click', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      const panel = document.getElementById('bday-panel-' + el.dataset.idx);
-      if (panel) panel.classList.toggle('bday-panel--open');
-    });
+  function selectedMatchCard() {
+    const checked = document.querySelector('input[name="candidate_id"]:checked');
+    return checked ? checked.closest('.match-card') : null;
+  }
+
+  function selectedBirthdayValue(card) {
+    const panel = card ? card.querySelector('.bday-panel') : null;
+    if (!panel) return card ? card.dataset.existingBday : '';
+    const checked = panel.querySelector('.bday-radio:checked');
+    if (!checked) return card.dataset.existingBday;
+    if (checked.value === '__custom__') {
+      return panel.querySelector('.bday-custom').value.trim() || '自行輸入';
+    }
+    return checked.value || card.dataset.existingBday;
+  }
+
+  function updateDecisionSummary() {
+    const summary = document.getElementById('decision-summary');
+    if (!summary) return;
+    const card = selectedMatchCard();
+    if (!card) {
+      summary.textContent = '';
+      return;
+    }
+    const incomingName = {{ current_record.name | tojson }};
+    const incomingBirthday = {{ incoming_birthday | tojson }};
+    summary.textContent = '將 incoming ' + incomingName + '，生日 ' + incomingBirthday + '，合併到 '
+      + card.dataset.id + '，合併後生日 ' + selectedBirthdayValue(card);
+  }
+
+  document.querySelectorAll('input[name="candidate_id"], .bday-radio, .bday-custom').forEach(el => {
+    el.addEventListener('change', updateDecisionSummary);
+    el.addEventListener('input', updateDecisionSummary);
   });
+
+  updateDecisionSummary();
 
   // Collect birthday_override on form submit
   const resolveForm = document.querySelector('form[action*="/resolve"]');
@@ -162,10 +198,10 @@
     resolveForm.addEventListener('submit', () => {
       const field = document.getElementById('bday-override-field');
       field.value = '';
-      document.querySelectorAll('.bday-panel--open').forEach(panel => {
-        const idx = panel.dataset.idx;
-        const card = document.querySelector('.match-card[data-idx="' + idx + '"]');
-        if (!card || !card.querySelector('input[name="candidate_id"]').checked) return;
+      const card = selectedMatchCard();
+      if (card) {
+        const panel = card.querySelector('.bday-panel');
+        if (!panel) return;
         for (const r of panel.querySelectorAll('.bday-radio')) {
           if (!r.checked) continue;
           field.value = r.value === '__custom__'
@@ -173,7 +209,7 @@
             : r.value;
           break;
         }
-      });
+      }
     });
   }
 

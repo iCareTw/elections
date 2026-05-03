@@ -511,18 +511,23 @@ button { font: inherit; cursor: pointer; border: 0; }
 .record-field { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); padding: 5px 0; font-size: 12px; }
 .record-field span { color: var(--muted); font-size: 11.5px; }
 .match-card { border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; margin-bottom: 6px; cursor: pointer; background: rgba(255,255,255,.58); display: grid; gap: 1px; }
-.match-card:has(input:checked) { border-color: var(--accent); background: #e2f4ed; }
+.match-card:has(input[name="candidate_id"]:checked) { border-color: var(--accent); background: #e2f4ed; }
+.match-card-main { display: grid; gap: 1px; cursor: pointer; }
 .match-card strong { font-size: 12.5px; }
 .match-card span { color: var(--muted); font-size: 11px; }
 .match-card .match-elections { list-style: none; padding: 0; margin: 3px 0 0; display: grid; gap: 2px; }
 .match-card .match-elections li { font-size: 10.5px; color: var(--muted); padding: 2px 5px; background: rgba(0,0,0,.04); border-radius: 3px; }
+.match-card-head { display: flex; align-items: center; gap: 6px; }
+.match-select { width: 14px; height: 14px; accent-color: var(--accent); }
+.match-card .selected-label { display: none; margin-left: auto; color: var(--accent-strong); font-size: 10px; font-weight: 700; }
+.match-card:has(input[name="candidate_id"]:checked) .selected-label { display: inline; }
 .decision-bar { display: flex; gap: 8px; margin-top: 12px; }
+.decision-summary { margin-top: 12px; padding: 7px 10px; border-radius: 8px; background: #eef8f3; border: 1px solid #a7d8cc; color: var(--accent-strong); font-size: 11.5px; font-weight: 700; }
 .error-banner { margin-bottom: 12px; padding: 10px 14px; border-radius: 8px; background: #fef3c7; border: 1px solid #fcd34d; color: #b45309; font-size: 12.5px; }
-.bday-warn { cursor: pointer; color: #b45309; font-size: 10px; margin-left: 4px; padding: 1px 5px; border-radius: 4px; background: #fef3c7; border: 1px solid #fcd34d; white-space: nowrap; }
-.bday-warn:hover { background: #fde68a; }
-.bday-panel { display: none; margin: -4px 0 6px; padding: 8px 10px; border-radius: 8px; background: #fffbeb; border: 1px solid #fcd34d; font-size: 11px; }
-.bday-panel--open { display: grid; gap: 4px; }
-.bday-panel-title { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+.match-card .bday-warn { color: #b45309; font-size: 10px; margin-left: 4px; padding: 1px 5px; border-radius: 4px; background: #fef3c7; border: 1px solid #fcd34d; white-space: nowrap; }
+.bday-panel { display: none; margin: 6px 0 0; padding: 8px 10px; border-radius: 8px; background: #fffbeb; border: 1px solid #fcd34d; font-size: 11px; cursor: default; }
+.match-card:has(input[name="candidate_id"]:checked) .bday-panel { display: grid; gap: 4px; }
+.match-card .bday-panel-title { font-size: 10px; color: var(--muted); margin-bottom: 2px; font-weight: 700; }
 .bday-opt { display: flex; align-items: center; gap: 5px; color: #374151; }
 .bday-custom { width: 70px; padding: 2px 5px; border: 1px solid var(--line); border-radius: 4px; font-size: 11px; }
 
