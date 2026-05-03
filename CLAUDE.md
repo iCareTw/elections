@@ -45,6 +45,10 @@ Behavioral guidelines to reduce common LLM coding mistakes.
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
+### Skill 使用備注
+
+- 除非 user 明確提示要使用 `brainstorming` SKILL, 否則不要主動啟用. 對於簡單, 明確, 可直接執行的修改請依照最小成本原則處理.
+
 ### 0. Read-Only Gate
 
 **Consultation overrides execution when intent is mixed.**
