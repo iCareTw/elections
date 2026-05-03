@@ -338,6 +338,7 @@ body {
   font-family: "Avenir Next","PingFang TC","Noto Sans TC",sans-serif;
   font-size: 13px;
 }
+body.is-building .shell { pointer-events: none; user-select: none; }
 button { font: inherit; cursor: pointer; border: 0; }
 .shell {
   display: flex;
@@ -428,6 +429,45 @@ button { font: inherit; cursor: pointer; border: 0; }
 .generate-btn { width: 100%; border-radius: 10px; padding: 9px 12px; font-size: 12px; font-weight: 700; background: var(--accent); color: white; text-align: left; display: flex; align-items: center; gap: 7px; cursor: pointer; border: 0; }
 .generate-btn:hover { background: var(--accent-strong); }
 .build-result { color: var(--accent-strong); font-size: 12px; }
+
+/* ── Busy overlay ── */
+.busy-overlay[hidden] { display: none; }
+.busy-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 36, 33, .38);
+  backdrop-filter: blur(5px);
+  cursor: wait;
+}
+.busy-box {
+  min-width: 260px;
+  border-radius: 18px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink);
+  background: rgba(255,249,237,.94);
+  border: 1px solid rgba(110,96,70,.26);
+  box-shadow: var(--shadow);
+}
+.busy-spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid rgba(15,118,110,.18);
+  border-top-color: var(--accent);
+  animation: busy-spin .8s linear infinite;
+}
+.busy-box p { font-weight: 700; font-size: 13px; }
+@keyframes busy-spin {
+  to { transform: rotate(360deg); }
+}
 
 /* ── Workspace ── */
 .workspace {

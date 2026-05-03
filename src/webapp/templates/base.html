@@ -81,8 +81,8 @@
     </script>
 
     <div class="nav-footer">
-      <form method="post" action="/build">
-        <button class="generate-btn" type="submit">⬇ Generate candidates.yaml</button>
+      <form method="post" action="/build" id="build-form">
+        <button class="generate-btn" type="submit" id="build-submit">⬇ Generate candidates.yaml</button>
       </form>
       {% if generated is defined and generated %}
       <p class="build-result">✓ {{ generated }} 位候選人已匯出</p>
@@ -97,7 +97,27 @@
   </section>
 
 </main>
+<div class="busy-overlay" id="build-busy-overlay" hidden aria-live="polite" aria-busy="true">
+  <div class="busy-box">
+    <div class="busy-spinner" aria-hidden="true"></div>
+    <p>產生 candidates.yaml 中, 請稍候</p>
+  </div>
+</div>
 {% block scripts %}{% endblock %}
+<script>
+(function() {
+  const buildForm = document.getElementById('build-form');
+  const buildSubmit = document.getElementById('build-submit');
+  const overlay = document.getElementById('build-busy-overlay');
+  if (!buildForm || !overlay) return;
+
+  buildForm.addEventListener('submit', function() {
+    overlay.hidden = false;
+    document.body.classList.add('is-building');
+    if (buildSubmit) buildSubmit.disabled = true;
+  });
+})();
+</script>
 <script>
 (function() {
   const handle = document.getElementById('resize-handle');

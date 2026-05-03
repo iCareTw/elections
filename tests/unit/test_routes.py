@@ -135,6 +135,9 @@ def test_navigator_does_not_expand_unselected_top_level_dirs() -> None:
     assert 'onclick="goHome()"' in home_html
     assert 'title="Home">⌂</button>' in home_html
     assert 'onclick="collapseAll()"' not in home_html
+    assert 'id="build-form"' in home_html
+    assert 'id="build-busy-overlay"' in home_html
+    assert "產生 candidates.yaml 中, 請稍候" in home_html
     assert selected_html.count('class="tree-node dir" open') == 1
     assert '<span class="tree-dir-label">president</span>' in selected_html
     assert '<span class="badge badge-pending tree-dir-pending">1</span>' in selected_html
