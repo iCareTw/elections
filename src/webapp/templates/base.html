@@ -25,7 +25,12 @@
         {# Group and sort: Directories first, then elections, preserving insertion order (natural sort from Python) #}
         {% for name, child in node.children.items() if child.kind == 'dir' %}
           <details class="tree-node dir" {% if selected_id and selected_id.startswith(child.path ~ '/') %}open{% endif %}>
-            <summary class="tree-dir">{{ name }}</summary>
+            <summary class="tree-dir">
+              <span class="tree-dir-label">{{ name }}</span>
+              {% if child.pending_commit_count %}
+              <span class="badge badge-pending tree-dir-pending">{{ child.pending_commit_count }}</span>
+              {% endif %}
+            </summary>
             <div class="tree-children">
               {{ render_tree(child) }}
             </div>

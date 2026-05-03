@@ -36,6 +36,29 @@ def test_election_tree_does_not_write_discovered_elections(tmp_path: Path) -> No
     assert tree["children"]["president"]["children"]["第16任總統副總統選舉.xlsx"]["kind"] == "election"
 
 
+def test_election_tree_counts_pending_commit_descendants(tmp_path: Path) -> None:
+    class ReadOnlyStore:
+        def list_elections(self) -> list[dict]:
+            return [
+                {"election_id": "council/1998/未完成.xlsx", "status": "todo"},
+                {"election_id": "council/2022/已完成.xlsx", "status": "done"},
+            ]
+
+    for path in (
+        tmp_path / "_data" / "council" / "1998" / "未完成.xlsx",
+        tmp_path / "_data" / "council" / "2022" / "已完成.xlsx",
+    ):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("")
+
+    tree = _election_tree(tmp_path, ReadOnlyStore())  # type: ignore[arg-type]
+
+    council = tree["children"]["council"]
+    assert council["pending_commit_count"] == 1
+    assert council["children"]["1998"]["pending_commit_count"] == 1
+    assert council["children"]["2022"]["pending_commit_count"] == 0
+
+
 def test_navigator_does_not_expand_unselected_top_level_dirs() -> None:
     templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
     env = Environment(loader=FileSystemLoader(str(templates_dir)))
@@ -45,6 +68,7 @@ def test_navigator_does_not_expand_unselected_top_level_dirs() -> None:
             "president": {
                 "kind": "dir",
                 "path": "president",
+                "pending_commit_count": 1,
                 "children": {
                     "第16任總統副總統選舉.xlsx": {
                         "kind": "election",
@@ -59,6 +83,7 @@ def test_navigator_does_not_expand_unselected_top_level_dirs() -> None:
             "mayor": {
                 "kind": "dir",
                 "path": "mayor",
+                "pending_commit_count": 1,
                 "children": {
                     "111年直轄市長選舉.xlsx": {
                         "kind": "election",
@@ -73,10 +98,12 @@ def test_navigator_does_not_expand_unselected_top_level_dirs() -> None:
             "legislator": {
                 "kind": "dir",
                 "path": "legislator",
+                "pending_commit_count": 1,
                 "children": {
                     "party-list-legislator": {
                         "kind": "dir",
                         "path": "legislator/party-list-legislator",
+                        "pending_commit_count": 1,
                         "children": {
                             "11th.yaml": {
                                 "kind": "election",
@@ -106,7 +133,8 @@ def test_navigator_does_not_expand_unselected_top_level_dirs() -> None:
 
     assert home_html.count('class="tree-node dir" open') == 0
     assert selected_html.count('class="tree-node dir" open') == 1
-    assert '<details class="tree-node dir" open>\n            <summary class="tree-dir">president</summary>' in selected_html
+    assert '<span class="tree-dir-label">president</span>' in selected_html
+    assert '<span class="badge badge-pending tree-dir-pending">1</span>' in selected_html
 
 
 def test_election_detail_template_handles_review_status() -> None:

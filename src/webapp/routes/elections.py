@@ -19,17 +19,20 @@ def _election_tree(root: Path, store: Store) -> dict:
     raw = discover_elections(root)
     db_elections = {e["election_id"]: e for e in store.list_elections()}
     
-    tree = {"name": "root", "children": {}}
+    tree = {"name": "root", "children": {}, "pending_commit_count": 0}
 
     for e in raw:
         eid = e["election_id"]
         merged = {**e, **db_elections.get(eid, {})}
         merged.setdefault("status", "todo")
+        pending_commit = merged["status"] != "done"
         
         parts = eid.split("/")
         current = tree
         path_acc = ""
         for i, part in enumerate(parts):
+            if pending_commit:
+                current["pending_commit_count"] += 1
             path_acc = f"{path_acc}/{part}" if path_acc else part
             if i == len(parts) - 1:
                 # Leaf node (election)
@@ -44,7 +47,8 @@ def _election_tree(root: Path, store: Store) -> dict:
                         "kind": "dir",
                         "name": part,
                         "path": path_acc,
-                        "children": {}
+                        "children": {},
+                        "pending_commit_count": 0,
                     }
                 current = current["children"][part]
 
