@@ -12,6 +12,7 @@ from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 from psycopg_pool import ConnectionPool
 
+from src.normalize import normalize_candidate_name as _normalize_candidate_name
 from src.normalize import normalize_name as _normalize_name
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -274,7 +275,7 @@ class Store:
         return [dict(r) for r in rows]
 
     def list_candidates_by_name(self, name: str) -> list[dict[str, Any]]:
-        normalized = _normalize_name(name)
+        normalized = _normalize_candidate_name(name)
         with self.connect() as conn:
             self._setup_conn(conn)
             rows = conn.execute(
@@ -375,7 +376,7 @@ class Store:
                         VALUES (%s, %s, %s)
                         ON CONFLICT(id) DO NOTHING
                         """,
-                        (candidate_id, _normalize_name(payload["name"]), payload.get("birthday")),
+                        (candidate_id, _normalize_candidate_name(payload["name"]), payload.get("birthday")),
                     )
                     conn.execute(
                         """
