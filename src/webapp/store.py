@@ -12,7 +12,10 @@ from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 from psycopg_pool import ConnectionPool
 
-from src.normalize import normalize_candidate_name as _normalize_candidate_name
+from src.normalize import (
+    normalize_candidate_name as _normalize_candidate_name,
+    normalize_name_without_latin as _normalize_name_without_latin,
+)
 from src.normalize import normalize_name as _normalize_name
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -308,6 +311,17 @@ class Store:
                     "party": row["party"],
                 })
         return list(grouped.values())
+
+    def list_candidates_by_name_without_latin(self, name: str) -> list[dict[str, Any]]:
+        normalized = _normalize_name_without_latin(name)
+        if not normalized:
+            return []
+        candidates = self.list_candidates_with_elections()
+        return [
+            candidate
+            for candidate in candidates
+            if _normalize_name_without_latin(candidate["name"]) == normalized
+        ]
 
     def list_candidates_with_elections(self) -> list[dict[str, Any]]:
         with self.connect() as conn:

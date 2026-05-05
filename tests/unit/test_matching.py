@@ -1,6 +1,6 @@
 import pytest
 
-from src.normalize import normalize_name
+from src.normalize import normalize_name, normalize_name_without_latin
 from src.webapp.matching import classify_record
 
 
@@ -13,6 +13,10 @@ class _FakeStore:
     def list_candidates_by_name(self, name: str) -> list[dict]:
         normalized = normalize_name(name)
         return [c for c in self._candidates if normalize_name(c["name"]) == normalized]
+
+    def list_candidates_by_name_without_latin(self, name: str) -> list[dict]:
+        normalized = normalize_name_without_latin(name)
+        return [c for c in self._candidates if normalize_name_without_latin(c["name"]) == normalized]
 
 
 def test_classify_record_auto_matches_same_name_same_birthday() -> None:
@@ -52,3 +56,24 @@ def test_classify_record_creates_new_id_without_same_name_match() -> None:
     result = classify_record(record, _FakeStore(existing))
 
     assert result == {"kind": "new", "candidate_id": "id_黃珊珊_1969"}
+
+
+def test_classify_record_auto_matches_latin_removed_name_with_same_birthday() -> None:
+    record = {"name": "簡東明Uliw．Qaljupayare", "birthday": 1951}
+    existing = [{"name": "簡東明", "birthday": 1951, "id": "id_簡東明_1951"}]
+
+    result = classify_record(record, _FakeStore(existing))
+
+    assert result == {"kind": "auto", "candidate_id": "id_簡東明_1951"}
+
+
+def test_classify_record_does_not_latin_fallback_when_birthday_is_ambiguous() -> None:
+    record = {"name": "簡東明Uliw．Qaljupayare", "birthday": 1951}
+    existing = [
+        {"name": "簡東明", "birthday": 1951, "id": "id_簡東明_1951"},
+        {"name": "簡東明", "birthday": 1951, "id": "id_簡東明_1951_dup"},
+    ]
+
+    result = classify_record(record, _FakeStore(existing))
+
+    assert result == {"kind": "new", "candidate_id": "id_簡東明UliwQaljupayare_1951"}

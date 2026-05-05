@@ -5,12 +5,21 @@ _BRACKET_PATTERN = re.compile(r"[(\（][^)\）]*[)\）]|[【][^】]*[】]")
 _REMOVE_PATTERN = re.compile(r"[\s　‧·•．]")
 _SPACE_PATTERN = re.compile(r"[\s　]")
 _DOT_PATTERN = re.compile(r"[‧·•．]")
+_LATIN_PATTERN = re.compile(r"[A-Za-z]+")
+_ASCII_DOT_PATTERN = re.compile(r"[.]")
 
 
 def normalize_name(name: str) -> str:
     """移除空白、括號（含內容）、特殊符號，保留中文、英文、數字。"""
     name = _BRACKET_PATTERN.sub("", name)
     return _REMOVE_PATTERN.sub("", name)
+
+
+def normalize_name_without_latin(name: str) -> str:
+    """供 fallback 比對使用：移除英文字母與英文名常見分隔點。"""
+    name = _LATIN_PATTERN.sub("", name)
+    name = _ASCII_DOT_PATTERN.sub("", name)
+    return normalize_name(name)
 
 
 def normalize_candidate_name(name: str) -> str:
