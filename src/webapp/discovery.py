@@ -5,7 +5,13 @@ from pathlib import Path
 
 import yaml
 
-from src import parse_council, parse_legislator, parse_mayor, parse_president
+from src import (
+    parse_council,
+    parse_legislator,
+    parse_legislator_by_election,
+    parse_mayor,
+    parse_president,
+)
 from src.session_years import SESSION_YEARS
 
 _SESSION_RE = re.compile(r"(\d+)th")
@@ -158,6 +164,42 @@ def _discover_legislator_party_list(root: Path) -> list[dict]:
     return elections
 
 
+def _discover_legislator_by_election(root: Path) -> list[dict]:
+    data_dir = _first_existing_dir(root, "by-election-legislator")
+    if data_dir is None:
+        return []
+
+    elections = []
+    for child in _visible_children(data_dir):
+        if child.is_file() and child.suffix.lower() in {".yaml", ".yml"}:
+            session = _session_from_text(child.stem)
+            elections.append(
+                _record(
+                    type_="legislator-by-election",
+                    election_id=f"legislator/{data_dir.name}/{child.name}",
+                    path=child,
+                    session=session,
+                )
+            )
+            continue
+
+        if not child.is_dir():
+            continue
+
+        session = _session_from_text(child.name)
+        for path in _visible_children(child):
+            if path.is_file() and path.suffix.lower() == ".xlsx":
+                elections.append(
+                    _record(
+                        type_="legislator-by-election",
+                        election_id=f"legislator/{data_dir.name}/{child.name}/{path.name}",
+                        path=path,
+                        session=session,
+                    )
+                )
+    return elections
+
+
 def _discover_council(root: Path) -> list[dict]:
     data_dir = root / "_data" / "council"
     if not data_dir.exists():
@@ -190,6 +232,7 @@ def discover_elections(root: Path) -> list[dict]:
     elections.extend(_discover_mayor(root))
     elections.extend(_discover_legislator_district(root))
     elections.extend(_discover_legislator_party_list(root))
+    elections.extend(_discover_legislator_by_election(root))
     elections.extend(_discover_council(root))
     return sorted(elections, key=lambda e: [natural_sort_key(p) for p in e["election_id"].split("/")])
 
@@ -212,6 +255,8 @@ def _resolve_parser(election: dict):
         return parse_mayor.parse_file
     if election_type == "legislator":
         return parse_legislator.parse_file
+    if election_type == "legislator-by-election":
+        return parse_legislator_by_election.parse_file
     if election_type == "council":
         return parse_council.parse_file
     raise ValueError(f"Unsupported election type: {election_type}")
