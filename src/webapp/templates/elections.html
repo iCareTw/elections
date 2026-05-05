@@ -26,14 +26,13 @@
   <div class="status-done">
     ✓ 已 commit 至 DB
   </div>
-  {% set manual_log = resolutions | selectattr("mode", "ne", "auto") | list %}
-  {% if manual_log %}
+  {% if resolutions %}
   <div class="decision-log">
-    <h4>人工決策紀錄（{{ manual_log | length }} 筆）</h4>
+    <h4>已 commit 紀錄（{{ resolutions | length }} 筆）</h4>
     <table class="log-table">
       <thead><tr><th>姓名</th><th>決策</th><th>Candidate ID</th></tr></thead>
       <tbody>
-        {% for r in manual_log %}
+        {% for r in resolutions %}
         <tr>
           <td>{{ r.name }}</td>
           <td>{{ r.mode_label }}</td>

@@ -186,6 +186,50 @@ def test_election_detail_template_handles_ready_status() -> None:
     assert "/review/president/" in html
 
 
+def test_done_template_shows_all_committed_resolutions() -> None:
+    templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
+    env = Environment(loader=FileSystemLoader(str(templates_dir)))
+    template = env.get_template("elections.html")
+
+    html = template.render(
+        election_tree={"children": {}},
+        selected_id="legislator/by-election-legislator/7th/第7屆立法委員臺東縣補選.xlsx",
+        election={
+            "election_id": "legislator/by-election-legislator/7th/第7屆立法委員臺東縣補選.xlsx",
+            "type": "legislator-by-election",
+            "year": None,
+            "label": "第7屆立法委員臺東縣補選",
+            "status": "done",
+        },
+        resolutions=[
+            {
+                "name": "洪銘堅",
+                "mode": "new",
+                "mode_label": "自動建立",
+                "candidate_id": "id_洪銘堅_1953",
+            },
+            {
+                "name": "賴坤成",
+                "mode": "auto",
+                "mode_label": "自動匹配",
+                "candidate_id": "id_賴坤成_1964",
+            },
+            {
+                "name": "鄺麗貞",
+                "mode": "auto",
+                "mode_label": "自動匹配",
+                "candidate_id": "id_鄺麗貞_1963",
+            },
+        ],
+    )
+
+    assert "已 commit 紀錄（3 筆）" in html
+    assert "洪銘堅" in html
+    assert "賴坤成" in html
+    assert "鄺麗貞" in html
+    assert "人工決策紀錄" not in html
+
+
 def test_home_returns_200(tmp_path: Path) -> None:
     config = load_database_config()
     if not config.database_url:
