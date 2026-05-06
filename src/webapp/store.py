@@ -287,7 +287,8 @@ class Store:
             rows = conn.execute(
                 """
                 SELECT c.id, c.name, c.birthday,
-                       ce.year, ce.type, ce.region, ce.party
+                       ce.year, ce.type, ce.region, ce.party,
+                       ce.elected, ce.session, ce.ticket, ce.order_id
                 FROM candidates c
                 LEFT JOIN candidate_elections ce ON ce.candidate_id = c.id
                 WHERE c.name = %s
@@ -307,12 +308,8 @@ class Store:
                     "elections": [],
                 }
             if row["year"] is not None:
-                grouped[cid]["elections"].append({
-                    "year": row["year"],
-                    "type": row["type"],
-                    "region": row["region"],
-                    "party": row["party"],
-                })
+                election = {k: row[k] for k in ("year", "type", "region", "party", "elected", "session", "ticket", "order_id") if row[k] is not None}
+                grouped[cid]["elections"].append(election)
         return list(grouped.values())
 
     def list_candidates_by_name_without_latin(self, name: str) -> list[dict[str, Any]]:
