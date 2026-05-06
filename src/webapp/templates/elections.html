@@ -64,14 +64,15 @@
   <div class="state-error">
     <p class="pathline">{{ election.type }} / {{ election.year }}</p>
     <h2>{{ election.label }}</h2>
-    <p class="error-title">原始資料異常：下列 {{ election.invalid_records | length }} 筆記錄缺少生日欄位</p>
+    <p class="error-title">原始資料異常：下列 {{ election.invalid_records | length }} 筆記錄缺少必要欄位（姓名、生日、政黨）</p>
     <table class="log-table error-table">
-      <thead><tr><th>#</th><th>姓名</th><th>Source Record ID</th></tr></thead>
+      <thead><tr><th>#</th><th>姓名</th><th>缺少欄位</th><th>Source Record ID</th></tr></thead>
       <tbody>
         {% for r in election.invalid_records %}
         <tr>
           <td>{{ loop.index }}</td>
-          <td>{{ r.name }}</td>
+          <td>{{ r.name or '（空白）' }}</td>
+          <td>{{ [('姓名' if not r.name else ''), ('生日' if not r.birthday else ''), ('政黨' if not r.party else '')] | reject('equalto', '') | join('、') }}</td>
           <td class="mono">{{ r.source_record_id }}</td>
         </tr>
         {% endfor %}

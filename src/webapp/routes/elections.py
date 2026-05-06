@@ -121,8 +121,11 @@ async def load_election(request: Request, election_id: str):
         return RedirectResponse("/", status_code=303)
 
     records = load_election_records(raw_election)
-    missing_birthday = [r for r in records if not r.get("birthday")]
-    if missing_birthday:
+    invalid_records = [
+        r for r in records
+        if not r.get("name") or not r.get("birthday") or not r.get("party")
+    ]
+    if invalid_records:
         election_tree = _election_tree(root, store)
         return templates.TemplateResponse(
             request,
@@ -130,7 +133,7 @@ async def load_election(request: Request, election_id: str):
             {
                 "election_tree": election_tree,
                 "selected_id": election_id,
-                "election": {**raw_election, "status": "invalid_data", "invalid_records": missing_birthday},
+                "election": {**raw_election, "status": "invalid_data", "invalid_records": invalid_records},
             },
             status_code=422,
         )
