@@ -35,7 +35,7 @@ FastAPI + Jinja2 候選人身分判定介面. 以 DB 作為 single source of tru
 ## 命名規範
 
 - region 欄位使用官方全名, `臺` 不寫作 `台` (如 `臺北市`, `臺中市`)
-- `election_types.yaml` 合法 type 值: `國家元首_總統`, `國家元首_副總統`, `縣市首長`, `立法委員`, `縣市議員`
+- `election_types.yaml` 合法 type 值: `國家元首_總統`, `國家元首_副總統`, `縣市首長`, `立法委員`, `縣市議員`, `鄉鎮市長`
 
 ---
 
