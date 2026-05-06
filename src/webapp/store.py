@@ -120,6 +120,9 @@ class Store:
         sql_path = ROOT / "db" / "001_init.sql"
         ddl = sql_path.read_text(encoding="utf-8")
         with self.connect() as conn:
+            conn.execute(
+                sql.SQL("CREATE SCHEMA IF NOT EXISTS {}").format(sql.Identifier(self.config.schema))
+            )
             self._setup_conn(conn)
             with conn.transaction():
                 conn.execute(ddl)
@@ -193,7 +196,7 @@ class Store:
         source_record_id: str,
         election_id: str,
         payload: dict[str, Any],
-        original_kind: str,
+        original_kind: str = "unknown",
     ) -> None:
         with self.connect() as conn:
             self._setup_conn(conn)

@@ -343,11 +343,28 @@ def test_auto_decisions_survive_without_browser_session(tmp_path: Path) -> None:
     election_path.parent.mkdir(parents=True)
     election_path.write_text(
         "- name: 自動測試候選人\n  party: 測試黨\n  birthday: 1980\n"
+        "  year: 2024\n  region: 全國\n  type: 立法委員\n  elected: 0\n  session: 11\n"
+        "- name: 人工測試候選人\n  party: 測試黨\n  birthday: 1990\n"
         "  year: 2024\n  region: 全國\n  type: 立法委員\n  elected: 0\n  session: 11\n",
         encoding="utf-8",
     )
     election_id = f"legislator/party-list-legislator/{token}th.yaml"
     candidate_id = "id_自動測試候選人_1980"
+    manual_candidate_ids = [
+        f"id_人工測試候選人_A_{token[:8]}",
+        f"id_人工測試候選人_B_{token[:8]}",
+    ]
+
+    with store.connect() as conn:
+        store._setup_conn(conn)
+        for manual_candidate_id in manual_candidate_ids:
+            conn.execute(
+                """
+                INSERT INTO candidates(id, name, birthday)
+                VALUES (%s, %s, %s)
+                """,
+                (manual_candidate_id, "人工測試候選人", 1990),
+            )
 
     app = _make_app(tmp_path, store)
     load_client = TestClient(app, raise_server_exceptions=True)
@@ -358,10 +375,28 @@ def test_auto_decisions_survive_without_browser_session(tmp_path: Path) -> None:
         assert resp.status_code == 303
 
         row = next(item for item in store.list_elections() if item["election_id"] == election_id)
-        assert row["status"] == "ready"
+        assert row["status"] == "review"
         assert row["resolved_count"] == 1
-        assert row["unresolved_count"] == 0
+        assert row["unresolved_count"] == 1
         assert len(store.list_review_decisions(election_id)) == 1
+
+        manual_source_record_id = next(
+            record["source_record_id"]
+            for record in store.list_source_records(election_id)
+            if record["name"] == "人工測試候選人"
+        )
+        resp = load_client.post(
+            f"/review/{election_id}/resolve",
+            data={
+                "source_record_id": manual_source_record_id,
+                "mode": "use_match",
+                "candidate_id": manual_candidate_ids[0],
+                "i": "0",
+                "total_count": "2",
+            },
+            follow_redirects=False,
+        )
+        assert resp.status_code == 303
 
         resp = commit_client.post(f"/elections/{election_id}/commit", follow_redirects=False)
         assert resp.status_code == 303
@@ -372,4 +407,6 @@ def test_auto_decisions_survive_without_browser_session(tmp_path: Path) -> None:
     finally:
         store.delete_election(election_id)
         store.delete_candidate(candidate_id)
+        for manual_candidate_id in manual_candidate_ids:
+            store.delete_candidate(manual_candidate_id)
         store.close()

@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from shutil import copyfile
 from urllib.parse import quote
+from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
@@ -57,10 +58,27 @@ def test_loaded_review_election_can_be_reopened_after_switching(tmp_path: Path) 
     loaded_url = quote(loaded_id, safe="/")
     other_url = quote(other_id, safe="/")
     review_url = f"/review/{loaded_url}"
+    token = uuid4().hex[:8]
+    seeded_candidate_ids = [
+        f"id_測試李登輝_A_{token}",
+        f"id_測試李登輝_B_{token}",
+    ]
 
     try:
         store.delete_election(loaded_id)
         store.delete_election(other_id)
+        for candidate_id in seeded_candidate_ids:
+            store.delete_candidate(candidate_id)
+        with store.connect() as conn:
+            store._setup_conn(conn)
+            for candidate_id in seeded_candidate_ids:
+                conn.execute(
+                    """
+                    INSERT INTO candidates(id, name, birthday)
+                    VALUES (%s, %s, %s)
+                    """,
+                    (candidate_id, "李登輝", 1923),
+                )
 
         client = _client(tmp_path, store)
 
@@ -79,4 +97,6 @@ def test_loaded_review_election_can_be_reopened_after_switching(tmp_path: Path) 
     finally:
         store.delete_election(loaded_id)
         store.delete_election(other_id)
+        for candidate_id in seeded_candidate_ids:
+            store.delete_candidate(candidate_id)
         store.close()
