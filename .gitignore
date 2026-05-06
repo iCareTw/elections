@@ -7,3 +7,4 @@ _data
 logs/
 .coverage
 htmlcov/
+.playwright-mcp/
