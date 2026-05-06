@@ -24,6 +24,12 @@
     {% for key, value in record_fields %}
     <div class="record-field"><strong>{{ key }}</strong><span>{{ value }}</span></div>
     {% endfor %}
+    {% if bulletin_url %}
+    <div class="record-field bulletin-link">
+      <strong>公報</strong>
+      <span><a href="{{ bulletin_url }}" target="_blank" rel="noopener">📋 選舉公報目錄 ↗</a></span>
+    </div>
+    {% endif %}
   </article>
 
   <article class="panel">
