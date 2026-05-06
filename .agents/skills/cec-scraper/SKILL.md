@@ -23,7 +23,7 @@ description: >
 | `T1` | 直轄市議員 | `fetch_council.py` + `parse_council.py` |
 | `T2` | 縣市議員 | `fetch_council.py` + `parse_council.py` |
 | `D1` | 直轄市山地原住民區長 | 無 |
-| `D2` | 鄉鎮市長 | 無 |
+| `D2` | 鄉鎮市長 | `fetch_township.py`（規劃中） |
 | `R1` | 直轄市山地原住民區民代表 | 無 |
 | `R2` | 鄉鎮市民代表 | 無 |
 | `V0` | 村里長 | 無 |
@@ -137,7 +137,8 @@ records = [row for rows in d.values() for row in rows]
 
 | 建議檔案 | 涵蓋 subject_id | 備注 |
 |---|---|---|
-| `fetch_chief.py` | D1 + D2 | 首長類，涵蓋原住民區長和鄉鎮市長 |
+| `fetch_township.py` | D2 | 鄉鎮市長，模仿 `fetch_council.py` |
+| `fetch_chief.py` | D1 + D2 | 若要合併：首長類，涵蓋原住民區長和鄉鎮市長 |
 | `fetch_township_rep.py` | R1 + R2 | 代表類，R2 需用多 key 合併 |
 | `fetch_village.py` | V0 | 村里長，規模最大，多 key 合併 |
 
