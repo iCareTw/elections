@@ -65,7 +65,8 @@
           {% if match.elections %}
           <ul class="match-elections">
             {% for e in match.elections %}
-            <li>{{ e.year }} {{ e.type }} · {{ e.region }}{% if e.party %} · {{ e.party }}{% endif %}</li>
+            {% set burl = bulletin_url_from_record(e) %}
+            <li>{{ e.year }} {{ e.type }} · {{ e.region }}{% if e.party %} · {{ e.party }}{% endif %}{% if burl %} <a class="bulletin-inline" href="{{ burl }}" target="_blank" rel="noopener">📋</a>{% endif %}</li>
             {% endfor %}
           </ul>
           {% else %}

@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 
+from src.webapp.bulletin import bulletin_url_from_record
 from src.webapp.logging_setup import setup_logging
 from src.webapp.routes import build, elections, review
 from src.webapp.store import Store
@@ -40,7 +41,9 @@ def create_app(root: Path = ROOT) -> FastAPI:
     )
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
-    app.state.templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+    templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+    templates.env.globals["bulletin_url_from_record"] = bulletin_url_from_record
+    app.state.templates = templates
     app.state.root = root
 
     app.include_router(elections.router)
