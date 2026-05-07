@@ -127,7 +127,7 @@ def _council_bulletin_url(type_: str, year: int, region: str) -> str:
 
     district = _district_number(region)
     region_name = _region_name(region)
-    if type_ == "縣市議員" and not direct and district is not None:
+    if type_ == "縣市議員" and district is not None:
         return _file_url(*base_parts, f"{region_name}第{district}選舉區議員.pdf")
 
     return _dir_url(*base_parts)

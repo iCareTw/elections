@@ -31,6 +31,19 @@ def test_council_candidate_history_links_to_district_pdf() -> None:
     )
 
 
+def test_direct_municipality_council_candidate_history_links_to_district_pdf() -> None:
+    record = {
+        "type": "縣市議員",
+        "year": 2014,
+        "region": "臺南市 第03選舉區",
+    }
+
+    assert bulletin_url_from_record(record) == (
+        "https://bulletin.cec.gov.tw/01選舉公報/05直轄市議員/103年/"
+        "05臺南市/臺南市第3選舉區議員.pdf"
+    )
+
+
 def test_party_list_legislator_links_to_pdf_when_stable() -> None:
     record = {
         "type": "立法委員",
