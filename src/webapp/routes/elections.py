@@ -121,10 +121,12 @@ async def load_election(request: Request, election_id: str):
         return RedirectResponse("/", status_code=303)
 
     records = load_election_records(raw_election)
-    invalid_records = [
-        r for r in records
-        if not r.get("name") or not r.get("birthday") or not r.get("party")
-    ]
+    _REQUIRED_FIELDS = (("name", "姓名"), ("birthday", "生日"), ("party", "政黨"))
+    invalid_records = []
+    for r in records:
+        missing = [label for key, label in _REQUIRED_FIELDS if not r.get(key)]
+        if missing:
+            invalid_records.append({**r, "missing_fields": "、".join(missing)})
     if invalid_records:
         election_tree = _election_tree(root, store)
         return templates.TemplateResponse(

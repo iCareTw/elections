@@ -72,7 +72,7 @@
         <tr>
           <td>{{ loop.index }}</td>
           <td>{{ r.name or '（空白）' }}</td>
-          <td>{{ [('姓名' if not r.name else ''), ('生日' if not r.birthday else ''), ('政黨' if not r.party else '')] | reject('equalto', '') | join('、') }}</td>
+          <td>{{ r.missing_fields }}</td>
           <td class="mono">{{ r.source_record_id }}</td>
         </tr>
         {% endfor %}

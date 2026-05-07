@@ -24,10 +24,11 @@
     {% for key, value in record_fields %}
     <div class="record-field"><strong>{{ key }}</strong><span>{{ value }}</span></div>
     {% endfor %}
-    {% if bulletin_url %}
+    {% set incoming_burl = bulletin_url(current_record.payload) %}
+    {% if incoming_burl %}
     <div class="record-field bulletin-link">
       <strong>公報</strong>
-      <span><a href="{{ bulletin_url }}" target="_blank" rel="noopener">📋 選舉公報 PDF ↗</a></span>
+      <span><a href="{{ incoming_burl }}" target="_blank" rel="noopener">📋 選舉公報目錄 ↗</a></span>
     </div>
     {% endif %}
   </article>
@@ -65,8 +66,8 @@
           {% if match.elections %}
           <ul class="match-elections">
             {% for e in match.elections %}
-            {% set burl = bulletin_url_from_record(e) %}
-            <li>{{ e.year }} {{ e.type }} · {{ e.region }}{% if e.party %} · {{ e.party }}{% endif %}{% if burl %} <a class="bulletin-inline" href="{{ burl }}" target="_blank" rel="noopener" title="選舉公報 PDF">📋</a>{% endif %}</li>
+            {% set burl = bulletin_url(e) %}
+            <li>{{ e.year }} {{ e.type }} · {{ e.region }}{% if e.party %} · {{ e.party }}{% endif %}{% if burl %} <a class="bulletin-inline" href="{{ burl }}" target="_blank" rel="noopener">📋</a>{% endif %}</li>
             {% endfor %}
           </ul>
           {% else %}

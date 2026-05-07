@@ -8,10 +8,18 @@ _BULLETIN_DIR_BASE = "https://bulletin.cec.gov.tw/?dir=01選舉公報"
 _BULLETIN_FILE_BASE = "https://bulletin.cec.gov.tw/01選舉公報"
 _EE_BULLETIN_BASE = "https://eebulletin.cec.gov.tw"
 
-# 直轄市升格時間表
-_ALWAYS_DIRECT = {"臺北市", "高雄市"}
-_DIRECT_FROM_2010 = {"新北市", "臺中市", "臺南市"}
-_DIRECT_FROM_2014 = {"桃園市"}
+# 直轄市升格年: 0 表示一直都是直轄市
+_DIRECT_MUNICIPALITY_FROM_YEAR = {
+    "臺北市": 0,
+    "高雄市": 0,
+    "新北市": 2010,
+    "臺中市": 2010,
+    "臺南市": 2010,
+    "桃園市": 2014,
+}
+
+# 鄉鎮市長公報自民國 103 年起改由 eebulletin.cec.gov.tw 提供
+_TOWNSHIP_BULLETIN_FROM_ROC = 103
 
 _LOCAL_REGION_CODES = {
     "臺北市": "01",
@@ -91,13 +99,8 @@ def _district_number(region: str) -> int | None:
 
 def _is_direct_municipality(region: str, year: int) -> bool:
     city = _region_name(region)
-    if city in _ALWAYS_DIRECT:
-        return True
-    if city in _DIRECT_FROM_2010 and year >= 2010:
-        return True
-    if city in _DIRECT_FROM_2014 and year >= 2014:
-        return True
-    return False
+    from_year = _DIRECT_MUNICIPALITY_FROM_YEAR.get(city)
+    return from_year is not None and year >= from_year
 
 
 def _region_folder(region: str, year: int, *, direct: bool) -> str | None:
@@ -147,47 +150,10 @@ def _legislator_bulletin_url(year: int, region: str, session: int | None) -> str
     return _dir_url("02立法委員", folder, "01區域")
 
 
-def bulletin_url_from_record(record: dict) -> str | None:
+def bulletin_url(payload: dict, election_id: str = "") -> str | None:
     """
-    從 candidate_elections 的單筆紀錄（type/year/region/session）產生公報目錄連結。
-    用於 Possible Existing Candidates 的選舉歷史清單。
-    """
-    type_ = record.get("type", "")
-    year = record.get("year")
-    region = record.get("region", "")
-    session = record.get("session")
-
-    if not year:
-        return None
-
-    roc = _roc(year)
-
-    if type_ in ("國家元首_總統", "國家元首_副總統"):
-        return _dir_url("01總統副總統", roc)
-
-    if type_ == "立法委員":
-        return _legislator_bulletin_url(year, region, session)
-
-    if type_ == "縣市首長":
-        subfolder = "03直轄市長" if _is_direct_municipality(region, year) else "04縣市長"
-        return _dir_url(subfolder, roc)
-
-    if type_ == "縣市議員":
-        return _council_bulletin_url(type_, year, region)
-
-    if type_ == "鄉鎮市長":
-        roc_year = _roc_number(year)
-        if roc_year >= 103:
-            return f"{_EE_BULLETIN_BASE}/?dir={roc_year}"
-        return None
-
-    return None
-
-
-def bulletin_url(payload: dict, election_id: str) -> str | None:
-    """
-    從 incoming record 的 payload + election_id 產生公報目錄連結。
-    election_id 用於區分直轄市 vs 縣市（比 region 更可靠）。
+    從含 type/year/region/session 的 dict 產生中選會公報目錄連結。
+    支援 source_record payload 與 candidate_elections row 兩種來源。
     """
     type_ = payload.get("type", "")
     year = payload.get("year")
@@ -206,7 +172,7 @@ def bulletin_url(payload: dict, election_id: str) -> str | None:
         return _legislator_bulletin_url(year, region, session)
 
     if type_ == "縣市首長":
-        subfolder = "03直轄市長" if "直轄市長" in election_id else "04縣市長"
+        subfolder = "03直轄市長" if "直轄市長" in election_id or _is_direct_municipality(region, year) else "04縣市長"
         return _dir_url(subfolder, roc)
 
     if type_ == "縣市議員":
@@ -214,7 +180,7 @@ def bulletin_url(payload: dict, election_id: str) -> str | None:
 
     if type_ == "鄉鎮市長":
         roc_year = _roc_number(year)
-        if roc_year >= 103:
+        if roc_year >= _TOWNSHIP_BULLETIN_FROM_ROC:
             return f"{_EE_BULLETIN_BASE}/?dir={roc_year}"
         return None
 
