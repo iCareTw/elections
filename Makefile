@@ -18,8 +18,12 @@ cov:
 ui:
 	uv run python -m src.webapp.app
 
-# .PHONY: crawl-data
-# crawl-data:
+.PHONY: crawl-data
+crawl-data:
+# # ---------------------- 村里長 & 鄉鎮市長 ----------------------
+	uv run src/fetch_township.py
+	uv run src/fetch_village.py
+
 # # ---------------------- 國家元首 ----------------------
 # 	uv run python main.py --type president --year 1996
 # 	uv run python main.py --type president --year 2000

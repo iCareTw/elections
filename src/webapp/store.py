@@ -221,6 +221,59 @@ class Store:
                 ),
             )
 
+    def batch_upsert_source_records(self, rows: list[dict[str, Any]]) -> None:
+        if not rows:
+            return
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            with conn.transaction():
+                with conn.cursor() as cur:
+                    cur.executemany(
+                        """
+                        INSERT INTO source_records(source_record_id, election_id, name, birthday, payload, original_kind)
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        ON CONFLICT(source_record_id) DO UPDATE SET
+                            election_id   = EXCLUDED.election_id,
+                            name          = EXCLUDED.name,
+                            birthday      = EXCLUDED.birthday,
+                            payload       = EXCLUDED.payload,
+                            original_kind = EXCLUDED.original_kind
+                        """,
+                        [
+                            (
+                                r["source_record_id"],
+                                r["election_id"],
+                                r["payload"]["name"],
+                                r["payload"].get("birthday"),
+                                Jsonb(r["payload"]),
+                                r["original_kind"],
+                            )
+                            for r in rows
+                        ],
+                    )
+
+    def batch_upsert_review_decisions(self, rows: list[dict[str, Any]]) -> None:
+        if not rows:
+            return
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            with conn.transaction():
+                with conn.cursor() as cur:
+                    cur.executemany(
+                        """
+                        INSERT INTO review_decisions(source_record_id, election_id, candidate_id, mode)
+                        VALUES (%s, %s, %s, %s)
+                        ON CONFLICT(source_record_id) DO UPDATE SET
+                            candidate_id = EXCLUDED.candidate_id,
+                            mode         = EXCLUDED.mode,
+                            updated_at   = CURRENT_TIMESTAMP
+                        """,
+                        [
+                            (r["source_record_id"], r["election_id"], r["candidate_id"], r["mode"])
+                            for r in rows
+                        ],
+                    )
+
     def get_source_record(self, source_record_id: str) -> dict[str, Any] | None:
         with self.connect() as conn:
             self._setup_conn(conn)
@@ -311,6 +364,40 @@ class Store:
                 election = {k: row[k] for k in ("year", "type", "region", "party", "elected", "session", "ticket", "order_id") if row[k] is not None}
                 grouped[cid]["elections"].append(election)
         return list(grouped.values())
+
+    def list_candidates_by_names(self, names: set[str]) -> dict[str, list[dict[str, Any]]]:
+        """Batch lookup: returns {normalized_name: [candidate, ...]}."""
+        if not names:
+            return {}
+        normalized = list({_normalize_candidate_name(n) for n in names})
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            rows = conn.execute(
+                """
+                SELECT c.id, c.name, c.birthday,
+                       ce.year, ce.type, ce.region, ce.party,
+                       ce.elected, ce.session, ce.ticket, ce.order_id
+                FROM candidates c
+                LEFT JOIN candidate_elections ce ON ce.candidate_id = c.id
+                WHERE c.name = ANY(%s)
+                ORDER BY c.id, ce.year NULLS LAST
+                """,
+                (normalized,),
+            ).fetchall()
+
+        grouped: dict[str, dict[str, Any]] = {}
+        for row in rows:
+            cid = row["id"]
+            if cid not in grouped:
+                grouped[cid] = {"id": cid, "name": row["name"], "birthday": row["birthday"], "elections": []}
+            if row["year"] is not None:
+                election = {k: row[k] for k in ("year", "type", "region", "party", "elected", "session", "ticket", "order_id") if row[k] is not None}
+                grouped[cid]["elections"].append(election)
+
+        by_name: dict[str, list[dict[str, Any]]] = {}
+        for c in grouped.values():
+            by_name.setdefault(c["name"], []).append(c)
+        return by_name
 
     def list_candidates_by_name_without_latin(self, name: str) -> list[dict[str, Any]]:
         normalized = _normalize_name_without_latin(name)

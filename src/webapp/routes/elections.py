@@ -8,7 +8,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from src.webapp.discovery import discover_elections, load_election_records
-from src.webapp.matching import classify_record
+from src.webapp.matching import classify_record_cached
 from src.webapp.store import Store
 
 router = APIRouter()
@@ -143,41 +143,52 @@ async def load_election(request: Request, election_id: str):
     store.upsert_election(raw_election)
 
     existing_decisions = {
-        decision["source_record_id"]: decision
-        for decision in store.list_review_decisions(election_id)
+        d["source_record_id"]: d
+        for d in store.list_review_decisions(election_id)
     }
-    total = 0
+
+    to_classify = [r for r in records if r["source_record_id"] not in existing_decisions]
+    already_decided = [r for r in records if r["source_record_id"] in existing_decisions]
+
+    # Batch-fetch candidates needed for classification (2 queries instead of N*2)
+    names = {r["name"] for r in to_classify}
+    candidates_by_name = store.list_candidates_by_names(names)
+    all_candidates = store.list_candidates_with_elections() if names else []
+
+    source_records_batch: list[dict] = []
+    decisions_batch: list[dict] = []
     auto_new = 0
 
-    for record in records:
-        if record["source_record_id"] in existing_decisions:
-            existing_mode = existing_decisions[record["source_record_id"]]["mode"]
-            original_kind = existing_mode if existing_mode in ("auto", "new") else "manual"
-            store.insert_source_record(
-                source_record_id=record["source_record_id"],
-                election_id=election_id,
-                payload=record,
-                original_kind=original_kind,
-            )
-            total += 1
-            continue
+    for record in already_decided:
+        existing_mode = existing_decisions[record["source_record_id"]]["mode"]
+        original_kind = existing_mode if existing_mode in ("auto", "new") else "manual"
+        source_records_batch.append({
+            "source_record_id": record["source_record_id"],
+            "election_id": election_id,
+            "payload": record,
+            "original_kind": original_kind,
+        })
 
-        result = classify_record(record, store)
-        store.insert_source_record(
-            source_record_id=record["source_record_id"],
-            election_id=election_id,
-            payload=record,
-            original_kind=result["kind"],
-        )
+    for record in to_classify:
+        result = classify_record_cached(record, candidates_by_name, all_candidates)
+        source_records_batch.append({
+            "source_record_id": record["source_record_id"],
+            "election_id": election_id,
+            "payload": record,
+            "original_kind": result["kind"],
+        })
         if result["kind"] in ("auto", "new"):
-            store.upsert_review_decision(
-                source_record_id=record["source_record_id"],
-                election_id=election_id,
-                candidate_id=result["candidate_id"],
-                mode=result["kind"],
-            )
+            decisions_batch.append({
+                "source_record_id": record["source_record_id"],
+                "election_id": election_id,
+                "candidate_id": result["candidate_id"],
+                "mode": result["kind"],
+            })
             auto_new += 1
-        total += 1
+
+    store.batch_upsert_source_records(source_records_batch)
+    store.batch_upsert_review_decisions(decisions_batch)
+    total = len(records)
 
     decision_count = len(store.list_review_decisions(election_id))
     pending_count = total - decision_count

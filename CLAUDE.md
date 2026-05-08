@@ -43,6 +43,26 @@ FastAPI + Jinja2 候選人身分判定介面. 以 DB 作為 single source of tru
 
 ---
 
+## DB 破壞性操作規範
+
+**DELETE、UPDATE、commit_election 等任何會改變或移除 DB 資料的操作，嚴格遵守兩步驟：**
+
+1. 在一則訊息說明計畫（將刪除/修改哪些資料、預期結果）
+2. 等待 user 在下一則訊息明確授權後，才在新訊息執行
+
+**不得在同一則訊息內說明後立即執行。** SELECT 查詢不受此限。
+
+---
+
+## 與 User 溝通原則
+
+- 避免技術用語（如函式名稱、變數、API 細節），除非 user 主動詢問
+- 不主動解釋程式碼的實作細節
+- 所有說明一律從 user 的操作與使用觀點出發（「你可以執行…」「會產生…」而非「這段程式碼做了…」）
+- 任何答覆必須簡潔有力，直接切入 user 最核心關注的重點，去除鋪陳與補充說明
+
+---
+
 ## 核心開發原則
 
 Behavioral guidelines to reduce common LLM coding mistakes.

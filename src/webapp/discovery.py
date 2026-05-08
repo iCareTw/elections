@@ -12,6 +12,7 @@ from src import (
     parse_mayor,
     parse_president,
     parse_township,
+    parse_village,
 )
 from src.session_years import SESSION_YEARS
 
@@ -253,6 +254,32 @@ def _discover_township(root: Path) -> list[dict]:
     return elections
 
 
+def _discover_village(root: Path) -> list[dict]:
+    data_dir = root / "_data" / "village"
+    if not data_dir.exists():
+        return []
+
+    elections = []
+    for year_dir in _visible_children(data_dir):
+        if not year_dir.is_dir():
+            continue
+        try:
+            year = int(year_dir.name)
+        except ValueError:
+            continue
+        for path in _visible_children(year_dir):
+            if path.is_file() and path.suffix.lower() == ".xlsx":
+                elections.append(
+                    _record(
+                        type_="village",
+                        election_id=f"village/{year_dir.name}/{path.name}",
+                        path=path,
+                        year=year,
+                    )
+                )
+    return elections
+
+
 def discover_elections(root: Path) -> list[dict]:
     elections = []
     elections.extend(_discover_president(root))
@@ -262,6 +289,7 @@ def discover_elections(root: Path) -> list[dict]:
     elections.extend(_discover_legislator_by_election(root))
     elections.extend(_discover_council(root))
     elections.extend(_discover_township(root))
+    elections.extend(_discover_village(root))
     return sorted(elections, key=lambda e: [natural_sort_key(p) for p in e["election_id"].split("/")])
 
 
@@ -289,6 +317,8 @@ def _resolve_parser(election: dict):
         return parse_council.parse_file
     if election_type == "township":
         return parse_township.parse_file
+    if election_type == "village":
+        return parse_village.parse_file
     raise ValueError(f"Unsupported election type: {election_type}")
 
 

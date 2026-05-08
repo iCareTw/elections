@@ -2,6 +2,15 @@ import re
 from typing import Union
 
 _BRACKET_PATTERN = re.compile(r"[(\（][^)\）]*[)\）]|[【][^】]*[】]")
+_CEC_ENCODED = re.compile(r"@([0-9A-Fa-f]{4,6})@")
+
+
+def decode_cec_name(name: str) -> str:
+    """Decode CEC's @XXXX@ encoding for rare Unicode characters (e.g. @3CF5@ → 㳵)."""
+    def _replace(m: re.Match) -> str:
+        cp = int(m.group(1), 16)
+        return chr(cp) if cp <= 0x10FFFF else m.group(0)
+    return _CEC_ENCODED.sub(_replace, name)
 _REMOVE_PATTERN = re.compile(r"[\s　‧·•．]")
 _SPACE_PATTERN = re.compile(r"[\s　]")
 _DOT_PATTERN = re.compile(r"[‧·•．]")
