@@ -185,3 +185,7 @@ def bulletin_url(payload: dict, election_id: str = "") -> str | None:
         return None
 
     return None
+
+
+def bulletin_url_from_record(record: dict) -> str | None:
+    return bulletin_url(record)
