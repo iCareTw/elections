@@ -54,6 +54,7 @@
 
       {% for match in matches %}
       {% set bday_diff = incoming_birthday is not none and match.birthday != incoming_birthday %}
+      {% set bday_age_diff = ((match.birthday - incoming_birthday) | abs) if incoming_birthday is not none and match.birthday is not none else none %}
       <div class="match-card" data-idx="{{ loop.index }}" data-name="{{ match.name }}" data-id="{{ match.id }}" data-existing-bday="{{ match.birthday }}">
         <label class="match-card-main">
           <span class="match-card-head">
@@ -64,7 +65,7 @@
           </span>
           <span>
             生日：{{ match.birthday }}
-            {% if bday_diff %}<span class="bday-warn">⚠ 生日不符</span>{% endif %}
+            {% if bday_diff %}<span class="bday-warn{% if bday_age_diff is not none and bday_age_diff <= 1 %} bday-warn-close{% endif %}">⚠ {% if match.birthday is not none %}差{{ bday_age_diff }}歲{% else %}生日不符{% endif %}</span>{% endif %}
             ｜ {{ match.id }}
           </span>
           {% if match.elections %}

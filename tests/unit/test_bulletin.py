@@ -148,6 +148,51 @@ def test_review_template_renders_incoming_and_possible_candidate_pdf_links() -> 
     assert possible_url in html
 
 
+def test_review_template_marks_close_birthday_diff_only() -> None:
+    templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
+    env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
+    env.globals["bulletin_url_from_record"] = bulletin_url_from_record
+    template = env.get_template("review.html")
+
+    html = template.render(
+        election_tree={"children": {}},
+        selected_id="council/2005/縣市議員_區域_臺中市.xlsx",
+        election={"type": "council", "year": 2005, "label": "縣市議員_區域_臺中市"},
+        incoming_type="縣市議員",
+        record_fields=[],
+        bulletin_url=None,
+        matches=[
+            {
+                "id": "id_陳瑞昌_1975",
+                "name": "陳瑞昌",
+                "birthday": 1975,
+                "elections": [],
+            },
+            {
+                "id": "id_陳瑞昌_1974",
+                "name": "陳瑞昌",
+                "birthday": 1974,
+                "elections": [],
+            },
+        ],
+        incoming_birthday=1976,
+        current_decision=None,
+        current_record={"source_record_id": "src:1", "name": "陳瑞昌"},
+        i=0,
+        display_count=1,
+        total_count=1,
+        resolved_count=0,
+        progress_pct=0,
+        error="",
+        decision_log=[],
+        pending_count=1,
+    )
+
+    assert '<span class="bday-warn bday-warn-close">⚠ 差1歲</span>' in html
+    assert '<span class="bday-warn">⚠ 差2歲</span>' in html
+    assert 'bday-warn bday-warn-close">⚠ 差2歲' not in html
+
+
 def test_review_template_renders_party_list_legislator_pdf_without_session() -> None:
     templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
     env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
