@@ -7,6 +7,7 @@ import yaml
 
 from src import (
     parse_council,
+    parse_indigenous,
     parse_legislator,
     parse_legislator_by_election,
     parse_mayor,
@@ -254,6 +255,31 @@ def _discover_township(root: Path) -> list[dict]:
     return elections
 
 
+def _discover_indigenous(root: Path, subdir: str, type_: str) -> list[dict]:
+    data_dir = root / "_data" / subdir
+    if not data_dir.exists():
+        return []
+    elections = []
+    for year_dir in _visible_children(data_dir):
+        if not year_dir.is_dir():
+            continue
+        try:
+            year = int(year_dir.name)
+        except ValueError:
+            continue
+        for path in _visible_children(year_dir):
+            if path.is_file() and path.suffix.lower() == ".xlsx":
+                elections.append(
+                    _record(
+                        type_=type_,
+                        election_id=f"{subdir}/{year_dir.name}/{path.name}",
+                        path=path,
+                        year=year,
+                    )
+                )
+    return elections
+
+
 def _discover_village(root: Path) -> list[dict]:
     data_dir = root / "_data" / "village"
     if not data_dir.exists():
@@ -290,6 +316,8 @@ def discover_elections(root: Path) -> list[dict]:
     elections.extend(_discover_council(root))
     elections.extend(_discover_township(root))
     elections.extend(_discover_village(root))
+    elections.extend(_discover_indigenous(root, "indigenous_chief", "indigenous_chief"))
+    elections.extend(_discover_indigenous(root, "indigenous_rep",   "indigenous_rep"))
     return sorted(elections, key=lambda e: [natural_sort_key(p) for p in e["election_id"].split("/")])
 
 
@@ -319,6 +347,10 @@ def _resolve_parser(election: dict):
         return parse_township.parse_file
     if election_type == "village":
         return parse_village.parse_file
+    if election_type == "indigenous_chief":
+        return parse_indigenous.parse_chief_file
+    if election_type == "indigenous_rep":
+        return parse_indigenous.parse_rep_file
     raise ValueError(f"Unsupported election type: {election_type}")
 
 

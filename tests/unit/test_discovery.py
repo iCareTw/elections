@@ -26,6 +26,14 @@ def test_discover_elections_includes_current_source_types(tmp_path: Path) -> Non
     by_election_yaml = tmp_path / "_data" / "legislator" / "by-election-legislator" / "9th.yaml"
     by_election_yaml.write_text("[]", encoding="utf-8")
 
+    indigenous_chief_dir = tmp_path / "_data" / "indigenous_chief" / "2014"
+    indigenous_chief_dir.mkdir(parents=True)
+    (indigenous_chief_dir / "新北市.xlsx").write_text("")
+
+    indigenous_rep_dir = tmp_path / "_data" / "indigenous_rep" / "2014"
+    indigenous_rep_dir.mkdir(parents=True)
+    (indigenous_rep_dir / "新北市.xlsx").write_text("")
+
     (tmp_path / "_data" / "unknown").mkdir(parents=True)
 
     elections = discover_elections(tmp_path)
@@ -38,6 +46,8 @@ def test_discover_elections_includes_current_source_types(tmp_path: Path) -> Non
         "legislator/party-list-legislator/11th.yaml",
         "mayor/111年直轄市長選舉.xlsx",
         "president/第16任總統副總統選舉.xlsx",
+        "indigenous_chief/2014/新北市.xlsx",
+        "indigenous_rep/2014/新北市.xlsx",
     }
     assert by_id["legislator/party-list-legislator/11th.yaml"]["status"] == "todo"
     assert by_id["legislator/party-list-legislator/11th.yaml"]["session"] == 11
@@ -49,6 +59,12 @@ def test_discover_elections_includes_current_source_types(tmp_path: Path) -> Non
     assert by_id["legislator/district-legislator/11th/區域_臺北市.xlsx"]["session"] == 11
     assert by_id["legislator/district-legislator/11th/區域_臺北市.xlsx"]["year"] == 2024
     assert by_id["legislator/district-legislator/11th/區域_臺北市.xlsx"]["path"] == district_dir / "區域_臺北市.xlsx"
+    assert by_id["indigenous_chief/2014/新北市.xlsx"]["type"] == "indigenous_chief"
+    assert by_id["indigenous_chief/2014/新北市.xlsx"]["year"] == 2014
+    assert by_id["indigenous_chief/2014/新北市.xlsx"]["path"] == indigenous_chief_dir / "新北市.xlsx"
+    assert by_id["indigenous_rep/2014/新北市.xlsx"]["type"] == "indigenous_rep"
+    assert by_id["indigenous_rep/2014/新北市.xlsx"]["year"] == 2014
+    assert by_id["indigenous_rep/2014/新北市.xlsx"]["path"] == indigenous_rep_dir / "新北市.xlsx"
     by_election_id = "legislator/by-election-legislator/8th/第8屆立法委員臺中市第02選舉區補選.xlsx"
     assert by_id[by_election_id]["session"] == 8
     assert "year" not in by_id[by_election_id]

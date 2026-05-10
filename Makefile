@@ -19,10 +19,19 @@ ui:
 	uv run python -m src.webapp.app
 
 .PHONY: crawl-data
-crawl-data:
-# # ---------------------- 村里長 & 鄉鎮市長 ----------------------
+crawl-data: crawl-township crawl-village crawl-indigenous
+
+.PHONY: crawl-township
+crawl-township:
 	uv run src/fetch_township.py
+
+.PHONY: crawl-village
+crawl-village:
 	uv run src/fetch_village.py
+
+.PHONY: crawl-indigenous
+crawl-indigenous:
+	uv run src/fetch_indigenous.py
 
 # # ---------------------- 國家元首 ----------------------
 # 	uv run python main.py --type president --year 1996
