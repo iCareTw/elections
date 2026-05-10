@@ -19,10 +19,16 @@
 </div>
 
 <div class="review-grid">
+  {% set local_types = ['村里長', '鄉鎮市長', '原住民區長', '原住民區民代表', '縣市首長', '縣市議員', '立法委員'] %}
+  {% set is_local = incoming_type in local_types %}
   <article class="panel">
     <h3>Incoming Record</h3>
     {% for key, value in record_fields %}
-    <div class="record-field"><strong>{{ key }}</strong><span>{{ value }}</span></div>
+    <div class="record-field"><strong>{{ key }}</strong>
+      {% if is_local and key == '選舉' %}<span><span class="tag-type">{{ value }}</span></span>
+      {% elif is_local and key == '地區' %}<span><span class="tag-region">{{ value }}</span></span>
+      {% else %}<span>{{ value }}</span>{% endif %}
+    </div>
     {% endfor %}
     {% if bulletin_url is string or bulletin_url is none %}
     {% set incoming_burl = bulletin_url %}
@@ -76,7 +82,7 @@
             {% else %}
             {% set burl = bulletin_url(e) %}
             {% endif %}
-            <li>{{ e.year }} {{ e.type }} · {{ e.region }}{% if e.party %} · {{ e.party }}{% endif %}{% if burl %} <a class="bulletin-inline" href="{{ burl }}" target="_blank" rel="noopener" title="選舉公報 PDF">📋</a>{% endif %}</li>
+            <li>{{ e.year }} {% if is_local %}<span class="tag-type">{{ e.type }}</span>{% else %}{{ e.type }}{% endif %} · {% if is_local %}<span class="tag-region">{{ e.region }}</span>{% else %}{{ e.region }}{% endif %}{% if e.party %} · {{ e.party }}{% endif %}{% if burl %} <a class="bulletin-inline" href="{{ burl }}" target="_blank" rel="noopener" title="選舉公報 PDF">📋</a>{% endif %}</li>
             {% endfor %}
           </ul>
           {% else %}

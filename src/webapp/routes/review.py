@@ -96,6 +96,7 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
         "record_fields": record_fields,
         "matches": matches,
         "incoming_birthday": payload.get("birthday"),
+        "incoming_type": payload.get("type"),
         "i": i,
         "pending_count": len(pending_records),
         "display_count": display_count,

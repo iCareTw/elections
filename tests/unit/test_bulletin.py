@@ -193,6 +193,46 @@ def test_review_template_marks_close_birthday_diff_only() -> None:
     assert 'bday-warn bday-warn-close">⚠ 差2歲' not in html
 
 
+def test_review_template_tags_local_type_and_region_fields() -> None:
+    templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
+    env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
+    env.globals["bulletin_url_from_record"] = bulletin_url_from_record
+    template = env.get_template("review.html")
+
+    html = template.render(
+        election_tree={"children": {}},
+        selected_id="indigenous_chief/2014/新北市.xlsx",
+        election={"type": "indigenous_chief", "year": 2014, "label": "新北市"},
+        incoming_type="原住民區長",
+        record_fields=[("選舉", "原住民區長"), ("地區", "新北市 烏來區")],
+        bulletin_url=None,
+        matches=[
+            {
+                "id": "id_測試候選人_1970",
+                "name": "測試候選人",
+                "birthday": 1970,
+                "elections": [
+                    {"type": "原住民區長", "year": 2014, "region": "新北市 烏來區", "party": "無黨籍"}
+                ],
+            }
+        ],
+        incoming_birthday=1970,
+        current_decision=None,
+        current_record={"source_record_id": "src:1", "name": "測試候選人"},
+        i=0,
+        display_count=1,
+        total_count=1,
+        resolved_count=0,
+        progress_pct=0,
+        error="",
+        decision_log=[],
+        pending_count=1,
+    )
+
+    assert '<span class="tag-type">原住民區長</span>' in html
+    assert '<span class="tag-region">新北市 烏來區</span>' in html
+
+
 def test_review_template_renders_party_list_legislator_pdf_without_session() -> None:
     templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
     env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
