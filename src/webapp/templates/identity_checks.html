@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block workspace %}
+
+<div class="workspace-header">
+  <div>
+    <p class="pathline">Robustness Check</p>
+    <h2>疑似誤合併檢查</h2>
+  </div>
+  <form method="post" action="/identity-checks/scan">
+    <button class="button primary" type="submit">重新檢查</button>
+  </form>
+</div>
+
+{% if generated_count %}
+<div class="status-done">已產生 {{ generated_count }} 筆待檢查項目</div>
+{% endif %}
+
+<div class="check-layout">
+  <section class="panel">
+    <h3>待審清單</h3>
+    {% if issues %}
+    <table class="log-table">
+      <thead><tr><th>狀態</th><th>等級</th><th>候選人</th><th>原因</th><th></th></tr></thead>
+      <tbody>
+        {% for issue in issues %}
+        <tr>
+          <td><span class="badge badge-{{ issue.status }}">{{ issue.status_label }}</span></td>
+          <td>{{ issue.severity_label }}</td>
+          <td class="mono">{{ issue.candidate_id }}</td>
+          <td>{{ issue.summary }}</td>
+          <td><a class="button ghost" href="/identity-checks/{{ issue.id }}">查看</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty">目前沒有待審項目</p>
+    {% endif %}
+  </section>
+
+  <section class="panel">
+    <h3>修正紀錄</h3>
+    {% if operations %}
+    <table class="log-table">
+      <thead><tr><th>時間</th><th>操作</th><th>來源</th><th>目標</th></tr></thead>
+      <tbody>
+        {% for op in operations %}
+        <tr>
+          <td>{{ op.created_at.strftime("%m/%d %H:%M") if op.created_at else "" }}</td>
+          <td>{{ op.operation_label }}</td>
+          <td class="mono">{{ op.source_candidate_id }}</td>
+          <td class="mono">{{ op.target_candidate_id }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty">尚無修正紀錄</p>
+    {% endif %}
+  </section>
+</div>
+
+{% endblock %}

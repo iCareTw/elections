@@ -235,3 +235,122 @@ def test_store_commit_election_writes_candidates_and_elections() -> None:
         store.delete_election(election_id)
         store.delete_candidate(candidate_id)
         store.close()
+
+
+def test_identity_fix_splits_committed_candidate_with_operation_snapshot() -> None:
+    config = load_database_config()
+    if not config.database_url:
+        pytest.skip("PostgreSQL connection not configured")
+
+    store = Store(config)
+    try:
+        store.open()
+    except Exception:
+        pytest.skip("PostgreSQL is not reachable")
+    try:
+        store.init_schema()
+    except ConnectionError:
+        store.close()
+        pytest.skip("PostgreSQL is not reachable")
+
+    token = uuid4().hex
+    candidate_id = f"id_疑似誤合併_{token[:8]}"
+    election_id_a = f"test/identity-check-a-{token}.yaml"
+    election_id_b = f"test/identity-check-b-{token}.yaml"
+    src_a = f"{election_id_a}:0"
+    src_b = f"{election_id_b}:0"
+    payload_a = {
+        "name": "疑似誤合併",
+        "birthday": 1970,
+        "year": 1998,
+        "type": "立法委員",
+        "region": "屏東縣選舉區",
+        "party": "測試黨",
+        "elected": 0,
+    }
+    payload_b = {
+        "name": "疑似誤合併",
+        "birthday": 1970,
+        "year": 1998,
+        "type": "縣市議員",
+        "region": "屏東縣 第03選舉區",
+        "party": "測試黨",
+        "elected": 0,
+    }
+
+    try:
+        for election_id, src_id, payload in (
+            (election_id_a, src_a, payload_a),
+            (election_id_b, src_b, payload_b),
+        ):
+            store.upsert_election({
+                "election_id": election_id,
+                "type": "test",
+                "label": election_id,
+                "path": f"/tmp/{election_id}",
+            })
+            store.insert_source_record(
+                source_record_id=src_id,
+                election_id=election_id,
+                payload=payload,
+            )
+            store.commit_election(
+                election_id=election_id,
+                decisions={src_id: {"mode": "auto", "candidate_id": candidate_id}},
+                source_records_map={src_id: payload},
+            )
+
+        assert store.refresh_identity_check_issues() >= 1
+        issue = next(
+            item
+            for item in store.list_identity_check_issues()
+            if item["candidate_id"] == candidate_id
+            and item["issue_type"] == "same_year_multiple"
+        )
+
+        preview = store.preview_identity_fix(
+            issue_id=issue["id"],
+            action="selected_new",
+            source_record_ids=[src_a],
+        )
+        assert preview["target_candidate_id"] == f"{candidate_id}a"
+        assert len(preview["after_candidates"]) == 2
+
+        operation_id = store.apply_identity_fix(
+            issue_id=issue["id"],
+            action="selected_new",
+            source_record_ids=[src_a],
+        )
+
+        with store.connect() as conn:
+            store._setup_conn(conn)
+            rows = conn.execute(
+                """
+                SELECT source_record_id, candidate_id
+                FROM resolutions
+                WHERE source_record_id = ANY(%s)
+                ORDER BY source_record_id
+                """,
+                ([src_a, src_b],),
+            ).fetchall()
+        assert {r["source_record_id"]: r["candidate_id"] for r in rows} == {
+            src_a: f"{candidate_id}a",
+            src_b: candidate_id,
+        }
+
+        operations = store.list_identity_fix_operations(issue_id=issue["id"])
+        assert operations[0]["id"] == operation_id
+        assert operations[0]["before_snapshot"]
+        assert operations[0]["after_snapshot"]
+    finally:
+        with store.connect() as conn:
+            store._setup_conn(conn)
+            conn.execute(
+                "DELETE FROM identity_fix_operations WHERE source_candidate_id = %s OR target_candidate_id = %s",
+                (candidate_id, f"{candidate_id}a"),
+            )
+        store.delete_election(election_id_a)
+        store.delete_election(election_id_b)
+        store.delete_candidate(candidate_id)
+        store.delete_candidate(f"{candidate_id}a")
+        store.close()

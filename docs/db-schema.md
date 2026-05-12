@@ -24,6 +24,10 @@ Schema name: `elections`. 此文件記錄 `db/001_init.sql` 建立後的 schema 
 ┌──────────────────┐  ┌─────────────┐
 │ review_decisions │  │ resolutions │
 └──────────────────┘  └─────────────┘
+
+┌───────────────────────┐        ┌─────────────────────────┐
+│ identity_check_issues │        │ identity_fix_operations │
+└───────────────────────┘        └─────────────────────────┘
 ```
 
 ---
@@ -161,6 +165,58 @@ Index:
 | `order_id`     | INTEGER        | 排序用流水號                                        |
 
 Unique constraint: `(candidate_id, year, type, region)`.
+
+---
+
+## identity_check_issues
+
+commit 後的候選人合理性檢查清單. 每筆代表一個需要人工確認的疑點.
+
+| field               | type        | description                                  |
+|---------------------|-------------|----------------------------------------------|
+| `id`                | SERIAL PK   | 流水號                                        |
+| `issue_key`         | TEXT UNIQUE | 同一疑點的穩定識別碼                           |
+| `candidate_id`      | VARCHAR(64) | 被檢查的候選人 → `candidates.id`              |
+| `issue_type`        | VARCHAR(32) | `same_year_multiple` / `rank_downgrade` / `regional_jump` |
+| `severity`          | VARCHAR(16) | `critical` / `warning`                       |
+| `summary`           | TEXT        | UI 顯示摘要                                    |
+| `source_record_ids` | TEXT[]      | 牽涉的 committed source records               |
+| `election_refs`     | JSONB       | UI 顯示用的參選紀錄快照                         |
+| `status`            | VARCHAR(16) | `open` / `ignored` / `resolved` / `stale`     |
+| `decision_note`     | TEXT        | 保留給人工備註                                 |
+| `created_at`        | TIMESTAMPTZ | 建立時間                                      |
+| `updated_at`        | TIMESTAMPTZ | 最後更新時間                                   |
+
+Index:
+
+- `idx_identity_check_issues_status` on `(status)`.
+- `idx_identity_check_issues_candidate_id` on `(candidate_id)`.
+
+Trigger:
+
+- `trg_identity_check_issues_updated_at`: `BEFORE UPDATE`, 執行 `touch_updated_at()`.
+
+---
+
+## identity_fix_operations
+
+疑似誤合併修正操作紀錄. 用 before / after snapshot 支援追蹤與還原.
+
+| field                     | type        | description                      |
+|---------------------------|-------------|----------------------------------|
+| `id`                      | SERIAL PK   | 流水號                            |
+| `issue_id`                | INTEGER FK  | 來源疑點 → `identity_check_issues.id` |
+| `operation`               | VARCHAR(32) | 修正方式                          |
+| `source_candidate_id`     | VARCHAR(64) | 原本 candidate id                 |
+| `target_candidate_id`     | VARCHAR(64) | 移入或新建 candidate id            |
+| `moved_source_record_ids` | TEXT[]      | 本次移動的 committed source records |
+| `before_snapshot`         | JSONB       | 套用前候選人參選快照                |
+| `after_snapshot`          | JSONB       | 套用後候選人參選快照                |
+| `created_at`              | TIMESTAMPTZ | 操作時間                          |
+
+Index:
+
+- `idx_identity_fix_operations_issue_id` on `(issue_id)`.
 
 ---
 

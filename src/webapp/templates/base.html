@@ -9,17 +9,30 @@
 <body>
 <main class="shell">
 
+  {% set mode = app_mode | default('identity') %}
   <aside class="navigator">
     <div class="brand">
       <span class="eyebrow">Candidate Merge</span>
       <h1>Identity Workbench</h1>
     </div>
 
+    <nav class="mode-switch" aria-label="Workspace mode">
+      <a class="mode-tab {% if mode == 'identity' %}active{% endif %}" href="/">
+        <span>Identity UI</span>
+        <em>匯入與身分判定</em>
+      </a>
+      <a class="mode-tab {% if mode == 'check' %}active{% endif %}" href="/identity-checks">
+        <span>Identity Check</span>
+        <em>commit 後合理性檢查</em>
+      </a>
+    </nav>
+
     <div class="nav-header-row">
       <button class="button ghost" onclick="location.reload()">Refresh</button>
       <button class="button ghost collapse-btn" onclick="goHome()" title="Home">⌂</button>
     </div>
 
+    {% if mode == 'identity' %}
     <div class="election-list" id="election-tree">
       {% macro render_tree(node) %}
         {# Group and sort: Directories first, then elections, preserving insertion order (natural sort from Python) #}
@@ -54,32 +67,51 @@
       {% endmacro %}
       {{ render_tree(election_tree) }}
     </div>
+    {% else %}
+    <div class="check-nav">
+      <a class="check-nav-row selected" href="/identity-checks">
+        <strong>待審清單</strong>
+        <span>查看疑似誤合併項目</span>
+      </a>
+      <form method="post" action="/identity-checks/scan">
+        <button class="check-nav-row check-nav-button" type="submit">
+          <strong>重新檢查</strong>
+          <span>掃描已 commit 的候選人紀錄</span>
+        </button>
+      </form>
+    </div>
+    {% endif %}
 
     <script>
       function goHome() {
         const tree = document.getElementById('election-tree');
-        const details = tree.querySelectorAll('details');
-        details.forEach(d => d.removeAttribute('open'));
+        if (tree) {
+          const details = tree.querySelectorAll('details');
+          details.forEach(d => d.removeAttribute('open'));
+        }
         sessionStorage.setItem('nav-scroll', '0');
-        window.location.href = '/';
+        window.location.href = {{ ('/identity-checks' if mode == 'check' else '/') | tojson }};
       }
 
       const navList = document.querySelector('.election-list');
 
       // Restore scroll position on page load
       const savedScroll = sessionStorage.getItem('nav-scroll');
-      if (savedScroll !== null) {
+      if (navList && savedScroll !== null) {
         navList.scrollTop = parseInt(savedScroll, 10);
       }
 
       // Save scroll position before navigating
-      navList.querySelectorAll('a.tree-row').forEach(a => {
-        a.addEventListener('click', () => {
-          sessionStorage.setItem('nav-scroll', navList.scrollTop);
+      if (navList) {
+        navList.querySelectorAll('a.tree-row').forEach(a => {
+          a.addEventListener('click', () => {
+            sessionStorage.setItem('nav-scroll', navList.scrollTop);
+          });
         });
-      });
+      }
     </script>
 
+    {% if mode == 'identity' %}
     <div class="nav-footer">
       <form method="post" action="/build" id="build-form">
         <button class="generate-btn" type="submit" id="build-submit">⬇ Generate candidates.yaml</button>
@@ -88,11 +120,15 @@
       <p class="build-result">✓ {{ generated }} 位候選人已匯出</p>
       {% endif %}
     </div>
+    {% endif %}
   </aside>
 
   <div class="resize-handle" id="resize-handle"></div>
 
   <section class="workspace">
+    <div class="mode-banner mode-{{ mode }}">
+      目前使用 {{ "Identity Check" if mode == "check" else "Identity UI" }}
+    </div>
     {% block workspace %}{% endblock %}
   </section>
 

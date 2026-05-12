@@ -141,6 +141,8 @@ def test_navigator_does_not_expand_unselected_top_level_dirs() -> None:
     assert selected_html.count('class="tree-node dir" open') == 1
     assert '<span class="tree-dir-label">president</span>' in selected_html
     assert '<span class="badge badge-pending tree-dir-pending">1</span>' in selected_html
+    assert "Identity UI" in home_html
+    assert "Identity Check" in home_html
 
 
 def test_election_detail_template_handles_review_status() -> None:
@@ -228,6 +230,87 @@ def test_done_template_shows_all_committed_resolutions() -> None:
     assert "賴坤成" in html
     assert "鄺麗貞" in html
     assert "人工決策紀錄" not in html
+
+
+def test_identity_check_templates_render_review_and_preview() -> None:
+    templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
+    env = Environment(loader=FileSystemLoader(str(templates_dir)))
+
+    index_html = env.get_template("identity_checks.html").render(
+        app_mode="check",
+        election_tree={"children": {}},
+        selected_id=None,
+        issues=[
+            {
+                "id": 1,
+                "status": "open",
+                "status_label": "待審",
+                "severity_label": "必審",
+                "candidate_id": "id_劉煜基_1946",
+                "summary": "劉煜基 在 1998 年有 2 筆參選紀錄",
+            }
+        ],
+        operations=[],
+        generated_count=None,
+    )
+    assert "疑似誤合併檢查" in index_html
+    assert "/identity-checks/1" in index_html
+    assert "目前使用 Identity Check" in index_html
+    assert "待審清單" in index_html
+
+    detail = {
+        "issue": {
+            "id": 1,
+            "issue_type_label": "同一年多場選舉",
+            "summary": "劉煜基 在 1998 年有 2 筆參選紀錄",
+            "source_record_ids": ["legislator:1"],
+        },
+        "candidate": {"id": "id_劉煜基_1946", "name": "劉煜基", "birthday": 1946},
+        "records": [
+            {
+                "source_record_id": "legislator:1",
+                "year": 1998,
+                "type": "立法委員",
+                "region": "屏東縣選舉區",
+                "party": "建國黨",
+            },
+            {
+                "source_record_id": "council:1",
+                "year": 1998,
+                "type": "縣市議員",
+                "region": "屏東縣 第03選舉區",
+                "party": "建國黨",
+            },
+        ],
+        "nearby_candidates": [],
+        "operations": [],
+    }
+    detail_html = env.get_template("identity_check_detail.html").render(
+        app_mode="check",
+        election_tree={"children": {}},
+        selected_id=None,
+        detail=detail,
+        preview={
+            "action": "selected_new",
+            "source_record_ids": ["legislator:1"],
+            "target_candidate_id": "id_劉煜基_1946a",
+            "after_candidates": [
+                {
+                    "id": "id_劉煜基_1946",
+                    "name": "劉煜基",
+                    "elections": [detail["records"][1]],
+                },
+                {
+                    "id": "id_劉煜基_1946a",
+                    "name": "劉煜基",
+                    "elections": [detail["records"][0]],
+                },
+            ],
+        },
+        error="",
+    )
+    assert "套用前預覽" in detail_html
+    assert "id_劉煜基_1946a" in detail_html
 
 
 def test_home_returns_200(tmp_path: Path) -> None:

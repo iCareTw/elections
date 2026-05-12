@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block workspace %}
+
+{% if error %}
+<div class="error-banner">⚠ {{ error }}</div>
+{% endif %}
+
+<div class="workspace-header">
+  <div>
+    <p class="pathline">Robustness Check / {{ detail.issue.issue_type_label }}</p>
+    <h2>{{ detail.candidate.name }}</h2>
+    <p class="mono">{{ detail.candidate.id }}</p>
+  </div>
+  <a class="button ghost" href="/identity-checks">返回清單</a>
+</div>
+
+<div class="status">{{ detail.issue.summary }}</div>
+
+<form method="post" action="/identity-checks/{{ detail.issue.id }}/preview" class="check-layout">
+  <section class="panel">
+    <h3>可疑 Elections</h3>
+    <div class="check-list">
+      {% for record in detail.records %}
+      <label class="check-row">
+        <input type="checkbox" name="source_record_ids" value="{{ record.source_record_id }}"
+               {% if record.source_record_id in detail.issue.source_record_ids %}checked{% endif %}>
+        <span>
+          <strong>{{ record.year }} {{ record.type }}</strong>
+          <em>{{ record.region }}{% if record.party %} · {{ record.party }}{% endif %}</em>
+          <code>{{ record.source_record_id }}</code>
+        </span>
+      </label>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="panel">
+    <h3>修正方式</h3>
+    {% if detail.nearby_candidates %}
+    <div class="choice-list">
+      <label class="choice-row">
+        <input type="radio" name="action" value="target_existing" checked>
+        <span>合併到同名且生日差 1 年的候選人</span>
+      </label>
+      {% for candidate in detail.nearby_candidates %}
+      <label class="choice-row">
+        <input type="radio" name="target_candidate_id" value="{{ candidate.id }}" {% if loop.first %}checked{% endif %}>
+        <span>合併到 <code>{{ candidate.id }}</code></span>
+      </label>
+      <ul class="match-elections">
+        {% for e in candidate.elections %}
+        <li>{{ e.year }} {{ e.type }} · {{ e.region }}</li>
+        {% endfor %}
+      </ul>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <label class="choice-row">
+      <input type="radio" name="action" value="selected_new" {% if not detail.nearby_candidates %}checked{% endif %}>
+      <span>選取的 elections 建立新 id</span>
+    </label>
+
+    <label class="choice-row">
+      <input type="radio" name="action" value="others_new">
+      <span>選取的 elections 保留目前 id, 其他 elections 建立新 id</span>
+    </label>
+
+    <div class="decision-bar">
+      <button class="button primary" type="submit">預覽結果</button>
+    </div>
+  </section>
+</form>
+
+{% if preview %}
+<section class="panel preview-panel">
+  <h3>套用前預覽</h3>
+  <div class="preview-grid">
+    {% for candidate in preview.after_candidates %}
+    <div class="preview-card">
+      <strong>{{ candidate.name }}</strong>
+      <span class="mono">{{ candidate.id }}</span>
+      <ul class="match-elections">
+        {% for e in candidate.elections %}
+        <li>{{ e.year }} {{ e.type }} · {{ e.region }}{% if e.party %} · {{ e.party }}{% endif %}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </div>
+  <form method="post" action="/identity-checks/{{ detail.issue.id }}/apply" class="decision-bar">
+    <input type="hidden" name="action" value="{{ preview.action }}">
+    {% for source_record_id in preview.source_record_ids %}
+    <input type="hidden" name="source_record_ids" value="{{ source_record_id }}">
+    {% endfor %}
+    {% if preview.target_candidate_id %}
+    <input type="hidden" name="target_candidate_id" value="{{ preview.target_candidate_id }}">
+    {% endif %}
+    <button class="button primary" type="submit">套用修正</button>
+  </form>
+</section>
+{% endif %}
+
+{% if detail.operations %}
+<section class="panel">
+  <h3>本項目修正紀錄</h3>
+  <table class="log-table">
+    <thead><tr><th>時間</th><th>操作</th><th>來源</th><th>目標</th></tr></thead>
+    <tbody>
+      {% for op in detail.operations %}
+      <tr>
+        <td>{{ op.created_at.strftime("%m/%d %H:%M") if op.created_at else "" }}</td>
+        <td>{{ op.operation_label }}</td>
+        <td class="mono">{{ op.source_candidate_id }}</td>
+        <td class="mono">{{ op.target_candidate_id }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+
+<form method="post" action="/identity-checks/{{ detail.issue.id }}/ignore">
+  <button class="button ghost" type="submit">標記為沒問題</button>
+</form>
+
+{% endblock %}
