@@ -6,7 +6,7 @@ import httpx
 import openpyxl
 
 BASE_URL = 'https://db.cec.gov.tw'
-DATA_ROOT = Path('_data/council')
+DATA_ROOT = Path('_data/councilor')
 
 XLSX_COLUMNS = [
     ('地區',  'area_name'),
@@ -27,11 +27,11 @@ SUBJECT_LIST = [
 ]
 
 
-def output_path(session: int, council_type: str, desc: str, area_name: str | None = None) -> Path:
+def output_path(session: int, councilor_type: str, desc: str, area_name: str | None = None) -> Path:
     folder = DATA_ROOT / str(session + 1911)
     if area_name:
-        return folder / f'{council_type}_{desc}_{area_name}.xlsx'
-    return folder / f'{council_type}_{desc}.xlsx'
+        return folder / f'{councilor_type}_{desc}_{area_name}.xlsx'
+    return folder / f'{councilor_type}_{desc}.xlsx'
 
 
 def list_url(subject_id: str) -> str:
@@ -82,7 +82,7 @@ async def _fetch_json(client: httpx.AsyncClient, url: str) -> dict | list:
 async def _scrape_entry(
     client: httpx.AsyncClient,
     session: int,
-    council_type: str,
+    councilor_type: str,
     legis_id: str,
     entry: dict,
     force: bool,
@@ -101,7 +101,7 @@ async def _scrape_entry(
             prv_code  = city['prv_code']
             city_code = city['city_code']
             area_name = city['area_name']
-            path = output_path(session, council_type, desc, area_name)
+            path = output_path(session, councilor_type, desc, area_name)
             if path.exists() and not force:
                 print(f'  skip {path.name}')
                 continue
@@ -116,7 +116,7 @@ async def _scrape_entry(
                 print(f'  WARNING {area_name}: {e}')
     else:
         # dataLevel=C：全國單一檔案
-        path = output_path(session, council_type, desc)
+        path = output_path(session, councilor_type, desc)
         if path.exists() and not force:
             print(f'  skip {path.name}')
             return
@@ -128,16 +128,16 @@ async def _scrape_entry(
             print(f'  wrote {path}')
             await asyncio.sleep(2)
         except Exception as e:
-            print(f'  WARNING {council_type} {desc}: {e}')
+            print(f'  WARNING {councilor_type} {desc}: {e}')
 
 
 async def _run(sessions: list[int], force: bool) -> None:
     """
     補齊指定屆次（民國年）的直轄市/縣市議員原始資料
-    ex: uv run src/fetch_council.py --session 111
+    ex: uv run src/fetch_councilor.py --session 111
     """
     async with httpx.AsyncClient(timeout=30, verify=False) as client:
-        for subject_id, council_type in SUBJECT_LIST:
+        for subject_id, councilor_type in SUBJECT_LIST:
             raw = await _fetch_json(client, list_url(subject_id))
             await asyncio.sleep(2)
             session_map = parse_session_map(raw)
@@ -145,17 +145,17 @@ async def _run(sessions: list[int], force: bool) -> None:
             target_sessions = sessions if sessions else sorted({s for s, _ in session_map})
 
             for s in target_sessions:
-                print(f'\n=== {council_type} 第{s}屆 ===')
+                print(f'\n=== {councilor_type} 第{s}屆 ===')
                 for legis_id in ('T1', 'T2', 'T3'):
                     entry = session_map.get((s, legis_id))
                     if not entry:
                         continue
-                    await _scrape_entry(client, s, council_type, legis_id, entry, force)
+                    await _scrape_entry(client, s, councilor_type, legis_id, entry, force)
                     await asyncio.sleep(2)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description='Fetch council member XLSX from CEC')
+    parser = argparse.ArgumentParser(description='Fetch councilor XLSX from CEC')
     parser.add_argument('--session', type=int, help='single session (民國年, e.g. 111)')
     parser.add_argument('--force',   action='store_true', help='overwrite existing files')
     args = parser.parse_args()

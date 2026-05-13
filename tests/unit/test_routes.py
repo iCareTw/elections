@@ -40,23 +40,23 @@ def test_election_tree_counts_pending_commit_descendants(tmp_path: Path) -> None
     class ReadOnlyStore:
         def list_elections(self) -> list[dict]:
             return [
-                {"election_id": "council/1998/未完成.xlsx", "status": "todo"},
-                {"election_id": "council/2022/已完成.xlsx", "status": "done"},
+                {"election_id": "councilor/1998/未完成.xlsx", "status": "todo"},
+                {"election_id": "councilor/2022/已完成.xlsx", "status": "done"},
             ]
 
     for path in (
-        tmp_path / "_data" / "council" / "1998" / "未完成.xlsx",
-        tmp_path / "_data" / "council" / "2022" / "已完成.xlsx",
+        tmp_path / "_data" / "councilor" / "1998" / "未完成.xlsx",
+        tmp_path / "_data" / "councilor" / "2022" / "已完成.xlsx",
     ):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("")
 
     tree = _election_tree(tmp_path, ReadOnlyStore())  # type: ignore[arg-type]
 
-    council = tree["children"]["council"]
-    assert council["pending_commit_count"] == 1
-    assert council["children"]["1998"]["pending_commit_count"] == 1
-    assert council["children"]["2022"]["pending_commit_count"] == 0
+    councilor = tree["children"]["councilor"]
+    assert councilor["pending_commit_count"] == 1
+    assert councilor["children"]["1998"]["pending_commit_count"] == 1
+    assert councilor["children"]["2022"]["pending_commit_count"] == 0
 
 
 def test_navigator_does_not_expand_unselected_top_level_dirs() -> None:

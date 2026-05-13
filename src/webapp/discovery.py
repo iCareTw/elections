@@ -6,7 +6,7 @@ from pathlib import Path
 import yaml
 
 from src import (
-    parse_council,
+    parse_councilor,
     parse_indigenous,
     parse_legislator,
     parse_legislator_by_election,
@@ -120,6 +120,46 @@ def _discover_mayor(root: Path) -> list[dict]:
     return elections
 
 
+def _discover_province(root: Path) -> list[dict]:
+    data_dir = root / "_data" / "province"
+    if not data_dir.exists():
+        return []
+
+    elections = []
+    for path in _visible_children(data_dir):
+        if path.is_file() and path.suffix.lower() in {".yaml", ".yml"}:
+            year_match = re.search(r"(\d{4})", path.stem)
+            elections.append(
+                _record(
+                    type_="province",
+                    election_id=f"province/{path.name}",
+                    path=path,
+                    year=int(year_match.group(1)) if year_match else None,
+                )
+            )
+    return elections
+
+
+def _discover_province_councilor(root: Path) -> list[dict]:
+    data_dir = root / "_data" / "province_councilor"
+    if not data_dir.exists():
+        return []
+
+    elections = []
+    for path in _visible_children(data_dir):
+        if path.is_file() and path.suffix.lower() in {".yaml", ".yml"}:
+            year_match = re.search(r"(\d{4})", path.stem)
+            elections.append(
+                _record(
+                    type_="province_councilor",
+                    election_id=f"province_councilor/{path.name}",
+                    path=path,
+                    year=int(year_match.group(1)) if year_match else None,
+                )
+            )
+    return elections
+
+
 def _discover_legislator_district(root: Path) -> list[dict]:
     data_dir = _first_existing_dir(root, "district-legislator", "district")
     if data_dir is None:
@@ -203,8 +243,28 @@ def _discover_legislator_by_election(root: Path) -> list[dict]:
     return elections
 
 
-def _discover_council(root: Path) -> list[dict]:
-    data_dir = root / "_data" / "council"
+def _discover_mna(root: Path) -> list[dict]:
+    data_dir = root / "_data" / "mna"
+    if not data_dir.exists():
+        return []
+
+    elections = []
+    for path in _visible_children(data_dir):
+        if path.is_file() and path.suffix.lower() in {".yaml", ".yml"}:
+            session = _session_from_text(path.stem)
+            elections.append(
+                _record(
+                    type_="mna",
+                    election_id=f"mna/{path.name}",
+                    path=path,
+                    session=session,
+                )
+            )
+    return elections
+
+
+def _discover_councilor(root: Path) -> list[dict]:
+    data_dir = root / "_data" / "councilor"
     if not data_dir.exists():
         return []
 
@@ -220,8 +280,8 @@ def _discover_council(root: Path) -> list[dict]:
             if path.is_file() and path.suffix.lower() == ".xlsx":
                 elections.append(
                     _record(
-                        type_="council",
-                        election_id=f"council/{year_dir.name}/{path.name}",
+                        type_="councilor",
+                        election_id=f"councilor/{year_dir.name}/{path.name}",
                         path=path,
                         year=year,
                     )
@@ -310,10 +370,13 @@ def discover_elections(root: Path) -> list[dict]:
     elections = []
     elections.extend(_discover_president(root))
     elections.extend(_discover_mayor(root))
+    elections.extend(_discover_province(root))
+    elections.extend(_discover_province_councilor(root))
     elections.extend(_discover_legislator_district(root))
     elections.extend(_discover_legislator_party_list(root))
     elections.extend(_discover_legislator_by_election(root))
-    elections.extend(_discover_council(root))
+    elections.extend(_discover_mna(root))
+    elections.extend(_discover_councilor(root))
     elections.extend(_discover_township(root))
     elections.extend(_discover_village(root))
     elections.extend(_discover_indigenous(root, "indigenous_chief", "indigenous_chief"))
@@ -326,7 +389,7 @@ def _resolve_parser(election: dict):
     根據 election 的類型與檔案格式決定要使用哪個 parser 來讀取原始資料.
     邏輯必須寫死中選會揭露的原始資料混亂所導致.
         - president & mayor 是 xlsx, 且歷史資料格式一致
-        - legislator 的區域與不分區及 council 資料格式完全不同, 歷屆立委/議員由人工處理以後整理成 yaml
+        - legislator 的區域與不分區及 councilor 資料格式完全不同, 歷屆立委/議員由人工處理以後整理成 yaml
     """
     path = Path(election["path"])
     if path.suffix.lower() in {".yaml", ".yml"}:
@@ -341,8 +404,8 @@ def _resolve_parser(election: dict):
         return parse_legislator.parse_file
     if election_type == "legislator-by-election":
         return parse_legislator_by_election.parse_file
-    if election_type == "council":
-        return parse_council.parse_file
+    if election_type == "councilor":
+        return parse_councilor.parse_file
     if election_type == "township":
         return parse_township.parse_file
     if election_type == "village":

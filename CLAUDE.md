@@ -23,7 +23,7 @@ uv add <package>
 - `candidates.yaml` — 候選人主 mapping 檔
 - `election_types.yaml` — 合法 type enum 清單
 
-`_data/` 資料類型: `president/`, `mayor/`, `legislator/`, `council/`
+`_data/` 資料類型: `president/`, `mayor/`, `legislator/`, `councilor/`
 
 ## DB Schema
 

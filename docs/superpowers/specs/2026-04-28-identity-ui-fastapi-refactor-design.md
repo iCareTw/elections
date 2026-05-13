@@ -169,7 +169,7 @@ logs/                 ← gitignore
 - Brand header
 - Refresh 按鈕
 - `_data/` 鏡像樹狀清單 (緊湊列高, `padding: 1px`, `line-height: 1.5`)
-  - 目錄節點: `president/`, `mayor/`, `legislator/`, `council/`
+  - 目錄節點: `president/`, `mayor/`, `legislator/`, `councilor/`
   - 檔案列: 檔名 + status badge (todo / review / done)
   - 點選後 navigate 到對應頁面 (full-page render)
 - 底部: **Generate candidates.yaml** 按鈕 (project-level 操作, 與選舉操作明確分離)

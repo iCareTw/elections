@@ -5,20 +5,20 @@ from jinja2 import Environment, FileSystemLoader
 from src.webapp.bulletin import bulletin_url, bulletin_url_from_record
 
 
-def test_council_incoming_record_links_to_district_pdf() -> None:
+def test_councilor_incoming_record_links_to_district_pdf() -> None:
     payload = {
         "type": "縣市議員",
         "year": 2005,
         "region": "臺中市 第06選舉區",
     }
 
-    assert bulletin_url(payload, "council/2005/縣市議員_區域_臺中市.xlsx") == (
+    assert bulletin_url(payload, "councilor/2005/縣市議員_區域_臺中市.xlsx") == (
         "https://bulletin.cec.gov.tw/01選舉公報/06縣市議員/094年/"
         "13臺中市/臺中市第6選舉區議員.pdf"
     )
 
 
-def test_council_candidate_history_links_to_district_pdf() -> None:
+def test_councilor_candidate_history_links_to_district_pdf() -> None:
     record = {
         "type": "縣市議員",
         "year": 2009,
@@ -31,7 +31,7 @@ def test_council_candidate_history_links_to_district_pdf() -> None:
     )
 
 
-def test_direct_municipality_council_candidate_history_links_to_district_pdf() -> None:
+def test_direct_municipality_councilor_candidate_history_links_to_district_pdf() -> None:
     record = {
         "type": "縣市議員",
         "year": 2014,
@@ -84,7 +84,7 @@ def test_pdf_links_do_not_use_directory_query_urls() -> None:
     assert url.endswith(".pdf")
 
 
-def test_council_record_without_known_district_falls_back_to_region_folder() -> None:
+def test_councilor_record_without_known_district_falls_back_to_region_folder() -> None:
     record = {
         "type": "縣市議員",
         "year": 2005,
@@ -104,7 +104,7 @@ def test_review_template_renders_incoming_and_possible_candidate_pdf_links() -> 
 
     incoming_url = bulletin_url(
         {"type": "縣市議員", "year": 2005, "region": "臺中市 第06選舉區"},
-        "council/2005/縣市議員_區域_臺中市.xlsx",
+        "councilor/2005/縣市議員_區域_臺中市.xlsx",
     )
     possible_url = bulletin_url_from_record({
         "type": "縣市議員",
@@ -114,8 +114,8 @@ def test_review_template_renders_incoming_and_possible_candidate_pdf_links() -> 
 
     html = template.render(
         election_tree={"children": {}},
-        selected_id="council/2005/縣市議員_區域_臺中市.xlsx",
-        election={"type": "council", "year": 2005, "label": "縣市議員_區域_臺中市"},
+        selected_id="councilor/2005/縣市議員_區域_臺中市.xlsx",
+        election={"type": "councilor", "year": 2005, "label": "縣市議員_區域_臺中市"},
         record_fields=[],
         bulletin_url=incoming_url,
         matches=[{
@@ -156,8 +156,8 @@ def test_review_template_marks_close_birthday_diff_only() -> None:
 
     html = template.render(
         election_tree={"children": {}},
-        selected_id="council/2005/縣市議員_區域_臺中市.xlsx",
-        election={"type": "council", "year": 2005, "label": "縣市議員_區域_臺中市"},
+        selected_id="councilor/2005/縣市議員_區域_臺中市.xlsx",
+        election={"type": "councilor", "year": 2005, "label": "縣市議員_區域_臺中市"},
         incoming_type="縣市議員",
         record_fields=[],
         bulletin_url=None,
@@ -248,8 +248,8 @@ def test_review_template_renders_party_list_legislator_pdf_without_session() -> 
 
     html = template.render(
         election_tree={"children": {}},
-        selected_id="council/2005/縣市議員_區域_臺中市.xlsx",
-        election={"type": "council", "year": 2005, "label": "縣市議員_區域_臺中市"},
+        selected_id="councilor/2005/縣市議員_區域_臺中市.xlsx",
+        election={"type": "councilor", "year": 2005, "label": "縣市議員_區域_臺中市"},
         record_fields=[],
         bulletin_url=None,
         matches=[{

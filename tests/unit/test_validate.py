@@ -1,6 +1,6 @@
 from src.validate import validate_candidates
 
-VALID_TYPES = {'國家元首_總統', '國家元首_副總統', '縣市首長', '立法委員', '縣市議員'}
+VALID_TYPES = {'國家元首_總統', '國家元首_副總統', '縣市首長', '臺灣省長', '臺灣省議員', '立法委員', '國大代表', '縣市議員'}
 
 
 def test_valid_passes():

@@ -20,8 +20,8 @@ description: >
 | `C1` | 直轄市長 | parse only（`_data/mayor/` 手動取得 XLSX） |
 | `C2` | 縣市長（含補選） | parse only（同上） |
 | `L0` | 立法委員 | `fetch_legislator.py` + `parse_legislator.py` |
-| `T1` | 直轄市議員 | `fetch_council.py` + `parse_council.py` |
-| `T2` | 縣市議員 | `fetch_council.py` + `parse_council.py` |
+| `T1` | 直轄市議員 | `fetch_councilor.py` + `parse_councilor.py` |
+| `T2` | 縣市議員 | `fetch_councilor.py` + `parse_councilor.py` |
 | `D1` | 直轄市山地原住民區長 | 無 |
 | `D2` | 鄉鎮市長 | `fetch_township.py`（規劃中） |
 | `R1` | 直轄市山地原住民區民代表 | 無 |
@@ -133,11 +133,11 @@ records = [row for rows in d.values() for row in rows]
 
 ## 建議爬蟲組織
 
-參考現有 `fetch_council.py`（同時涵蓋 T1 + T2）的分組方式：
+參考現有 `fetch_councilor.py`（同時涵蓋 T1 + T2）的分組方式：
 
 | 建議檔案 | 涵蓋 subject_id | 備注 |
 |---|---|---|
-| `fetch_township.py` | D2 | 鄉鎮市長，模仿 `fetch_council.py` |
+| `fetch_township.py` | D2 | 鄉鎮市長，模仿 `fetch_councilor.py` |
 | `fetch_chief.py` | D1 + D2 | 若要合併：首長類，涵蓋原住民區長和鄉鎮市長 |
 | `fetch_township_rep.py` | R1 + R2 | 代表類，R2 需用多 key 合併 |
 | `fetch_village.py` | V0 | 村里長，規模最大，多 key 合併 |
@@ -146,7 +146,7 @@ records = [row for rows in d.values() for row in rows]
 
 ## 現有爬蟲的 `parse_session_map` 邏輯
 
-以 `fetch_council.py` 為範本，list JSON 結構：
+以 `fetch_councilor.py` 為範本，list JSON 結構：
 
 ```python
 # list JSON 的每個 area 底下有 theme_items
@@ -187,5 +187,5 @@ XLSX_COLUMNS = [
 ## 注意事項
 
 - 所有 HTTP 請求加 `verify=False`（CEC 的 SSL 憑證有問題）
-- 爬取時加 `asyncio.sleep(2)` 避免過於頻繁（參考 `fetch_council.py`）
+- 爬取時加 `asyncio.sleep(2)` 避免過於頻繁（參考 `fetch_councilor.py`）
 - 執行任何 Python 指令使用 `uv run python`

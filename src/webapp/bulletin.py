@@ -117,7 +117,7 @@ def _region_folder(region: str, year: int, *, direct: bool) -> str | None:
     return f"{code}{name}" if code else None
 
 
-def _council_bulletin_url(type_: str, year: int, region: str) -> str:
+def _councilor_bulletin_url(type_: str, year: int, region: str) -> str:
     direct = _is_direct_municipality(region, year)
     subfolder = "05直轄市議員" if direct else "06縣市議員"
     base_parts = [subfolder, _roc(year)]
@@ -176,7 +176,7 @@ def bulletin_url(payload: dict, election_id: str = "") -> str | None:
         return _dir_url(subfolder, roc)
 
     if type_ == "縣市議員":
-        return _council_bulletin_url(type_, year, region)
+        return _councilor_bulletin_url(type_, year, region)
 
     if type_ == "鄉鎮市長":
         roc_year = _roc_number(year)

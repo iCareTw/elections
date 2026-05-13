@@ -19,7 +19,7 @@ elections/
 │   ├── president/          # 總統副總統選舉 xlsx
 │   ├── mayor/              # 縣市首長選舉 xlsx
 │   ├── legislator/         # 立法委員選舉（暫不處理）
-│   └── council/            # 縣市議員選舉（暫不處理）
+│   └── councilor/            # 縣市議員選舉（暫不處理）
 ├── candidates.yaml         # 主 mapping 檔
 └── election_types.yaml     # type enum 參考表
 ```
@@ -244,5 +244,5 @@ uv run python main.py --type president --year 2024
 ## 現階段範圍
 
 - **已納入：** president、mayor（資料結構一致，優先處理）
-- **暫緩：** legislator、council（原始資料格式不一致，待整理後再行擴充）
+- **暫緩：** legislator、councilor（原始資料格式不一致，待整理後再行擴充）
 - **不含：** 鄉鎮區長、里長、鄉鎮市民代表（超出現階段範圍）
