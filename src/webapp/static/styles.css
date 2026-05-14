@@ -553,6 +553,9 @@ button { font: inherit; cursor: pointer; border: 0; }
 .match-card .bday-warn.bday-warn-close { color: #b91c1c; font-weight: 800; background: #fef2f2; border: 2px solid #dc2626; padding: 1px 6px; }
 .tag-type { display: inline; padding: 1px 5px; border-radius: 3px; background: #dbeafe; color: #1e40af; font-size: inherit; }
 .tag-region { display: inline; padding: 1px 5px; border-radius: 3px; background: #d1fae5; color: #065f46; font-size: inherit; }
+.tag-elected { display: inline; padding: 1px 5px; border-radius: 3px; font-size: inherit; font-weight: 700; }
+.tag-elected.is-elected { background: #fef3c7; color: #92400e; }
+.tag-elected.not-elected { background: #f3f4f6; color: #4b5563; }
 .bday-panel { display: none; margin: 6px 0 0; padding: 8px 10px; border-radius: 8px; background: #fffbeb; border: 1px solid #fcd34d; font-size: 11px; cursor: default; }
 .match-card:has(input[name="candidate_id"]:checked) .bday-panel { display: grid; gap: 4px; }
 .match-card .bday-panel-title { font-size: 10px; color: var(--muted); margin-bottom: 2px; font-weight: 700; }

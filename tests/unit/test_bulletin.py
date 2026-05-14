@@ -233,6 +233,47 @@ def test_review_template_tags_local_type_and_region_fields() -> None:
     assert '<span class="tag-region">新北市 烏來區</span>' in html
 
 
+def test_review_template_renders_elected_status_for_incoming_and_possible_matches() -> None:
+    templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
+    env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
+    env.globals["bulletin_url_from_record"] = bulletin_url_from_record
+    template = env.get_template("review.html")
+
+    html = template.render(
+        election_tree={"children": {}},
+        selected_id="councilor/2005/縣市議員_區域_臺中市.xlsx",
+        election={"type": "councilor", "year": 2005, "label": "縣市議員_區域_臺中市"},
+        incoming_type="縣市議員",
+        record_fields=[("選舉", "縣市議員"), ("地區", "臺中市 第06選舉區"), ("當選", 1)],
+        bulletin_url=None,
+        matches=[
+            {
+                "id": "id_測試候選人_1970",
+                "name": "測試候選人",
+                "birthday": 1970,
+                "elections": [
+                    {"type": "縣市議員", "year": 2009, "region": "桃園縣 第05選舉區", "party": "無黨籍", "elected": 0},
+                    {"type": "縣市議員", "year": 2014, "region": "桃園市 第05選舉區", "party": "無黨籍", "elected": 1},
+                ],
+            }
+        ],
+        incoming_birthday=1970,
+        current_decision=None,
+        current_record={"source_record_id": "src:1", "name": "測試候選人"},
+        i=0,
+        display_count=1,
+        total_count=1,
+        resolved_count=0,
+        progress_pct=0,
+        error="",
+        decision_log=[],
+        pending_count=1,
+    )
+
+    assert '<span class="tag-elected is-elected">當選</span>' in html
+    assert '<span class="tag-elected not-elected">未當選</span>' in html
+
+
 def test_review_template_renders_party_list_legislator_pdf_without_session() -> None:
     templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
     env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
