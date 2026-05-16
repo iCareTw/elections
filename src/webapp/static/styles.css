@@ -542,6 +542,8 @@ button { font: inherit; cursor: pointer; border: 0; }
 .match-card span { color: var(--muted); font-size: 11px; }
 .match-card .match-elections { list-style: none; padding: 0; margin: 3px 0 0; display: grid; gap: 2px; }
 .match-card .match-elections li { font-size: 10.5px; color: var(--muted); padding: 2px 5px; background: rgba(0,0,0,.04); border-radius: 3px; }
+.match-card .match-elections li.incoming-election-item { background: rgba(59,130,246,.10); color: var(--ink); border-left: 2px solid #3b82f6; }
+.incoming-tag { font-size: 9px; color: #3b82f6; font-weight: 700; margin-left: 4px; opacity: 0.85; }
 .match-card-head { display: flex; align-items: center; gap: 6px; }
 .match-select { width: 14px; height: 14px; accent-color: var(--accent); }
 .match-card .selected-label { display: none; margin-left: auto; color: var(--accent-strong); font-size: 10px; font-weight: 700; }
@@ -556,6 +558,30 @@ button { font: inherit; cursor: pointer; border: 0; }
 .tag-elected { display: inline; padding: 1px 5px; border-radius: 3px; font-size: inherit; font-weight: 700; }
 .tag-elected.is-elected { background: #fef3c7; color: #92400e; }
 .tag-elected.not-elected { background: #f3f4f6; color: #4b5563; }
+/* ── Match candidate ID ── */
+.match-candidate-id { font-size: 10px; color: var(--muted); margin: 1px 0 0; }
+
+/* ── Match score pill ── */
+.match-score-pill { display: inline-flex; align-items: center; font-size: 9.5px; font-weight: 800; padding: 1px 6px; border-radius: 99px; margin-left: 3px; }
+.match-score-pill.score-high { background: #d1fae5; color: #065f46; }
+.match-score-pill.score-mid { background: #fef3c7; color: #92400e; }
+.match-score-pill.score-low { background: #fee2e2; color: #991b1b; }
+
+/* ── Match comparison rows ── */
+.match-cmp { display: grid; gap: 0; margin: 5px 0 4px; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+.cmp-row { display: grid; grid-template-columns: 2.6em 1fr auto; gap: 8px; align-items: center; padding: 3px 8px; font-size: 10.5px; border-bottom: 1px solid rgba(0,0,0,.04); }
+.cmp-row:last-child { border-bottom: none; }
+.cmp-label { color: var(--muted); font-size: 9.5px; font-weight: 700; white-space: nowrap; }
+.cmp-value { color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cmp-indicator { font-size: 10px; font-weight: 700; white-space: nowrap; text-align: right; }
+.cmp-exact { background: rgba(5, 150, 105, 0.07); }
+.cmp-exact .cmp-indicator { color: #059669; }
+.cmp-close { background: rgba(217, 119, 6, 0.07); }
+.cmp-close .cmp-indicator { color: #d97706; }
+.cmp-diff { background: rgba(220, 38, 38, 0.05); }
+.cmp-diff .cmp-value { opacity: 0.7; }
+.cmp-diff .cmp-indicator { color: #dc2626; }
+
 .bday-panel { display: none; margin: 6px 0 0; padding: 8px 10px; border-radius: 8px; background: #fffbeb; border: 1px solid #fcd34d; font-size: 11px; cursor: default; }
 .match-card:has(input[name="candidate_id"]:checked) .bday-panel { display: grid; gap: 4px; }
 .match-card .bday-panel-title { font-size: 10px; color: var(--muted); margin-bottom: 2px; font-weight: 700; }

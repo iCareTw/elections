@@ -66,28 +66,73 @@
       {% for match in matches %}
       {% set bday_diff = incoming_birthday is not none and match.birthday != incoming_birthday %}
       {% set bday_age_diff = ((match.birthday - incoming_birthday) | abs) if incoming_birthday is not none and match.birthday is not none else none %}
+      {% set _cmp = match.get('cmp') or {} %}
+      {% set _cmp_val = match.get('cmp_val') or {} %}
+      {% set bday_cmp = _cmp.get('birthday') %}
+      {% set party_cmp = _cmp.get('party') %}
+      {% set type_cmp = _cmp.get('type') %}
+      {% set region_cmp = _cmp.get('region') %}
       <div class="match-card" data-idx="{{ loop.index }}" data-name="{{ match.name }}" data-id="{{ match.id }}" data-existing-bday="{{ match.birthday }}">
         <label class="match-card-main">
           <span class="match-card-head">
             <input class="match-select" type="radio" name="candidate_id" value="{{ match.id }}"
                    {% if loop.first %}checked{% endif %}>
             <strong>{{ match.name }}</strong>
+            {% set _total = match.get('total_cmp') or 0 %}
+            {% set _hits = match.get('match_count') or 0 %}
+            {% if _total %}
+            <span class="match-score-pill {% if _hits == _total %}score-high{% elif _hits * 2 >= _total %}score-mid{% else %}score-low{% endif %}">{{ _hits }}/{{ _total }}</span>
+            {% endif %}
             <span class="selected-label">目前選取</span>
           </span>
-          <span>
-            生日：{{ match.birthday }}
-            {% if bday_diff %}<span class="bday-warn{% if bday_age_diff is not none and bday_age_diff <= 1 %} bday-warn-close{% endif %}">⚠ {% if match.birthday is not none %}差{{ bday_age_diff }}歲{% else %}生日不符{% endif %}</span>{% endif %}
-            ｜ {{ match.id }}
-          </span>
-          {% if match.elections %}
+          <span class="mono match-candidate-id">{{ match.id }}</span>
+
+          <div class="match-cmp">
+            {% if bday_cmp %}
+            <div class="cmp-row cmp-{{ bday_cmp }}">
+              <span class="cmp-label">生日</span>
+              <span class="cmp-value">{{ match.birthday or '—' }}</span>
+              <span class="cmp-indicator">
+                {% if bday_cmp == 'exact' %}✓
+                {% elif bday_age_diff is not none %}差{{ bday_age_diff }}歲
+                {% endif %}
+              </span>
+            </div>
+            {% endif %}
+            {% if party_cmp and incoming_party %}
+            <div class="cmp-row cmp-{{ party_cmp }}">
+              <span class="cmp-label">政黨</span>
+              <span class="cmp-value">{{ _cmp_val.get('party') or '—' }}</span>
+              <span class="cmp-indicator">{% if party_cmp == 'exact' %}✓{% else %}✗{% endif %}</span>
+            </div>
+            {% endif %}
+            {% if type_cmp and incoming_type %}
+            <div class="cmp-row cmp-{{ type_cmp }}">
+              <span class="cmp-label">選舉</span>
+              <span class="cmp-value">{% set _tv = _cmp_val.get('type') or '—' %}<span class="{% if type_cmp == 'exact' %}tag-type{% endif %}">{{ _tv }}</span></span>
+              <span class="cmp-indicator">{% if type_cmp == 'exact' %}✓{% else %}✗{% endif %}</span>
+            </div>
+            {% endif %}
+            {% if region_cmp and incoming_region %}
+            <div class="cmp-row cmp-{{ region_cmp }}">
+              <span class="cmp-label">地區</span>
+              <span class="cmp-value">{% set _rv = _cmp_val.get('region') or '—' %}<span class="{% if region_cmp == 'exact' %}tag-region{% endif %}">{{ _rv }}</span></span>
+              <span class="cmp-indicator">{% if region_cmp == 'exact' %}✓{% else %}✗{% endif %}</span>
+            </div>
+            {% endif %}
+          </div>
+
+          {% set _ie = [incoming_election] if incoming_election else [] %}
+          {% set _merged = (match.elections + _ie) | sort(attribute='year') %}
+          {% if _merged %}
           <ul class="match-elections">
-            {% for e in match.elections %}
+            {% for e in _merged %}
             {% if bulletin_url is string or bulletin_url is none %}
             {% set burl = bulletin_url_from_record(e) %}
             {% else %}
             {% set burl = bulletin_url(e) %}
             {% endif %}
-            <li>{{ e.year }} {% if is_local %}<span class="tag-type">{{ e.type }}</span>{% else %}{{ e.type }}{% endif %} · {% if is_local %}<span class="tag-region">{{ e.region }}</span>{% else %}{{ e.region }}{% endif %}{% if e.party %} · {{ e.party }}{% endif %}{% if e.elected is defined and e.elected is not none %} · {{ elected_tag(e.elected) }}{% endif %}{% if burl %} <a class="bulletin-inline" href="{{ burl }}" target="_blank" rel="noopener" title="選舉公報 PDF">📋</a>{% endif %}</li>
+            <li{% if e.get('is_incoming') %} class="incoming-election-item"{% endif %}>{{ e.year }} {% if is_local %}<span class="tag-type">{{ e.type }}</span>{% else %}{{ e.type }}{% endif %} · {% if is_local %}<span class="tag-region">{{ e.region }}</span>{% else %}{{ e.region }}{% endif %}{% if e.party %} · {{ e.party }}{% endif %}{% if e.elected is defined and e.elected is not none %} · {{ elected_tag(e.elected) }}{% endif %}{% if burl %} <a class="bulletin-inline" href="{{ burl }}" target="_blank" rel="noopener" title="選舉公報 PDF">📋</a>{% endif %}{% if e.get('is_incoming') %} <span class="incoming-tag">← 本次</span>{% endif %}</li>
             {% endfor %}
           </ul>
           {% else %}

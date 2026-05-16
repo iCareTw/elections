@@ -16,6 +16,76 @@ from src.webapp.routes.elections import _election_tree
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
+
+def _annotate_match(incoming: dict, match: dict) -> dict:
+    score = 0
+    cmp: dict[str, str] = {}
+    cmp_val: dict[str, str] = {}  # value shown in comparison row (always existing candidate's value)
+    m_elections = match.get("elections", [])
+
+    def _first_distinct(vals: list[str | None], limit: int = 2) -> str:
+        seen: set[str] = set()
+        result: list[str] = []
+        for v in vals:
+            if v and v not in seen:
+                seen.add(v)
+                result.append(v)
+                if len(result) >= limit:
+                    break
+        return "、".join(result) if result else "—"
+
+    in_bday = incoming.get("birthday")
+    m_bday = match.get("birthday")
+    if in_bday is not None and m_bday is not None:
+        diff = abs(int(in_bday) - int(m_bday))
+        if diff == 0:
+            score += 40
+            cmp["birthday"] = "exact"
+        elif diff == 1:
+            score += 20
+            cmp["birthday"] = "close"
+        else:
+            cmp["birthday"] = "diff"
+    elif in_bday is not None:
+        cmp["birthday"] = "diff"
+
+    in_party = incoming.get("party")
+    if in_party:
+        m_parties = [e.get("party") for e in m_elections]
+        if in_party in m_parties:
+            score += 25
+            cmp["party"] = "exact"
+            cmp_val["party"] = in_party
+        else:
+            cmp["party"] = "diff"
+            cmp_val["party"] = _first_distinct(m_parties)
+
+    in_type = incoming.get("type")
+    if in_type:
+        m_types = [e.get("type") for e in m_elections]
+        if in_type in m_types:
+            score += 20
+            cmp["type"] = "exact"
+            cmp_val["type"] = in_type
+        else:
+            cmp["type"] = "diff"
+            cmp_val["type"] = _first_distinct(m_types)
+
+    in_region = incoming.get("region")
+    if in_region:
+        m_regions = [e.get("region") for e in m_elections]
+        if in_region in m_regions:
+            score += 15
+            cmp["region"] = "exact"
+            cmp_val["region"] = in_region
+        else:
+            cmp["region"] = "diff"
+            cmp_val["region"] = _first_distinct(m_regions)
+
+    match_count = sum(1 for v in cmp.values() if v in ("exact", "close"))
+    return {**match, "score": score, "cmp": cmp, "cmp_val": cmp_val, "match_count": match_count, "total_cmp": len(cmp)}
+
+
 _FIELD_LABELS = {
     "name": "姓名", "birthday": "生日", "party": "政黨",
     "type": "選舉", "region": "地區", "elected": "當選",
@@ -52,6 +122,8 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
     current_decision = decisions.get(current_record["source_record_id"])
     result = classify_record(payload, store)
     matches = result.get("matches", [])
+    matches = [_annotate_match(payload, m) for m in matches]
+    matches.sort(key=lambda m: m["score"], reverse=True)
 
     record_fields = [
         (_FIELD_LABELS.get(k, k), payload[k])
@@ -88,6 +160,16 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
         if d["mode"] in ("manual", "manual_new")
     ]
 
+    incoming_election = {
+        "year": payload.get("year"),
+        "type": payload.get("type"),
+        "region": payload.get("region"),
+        "party": payload.get("party"),
+        "elected": payload.get("elected"),
+        "session": payload.get("session"),
+        "is_incoming": True,
+    } if payload.get("year") is not None else None
+
     return templates.TemplateResponse(request, "review.html", {
         "election_tree": election_tree,
         "selected_id": election_id,
@@ -97,6 +179,9 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
         "matches": matches,
         "incoming_birthday": payload.get("birthday"),
         "incoming_type": payload.get("type"),
+        "incoming_party": payload.get("party"),
+        "incoming_region": payload.get("region"),
+        "incoming_election": incoming_election,
         "i": i,
         "pending_count": len(pending_records),
         "display_count": display_count,

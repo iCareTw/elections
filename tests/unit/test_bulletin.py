@@ -167,12 +167,20 @@ def test_review_template_marks_close_birthday_diff_only() -> None:
                 "name": "陳瑞昌",
                 "birthday": 1975,
                 "elections": [],
+                "cmp": {"birthday": "close"},
+                "score": 20,
+                "match_count": 1,
+                "total_cmp": 1,
             },
             {
                 "id": "id_陳瑞昌_1974",
                 "name": "陳瑞昌",
                 "birthday": 1974,
                 "elections": [],
+                "cmp": {"birthday": "diff"},
+                "score": 0,
+                "match_count": 0,
+                "total_cmp": 1,
             },
         ],
         incoming_birthday=1976,
@@ -188,9 +196,10 @@ def test_review_template_marks_close_birthday_diff_only() -> None:
         pending_count=1,
     )
 
-    assert '<span class="bday-warn bday-warn-close">⚠ 差1歲</span>' in html
-    assert '<span class="bday-warn">⚠ 差2歲</span>' in html
-    assert 'bday-warn bday-warn-close">⚠ 差2歲' not in html
+    assert 'cmp-row cmp-close' in html
+    assert '差1歲' in html
+    assert 'cmp-row cmp-diff' in html
+    assert '差2歲' in html
 
 
 def test_review_template_tags_local_type_and_region_fields() -> None:
