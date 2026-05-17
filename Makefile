@@ -1,3 +1,8 @@
+.PHONY: install
+install:
+	uv sync
+	uv run playwright install chromium
+
 .PHONY: test
 test:
 	uv run pytest tests/unit tests/integration -v
@@ -17,6 +22,11 @@ cov:
 .PHONY: ui
 ui:
 	uv run python -m src.webapp.app
+
+## WARNING: 爬取所有選舉公報! 會佔用非常大的 Disk 空間 (約 100GB)，請斟酌使用!
+.PHONY: crawl-voter-guide
+crawl-voter-guide:
+	uv run python -m src.fetch_voter_guide
 
 .PHONY: crawl-data
 crawl-data: crawl-township crawl-village crawl-indigenous
