@@ -22,13 +22,14 @@ TEMPLATES_DIR = Path(__file__).parent / "templates"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
     store = Store()
     store.open()
-    app.state.store = store
-    yield
-    # Shutdown
-    app.state.store.close()
+    try:
+        store.init_schema()
+        app.state.store = store
+        yield
+    finally:
+        store.close()
 
 
 def create_app(root: Path = ROOT) -> FastAPI:

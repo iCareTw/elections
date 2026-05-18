@@ -8,6 +8,7 @@ import yaml
 from fastapi.testclient import TestClient
 from jinja2 import Environment, FileSystemLoader
 
+import src.webapp.app as app_module
 from src.webapp.app import create_app
 from src.webapp.routes.elections import _election_tree
 from src.webapp.store import Store, load_database_config
@@ -17,6 +18,27 @@ def _make_app(tmp_path: Path, store: Store):
     app = create_app(root=tmp_path)
     app.state.store = store
     return app
+
+
+def test_app_startup_prepares_database(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    events: list[str] = []
+
+    class FakeStore:
+        def open(self) -> None:
+            events.append("open")
+
+        def init_schema(self) -> None:
+            events.append("init_schema")
+
+        def close(self) -> None:
+            events.append("close")
+
+    monkeypatch.setattr(app_module, "Store", FakeStore)
+
+    with TestClient(app_module.create_app(root=tmp_path)):
+        assert events == ["open", "init_schema"]
+
+    assert events == ["open", "init_schema", "close"]
 
 
 def test_election_tree_does_not_write_discovered_elections(tmp_path: Path) -> None:
