@@ -1033,10 +1033,60 @@ class Store:
             ).fetchall()
         return [dict(r) for r in rows]
 
-    def delete_election(self, election_id: str) -> None:
+    def reset_election_data(self, election_id: str) -> dict[str, int]:
         with self.connect() as conn:
             self._setup_conn(conn)
-            conn.execute("delete from elections where election_id = %s", (election_id,))
+            with conn.transaction():
+                stats = {
+                    "source_records": conn.execute(
+                        "SELECT count(*) AS n FROM source_records WHERE election_id = %s",
+                        (election_id,),
+                    ).fetchone()["n"],
+                    "resolutions": conn.execute(
+                        "SELECT count(*) AS n FROM resolutions WHERE election_id = %s",
+                        (election_id,),
+                    ).fetchone()["n"],
+                    "review_decisions": conn.execute(
+                        "SELECT count(*) AS n FROM review_decisions WHERE election_id = %s",
+                        (election_id,),
+                    ).fetchone()["n"],
+                }
+                affected_rows = conn.execute(
+                    """
+                    SELECT DISTINCT candidate_id
+                    FROM resolutions
+                    WHERE election_id = %s
+                      AND candidate_id IS NOT NULL
+                    """,
+                    (election_id,),
+                ).fetchall()
+                affected_candidate_ids = [row["candidate_id"] for row in affected_rows]
+
+                conn.execute("DELETE FROM elections WHERE election_id = %s", (election_id,))
+
+                removed_candidates = 0
+                for candidate_id in affected_candidate_ids:
+                    has_remaining = conn.execute(
+                        "SELECT 1 FROM resolutions WHERE candidate_id = %s LIMIT 1",
+                        (candidate_id,),
+                    ).fetchone()
+                    if has_remaining:
+                        self._sync_candidate_elections(conn, [candidate_id])
+                    else:
+                        removed_candidates += conn.execute(
+                            "DELETE FROM candidates WHERE id = %s",
+                            (candidate_id,),
+                        ).rowcount
+
+        return {
+            "source_records": int(stats["source_records"]),
+            "resolutions": int(stats["resolutions"]),
+            "review_decisions": int(stats["review_decisions"]),
+            "candidates": int(removed_candidates),
+        }
+
+    def delete_election(self, election_id: str) -> None:
+        self.reset_election_data(election_id)
 
     def delete_candidate(self, candidate_id: str) -> None:
         with self.connect() as conn:

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block workspace %}
+
+<section class="panel reset-confirm-panel">
+  <p class="pathline">Reset Election</p>
+  <h2>確認移除這次 election？</h2>
+  <p class="status">
+    {{ election_id }} 的匯入、判定與 commit 資料都會移除。修正原始檔後，需要重新從 Identity UI Load 並 commit。
+  </p>
+  <div class="decision-bar">
+    <form method="post" action="/elections/{{ election_id | urlencode }}/reset">
+      <input type="hidden" name="next" value="{{ next_url }}">
+      <button class="button primary danger-fill" type="submit">YES，移除</button>
+    </form>
+    <a class="button ghost" href="{{ next_url }}">NO，返回</a>
+  </div>
+</section>
+
+{% endblock %}

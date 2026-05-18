@@ -252,6 +252,19 @@ def test_done_template_shows_all_committed_resolutions() -> None:
     assert "賴坤成" in html
     assert "鄺麗貞" in html
     assert "人工決策紀錄" not in html
+    assert "重置此筆" in html
+    assert "/reset-confirm" in html
+
+    confirm_html = env.get_template("reset_election_confirm.html").render(
+        app_mode="identity",
+        election_tree={"children": {}},
+        selected_id="legislator/by-election-legislator/7th/第7屆立法委員臺東縣補選.xlsx",
+        election_id="legislator/by-election-legislator/7th/第7屆立法委員臺東縣補選.xlsx",
+        next_url="/elections/legislator/by-election-legislator/7th/第7屆立法委員臺東縣補選.xlsx",
+    )
+    assert "YES，移除" in confirm_html
+    assert "NO，返回" in confirm_html
+    assert "/reset" in confirm_html
 
 
 def test_identity_check_templates_render_review_and_preview() -> None:
@@ -293,6 +306,7 @@ def test_identity_check_templates_render_review_and_preview() -> None:
         "records": [
             {
                 "source_record_id": "legislator:1",
+                "election_id": "legislator/test.xlsx",
                 "year": 1998,
                 "type": "立法委員",
                 "region": "屏東縣選舉區",
@@ -300,6 +314,7 @@ def test_identity_check_templates_render_review_and_preview() -> None:
             },
             {
                 "source_record_id": "council:1",
+                "election_id": "councilor/test.xlsx",
                 "year": 1998,
                 "type": "縣市議員",
                 "region": "屏東縣 第03選舉區",
@@ -318,6 +333,8 @@ def test_identity_check_templates_render_review_and_preview() -> None:
             {"key": "elected", "label": "當選", "value": "", "class": ""},
         ]
         record["bulletin_url"] = "https://example.test/bulletin"
+        record["duplicate_year_source"] = False
+    detail["records"][1]["duplicate_year_source"] = True
     detail_html = env.get_template("identity_check_detail.html").render(
         app_mode="check",
         election_tree={"children": {}},
@@ -346,6 +363,50 @@ def test_identity_check_templates_render_review_and_preview() -> None:
     assert "id_劉煜基_1946a" in detail_html
     assert "參選紀錄比較" in detail_html
     assert "選舉公報" in detail_html
+    assert "重置此筆" in detail_html
+    assert "duplicate-year-source" in detail_html
+    assert "/reset-confirm" in detail_html
+
+
+def test_identity_check_detail_marks_duplicate_year_source_rows() -> None:
+    from src.webapp.routes.identity_checks import _prepare_identity_check_detail
+
+    detail = {
+        "records": [
+            {
+                "source_record_id": "councilor/test.xlsx:1",
+                "election_id": "councilor/test.xlsx",
+                "year": 2005,
+                "type": "縣市議員",
+                "region": "臺東縣 第01選舉區",
+                "elected": 1,
+            },
+            {
+                "source_record_id": "councilor/test.xlsx:2",
+                "election_id": "councilor/test.xlsx",
+                "year": 2005,
+                "type": "縣市議員",
+                "region": "臺東縣 台東市",
+                "elected": 0,
+            },
+            {
+                "source_record_id": "councilor/test.xlsx:3",
+                "election_id": "councilor/test.xlsx",
+                "year": 2009,
+                "type": "縣市議員",
+                "region": "臺東縣 第01選舉區",
+            },
+        ]
+    }
+
+    _prepare_identity_check_detail(detail)
+
+    assert detail["records"][0]["duplicate_year_source"] is True
+    assert detail["records"][1]["duplicate_year_source"] is True
+    assert detail["records"][2]["duplicate_year_source"] is False
+    assert detail["records"][0]["compare_fields"][0]["class"] == "compare-plain"
+    assert detail["records"][0]["compare_fields"][4]["class"] == "compare-elected"
+    assert detail["records"][1]["compare_fields"][4]["class"] == "compare-not-elected"
 
 
 def test_home_returns_200(tmp_path: Path) -> None:

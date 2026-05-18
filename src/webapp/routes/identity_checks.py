@@ -138,6 +138,15 @@ async def ignore_identity_check(request: Request, issue_id: int):
 
 def _prepare_identity_check_detail(detail: dict) -> None:
     records = detail.get("records", [])
+    year_source_counts: dict[tuple[str, str], int] = {}
+    for record in records:
+        key = (
+            _display_compare_value("year", record.get("year")),
+            str(record.get("election_id") or ""),
+        )
+        if key[0] and key[1]:
+            year_source_counts[key] = year_source_counts.get(key, 0) + 1
+
     value_classes: dict[tuple[str, str], str] = {}
     for field in _COMPARE_FIELDS:
         values = sorted({
@@ -149,12 +158,21 @@ def _prepare_identity_check_detail(detail: dict) -> None:
             value_classes[(field, value)] = f"compare-token-{(index % 8) + 1}"
 
     for record in records:
+        year_source_key = (
+            _display_compare_value("year", record.get("year")),
+            str(record.get("election_id") or ""),
+        )
+        record["duplicate_year_source"] = year_source_counts.get(year_source_key, 0) > 1
         record["compare_fields"] = [
             {
                 "key": field,
                 "label": _COMPARE_LABELS[field],
                 "value": _display_compare_value(field, record.get(field)),
-                "class": value_classes.get((field, _display_compare_value(field, record.get(field))), ""),
+                "class": _compare_field_class(
+                    field,
+                    _display_compare_value(field, record.get(field)),
+                    value_classes,
+                ),
             }
             for field in _COMPARE_FIELDS
         ]
@@ -167,3 +185,13 @@ def _display_compare_value(field: str, value) -> str:
     if field == "elected":
         return "當選" if value in (1, True, "1", "true", "True", "*") else "未當選"
     return str(value)
+
+
+def _compare_field_class(field: str, value: str, value_classes: dict[tuple[str, str], str]) -> str:
+    if not value:
+        return ""
+    if field == "year":
+        return "compare-plain"
+    if field == "elected":
+        return "compare-elected" if value == "當選" else "compare-not-elected"
+    return value_classes.get((field, value), "")

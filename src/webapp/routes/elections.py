@@ -211,3 +211,29 @@ async def load_election(request: Request, election_id: str):
         return RedirectResponse(f"/elections/{election_id}", status_code=303)
 
     return RedirectResponse(f"/review/{election_id}", status_code=303)
+
+
+@router.post("/elections/{election_id:path}/reset")
+async def reset_election(request: Request, election_id: str):
+    store: Store = request.app.state.store
+    form = await request.form()
+    next_url = str(form.get("next") or f"/elections/{election_id}")
+    stats = store.reset_election_data(election_id)
+    store.refresh_identity_check_issues()
+    logger.info("reset election=%s stats=%s", election_id, stats)
+    return RedirectResponse(next_url, status_code=303)
+
+
+@router.get("/elections/{election_id:path}/reset-confirm")
+async def reset_election_confirm(request: Request, election_id: str):
+    store: Store = request.app.state.store
+    root: Path = request.app.state.root
+    templates: Jinja2Templates = request.app.state.templates
+    next_url = request.query_params.get("next") or f"/elections/{election_id}"
+    return templates.TemplateResponse(request, "reset_election_confirm.html", {
+        "app_mode": "identity",
+        "election_tree": _election_tree(root, store),
+        "selected_id": election_id,
+        "election_id": election_id,
+        "next_url": next_url,
+    })

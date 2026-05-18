@@ -30,11 +30,12 @@
           <th>當選</th>
           <th>公報</th>
           <th>來源</th>
+          <th>操作</th>
         </tr>
       </thead>
       <tbody>
         {% for record in detail.records %}
-        <tr>
+        <tr class="{% if record.duplicate_year_source %}duplicate-year-source{% endif %}">
           <td>
             <input type="checkbox" name="source_record_ids" value="{{ record.source_record_id }}"
                    {% if record.source_record_id in detail.issue.source_record_ids %}checked{% endif %}>
@@ -42,7 +43,11 @@
           {% for field in record.compare_fields %}
           <td>
             {% if field.value %}
-            <span class="compare-chip {{ field.class }}">{{ field.value }}</span>
+              {% if field.class == 'compare-plain' %}
+              <span>{{ field.value }}</span>
+              {% else %}
+              <span class="compare-chip {{ field.class }}">{{ field.value }}</span>
+              {% endif %}
             {% else %}
             <span class="empty-value">—</span>
             {% endif %}
@@ -55,7 +60,18 @@
             <span class="bulletin-missing">無公報</span>
             {% endif %}
           </td>
-          <td class="mono source-id">{{ record.source_record_id }}</td>
+          <td class="source-cell">
+            <span class="mono source-id">
+              <span class="{% if record.duplicate_year_source %}duplicate-source-file{% endif %}">{{ record.election_id }}</span>:{{ record.source_record_id.rsplit(':', 1)[1] }}
+            </span>
+          </td>
+          <td>
+            <button class="text-danger reset-election-inline"
+                    type="submit"
+                    form="reset-election-{{ loop.index }}">
+              重置此筆
+            </button>
+          </td>
         </tr>
         {% endfor %}
       </tbody>
@@ -99,6 +115,14 @@
     </div>
   </section>
 </form>
+
+{% for record in detail.records %}
+<form id="reset-election-{{ loop.index }}"
+      method="get"
+      action="/elections/{{ record.election_id | urlencode }}/reset-confirm">
+  <input type="hidden" name="next" value="/identity-checks">
+</form>
+{% endfor %}
 
 {% if preview %}
 <section class="panel preview-panel">

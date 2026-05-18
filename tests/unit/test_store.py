@@ -237,6 +237,96 @@ def test_store_commit_election_writes_candidates_and_elections() -> None:
         store.close()
 
 
+def test_reset_election_data_removes_committed_rows_and_resyncs_candidate_history() -> None:
+    from uuid import uuid4
+    config = load_database_config()
+    if not config.database_url:
+        pytest.skip("PostgreSQL connection not configured")
+
+    store = Store(config)
+    try:
+        store.open()
+    except Exception:
+        pytest.skip("PostgreSQL is not reachable")
+    try:
+        store.init_schema()
+    except ConnectionError:
+        store.close()
+        pytest.skip("PostgreSQL is not reachable")
+
+    token = uuid4().hex
+    reset_election_id = f"test/reset-{token}.yaml"
+    keep_election_id = f"test/keep-{token}.yaml"
+    reset_src_id = f"{reset_election_id}:0"
+    keep_src_id = f"{keep_election_id}:0"
+    shared_candidate_id = f"id_重置測試_{token[:8]}"
+
+    try:
+        for election_id, label in (
+            (reset_election_id, "Reset Test"),
+            (keep_election_id, "Keep Test"),
+        ):
+            store.upsert_election({
+                "election_id": election_id,
+                "type": "test",
+                "label": label,
+                "path": f"/tmp/{election_id}",
+            })
+
+        reset_payload = {
+            "name": "重置測試",
+            "birthday": 1970,
+            "year": 2020,
+            "type": "縣市議員",
+            "region": "臺東縣 第01選舉區",
+            "party": "無黨籍",
+            "elected": 1,
+        }
+        keep_payload = {
+            "name": "重置測試",
+            "birthday": 1970,
+            "year": 2024,
+            "type": "縣市議員",
+            "region": "臺東縣 第01選舉區",
+            "party": "無黨籍",
+            "elected": 0,
+        }
+        store.insert_source_record(
+            source_record_id=reset_src_id,
+            election_id=reset_election_id,
+            payload=reset_payload,
+        )
+        store.insert_source_record(
+            source_record_id=keep_src_id,
+            election_id=keep_election_id,
+            payload=keep_payload,
+        )
+        store.commit_election(
+            election_id=reset_election_id,
+            decisions={reset_src_id: {"mode": "auto", "candidate_id": shared_candidate_id}},
+            source_records_map={reset_src_id: reset_payload},
+        )
+        store.commit_election(
+            election_id=keep_election_id,
+            decisions={keep_src_id: {"mode": "auto", "candidate_id": shared_candidate_id}},
+            source_records_map={keep_src_id: keep_payload},
+        )
+
+        stats = store.reset_election_data(reset_election_id)
+
+        assert stats["source_records"] == 1
+        assert stats["resolutions"] == 1
+        assert store.list_source_records(reset_election_id) == []
+        assert store.list_resolutions(reset_election_id) == []
+        target = next(c for c in store.list_candidates_with_elections() if c["id"] == shared_candidate_id)
+        assert [e["year"] for e in target["elections"]] == [2024]
+    finally:
+        store.delete_election(reset_election_id)
+        store.delete_election(keep_election_id)
+        store.delete_candidate(shared_candidate_id)
+        store.close()
+
+
 def test_identity_fix_splits_committed_candidate_with_operation_snapshot() -> None:
     config = load_database_config()
     if not config.database_url:
