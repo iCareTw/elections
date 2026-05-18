@@ -8,11 +8,21 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
+from src.webapp.bulletin import bulletin_url
 from src.webapp.routes.elections import _election_tree
 from src.webapp.store import Store
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+_COMPARE_FIELDS = ("year", "type", "region", "party", "elected")
+_COMPARE_LABELS = {
+    "year": "年份",
+    "type": "選舉類別",
+    "region": "區域",
+    "party": "黨籍",
+    "elected": "當選",
+}
 
 
 @router.get("/identity-checks")
@@ -47,6 +57,7 @@ async def identity_check_detail(request: Request, issue_id: int):
     detail = store.get_identity_check_detail(issue_id)
     if detail is None:
         return RedirectResponse("/identity-checks", status_code=303)
+    _prepare_identity_check_detail(detail)
     return templates.TemplateResponse(request, "identity_check_detail.html", {
         "app_mode": "check",
         "election_tree": _election_tree(root, store),
@@ -71,6 +82,7 @@ async def preview_identity_fix(
     detail = store.get_identity_check_detail(issue_id)
     if detail is None:
         return RedirectResponse("/identity-checks", status_code=303)
+    _prepare_identity_check_detail(detail)
     if not source_record_ids:
         return RedirectResponse(f"/identity-checks/{issue_id}?error={quote('請至少選擇一筆 election')}", status_code=303)
 
@@ -122,3 +134,36 @@ async def ignore_identity_check(request: Request, issue_id: int):
     store: Store = request.app.state.store
     store.update_identity_check_status(issue_id, "ignored")
     return RedirectResponse("/identity-checks", status_code=303)
+
+
+def _prepare_identity_check_detail(detail: dict) -> None:
+    records = detail.get("records", [])
+    value_classes: dict[tuple[str, str], str] = {}
+    for field in _COMPARE_FIELDS:
+        values = sorted({
+            _display_compare_value(field, record.get(field))
+            for record in records
+            if _display_compare_value(field, record.get(field))
+        })
+        for index, value in enumerate(values):
+            value_classes[(field, value)] = f"compare-token-{(index % 8) + 1}"
+
+    for record in records:
+        record["compare_fields"] = [
+            {
+                "key": field,
+                "label": _COMPARE_LABELS[field],
+                "value": _display_compare_value(field, record.get(field)),
+                "class": value_classes.get((field, _display_compare_value(field, record.get(field))), ""),
+            }
+            for field in _COMPARE_FIELDS
+        ]
+        record["bulletin_url"] = bulletin_url(record, record.get("election_id") or "")
+
+
+def _display_compare_value(field: str, value) -> str:
+    if value is None or value == "":
+        return ""
+    if field == "elected":
+        return "當選" if value in (1, True, "1", "true", "True", "*") else "未當選"
+    return str(value)

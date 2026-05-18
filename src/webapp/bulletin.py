@@ -104,7 +104,10 @@ def _bulletin_county_code(city: str, year: int) -> str | None:
     return _BULLETIN_COUNTY_OLD.get(city)
 
 
-def _councilor_url(year: int, region: str) -> str:
+def _councilor_url(year: int, region: str) -> str | None:
+    if year == 2002:
+        return None
+
     roc = _roc(year)
     city = _city(region)
     direct = _is_direct(city, year)

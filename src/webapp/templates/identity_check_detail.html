@@ -16,22 +16,50 @@
 
 <div class="status">{{ detail.issue.summary }}</div>
 
-<form method="post" action="/identity-checks/{{ detail.issue.id }}/preview" class="check-layout">
+<form method="post" action="/identity-checks/{{ detail.issue.id }}/preview" class="identity-fix-form">
   <section class="panel">
-    <h3>可疑 Elections</h3>
-    <div class="check-list">
-      {% for record in detail.records %}
-      <label class="check-row">
-        <input type="checkbox" name="source_record_ids" value="{{ record.source_record_id }}"
-               {% if record.source_record_id in detail.issue.source_record_ids %}checked{% endif %}>
-        <span>
-          <strong>{{ record.year }} {{ record.type }}</strong>
-          <em>{{ record.region }}{% if record.party %} · {{ record.party }}{% endif %}</em>
-          <code>{{ record.source_record_id }}</code>
-        </span>
-      </label>
-      {% endfor %}
-    </div>
+    <h3>參選紀錄比較</h3>
+    <table class="log-table identity-record-table">
+      <thead>
+        <tr>
+          <th>拆分</th>
+          <th>年份</th>
+          <th>選舉類別</th>
+          <th>區域</th>
+          <th>黨籍</th>
+          <th>當選</th>
+          <th>公報</th>
+          <th>來源</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in detail.records %}
+        <tr>
+          <td>
+            <input type="checkbox" name="source_record_ids" value="{{ record.source_record_id }}"
+                   {% if record.source_record_id in detail.issue.source_record_ids %}checked{% endif %}>
+          </td>
+          {% for field in record.compare_fields %}
+          <td>
+            {% if field.value %}
+            <span class="compare-chip {{ field.class }}">{{ field.value }}</span>
+            {% else %}
+            <span class="empty-value">—</span>
+            {% endif %}
+          </td>
+          {% endfor %}
+          <td>
+            {% if record.bulletin_url %}
+            <a class="bulletin-inline" href="{{ record.bulletin_url }}" target="_blank" rel="noopener">選舉公報</a>
+            {% else %}
+            <span class="bulletin-missing">無公報</span>
+            {% endif %}
+          </td>
+          <td class="mono source-id">{{ record.source_record_id }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </section>
 
   <section class="panel">

@@ -41,6 +41,16 @@ def test_councilor_candidate_history_links_to_county_folder() -> None:
     )
 
 
+def test_2002_councilor_record_has_no_bulletin() -> None:
+    record = {
+        "type": "縣市議員",
+        "year": 2002,
+        "region": "臺東縣 第01選舉區",
+    }
+
+    assert bulletin_url_from_record(record) is None
+
+
 def test_direct_municipality_councilor_candidate_history_links_to_county_folder() -> None:
     record = {
         "type": "縣市議員",

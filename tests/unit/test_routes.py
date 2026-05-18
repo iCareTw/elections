@@ -279,6 +279,8 @@ def test_identity_check_templates_render_review_and_preview() -> None:
     assert "/identity-checks/1" in index_html
     assert "目前使用 Identity Check" in index_html
     assert "待審清單" in index_html
+    assert ">查看<" not in index_html
+    assert "修正紀錄" not in index_html
 
     detail = {
         "issue": {
@@ -307,6 +309,15 @@ def test_identity_check_templates_render_review_and_preview() -> None:
         "nearby_candidates": [],
         "operations": [],
     }
+    for record in detail["records"]:
+        record["compare_fields"] = [
+            {"key": "year", "label": "年份", "value": str(record["year"]), "class": "compare-token-1"},
+            {"key": "type", "label": "選舉類別", "value": record["type"], "class": "compare-token-1"},
+            {"key": "region", "label": "區域", "value": record["region"], "class": "compare-token-1"},
+            {"key": "party", "label": "黨籍", "value": record["party"], "class": "compare-token-1"},
+            {"key": "elected", "label": "當選", "value": "", "class": ""},
+        ]
+        record["bulletin_url"] = "https://example.test/bulletin"
     detail_html = env.get_template("identity_check_detail.html").render(
         app_mode="check",
         election_tree={"children": {}},
@@ -333,6 +344,8 @@ def test_identity_check_templates_render_review_and_preview() -> None:
     )
     assert "套用前預覽" in detail_html
     assert "id_劉煜基_1946a" in detail_html
+    assert "參選紀錄比較" in detail_html
+    assert "選舉公報" in detail_html
 
 
 def test_home_returns_200(tmp_path: Path) -> None:
