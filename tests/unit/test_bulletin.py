@@ -5,7 +5,7 @@ from jinja2 import Environment, FileSystemLoader
 from src.webapp.bulletin import bulletin_url, bulletin_url_from_record
 
 
-def test_councilor_incoming_record_links_to_district_pdf() -> None:
+def test_councilor_incoming_record_links_to_county_folder() -> None:
     payload = {
         "type": "縣市議員",
         "year": 2005,
@@ -13,12 +13,23 @@ def test_councilor_incoming_record_links_to_district_pdf() -> None:
     }
 
     assert bulletin_url(payload, "councilor/2005/縣市議員_區域_臺中市.xlsx") == (
-        "https://bulletin.cec.gov.tw/01選舉公報/06縣市議員/094年/"
-        "13臺中市/臺中市第6選舉區議員.pdf"
+        "https://bulletin.cec.gov.tw/?dir=01選舉公報/06縣市議員/094年/13臺中市"
     )
 
 
-def test_councilor_candidate_history_links_to_district_pdf() -> None:
+def test_old_councilor_link_uses_county_folder_to_avoid_filename_guessing() -> None:
+    record = {
+        "type": "縣市議員",
+        "year": 2005,
+        "region": "臺北縣 第06選舉區",
+    }
+
+    assert bulletin_url_from_record(record) == (
+        "https://bulletin.cec.gov.tw/?dir=01選舉公報/06縣市議員/094年/07臺北縣"
+    )
+
+
+def test_councilor_candidate_history_links_to_county_folder() -> None:
     record = {
         "type": "縣市議員",
         "year": 2009,
@@ -26,12 +37,11 @@ def test_councilor_candidate_history_links_to_district_pdf() -> None:
     }
 
     assert bulletin_url_from_record(record) == (
-        "https://bulletin.cec.gov.tw/01選舉公報/06縣市議員/098年/"
-        "09桃園縣/桃園縣第5選舉區議員.pdf"
+        "https://bulletin.cec.gov.tw/?dir=01選舉公報/06縣市議員/098年/09桃園縣"
     )
 
 
-def test_direct_municipality_councilor_candidate_history_links_to_district_pdf() -> None:
+def test_direct_municipality_councilor_candidate_history_links_to_county_folder() -> None:
     record = {
         "type": "縣市議員",
         "year": 2014,
@@ -39,8 +49,19 @@ def test_direct_municipality_councilor_candidate_history_links_to_district_pdf()
     }
 
     assert bulletin_url_from_record(record) == (
-        "https://bulletin.cec.gov.tw/01選舉公報/05直轄市議員/103年/"
-        "05臺南市/臺南市第3選舉區議員.pdf"
+        "https://bulletin.cec.gov.tw/?dir=01選舉公報/05直轄市議員/103年/05臺南市"
+    )
+
+
+def test_2010_direct_municipality_councilor_links_to_county_folder() -> None:
+    record = {
+        "type": "縣市議員",
+        "year": 2010,
+        "region": "新北市 第10選舉區",
+    }
+
+    assert bulletin_url_from_record(record) == (
+        "https://bulletin.cec.gov.tw/?dir=01選舉公報/05直轄市議員/099年/02新北市"
     )
 
 
@@ -71,7 +92,7 @@ def test_party_list_legislator_infers_session_from_year() -> None:
     )
 
 
-def test_pdf_links_do_not_use_directory_query_urls() -> None:
+def test_councilor_district_links_use_directory_urls() -> None:
     url = bulletin_url_from_record({
         "type": "縣市議員",
         "year": 2009,
@@ -79,9 +100,8 @@ def test_pdf_links_do_not_use_directory_query_urls() -> None:
     })
 
     assert url is not None
-    assert url.startswith("https://bulletin.cec.gov.tw/01選舉公報/")
-    assert "?dir=" not in url
-    assert url.endswith(".pdf")
+    assert url.startswith("https://bulletin.cec.gov.tw/?dir=01選舉公報/")
+    assert url.endswith("/09桃園縣")
 
 
 def test_councilor_record_without_known_district_falls_back_to_region_folder() -> None:
