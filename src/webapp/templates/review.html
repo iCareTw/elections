@@ -78,11 +78,6 @@
             <input class="match-select" type="radio" name="candidate_id" value="{{ match.id }}"
                    {% if loop.first %}checked{% endif %}>
             <strong>{{ match.name }}</strong>
-            {% set _total = match.get('total_cmp') or 0 %}
-            {% set _hits = match.get('match_count') or 0 %}
-            {% if _total %}
-            <span class="match-score-pill {% if _hits == _total %}score-high{% elif _hits * 2 >= _total %}score-mid{% else %}score-low{% endif %}">{{ _hits }}/{{ _total }}</span>
-            {% endif %}
             <span class="selected-label">目前選取</span>
           </span>
           <span class="mono match-candidate-id">{{ match.id }}</span>
@@ -132,7 +127,7 @@
             {% else %}
             {% set burl = bulletin_url(e) %}
             {% endif %}
-            <li{% if e.get('is_incoming') %} class="incoming-election-item"{% endif %}>{{ e.year }} {% if is_local %}<span class="tag-type">{{ e.type }}</span>{% else %}{{ e.type }}{% endif %} · {% if is_local %}<span class="tag-region">{{ e.region }}</span>{% else %}{{ e.region }}{% endif %}{% if e.party %} · {{ e.party }}{% endif %}{% if e.elected is defined and e.elected is not none %} · {{ elected_tag(e.elected) }}{% endif %}{% if burl %} <a class="bulletin-inline" href="{{ burl }}" target="_blank" rel="noopener" title="選舉公報 PDF">📋</a>{% endif %}{% if e.get('is_incoming') %} <span class="incoming-tag">← 本次</span>{% endif %}</li>
+            <li{% if e.get('is_incoming') %} class="incoming-election-item"{% endif %}>{{ e.year }} {% if is_local %}<span class="tag-type">{{ e.type }}</span>{% else %}{{ e.type }}{% endif %} · {% if is_local %}<span class="tag-region">{{ e.region }}</span>{% else %}{{ e.region }}{% endif %}{% if e.party %} · {{ e.party }}{% endif %}{% if e.elected is defined and e.elected is not none %} · {{ elected_tag(e.elected) }}{% endif %}{% if burl %} <a class="bulletin-inline" href="{{ burl }}" target="_blank" rel="noopener" title="選舉公報 PDF">📋</a>{% else %} <span class="bulletin-missing">無公報</span>{% endif %}{% if e.get('is_incoming') %} <span class="incoming-tag">← 本次</span>{% endif %}</li>
             {% endfor %}
           </ul>
           {% else %}
