@@ -625,34 +625,22 @@ button { font: inherit; cursor: pointer; border: 0; }
 .badge-stale { background: #e5e7eb; color: #6b7280; }
 .check-layout { display: grid; grid-template-columns: minmax(320px, 1fr) minmax(320px, 1fr); gap: 12px; }
 .identity-fix-form { display: grid; gap: 12px; }
-.identity-record-table { table-layout: fixed; border-collapse: separate; border-spacing: 0; }
+.identity-record-table { table-layout: fixed; border-collapse: collapse; }
 .identity-record-table th,
-.identity-record-table td { vertical-align: top; border-right: 1px solid var(--line); }
-.identity-record-table th:last-child,
-.identity-record-table td:last-child { border-right: none; }
-.identity-record-table th { padding: 7px 10px; }
-.identity-record-table td { padding: 7px 10px; }
-.identity-record-table th:first-child,
-.identity-record-table td:first-child { width: 52px; text-align: center; }
-.identity-record-table th:nth-child(2),
-.identity-record-table td:nth-child(2) { width: 72px; }
-.identity-record-table th:nth-child(3),
-.identity-record-table td:nth-child(3) { width: 110px; }
-.identity-record-table th:nth-child(4),
-.identity-record-table td:nth-child(4) { width: 190px; }
-.identity-record-table th:nth-child(5),
-.identity-record-table td:nth-child(5) { width: 94px; }
-.identity-record-table th:nth-child(6),
-.identity-record-table td:nth-child(6) { width: 72px; }
-.identity-record-table th:nth-child(7),
-.identity-record-table td:nth-child(7) { width: 88px; }
-.identity-record-table th:nth-child(8),
-.identity-record-table td:nth-child(8) { width: 360px; }
-.identity-record-table th:nth-child(9),
-.identity-record-table td:nth-child(9) { width: 86px; }
-.identity-record-table .source-id { overflow-wrap: anywhere; }
+.identity-record-table td { padding: 6px 8px; vertical-align: middle; border: 1px solid var(--line); }
+.identity-record-table th { font-size: 11px; background: rgba(255,255,255,.38); }
+.identity-record-table .col-select { width: 46px; }
+.identity-record-table .col-year { width: 62px; }
+.identity-record-table .col-type { width: 98px; }
+.identity-record-table .col-region { width: 180px; }
+.identity-record-table .col-party { width: 88px; }
+.identity-record-table .col-elected { width: 66px; }
+.identity-record-table .col-bulletin { width: 76px; }
+.identity-record-table .col-source { width: 360px; }
+.identity-record-table .col-row { width: 54px; }
+.identity-record-table .col-command { width: 84px; }
+.source-file-cell { overflow-wrap: anywhere; font-family: monospace; font-size: 11px; }
 .duplicate-source-file { color: #991b1b; font-weight: 800; }
-.source-cell { display: grid; gap: 4px; }
 .reset-election-form { margin: -4px 0 10px; }
 .reset-confirm-panel { max-width: 760px; }
 .reset-election-inline { width: fit-content; padding: 0; border: 0; background: transparent; cursor: pointer; color: var(--muted); font-size: 11px; font-weight: 700; }

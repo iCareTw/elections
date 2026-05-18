@@ -20,6 +20,18 @@
   <section class="panel">
     <h3>參選紀錄比較</h3>
     <table class="log-table identity-record-table">
+      <colgroup>
+        <col class="col-select">
+        <col class="col-year">
+        <col class="col-type">
+        <col class="col-region">
+        <col class="col-party">
+        <col class="col-elected">
+        <col class="col-bulletin">
+        <col class="col-source">
+        <col class="col-row">
+        <col class="col-command">
+      </colgroup>
       <thead>
         <tr>
           <th>拆分</th>
@@ -29,13 +41,14 @@
           <th>黨籍</th>
           <th>當選</th>
           <th>公報</th>
-          <th>來源</th>
+          <th>來源檔</th>
+          <th>列號</th>
           <th>操作</th>
         </tr>
       </thead>
       <tbody>
         {% for record in detail.records %}
-        <tr class="{% if record.duplicate_year_source %}duplicate-year-source{% endif %}">
+        <tr>
           <td>
             <input type="checkbox" name="source_record_ids" value="{{ record.source_record_id }}"
                    {% if record.source_record_id in detail.issue.source_record_ids %}checked{% endif %}>
@@ -60,13 +73,12 @@
             <span class="bulletin-missing">無公報</span>
             {% endif %}
           </td>
-          <td class="source-cell">
-            <span class="mono source-id">
-              <span class="{% if record.duplicate_year_source %}duplicate-source-file{% endif %}">{{ record.election_id }}</span>:{{ record.source_record_id.rsplit(':', 1)[1] }}
-            </span>
+          <td class="source-file-cell">
+            <span class="{% if record.duplicate_year_source %}duplicate-source-file{% endif %}">{{ record.election_id }}</span>
           </td>
+          <td class="mono">{{ record.source_record_id.rsplit(':', 1)[1] }}</td>
           <td>
-            <button class="text-danger reset-election-inline"
+            <button class="reset-election-inline"
                     type="submit"
                     form="reset-election-{{ loop.index }}">
               重置此筆

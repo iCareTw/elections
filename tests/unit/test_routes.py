@@ -364,7 +364,7 @@ def test_identity_check_templates_render_review_and_preview() -> None:
     assert "參選紀錄比較" in detail_html
     assert "選舉公報" in detail_html
     assert "重置此筆" in detail_html
-    assert "duplicate-year-source" in detail_html
+    assert "duplicate-source-file" in detail_html
     assert "/reset-confirm" in detail_html
 
 
