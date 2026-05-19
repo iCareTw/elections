@@ -51,7 +51,7 @@
         <tr>
           <td>
             <input type="checkbox" name="source_record_ids" value="{{ record.source_record_id }}"
-                   {% if record.source_record_id in detail.issue.source_record_ids %}checked{% endif %}>
+                   {% if record.source_record_id in (selected_source_record_ids | default([])) %}checked{% endif %}>
           </td>
           {% for field in record.compare_fields %}
           <td>
