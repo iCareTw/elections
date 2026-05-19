@@ -75,6 +75,18 @@ def test_2010_direct_municipality_councilor_links_to_county_folder() -> None:
     )
 
 
+def test_village_record_links_to_eebulletin_category_folder() -> None:
+    record = {
+        "type": "村里長",
+        "year": 2022,
+        "region": "臺東縣 鹿野鄉瑞豐村",
+    }
+
+    assert bulletin_url_from_record(record) == (
+        "https://eebulletin.cec.gov.tw/?dir=111/17臺東縣/05村里長"
+    )
+
+
 def test_party_list_legislator_links_to_pdf_when_stable() -> None:
     record = {
         "type": "立法委員",

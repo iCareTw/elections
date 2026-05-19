@@ -122,6 +122,15 @@ def _councilor_url(year: int, region: str) -> str | None:
     return _dir(base)
 
 
+def _legislator_party_url(year: int, session: int | None) -> str:
+    if session:
+        return _file(
+            f"02立法委員/{_roc(year)}第{session}屆/02全國不分區及僑居國外國民/"
+            f"{_roc_num(year)}年全國不分區及僑居國外國民立委選舉.pdf"
+        )
+    return _dir(f"02立法委員/{_roc(year)}")
+
+
 def bulletin_url(payload: dict, election_id: str = "") -> str | None:
     """
     從含 type/year/region/session 的 dict 產生中選會公報連結。
@@ -145,9 +154,7 @@ def bulletin_url(payload: dict, election_id: str = "") -> str | None:
     if type_ == "立法委員":
         session = session or _LEGISLATOR_SESSION_BY_YEAR.get(year)
         if region in {"全國", "不分區", "全國不分區及僑居國外國民"}:
-            if session:
-                return _dir(f"02立法委員/{roc}第{session}屆/02全國不分區及僑居國外國民")
-            return _dir(f"02立法委員/{roc}")
+            return _legislator_party_url(year, session)
         if session:
             return _dir(f"02立法委員/{roc}第{session}屆/01區域")
         return _dir(f"02立法委員/{roc}")
@@ -172,6 +179,15 @@ def bulletin_url(payload: dict, election_id: str = "") -> str | None:
             code = _EEBULLETIN_COUNTY.get(city)
             if code:
                 return _ee(f"{roc_num:03d}/{code}{city}/03鄉鎮市長")
+            return _ee(f"{roc_num:03d}")
+        return None
+
+    if type_ == "村里長":
+        roc_num = _roc_num(year)
+        if roc_num >= _TOWNSHIP_EEBULLETIN_FROM_ROC:
+            code = _EEBULLETIN_COUNTY.get(city)
+            if code:
+                return _ee(f"{roc_num:03d}/{code}{city}/05村里長")
             return _ee(f"{roc_num:03d}")
         return None
 
