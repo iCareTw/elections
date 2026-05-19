@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from src.webapp.identity_checks import find_identity_check_issues, region_root
+from src.webapp.routes.identity_checks import _prepare_identity_check_index
 
 
 def test_find_identity_check_issues_detects_same_year_multiple() -> None:
@@ -64,3 +65,54 @@ def test_find_identity_check_issues_detects_downgrade_after_elected() -> None:
 def test_region_root_treats_county_city_renames_as_same_region() -> None:
     assert region_root("臺北縣 第05選舉區") == "新北市"
     assert region_root("新北市 第03選舉區") == "新北市"
+
+
+def test_prepare_identity_check_index_groups_issues_by_candidate_and_hides_expired() -> None:
+    issues = [
+        {
+            "id": 1,
+            "candidate_id": "id_陳美玲_1965",
+            "name": "陳美玲",
+            "status": "open",
+            "status_label": "待審",
+            "severity": "critical",
+            "summary": "1998 年有 2 筆參選紀錄",
+        },
+        {
+            "id": 2,
+            "candidate_id": "id_陳美玲_1965",
+            "name": "陳美玲",
+            "status": "open",
+            "status_label": "待審",
+            "severity": "warning",
+            "summary": "2002 年有 1 筆參選紀錄",
+        },
+        {
+            "id": 3,
+            "candidate_id": "id_陳小華_1970",
+            "name": "陳小華",
+            "status": "stale",
+            "status_label": "已過期",
+            "severity": "warning",
+            "summary": "2010 年的問題已失效",
+        },
+    ]
+
+    rows, summary = _prepare_identity_check_index(issues)
+
+    assert len(rows) == 2
+    assert rows[0]["candidate_id"] == "id_陳美玲_1965"
+    assert rows[0]["reason_text"] == "1998 年有 2 筆參選紀錄; 2002 年有 1 筆參選紀錄"
+    assert rows[0]["severity_label"] == "必審"
+    assert summary == {
+        "critical": 1,
+        "warning": 1,
+        "open": 1,
+        "stale": 1,
+        "resolved": 0,
+        "ignored": 0,
+        "total": 2,
+    }
+
+    visible_rows = [row for row in rows if row["status"] != "stale"]
+    assert len(visible_rows) == 1

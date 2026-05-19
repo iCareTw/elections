@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 
 from fastapi import APIRouter, Form, Request
 from fastapi.responses import RedirectResponse
@@ -14,6 +14,13 @@ from src.webapp.store import Store
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+_ISSUE_STATUS_ORDER = {
+    "open": 0,
+    "stale": 1,
+    "resolved": 2,
+    "ignored": 3,
+}
 
 _COMPARE_FIELDS = ("year", "type", "region", "party", "elected")
 _COMPARE_LABELS = {
@@ -30,12 +37,18 @@ async def identity_checks_index(request: Request):
     store: Store = request.app.state.store
     root: Path = request.app.state.root
     templates: Jinja2Templates = request.app.state.templates
-    issues = store.list_identity_check_issues()
+    show_expired = request.query_params.get("show_expired", "1") not in {"0", "false", "False"}
+    issue_rows = store.list_identity_check_issues()
+    issues, summary = _prepare_identity_check_index(issue_rows)
+    if not show_expired:
+        issues = [issue for issue in issues if issue["status"] != "stale"]
     return templates.TemplateResponse(request, "identity_checks.html", {
         "app_mode": "check",
         "election_tree": _election_tree(root, store),
         "selected_id": None,
         "issues": issues,
+        "issue_summary": summary,
+        "show_expired": show_expired,
         "operations": store.list_identity_fix_operations(limit=20),
         "generated_count": request.query_params.get("generated"),
     })
@@ -46,7 +59,10 @@ async def scan_identity_checks(request: Request):
     store: Store = request.app.state.store
     count = store.refresh_identity_check_issues()
     logger.info("identity-check scan generated=%d", count)
-    return RedirectResponse(f"/identity-checks?generated={count}", status_code=303)
+    params = {"generated": count}
+    if request.query_params.get("show_expired") in {"0", "1"}:
+        params["show_expired"] = request.query_params["show_expired"]
+    return RedirectResponse(f"/identity-checks?{urlencode(params)}", status_code=303)
 
 
 @router.get("/identity-checks/{issue_id:int}")
@@ -63,6 +79,7 @@ async def identity_check_detail(request: Request, issue_id: int):
         "election_tree": _election_tree(root, store),
         "selected_id": None,
         "detail": detail,
+        "selected_source_record_ids": [],
         "preview": None,
         "error": request.query_params.get("error", ""),
     })
@@ -100,6 +117,7 @@ async def preview_identity_fix(
         "election_tree": _election_tree(root, store),
         "selected_id": None,
         "detail": detail,
+        "selected_source_record_ids": source_record_ids,
         "preview": preview,
         "error": "",
     })
@@ -177,6 +195,70 @@ def _prepare_identity_check_detail(detail: dict) -> None:
             for field in _COMPARE_FIELDS
         ]
         record["bulletin_url"] = bulletin_url(record, record.get("election_id") or "")
+
+
+def _prepare_identity_check_index(issues: list[dict]) -> tuple[list[dict], dict[str, int]]:
+    grouped: dict[str, dict] = {}
+    summary = {
+        "critical": 0,
+        "warning": 0,
+        "open": 0,
+        "stale": 0,
+        "resolved": 0,
+        "ignored": 0,
+        "total": 0,
+    }
+
+    for issue in issues:
+        candidate_id = issue["candidate_id"]
+        group = grouped.get(candidate_id)
+        if group is None:
+            group = {
+                "id": issue["id"],
+                "candidate_id": candidate_id,
+                "candidate_name": issue.get("name") or "",
+                "status": issue["status"],
+                "status_label": issue["status_label"],
+                "severity": issue["severity"],
+                "severity_label": _index_severity_label(issue["severity"]),
+                "reason_text": issue["summary"],
+                "_sort_key": _index_issue_sort_key(issue),
+            }
+            grouped[candidate_id] = group
+        else:
+            group["reason_text"] = f"{group['reason_text']}; {issue['summary']}"
+            current_sort = _index_issue_sort_key(issue)
+            if current_sort < group["_sort_key"]:
+                group["id"] = issue["id"]
+                group["status"] = issue["status"]
+                group["status_label"] = issue["status_label"]
+                group["severity"] = issue["severity"]
+                group["severity_label"] = _index_severity_label(issue["severity"])
+                group["_sort_key"] = current_sort
+            if issue["severity"] == "critical":
+                group["severity"] = "critical"
+                group["severity_label"] = "必審"
+
+    rows = sorted(grouped.values(), key=lambda item: item["_sort_key"])
+    for row in rows:
+        row.pop("_sort_key", None)
+        summary[row["status"]] += 1
+        summary["critical" if row["severity"] == "critical" else "warning"] += 1
+    summary["total"] = len(rows)
+    return rows, summary
+
+
+def _index_issue_sort_key(issue: dict) -> tuple[int, int, int, int]:
+    status_order = _ISSUE_STATUS_ORDER.get(issue.get("status"), 99)
+    severity_order = 0 if issue.get("severity") == "critical" else 1
+    updated = issue.get("updated_at")
+    updated_order = -int(updated.timestamp()) if hasattr(updated, "timestamp") else 0
+    issue_id = int(issue.get("id") or 0)
+    return (status_order, severity_order, updated_order, issue_id)
+
+
+def _index_severity_label(severity: str) -> str:
+    return "必審" if severity == "critical" else "提醒"
 
 
 def _display_compare_value(field: str, value) -> str:

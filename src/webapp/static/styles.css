@@ -518,6 +518,14 @@ button { font: inherit; cursor: pointer; border: 0; }
 
 /* ── State: done ── */
 .status-done { color: var(--accent-strong); font-size: 13px; }
+.check-header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.check-summary { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.check-summary .badge { margin-left: 0; }
+.check-table-wrap { overflow-x: auto; }
+.identity-check-table { table-layout: fixed; min-width: 980px; width: 100%; }
+.identity-check-table th,
+.identity-check-table td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.issue-reason { white-space: nowrap; }
 
 /* ── State: invalid_data ── */
 .state-error { display: flex; flex-direction: column; align-items: center; padding: 40px 24px; gap: 16px; }
@@ -612,14 +620,18 @@ button { font: inherit; cursor: pointer; border: 0; }
 .identity-check-table th:first-child,
 .identity-check-table td:first-child { width: 72px; }
 .identity-check-table th:nth-child(2),
-.identity-check-table td:nth-child(2) { width: 56px; }
+.identity-check-table td:nth-child(2) { width: 68px; }
 .identity-check-table th:nth-child(3),
 .identity-check-table td:nth-child(3) { width: 220px; }
+.identity-check-table th:nth-child(4),
+.identity-check-table td:nth-child(4) { width: auto; }
 .candidate-id-link { color: var(--accent); text-decoration: none; font-weight: 700; }
 .candidate-id-link:hover { text-decoration: underline; }
 .resolved-banner { background: #d1fae5; border: 1px solid #6ee7b7; border-radius: 6px; padding: 6px 10px; font-size: 12px; color: #065f46; margin-bottom: 10px; }
 .nav-pending-badge { background: #fef3c7; color: #92400e; border-radius: 10px; padding: 1px 7px; font-size: 10px; margin-left: 5px; }
 .badge-open { background: #fef3c7; color: #92400e; }
+.badge-warning { background: #fef3c7; color: #92400e; }
+.badge-critical { background: #fee2e2; color: #991b1b; }
 .badge-ignored { background: #f3f4f6; color: #6b7280; }
 .badge-resolved { background: #d1fae5; color: #065f46; }
 .badge-stale { background: #e5e7eb; color: #6b7280; }

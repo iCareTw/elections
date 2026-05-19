@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from uuid import uuid4
 
@@ -303,20 +304,35 @@ def test_identity_check_templates_render_review_and_preview() -> None:
                 "id": 1,
                 "status": "open",
                 "status_label": "待審",
+                "severity": "critical",
                 "severity_label": "必審",
                 "candidate_id": "id_劉煜基_1946",
-                "summary": "劉煜基 在 1998 年有 2 筆參選紀錄",
+                "reason_text": "劉煜基 在 1998 年有 2 筆參選紀錄; 劉煜基 在 2002 年有 1 筆參選紀錄",
             }
         ],
+        issue_summary={
+            "critical": 1,
+            "warning": 0,
+            "open": 1,
+            "stale": 0,
+            "resolved": 0,
+            "ignored": 0,
+            "total": 1,
+        },
+        show_expired=True,
         operations=[],
         generated_count=None,
     )
     assert "疑似誤合併檢查" in index_html
     assert "/identity-checks/1" in index_html
     assert "目前使用 Identity Check" in index_html
-    assert "待審清單" in index_html
+    assert "隱藏已過期" in index_html
+    assert "必審 1" in index_html
     assert ">查看<" not in index_html
     assert "修正紀錄" not in index_html
+    assert "checked" not in index_html
+    assert "；" not in index_html
+    assert "; " in index_html
 
     detail = {
         "issue": {
@@ -363,6 +379,7 @@ def test_identity_check_templates_render_review_and_preview() -> None:
         election_tree={"children": {}},
         selected_id=None,
         detail=detail,
+        selected_source_record_ids=["legislator:1"],
         preview={
             "action": "selected_new",
             "source_record_ids": ["legislator:1"],
@@ -389,6 +406,8 @@ def test_identity_check_templates_render_review_and_preview() -> None:
     assert "重置來源檔" in detail_html
     assert "duplicate-source-file" in detail_html
     assert "/reset-confirm" in detail_html
+    assert re.search(r'name="source_record_ids" value="legislator:1"\s+checked', detail_html)
+    assert not re.search(r'name="source_record_ids" value="council:1"\s+checked', detail_html)
 
 
 def test_identity_check_detail_marks_duplicate_year_source_rows() -> None:

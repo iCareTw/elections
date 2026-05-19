@@ -6,9 +6,14 @@
     <p class="pathline">Robustness Check</p>
     <h2>疑似誤合併檢查</h2>
   </div>
-  <form method="post" action="/identity-checks/scan">
-    <button class="button primary" type="submit">重新檢查</button>
-  </form>
+  <div class="check-header-actions">
+    <a class="button ghost" href="/identity-checks{% if show_expired %}?show_expired=0{% else %}?show_expired=1{% endif %}">
+      {% if show_expired %}隱藏已過期{% else %}顯示已過期{% endif %}
+    </a>
+    <form method="post" action="/identity-checks/scan">
+      <button class="button primary" type="submit">重新檢查</button>
+    </form>
+  </div>
 </div>
 
 {% if generated_count %}
@@ -16,26 +21,40 @@
 {% endif %}
 
 <section class="panel">
-  <h3>待審清單</h3>
-  {% if issues %}
-  <table class="log-table identity-check-table">
-    <thead><tr><th>狀態</th><th>等級</th><th>候選人</th><th>原因</th></tr></thead>
-    <tbody>
-      {% for issue in issues %}
-      <tr>
-        <td><span class="badge badge-{{ issue.status }}">{{ issue.status_label }}</span></td>
-        <td>{{ issue.severity_label }}</td>
-        <td class="mono">
-          <a class="candidate-id-link" href="/identity-checks/{{ issue.id }}">{{ issue.candidate_id }}</a>
-        </td>
-        <td>{{ issue.summary }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p class="empty">目前沒有待審項目</p>
-  {% endif %}
+  <div class="check-summary">
+    <span class="badge badge-critical">必審 {{ issue_summary.critical }}</span>
+    <span class="badge badge-open">待審 {{ issue_summary.warning }}</span>
+    <span class="badge badge-stale">已過期 {{ issue_summary.stale }}</span>
+    <span class="badge badge-resolved">已修正 {{ issue_summary.resolved }}</span>
+    <span class="badge badge-ignored">沒問題 {{ issue_summary.ignored }}</span>
+  </div>
+  <div class="check-table-wrap">
+    {% if issues %}
+    <table class="log-table identity-check-table">
+      <thead><tr><th>狀態</th><th>等級</th><th>候選人</th><th>原因</th></tr></thead>
+      <tbody>
+        {% for issue in issues %}
+        <tr>
+          <td><span class="badge badge-{{ issue.status }}">{{ issue.status_label }}</span></td>
+          <td><span class="badge badge-{{ 'critical' if issue.severity == 'critical' else 'warning' }}">{{ issue.severity_label }}</span></td>
+          <td class="mono">
+            <a class="candidate-id-link" href="/identity-checks/{{ issue.id }}" title="{{ issue.candidate_id }}">{{ issue.candidate_id }}</a>
+          </td>
+          <td class="issue-reason" title="{{ issue.reason_text }}">{{ issue.reason_text }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty">
+      {% if show_expired %}
+      目前沒有待審項目
+      {% else %}
+      目前沒有未過期項目
+      {% endif %}
+    </p>
+    {% endif %}
+  </div>
 </section>
 
 {% endblock %}
