@@ -20,6 +20,28 @@ def _make_app(tmp_path: Path, store: Store):
     return app
 
 
+def test_reset_confirm_route_is_not_captured_by_election_detail(tmp_path: Path) -> None:
+    class ReadOnlyStore:
+        def list_elections(self) -> list[dict]:
+            return []
+
+    election_path = tmp_path / "_data" / "councilor" / "2005" / "縣市議員_區域_臺東縣.xlsx"
+    election_path.parent.mkdir(parents=True)
+    election_path.write_text("")
+
+    app = _make_app(tmp_path, ReadOnlyStore())  # type: ignore[arg-type]
+    client = TestClient(app, raise_server_exceptions=True)
+
+    resp = client.get(
+        "/elections/councilor/2005/縣市議員_區域_臺東縣.xlsx/reset-confirm",
+        follow_redirects=False,
+    )
+
+    assert resp.status_code == 200
+    assert "YES，移除" in resp.text
+    assert "NO，返回" in resp.text
+
+
 def test_app_startup_prepares_database(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     events: list[str] = []
 
@@ -252,7 +274,7 @@ def test_done_template_shows_all_committed_resolutions() -> None:
     assert "賴坤成" in html
     assert "鄺麗貞" in html
     assert "人工決策紀錄" not in html
-    assert "重置此筆" in html
+    assert "重置來源檔" in html
     assert "/reset-confirm" in html
 
     confirm_html = env.get_template("reset_election_confirm.html").render(
@@ -264,6 +286,7 @@ def test_done_template_shows_all_committed_resolutions() -> None:
     )
     assert "YES，移除" in confirm_html
     assert "NO，返回" in confirm_html
+    assert "同一 candidate id 來自其他來源檔的資料會保留" in confirm_html
     assert "/reset" in confirm_html
 
 
@@ -363,7 +386,7 @@ def test_identity_check_templates_render_review_and_preview() -> None:
     assert "id_劉煜基_1946a" in detail_html
     assert "參選紀錄比較" in detail_html
     assert "選舉公報" in detail_html
-    assert "重置此筆" in detail_html
+    assert "重置來源檔" in detail_html
     assert "duplicate-source-file" in detail_html
     assert "/reset-confirm" in detail_html
 

@@ -72,6 +72,21 @@ async def home(request: Request):
     })
 
 
+@router.get("/elections/{election_id:path}/reset-confirm")
+async def reset_election_confirm(request: Request, election_id: str):
+    store: Store = request.app.state.store
+    root: Path = request.app.state.root
+    templates: Jinja2Templates = request.app.state.templates
+    next_url = request.query_params.get("next") or f"/elections/{election_id}"
+    return templates.TemplateResponse(request, "reset_election_confirm.html", {
+        "app_mode": "identity",
+        "election_tree": _election_tree(root, store),
+        "selected_id": election_id,
+        "election_id": election_id,
+        "next_url": next_url,
+    })
+
+
 @router.get("/elections/{election_id:path}")
 async def election_detail(request: Request, election_id: str):
     store: Store = request.app.state.store
@@ -222,18 +237,3 @@ async def reset_election(request: Request, election_id: str):
     store.refresh_identity_check_issues()
     logger.info("reset election=%s stats=%s", election_id, stats)
     return RedirectResponse(next_url, status_code=303)
-
-
-@router.get("/elections/{election_id:path}/reset-confirm")
-async def reset_election_confirm(request: Request, election_id: str):
-    store: Store = request.app.state.store
-    root: Path = request.app.state.root
-    templates: Jinja2Templates = request.app.state.templates
-    next_url = request.query_params.get("next") or f"/elections/{election_id}"
-    return templates.TemplateResponse(request, "reset_election_confirm.html", {
-        "app_mode": "identity",
-        "election_tree": _election_tree(root, store),
-        "selected_id": election_id,
-        "election_id": election_id,
-        "next_url": next_url,
-    })
