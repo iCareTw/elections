@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 
 
 def _annotate_match(incoming: dict, match: dict) -> dict:
-    score = 0
     cmp: dict[str, str] = {}
     cmp_val: dict[str, str] = {}  # value shown in comparison row (always existing candidate's value)
     m_elections = match.get("elections", [])
@@ -40,14 +39,7 @@ def _annotate_match(incoming: dict, match: dict) -> dict:
     age_diff: int | None = None
     if in_bday is not None and m_bday is not None:
         age_diff = abs(int(in_bday) - int(m_bday))
-        if age_diff == 0:
-            score += 40
-            cmp["birthday"] = "exact"
-        elif age_diff == 1:
-            score += 20
-            cmp["birthday"] = "close"
-        else:
-            cmp["birthday"] = "diff"
+        cmp["birthday"] = "exact" if age_diff == 0 else ("close" if age_diff == 1 else "diff")
     elif in_bday is not None:
         cmp["birthday"] = "diff"
 
@@ -55,7 +47,6 @@ def _annotate_match(incoming: dict, match: dict) -> dict:
     if in_party:
         m_parties = [e.get("party") for e in m_elections]
         if in_party in m_parties:
-            score += 25
             cmp["party"] = "exact"
             cmp_val["party"] = in_party
         else:
@@ -66,7 +57,6 @@ def _annotate_match(incoming: dict, match: dict) -> dict:
     if in_type:
         m_types = [e.get("type") for e in m_elections]
         if in_type in m_types:
-            score += 20
             cmp["type"] = "exact"
             cmp_val["type"] = in_type
         else:
@@ -77,15 +67,13 @@ def _annotate_match(incoming: dict, match: dict) -> dict:
     if in_region:
         m_regions = [e.get("region") for e in m_elections]
         if in_region in m_regions:
-            score += 15
             cmp["region"] = "exact"
             cmp_val["region"] = in_region
         else:
             cmp["region"] = "diff"
             cmp_val["region"] = _first_distinct(m_regions)
 
-    match_count = sum(1 for v in cmp.values() if v in ("exact", "close"))
-    return {**match, "score": score, "age_diff": age_diff, "cmp": cmp, "cmp_val": cmp_val, "match_count": match_count, "total_cmp": len(cmp)}
+    return {**match, "age_diff": age_diff, "cmp": cmp, "cmp_val": cmp_val}
 
 
 _FIELD_LABELS = {
