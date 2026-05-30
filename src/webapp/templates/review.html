@@ -72,7 +72,7 @@
       {% set party_cmp = _cmp.get('party') %}
       {% set type_cmp = _cmp.get('type') %}
       {% set region_cmp = _cmp.get('region') %}
-      <div class="match-card" data-idx="{{ loop.index }}" data-name="{{ match.name }}" data-id="{{ match.id }}" data-existing-bday="{{ match.birthday }}">
+      <div class="match-card" data-idx="{{ loop.index }}" data-name="{{ match.name }}" data-id="{{ match.id }}" data-existing-bday="{{ match.birthday }}" data-age-diff="{{ bday_age_diff if bday_age_diff is not none else '' }}">
         <label class="match-card-main">
           <span class="match-card-head">
             <input class="match-select" type="radio" name="candidate_id" value="{{ match.id }}"
@@ -222,6 +222,16 @@
 {% endblock %}
 
 {% block scripts %}
+<div id="age-diff-modal" class="modal-overlay" hidden>
+  <div class="modal-box">
+    <p class="modal-msg">選取的候選人生日相差超過 1 歲，確認要合併嗎？</p>
+    <div class="modal-actions">
+      <button type="button" id="age-diff-yes" class="button primary">Yes</button>
+      <button type="button" id="age-diff-no" class="button secondary">No</button>
+    </div>
+  </div>
+</div>
+
 <script>
   function selectedMatchCard() {
     const checked = document.querySelector('input[name="candidate_id"]:checked');
@@ -278,6 +288,30 @@
           break;
         }
       }
+    });
+  }
+
+  // Age-diff confirmation modal
+  let useMatchConfirmed = false;
+  const useMatchBtn = document.querySelector('button[value="use_match"]');
+  const ageDiffModal = document.getElementById('age-diff-modal');
+  if (useMatchBtn && ageDiffModal) {
+    useMatchBtn.addEventListener('click', function(e) {
+      if (useMatchConfirmed) { useMatchConfirmed = false; return; }
+      const card = selectedMatchCard();
+      const ageDiff = card ? parseFloat(card.dataset.ageDiff) : NaN;
+      if (!isNaN(ageDiff) && ageDiff > 1) {
+        e.preventDefault();
+        ageDiffModal.hidden = false;
+      }
+    });
+    document.getElementById('age-diff-yes').addEventListener('click', function() {
+      ageDiffModal.hidden = true;
+      useMatchConfirmed = true;
+      useMatchBtn.click();
+    });
+    document.getElementById('age-diff-no').addEventListener('click', function() {
+      ageDiffModal.hidden = true;
     });
   }
 

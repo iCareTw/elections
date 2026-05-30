@@ -453,6 +453,42 @@ button { font: inherit; cursor: pointer; border: 0; }
 .check-nav-row.selected { border-color: #f59e0b; background: #fffbeb; }
 .check-nav-button { cursor: pointer; font: inherit; }
 
+/* ── Confirmation modal ── */
+.modal-overlay[hidden] { display: none; }
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 36, 33, .45);
+  backdrop-filter: blur(3px);
+}
+.modal-box {
+  min-width: 280px;
+  max-width: 400px;
+  border-radius: 14px;
+  padding: 24px 28px;
+  background: rgba(255, 249, 237, .97);
+  border: 1px solid rgba(110, 96, 70, .26);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.modal-msg {
+  margin: 0;
+  font-size: .95rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
 /* ── Busy overlay ── */
 .busy-overlay[hidden] { display: none; }
 .busy-overlay {

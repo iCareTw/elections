@@ -37,12 +37,13 @@ def _annotate_match(incoming: dict, match: dict) -> dict:
 
     in_bday = incoming.get("birthday")
     m_bday = match.get("birthday")
+    age_diff: int | None = None
     if in_bday is not None and m_bday is not None:
-        diff = abs(int(in_bday) - int(m_bday))
-        if diff == 0:
+        age_diff = abs(int(in_bday) - int(m_bday))
+        if age_diff == 0:
             score += 40
             cmp["birthday"] = "exact"
-        elif diff == 1:
+        elif age_diff == 1:
             score += 20
             cmp["birthday"] = "close"
         else:
@@ -84,7 +85,7 @@ def _annotate_match(incoming: dict, match: dict) -> dict:
             cmp_val["region"] = _first_distinct(m_regions)
 
     match_count = sum(1 for v in cmp.values() if v in ("exact", "close"))
-    return {**match, "score": score, "cmp": cmp, "cmp_val": cmp_val, "match_count": match_count, "total_cmp": len(cmp)}
+    return {**match, "score": score, "age_diff": age_diff, "cmp": cmp, "cmp_val": cmp_val, "match_count": match_count, "total_cmp": len(cmp)}
 
 
 _FIELD_LABELS = {
@@ -124,7 +125,7 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
     result = classify_record(payload, store)
     matches = result.get("matches", [])
     matches = [_annotate_match(payload, m) for m in matches]
-    matches.sort(key=lambda m: m["score"], reverse=True)
+    matches.sort(key=lambda m: (m["age_diff"] is None, m["age_diff"] or 0))
 
     record_fields = [
         (_FIELD_LABELS.get(k, k), payload[k])
