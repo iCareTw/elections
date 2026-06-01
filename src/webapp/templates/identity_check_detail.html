@@ -76,7 +76,7 @@
           <td class="source-file-cell">
             <span class="{% if record.duplicate_year_source %}duplicate-source-file{% endif %}">{{ record.election_id }}</span>
           </td>
-          <td class="mono">{{ record.source_record_id.rsplit(':', 1)[1] }}</td>
+          <td class="mono">{{ record.order_id if record.order_id is not none else '—' }}</td>
           <td>
             <button class="reset-election-inline"
                     type="submit"
