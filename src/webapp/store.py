@@ -30,7 +30,7 @@ _ISSUE_STATUS_LABELS = {
     "open": "待審",
     "ignored": "沒問題",
     "resolved": "已修正",
-    "stale": "已過期",
+    "stale": "已自動解除",
 }
 _SEVERITY_LABELS = {
     "critical": "必審",

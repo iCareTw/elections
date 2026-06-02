@@ -8,7 +8,7 @@
   </div>
   <div class="check-header-actions">
     <a class="button ghost" href="/identity-checks{% if show_expired %}?show_expired=0{% else %}?show_expired=1{% endif %}">
-      {% if show_expired %}隱藏已過期{% else %}顯示已過期{% endif %}
+      {% if show_expired %}隱藏已自動解除{% else %}顯示已自動解除{% endif %}
     </a>
     <form method="post" action="/identity-checks/scan">
       <button class="button primary" type="submit">重新檢查</button>
@@ -22,9 +22,8 @@
 
 <section class="panel">
   <div class="check-summary">
-    <span class="badge badge-critical">必審 {{ issue_summary.critical }}</span>
-    <span class="badge badge-open">待審 {{ issue_summary.warning }}</span>
-    <span class="badge badge-stale">已過期 {{ issue_summary.stale }}</span>
+    <span class="badge badge-open">待審 {{ issue_summary.open }}（必審 {{ issue_summary.open_critical }}・提醒 {{ issue_summary.open_warning }}）</span>
+    <span class="badge badge-stale">已自動解除 {{ issue_summary.stale }}</span>
     <span class="badge badge-resolved">已修正 {{ issue_summary.resolved }}</span>
     <span class="badge badge-ignored">沒問題 {{ issue_summary.ignored }}</span>
   </div>

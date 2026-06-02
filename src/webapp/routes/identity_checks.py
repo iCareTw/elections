@@ -200,9 +200,9 @@ def _prepare_identity_check_detail(detail: dict) -> None:
 def _prepare_identity_check_index(issues: list[dict]) -> tuple[list[dict], dict[str, int]]:
     grouped: dict[str, dict] = {}
     summary = {
-        "critical": 0,
-        "warning": 0,
         "open": 0,
+        "open_critical": 0,
+        "open_warning": 0,
         "stale": 0,
         "resolved": 0,
         "ignored": 0,
@@ -243,7 +243,8 @@ def _prepare_identity_check_index(issues: list[dict]) -> tuple[list[dict], dict[
     for row in rows:
         row.pop("_sort_key", None)
         summary[row["status"]] += 1
-        summary["critical" if row["severity"] == "critical" else "warning"] += 1
+        if row["status"] == "open":
+            summary["open_critical" if row["severity"] == "critical" else "open_warning"] += 1
     summary["total"] = len(rows)
     return rows, summary
 

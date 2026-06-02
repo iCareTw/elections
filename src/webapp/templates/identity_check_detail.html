@@ -81,7 +81,7 @@
             <button class="reset-election-inline"
                     type="submit"
                     form="reset-election-{{ loop.index }}">
-              重置來源檔
+              清除整個來源檔判定
             </button>
           </td>
         </tr>
@@ -115,11 +115,6 @@
     <label class="choice-row">
       <input type="radio" name="action" value="selected_new" {% if not detail.nearby_candidates %}checked{% endif %}>
       <span>選取的 elections 建立新 id</span>
-    </label>
-
-    <label class="choice-row">
-      <input type="radio" name="action" value="others_new">
-      <span>選取的 elections 保留目前 id, 其他 elections 建立新 id</span>
     </label>
 
     <div class="decision-bar">
