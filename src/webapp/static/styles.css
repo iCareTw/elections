@@ -555,6 +555,8 @@ button { font: inherit; cursor: pointer; border: 0; }
 /* ── State: done ── */
 .status-done { color: var(--accent-strong); font-size: 13px; }
 .check-header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.check-filter { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 4px 0 14px; }
+.filter-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; cursor: pointer; }
 .check-summary { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 .check-summary .badge { margin-left: 0; }
 .check-table-wrap { overflow-x: auto; }

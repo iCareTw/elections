@@ -22,6 +22,13 @@ _ISSUE_STATUS_ORDER = {
     "ignored": 3,
 }
 
+_ISSUE_TYPE_FILTERS = (
+    ("same_year_multiple", "同年多筆參選"),
+    ("regional_jump", "跨地參選"),
+    ("rank_downgrade", "參選較低位階"),
+)
+_ALL_ISSUE_TYPES = [key for key, _ in _ISSUE_TYPE_FILTERS]
+
 _COMPARE_FIELDS = ("year", "type", "region", "party", "elected")
 _COMPARE_LABELS = {
     "year": "年份",
@@ -37,18 +44,24 @@ async def identity_checks_index(request: Request):
     store: Store = request.app.state.store
     root: Path = request.app.state.root
     templates: Jinja2Templates = request.app.state.templates
-    show_expired = request.query_params.get("show_expired", "1") not in {"0", "false", "False"}
+    if request.query_params.get("filtered") == "1":
+        selected_types = [t for t in request.query_params.getlist("type") if t in _ALL_ISSUE_TYPES]
+    else:
+        selected_types = list(_ALL_ISSUE_TYPES)
+
     issue_rows = store.list_identity_check_issues()
     issues, summary = _prepare_identity_check_index(issue_rows)
-    if not show_expired:
-        issues = [issue for issue in issues if issue["status"] != "stale"]
+    issues = [issue for issue in issues if issue["status"] != "stale"]
+    selected_set = set(selected_types)
+    issues = [issue for issue in issues if issue["issue_types"] & selected_set]
     return templates.TemplateResponse(request, "identity_checks.html", {
         "app_mode": "check",
         "election_tree": _election_tree(root, store),
         "selected_id": None,
         "issues": issues,
         "issue_summary": summary,
-        "show_expired": show_expired,
+        "type_filters": _ISSUE_TYPE_FILTERS,
+        "selected_types": selected_types,
         "operations": store.list_identity_fix_operations(limit=20),
         "generated_count": request.query_params.get("generated"),
     })
@@ -59,10 +72,7 @@ async def scan_identity_checks(request: Request):
     store: Store = request.app.state.store
     count = store.refresh_identity_check_issues()
     logger.info("identity-check scan generated=%d", count)
-    params = {"generated": count}
-    if request.query_params.get("show_expired") in {"0", "1"}:
-        params["show_expired"] = request.query_params["show_expired"]
-    return RedirectResponse(f"/identity-checks?{urlencode(params)}", status_code=303)
+    return RedirectResponse(f"/identity-checks?{urlencode({'generated': count})}", status_code=303)
 
 
 @router.get("/identity-checks/{issue_id:int}")
@@ -222,11 +232,13 @@ def _prepare_identity_check_index(issues: list[dict]) -> tuple[list[dict], dict[
                 "severity": issue["severity"],
                 "severity_label": _index_severity_label(issue["severity"]),
                 "reason_text": issue["summary"],
+                "issue_types": {issue["issue_type"]},
                 "_sort_key": _index_issue_sort_key(issue),
             }
             grouped[candidate_id] = group
         else:
             group["reason_text"] = f"{group['reason_text']}; {issue['summary']}"
+            group["issue_types"].add(issue["issue_type"])
             current_sort = _index_issue_sort_key(issue)
             if current_sort < group["_sort_key"]:
                 group["id"] = issue["id"]
