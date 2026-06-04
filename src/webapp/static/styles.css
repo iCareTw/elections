@@ -720,6 +720,8 @@ button { font: inherit; cursor: pointer; border: 0; }
 .check-row code,
 .choice-row code { font-size: 10.5px; color: var(--muted); }
 .choice-list { display: grid; gap: 6px; margin-bottom: 8px; }
+.nearby-merge-list { display: grid; gap: 6px; }
+.nearby-merge-list.is-disabled { opacity: .4; pointer-events: none; }
 .preview-panel { margin-top: 12px; }
 .preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
 .preview-card { border: 1px solid var(--line); border-radius: 12px; padding: 10px; background: rgba(255,255,255,.58); display: grid; gap: 4px; }

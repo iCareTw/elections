@@ -98,17 +98,19 @@
         <input type="radio" name="action" value="target_existing" checked>
         <span>合併到同名且生日差 1 年的候選人</span>
       </label>
-      {% for candidate in detail.nearby_candidates %}
-      <label class="choice-row">
-        <input type="radio" name="target_candidate_id" value="{{ candidate.id }}" {% if loop.first %}checked{% endif %}>
-        <span>合併到 <code>{{ candidate.id }}</code></span>
-      </label>
-      <ul class="match-elections">
-        {% for e in candidate.elections %}
-        <li>{{ e.year }} {{ e.type }} · {{ e.region }}</li>
+      <div class="nearby-merge-list">
+        {% for candidate in detail.nearby_candidates %}
+        <label class="choice-row">
+          <input type="radio" name="target_candidate_id" value="{{ candidate.id }}" {% if loop.first %}checked{% endif %}>
+          <span>合併到 <code>{{ candidate.id }}</code></span>
+        </label>
+        <ul class="match-elections">
+          {% for e in candidate.elections %}
+          <li>{{ e.year }} {{ e.type }} · {{ e.region }}</li>
+          {% endfor %}
+        </ul>
         {% endfor %}
-      </ul>
-      {% endfor %}
+      </div>
     </div>
     {% endif %}
 
@@ -182,5 +184,26 @@
 <form method="post" action="/identity-checks/{{ detail.issue.id }}/ignore">
   <button class="button ghost" type="submit">標記為沒問題</button>
 </form>
+
+{% if detail.nearby_candidates %}
+<script>
+(function () {
+  const form = document.querySelector(".identity-fix-form");
+  if (!form) return;
+  const mergeList = form.querySelector(".nearby-merge-list");
+  if (!mergeList) return;
+  function sync() {
+    const action = form.querySelector('input[name="action"]:checked');
+    const isMerge = action && action.value === "target_existing";
+    mergeList.classList.toggle("is-disabled", !isMerge);
+    mergeList.querySelectorAll('input[name="target_candidate_id"]').forEach((r) => {
+      r.disabled = !isMerge;
+    });
+  }
+  form.querySelectorAll('input[name="action"]').forEach((r) => r.addEventListener("change", sync));
+  sync();
+})();
+</script>
+{% endif %}
 
 {% endblock %}
