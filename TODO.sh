@@ -18,7 +18,7 @@
 中選會沒資料 https://db.cec.gov.tw/ElecTable/ByElection?type=Legislator
 
 
-# FIXME: http://127.0.0.1:23088/review/council/2005/縣市議員_區域_臺中市.xlsx 的 Possible Existing Candidates 也需要選舉公報
+# FIXME: http://127.0.0.1:23088/review/councilor/2005/縣市議員_區域_臺中市.xlsx 的 Possible Existing Candidates 也需要選舉公報
 
 
 # -------- 名字罕見字 --------
@@ -26,3 +26,17 @@
 #
 # Excel 資料
 # https://eebulletin.cec.gov.tw/111/05臺中市/05村里長/臺中市東勢區/臺中市東勢區中寧里.pdf
+
+
+選舉公報連結非常有問題!
+
+/01選舉公報/06縣市議員/107年/26宜蘭縣/宜蘭縣第10選舉區議員.pdf
+/01選舉公報/06縣市議員/107年/14宜蘭縣/10縣長.議員公報(第十選舉區).pdf
+
+
+
+- 1949_魏耀乾 與 1950_魏耀乾
+  - 資料錯亂!
+- 1950_吳光訓 與 1947_吳光訓
+  - 同一人, 選舉公報資料有問題
+- 1950_林建宏 2009_縣市議員 與 2018_村里長 應該是不同人

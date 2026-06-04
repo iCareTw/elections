@@ -62,11 +62,23 @@ def test_build_candidates_yaml_groups_records_by_candidate_id(tmp_path: Path) ->
         rows = build_candidates_yaml(store)
         target = next(r for r in rows if r["id"] == candidate_id)
         assert target["elections"][0]["year"] == 2024
+        assert "alias_names" not in target
+
+        store.add_candidate_alias(candidate_id, "測試建置舊名")
+        rows = build_candidates_yaml(store)
+        target = next(r for r in rows if r["id"] == candidate_id)
+        assert target["alias_names"] == ["測試建置舊名"]
 
         output = tmp_path / "candidates.yaml"
         write_candidates_yaml(store, output, ROOT / "election_types.yaml")
         written = yaml.safe_load(output.read_text(encoding="utf-8"))
-        assert any(r["id"] == candidate_id for r in written)
+        written_target = next(r for r in written if r["id"] == candidate_id)
+        assert written_target["alias_names"] == ["測試建置舊名"]
+
+        store.remove_candidate_alias(candidate_id, "測試建置舊名")
+        rows = build_candidates_yaml(store)
+        target = next(r for r in rows if r["id"] == candidate_id)
+        assert "alias_names" not in target
     finally:
         store.delete_election(election_id)
         store.delete_candidate(candidate_id)

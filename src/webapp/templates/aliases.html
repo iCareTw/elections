@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block workspace %}
+
+{% if error %}
+<div class="error-banner">{{ error }}</div>
+{% endif %}
+
+<div class="workspace-header">
+  <div>
+    <p class="pathline">Alias Names</p>
+    <h2>別名管理</h2>
+  </div>
+</div>
+
+<form method="get" action="/aliases" class="alias-search">
+  <input type="search" name="q" value="{{ query }}" placeholder="搜尋姓名、別名或人物 ID">
+  <button class="button primary" type="submit">搜尋</button>
+  {% if query %}<a class="button ghost" href="/aliases">清除</a>{% endif %}
+</form>
+
+<section class="alias-list">
+  {% for candidate in candidates %}
+  <article class="panel alias-card">
+    <div class="alias-person">
+      <strong>{{ candidate.name }}</strong>
+      <span>{{ candidate.birthday or "生日不詳" }}</span>
+      <code>{{ candidate.id }}</code>
+    </div>
+    <div class="alias-values">
+      {% for alias_name in candidate.alias_names %}
+      <form method="post" action="/aliases/{{ candidate.id | urlencode }}/remove" class="alias-chip">
+        <input type="hidden" name="q" value="{{ query }}">
+        <input type="hidden" name="alias_name" value="{{ alias_name }}">
+        <span>{{ alias_name }}</span>
+        <button type="submit" aria-label="移除 {{ alias_name }}">移除</button>
+      </form>
+      {% else %}
+      <span class="empty">尚未設定別名</span>
+      {% endfor %}
+    </div>
+    <form method="post" action="/aliases/{{ candidate.id | urlencode }}/add" class="alias-add">
+      <input type="hidden" name="q" value="{{ query }}">
+      <input type="text" name="alias_name" placeholder="輸入別名" required>
+      <button class="button secondary" type="submit">新增別名</button>
+    </form>
+  </article>
+  {% else %}
+  <p class="empty">找不到符合的人士</p>
+  {% endfor %}
+</section>
+
+{% endblock %}

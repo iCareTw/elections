@@ -25,6 +25,10 @@
         <span>Identity Check</span>
         <em>commit 後合理性檢查</em>
       </a>
+      <a class="mode-tab {% if mode == 'aliases' %}active{% endif %}" href="/aliases">
+        <span>別名管理</span>
+        <em>維護 candidates.yaml 別名</em>
+      </a>
     </nav>
 
     <div class="nav-header-row">
@@ -67,7 +71,7 @@
       {% endmacro %}
       {{ render_tree(election_tree) }}
     </div>
-    {% else %}
+    {% elif mode == 'check' %}
     <div class="check-nav">
       <a class="check-nav-row selected" href="/identity-checks">
         <strong>待審清單</strong>
@@ -90,7 +94,7 @@
           details.forEach(d => d.removeAttribute('open'));
         }
         sessionStorage.setItem('nav-scroll', '0');
-        window.location.href = {{ ('/identity-checks' if mode == 'check' else '/') | tojson }};
+        window.location.href = {{ ('/identity-checks' if mode == 'check' else ('/aliases' if mode == 'aliases' else '/')) | tojson }};
       }
 
       const navList = document.querySelector('.election-list');
@@ -111,7 +115,7 @@
       }
     </script>
 
-    {% if mode == 'identity' %}
+    {% if mode in ['identity', 'aliases'] %}
     <div class="nav-footer">
       <form method="post" action="/build" id="build-form">
         <button class="generate-btn" type="submit" id="build-submit">⬇ Generate candidates.yaml</button>
@@ -127,7 +131,7 @@
 
   <section class="workspace">
     <div class="mode-banner mode-{{ mode }}">
-      目前使用 {{ "Identity Check" if mode == "check" else "Identity UI" }}
+      目前使用 {% if mode == "check" %}Identity Check{% elif mode == "aliases" %}別名管理{% else %}Identity UI{% endif %}
     </div>
     {% block workspace %}{% endblock %}
   </section>

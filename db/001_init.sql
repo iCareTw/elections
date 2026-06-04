@@ -67,10 +67,14 @@ CREATE INDEX IF NOT EXISTS idx_resolutions_election_id
     ON resolutions (election_id);
 
 CREATE TABLE IF NOT EXISTS candidates (
-    id       VARCHAR(64) PRIMARY KEY,
-    name     VARCHAR(64) NOT NULL,
-    birthday INTEGER
+    id          VARCHAR(64) PRIMARY KEY,
+    name        VARCHAR(64) NOT NULL,
+    birthday    INTEGER,
+    alias_names TEXT[] NOT NULL DEFAULT '{}'
 );
+
+ALTER TABLE candidates
+    ADD COLUMN IF NOT EXISTS alias_names TEXT[] NOT NULL DEFAULT '{}';
 
 CREATE INDEX IF NOT EXISTS idx_candidates_name
     ON candidates (name);

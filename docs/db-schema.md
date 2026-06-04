@@ -135,11 +135,12 @@ Index:
 
 候選人身分主檔. 由 `resolutions` commit 後的 build 操作產生並維護.
 
-| field      | type           | description                                                                     |
-|------------|----------------|---------------------------------------------------------------------------------|
-| `id`       | VARCHAR(64) PK | 候選人唯一識別碼                                                                  |
-| `name`     | VARCHAR(64)    | 候選人姓名, 經 `normalize_candidate_name` 處理: 移除空白與括號, `‧·•．` 轉為 `.` |
-| `birthday` | INTEGER        | 生日, YYYYMMDD 格式                                                               |
+| field         | type           | description                                                                     |
+|---------------|----------------|---------------------------------------------------------------------------------|
+| `id`          | VARCHAR(64) PK | 候選人唯一識別碼                                                                  |
+| `name`        | VARCHAR(64)    | 候選人姓名, 經 `normalize_candidate_name` 處理: 移除空白與括號, `‧·•．` 轉為 `.` |
+| `birthday`    | INTEGER        | 生日, YYYYMMDD 格式                                                               |
+| `alias_names` | TEXT[]         | 人工維護的別名, 僅供產出 `candidates.yaml` 使用                                   |
 
 Index:
 

@@ -395,6 +395,7 @@ button { font: inherit; cursor: pointer; border: 0; }
 .mode-banner { margin-bottom: 4px; border-radius: 10px; padding: 7px 10px; font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
 .mode-banner.mode-identity { color: #065f46; background: #d1fae5; border: 1px solid #6ee7b7; }
 .mode-banner.mode-check { color: #92400e; background: #fef3c7; border: 1px solid #fcd34d; }
+.mode-banner.mode-aliases { color: #1e40af; background: #dbeafe; border: 1px solid #93c5fd; }
 
 /* ── Buttons ── */
 .button { border-radius: 999px; padding: 5px 12px; font-weight: 700; font-size: 11.5px; cursor: pointer; border: 0; text-decoration: none; display: inline-block; }
@@ -452,6 +453,20 @@ button { font: inherit; cursor: pointer; border: 0; }
 .check-nav-row span { color: var(--muted); font-size: 11px; }
 .check-nav-row.selected { border-color: #f59e0b; background: #fffbeb; }
 .check-nav-button { cursor: pointer; font: inherit; }
+
+/* ── Alias management ── */
+.alias-search { display: flex; gap: 8px; align-items: center; }
+.alias-search input,
+.alias-add input { min-width: 220px; border: 1px solid var(--line); border-radius: 9px; padding: 7px 9px; background: rgba(255,255,255,.72); color: var(--ink); }
+.alias-list { display: grid; gap: 10px; }
+.alias-card { display: grid; grid-template-columns: minmax(220px,.7fr) minmax(220px,1fr) auto; gap: 14px; align-items: center; }
+.alias-person { display: grid; gap: 2px; }
+.alias-person span, .alias-person code { color: var(--muted); font-size: 11px; }
+.alias-values { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.alias-chip { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; padding: 3px 4px 3px 9px; background: #dbeafe; color: #1e40af; }
+.alias-chip button { border-radius: 999px; padding: 2px 6px; background: rgba(255,255,255,.7); color: #1e40af; font-size: 10px; }
+.alias-add { display: flex; gap: 6px; align-items: center; }
+.alias-add input { min-width: 130px; width: 150px; }
 
 /* ── Confirmation modal ── */
 .modal-overlay[hidden] { display: none; }

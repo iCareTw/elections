@@ -188,6 +188,55 @@ def test_navigator_does_not_expand_unselected_top_level_dirs() -> None:
     assert '<span class="badge badge-pending tree-dir-pending">1</span>' in selected_html
     assert "Identity UI" in home_html
     assert "Identity Check" in home_html
+    assert "別名管理" in home_html
+
+
+def test_alias_management_page_and_actions(tmp_path: Path) -> None:
+    calls: list[tuple[str, str, str]] = []
+
+    class AliasStore:
+        def list_elections(self) -> list[dict]:
+            return []
+
+        def search_candidates_for_aliases(self, query: str) -> list[dict]:
+            assert query == "葉"
+            return [{
+                "id": "id_葉毓蘭_1958",
+                "name": "葉毓蘭",
+                "birthday": 1958,
+                "alias_names": ["游毓蘭"],
+            }]
+
+        def add_candidate_alias(self, candidate_id: str, alias_name: str) -> None:
+            calls.append(("add", candidate_id, alias_name))
+
+        def remove_candidate_alias(self, candidate_id: str, alias_name: str) -> None:
+            calls.append(("remove", candidate_id, alias_name))
+
+    app = _make_app(tmp_path, AliasStore())  # type: ignore[arg-type]
+    client = TestClient(app, raise_server_exceptions=True)
+
+    response = client.get("/aliases?q=葉")
+    assert response.status_code == 200
+    assert "別名管理" in response.text
+    assert "葉毓蘭" in response.text
+    assert "游毓蘭" in response.text
+
+    response = client.post(
+        "/aliases/id_葉毓蘭_1958/add",
+        data={"q": "葉", "alias_name": "葉舊名"},
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    assert calls[-1] == ("add", "id_葉毓蘭_1958", "葉舊名")
+
+    response = client.post(
+        "/aliases/id_葉毓蘭_1958/remove",
+        data={"q": "葉", "alias_name": "游毓蘭"},
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    assert calls[-1] == ("remove", "id_葉毓蘭_1958", "游毓蘭")
 
 
 def test_election_detail_template_handles_review_status() -> None:

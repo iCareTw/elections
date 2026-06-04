@@ -12,7 +12,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from src.webapp.bulletin import bulletin_url
 from src.webapp.logging_setup import setup_logging
-from src.webapp.routes import build, elections, identity_checks, review
+from src.webapp.routes import aliases, build, elections, identity_checks, review
 from src.webapp.store import Store
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -50,6 +50,7 @@ def create_app(root: Path = ROOT) -> FastAPI:
     app.include_router(elections.router)
     app.include_router(review.router)
     app.include_router(identity_checks.router)
+    app.include_router(aliases.router)
     app.include_router(build.router)
 
     return app

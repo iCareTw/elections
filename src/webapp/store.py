@@ -438,7 +438,7 @@ class Store:
             rows = conn.execute(
                 """
                 SELECT
-                    c.id, c.name, c.birthday,
+                    c.id, c.name, c.birthday, c.alias_names,
                     ce.year, ce.type, ce.region, ce.party,
                     ce.elected, ce.session, ce.ticket, ce.order_id
                 FROM candidates c
@@ -455,13 +455,66 @@ class Store:
                     "id": cid,
                     "name": row["name"],
                     "birthday": row["birthday"],
-                    "elections": [],
                 }
+                if row["alias_names"]:
+                    grouped[cid]["alias_names"] = list(row["alias_names"])
+                grouped[cid]["elections"] = []
             if row["year"] is not None:
                 election = {k: row[k] for k in ("year", "type", "region", "party", "elected", "session", "ticket", "order_id") if row[k] is not None}
                 grouped[cid]["elections"].append(election)
 
         return list(grouped.values())
+
+    def search_candidates_for_aliases(self, query: str = "") -> list[dict[str, Any]]:
+        query = query.strip()
+        pattern = f"%{query}%"
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            rows = conn.execute(
+                """
+                SELECT id, name, birthday, alias_names
+                FROM candidates
+                WHERE %s = ''
+                   OR name ILIKE %s
+                   OR id ILIKE %s
+                   OR EXISTS (
+                       SELECT 1 FROM unnest(alias_names) AS alias_name
+                       WHERE alias_name ILIKE %s
+                   )
+                ORDER BY name, birthday NULLS LAST, id
+                LIMIT 200
+                """,
+                (query, pattern, pattern, pattern),
+            ).fetchall()
+        return [dict(row) for row in rows]
+
+    def add_candidate_alias(self, candidate_id: str, alias_name: str) -> None:
+        alias_name = alias_name.strip()
+        if not alias_name:
+            raise ValueError("請輸入別名")
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                "SELECT name, alias_names FROM candidates WHERE id = %s",
+                (candidate_id,),
+            ).fetchone()
+            if row is None:
+                raise ValueError("找不到指定人物")
+            if alias_name == row["name"]:
+                raise ValueError("別名不可與目前姓名相同")
+            if alias_name not in row["alias_names"]:
+                conn.execute(
+                    "UPDATE candidates SET alias_names = array_append(alias_names, %s) WHERE id = %s",
+                    (alias_name, candidate_id),
+                )
+
+    def remove_candidate_alias(self, candidate_id: str, alias_name: str) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                "UPDATE candidates SET alias_names = array_remove(alias_names, %s) WHERE id = %s",
+                (alias_name, candidate_id),
+            )
 
     def list_committed_candidates_with_source_records(self) -> list[dict[str, Any]]:
         with self.connect() as conn:
@@ -1100,7 +1153,7 @@ class Store:
                 raise ValueError(f"候選人 {new_id} 已存在，id rename 失敗，需人工處理")
             with conn.transaction():
                 conn.execute(
-                    "INSERT INTO candidates(id, name, birthday) SELECT %s, name, %s FROM candidates WHERE id = %s",
+                    "INSERT INTO candidates(id, name, birthday, alias_names) SELECT %s, name, %s, alias_names FROM candidates WHERE id = %s",
                     (new_id, new_birthday, old_id),
                 )
                 conn.execute(
