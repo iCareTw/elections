@@ -18,6 +18,10 @@
 中選會沒資料 https://db.cec.gov.tw/ElecTable/ByElection?type=Legislator
 
 
+3th 立委輔選 - 第三屆立法委員補選 - 范振宗
+中選會沒資料 https://db.cec.gov.tw/ElecTable/ByElection?type=Legislator
+_data/additional/Screenshot 2026-06-05 at 02.06.14.png
+
 # FIXME: http://127.0.0.1:23088/review/councilor/2005/縣市議員_區域_臺中市.xlsx 的 Possible Existing Candidates 也需要選舉公報
 
 
@@ -26,13 +30,6 @@
 #
 # Excel 資料
 # https://eebulletin.cec.gov.tw/111/05臺中市/05村里長/臺中市東勢區/臺中市東勢區中寧里.pdf
-
-
-選舉公報連結非常有問題!
-
-/01選舉公報/06縣市議員/107年/26宜蘭縣/宜蘭縣第10選舉區議員.pdf
-/01選舉公報/06縣市議員/107年/14宜蘭縣/10縣長.議員公報(第十選舉區).pdf
-
 
 
 - 1949_魏耀乾 與 1950_魏耀乾
