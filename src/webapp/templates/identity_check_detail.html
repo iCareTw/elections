@@ -92,16 +92,18 @@
 
   <section class="panel">
     <h3>修正方式</h3>
+    {% set cur_action = preview.action if preview else ('target_existing' if detail.nearby_candidates else 'selected_new') %}
+    {% set cur_target = (preview.target_candidate_id if preview else (detail.nearby_candidates[0].id if detail.nearby_candidates else '')) %}
     {% if detail.nearby_candidates %}
     <div class="choice-list">
       <label class="choice-row">
-        <input type="radio" name="action" value="target_existing" checked>
+        <input type="radio" name="action" value="target_existing" {% if cur_action == 'target_existing' %}checked{% endif %}>
         <span>合併到同名且生日差 1 年的候選人</span>
       </label>
       <div class="nearby-merge-list">
         {% for candidate in detail.nearby_candidates %}
         <label class="choice-row">
-          <input type="radio" name="target_candidate_id" value="{{ candidate.id }}" {% if loop.first %}checked{% endif %}>
+          <input type="radio" name="target_candidate_id" value="{{ candidate.id }}" {% if cur_target == candidate.id %}checked{% endif %}>
           <span>合併到 <code>{{ candidate.id }}</code></span>
         </label>
         <ul class="match-elections">
@@ -115,7 +117,7 @@
     {% endif %}
 
     <label class="choice-row">
-      <input type="radio" name="action" value="selected_new" {% if not detail.nearby_candidates %}checked{% endif %}>
+      <input type="radio" name="action" value="selected_new" {% if cur_action == 'selected_new' %}checked{% endif %}>
       <span>選取的 elections 建立新 id</span>
     </label>
 
