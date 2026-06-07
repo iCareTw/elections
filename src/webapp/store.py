@@ -592,7 +592,12 @@ class Store:
             self._setup_conn(conn)
             rows = conn.execute(
                 """
-                SELECT i.*, c.name, c.birthday
+                SELECT i.*, c.name, c.birthday,
+                       ARRAY(
+                           SELECT DISTINCT ce.type
+                           FROM candidate_elections ce
+                           WHERE ce.candidate_id = i.candidate_id
+                       ) AS candidate_election_types
                 FROM identity_check_issues i
                 JOIN candidates c ON c.id = i.candidate_id
                 ORDER BY

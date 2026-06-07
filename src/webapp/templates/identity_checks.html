@@ -13,16 +13,49 @@
   </div>
 </div>
 
-<form method="get" action="/identity-checks" class="check-filter">
+<form method="get" action="/identity-checks" class="check-filter" id="check-filter-form">
   <input type="hidden" name="filtered" value="1">
-  {% for key, label in type_filters %}
-  <label class="filter-chip">
-    <input type="checkbox" name="type" value="{{ key }}" {% if key in selected_types %}checked{% endif %}>
-    <span>{{ label }}</span>
-  </label>
-  {% endfor %}
-  <button class="button ghost" type="submit">套用篩選</button>
+  <div class="filter-group">
+    <span class="filter-label">問題類型</span>
+    <button type="button" class="filter-toggle" data-group="type"></button>
+    {% for key, label in type_filters %}
+    <label class="filter-chip">
+      <input type="checkbox" name="type" value="{{ key }}" {% if key in selected_types %}checked{% endif %}>
+      <span>{{ label }}</span>
+    </label>
+    {% endfor %}
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">選舉類別</span>
+    <button type="button" class="filter-toggle" data-group="eltype"></button>
+    {% for key, label in eltype_filters %}
+    <label class="filter-chip">
+      <input type="checkbox" name="eltype" value="{{ key }}" {% if key in selected_eltypes %}checked{% endif %}>
+      <span>{{ label }}</span>
+    </label>
+    {% endfor %}
+  </div>
 </form>
+<script>
+(function () {
+  const form = document.getElementById('check-filter-form');
+  form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', () => form.submit());
+  });
+  form.querySelectorAll('.filter-toggle').forEach(btn => {
+    const name = btn.dataset.group;
+    const boxes = Array.from(form.querySelectorAll(`input[name="${name}"]`));
+    const refresh = () => { btn.textContent = boxes.every(b => b.checked) ? '清空' : '全選'; };
+    refresh();
+    boxes.forEach(b => b.addEventListener('change', refresh));
+    btn.addEventListener('click', () => {
+      const allOn = boxes.every(b => b.checked);
+      boxes.forEach(b => { b.checked = !allOn; });
+      form.submit();
+    });
+  });
+})();
+</script>
 
 {% if generated_count %}
 <div class="status-done">已產生 {{ generated_count }} 筆待檢查項目</div>

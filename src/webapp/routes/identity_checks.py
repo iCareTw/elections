@@ -29,6 +29,32 @@ _ISSUE_TYPE_FILTERS = (
 )
 _ALL_ISSUE_TYPES = [key for key, _ in _ISSUE_TYPE_FILTERS]
 
+_ELTYPE_FILTERS = (
+    ("president", "President"),
+    ("legislator", "Legislator"),
+    ("mna", "MNA"),
+    ("mayor", "Mayor"),
+    ("council", "Council"),
+    ("other", "Other"),
+)
+_ALL_ELTYPES = [key for key, _ in _ELTYPE_FILTERS]
+
+_ELTYPE_KNOWN_TYPES: dict[str, set[str]] = {
+    "president": {"國家元首_總統", "國家元首_副總統"},
+    "legislator": {"立法委員"},
+    "mna": {"國大代表"},
+    "mayor": {"縣市首長"},
+    "council": {"縣市議員"},
+}
+_ELTYPE_ALL_KNOWN = {t for types in _ELTYPE_KNOWN_TYPES.values() for t in types}
+
+
+def _election_type_category(t: str) -> str:
+    for category, types in _ELTYPE_KNOWN_TYPES.items():
+        if t in types:
+            return category
+    return "other"
+
 _COMPARE_FIELDS = ("year", "type", "region", "party", "elected")
 _COMPARE_LABELS = {
     "year": "年份",
@@ -46,14 +72,26 @@ async def identity_checks_index(request: Request):
     templates: Jinja2Templates = request.app.state.templates
     if request.query_params.get("filtered") == "1":
         selected_types = [t for t in request.query_params.getlist("type") if t in _ALL_ISSUE_TYPES]
+        selected_eltypes = [t for t in request.query_params.getlist("eltype") if t in _ALL_ELTYPES]
+        request.session["check_filter"] = {"type": selected_types, "eltype": selected_eltypes}
+    elif saved := request.session.get("check_filter"):
+        params = urlencode(
+            [("filtered", "1")]
+            + [("type", t) for t in saved.get("type", _ALL_ISSUE_TYPES)]
+            + [("eltype", t) for t in saved.get("eltype", _ALL_ELTYPES)],
+        )
+        return RedirectResponse(f"/identity-checks?{params}", status_code=302)
     else:
         selected_types = list(_ALL_ISSUE_TYPES)
+        selected_eltypes = list(_ALL_ELTYPES)
 
     issue_rows = store.list_identity_check_issues()
     issues, summary = _prepare_identity_check_index(issue_rows)
     issues = [issue for issue in issues if issue["status"] != "stale"]
     selected_set = set(selected_types)
     issues = [issue for issue in issues if issue["issue_types"] & selected_set]
+    selected_eltype_set = set(selected_eltypes)
+    issues = [issue for issue in issues if _issue_matches_eltypes(issue, selected_eltype_set)]
     return templates.TemplateResponse(request, "identity_checks.html", {
         "app_mode": "check",
         "election_tree": _election_tree(root, store),
@@ -62,6 +100,8 @@ async def identity_checks_index(request: Request):
         "issue_summary": summary,
         "type_filters": _ISSUE_TYPE_FILTERS,
         "selected_types": selected_types,
+        "eltype_filters": _ELTYPE_FILTERS,
+        "selected_eltypes": selected_eltypes,
         "operations": store.list_identity_fix_operations(limit=20),
         "generated_count": request.query_params.get("generated"),
     })
@@ -218,6 +258,15 @@ def _prepare_identity_check_detail(detail: dict) -> None:
         record["bulletin_url"] = bulletin_url(record, record.get("election_id") or "")
 
 
+def _issue_matches_eltypes(group: dict, selected: set[str]) -> bool:
+    if not selected:
+        return False
+    for t in group.get("candidate_election_types") or []:
+        if _election_type_category(t) in selected:
+            return True
+    return False
+
+
 def _prepare_identity_check_index(issues: list[dict]) -> tuple[list[dict], dict[str, int]]:
     grouped: dict[str, dict] = {}
     summary = {
@@ -244,6 +293,7 @@ def _prepare_identity_check_index(issues: list[dict]) -> tuple[list[dict], dict[
                 "severity_label": _index_severity_label(issue["severity"]),
                 "reason_text": issue["summary"],
                 "issue_types": {issue["issue_type"]},
+                "candidate_election_types": list(issue.get("candidate_election_types") or []),
                 "_sort_key": _index_issue_sort_key(issue),
             }
             grouped[candidate_id] = group
