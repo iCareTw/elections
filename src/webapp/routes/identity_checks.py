@@ -322,7 +322,7 @@ def _prepare_identity_check_index(issues: list[dict]) -> tuple[list[dict], dict[
                 group["severity"] = issue["severity"]
                 group["severity_label"] = _index_severity_label(issue["severity"])
                 group["_sort_key"] = current_sort
-            if issue["severity"] == "critical":
+            if issue["severity"] == "critical" and issue["status"] == "open":
                 group["severity"] = "critical"
                 group["severity_label"] = "必審"
 
