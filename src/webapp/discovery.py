@@ -286,7 +286,10 @@ def _discover_mna(root: Path) -> list[dict]:
 
 
 def _discover_councilor(root: Path) -> list[dict]:
+    # Accept both "councilor" (canonical) and legacy "council" directory name
     data_dir = root / "_data" / "councilor"
+    if not data_dir.exists():
+        data_dir = root / "_data" / "council"
     if not data_dir.exists():
         return []
 
