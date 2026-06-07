@@ -16,6 +16,7 @@ from src import (
     parse_township,
     parse_village,
 )
+from src.normalize import normalize_party
 from src.session_years import SESSION_YEARS
 
 _SESSION_RE = re.compile(r"(\d+)th")
@@ -469,6 +470,7 @@ def load_election_records(election: dict) -> list[dict]:
     parser = _resolve_parser(election)
     rows = []
     for index, record in enumerate(parser(election["path"])):
+        record = {**record, "party": normalize_party(record.get("party"))}
         rows.append(
             {
                 **record,

@@ -142,6 +142,22 @@ def test_load_election_records_assigns_stable_source_record_ids(tmp_path: Path) 
     assert rows[0]["name"] == "測試"
 
 
+def test_load_election_records_uses_taiwan_green_party_name(tmp_path: Path) -> None:
+    path = tmp_path / "_data" / "legislator" / "party-list-legislator" / "11th.yaml"
+    path.parent.mkdir(parents=True)
+    path.write_text("- name: 綠黨測試\n  party: 綠黨\n  birthday: 1970\n", encoding="utf-8")
+    election = {
+        "election_id": "legislator/party-list-legislator/11th.yaml",
+        "type": "party-list",
+        "path": path,
+        "session": 11,
+    }
+
+    rows = load_election_records(election)
+
+    assert rows[0]["party"] == "台灣綠黨"
+
+
 def test_load_by_election_yaml_records(tmp_path: Path) -> None:
     path = tmp_path / "_data" / "legislator" / "by-election-legislator" / "9th.yaml"
     path.parent.mkdir(parents=True)

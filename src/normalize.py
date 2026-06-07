@@ -38,6 +38,12 @@ def normalize_candidate_name(name: str) -> str:
     return _DOT_PATTERN.sub(".", name)
 
 
+def normalize_party(party: object) -> object:
+    if party == "綠黨":
+        return "台灣綠黨"
+    return party
+
+
 def generate_id(
     name: str,
     birthday: Union[str, int, None],
