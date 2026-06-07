@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import logging
 import os
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
+
+_clog = logging.getLogger("candidates")
 
 import psycopg
 from psycopg import sql
@@ -507,6 +510,7 @@ class Store:
                     "UPDATE candidates SET alias_names = array_append(alias_names, %s) WHERE id = %s",
                     (alias_name, candidate_id),
                 )
+                _clog.info("ADD_ALIAS candidate_id=%s name=%s alias=%s", candidate_id, row["name"], alias_name)
 
     def remove_candidate_alias(self, candidate_id: str, alias_name: str) -> None:
         with self.connect() as conn:
@@ -515,6 +519,7 @@ class Store:
                 "UPDATE candidates SET alias_names = array_remove(alias_names, %s) WHERE id = %s",
                 (alias_name, candidate_id),
             )
+        _clog.info("REMOVE_ALIAS candidate_id=%s alias=%s", candidate_id, alias_name)
 
     def list_committed_candidates_with_source_records(self) -> list[dict[str, Any]]:
         with self.connect() as conn:
@@ -715,7 +720,13 @@ class Store:
                     "UPDATE identity_check_issues SET status = 'resolved' WHERE id = %s",
                     (issue_id,),
                 )
-        return int(row["id"])
+        operation_id = int(row["id"])
+        _clog.info(
+            "IDENTITY_FIX operation_id=%d issue_id=%d action=%s source_candidate=%s target_candidate=%s moved_records=%s",
+            operation_id, issue_id, action, source_candidate_id, plan["target_candidate_id"],
+            plan["moved_source_record_ids"],
+        )
+        return operation_id
 
     def list_identity_fix_operations(self, *, issue_id: int | None = None, limit: int = 50) -> list[dict[str, Any]]:
         with self.connect() as conn:
@@ -1069,6 +1080,14 @@ class Store:
                     (election_id,),
                 )
 
+        _clog.info("COMMIT_ELECTION election_id=%s auto=%d manual=%d total=%d", election_id, auto, manual, auto + manual)
+        for src_id, decision in decisions.items():
+            if decision["mode"] in ("manual", "manual_new"):
+                payload = source_records_map[src_id]
+                _clog.info(
+                    "COMMIT_MANUAL election_id=%s candidate_id=%s name=%s mode=%s source_record_id=%s",
+                    election_id, decision["candidate_id"], payload.get("name", ""), decision["mode"], src_id,
+                )
         return auto, manual
 
     def list_resolutions(self, election_id: str) -> list[dict[str, Any]]:
@@ -1131,12 +1150,17 @@ class Store:
                             (candidate_id,),
                         ).rowcount
 
-        return {
+        result = {
             "source_records": int(stats["source_records"]),
             "resolutions": int(stats["resolutions"]),
             "review_decisions": int(stats["review_decisions"]),
             "candidates": int(removed_candidates),
         }
+        _clog.info(
+            "RESET_ELECTION election_id=%s candidates_deleted=%d candidates_updated=%d",
+            election_id, removed_candidates, len(affected_candidate_ids) - removed_candidates,
+        )
+        return result
 
     def delete_election(self, election_id: str) -> None:
         self.reset_election_data(election_id)
@@ -1145,6 +1169,7 @@ class Store:
         with self.connect() as conn:
             self._setup_conn(conn)
             conn.execute("DELETE FROM candidates WHERE id = %s", (candidate_id,))
+        _clog.info("DELETE_CANDIDATE candidate_id=%s", candidate_id)
 
     def rename_candidate(self, old_id: str, new_id: str, new_birthday: int) -> None:
         with self.connect() as conn:
@@ -1169,3 +1194,4 @@ class Store:
                     (new_id, old_id),
                 )
                 conn.execute("DELETE FROM candidates WHERE id = %s", (old_id,))
+        _clog.info("RENAME_CANDIDATE old_id=%s new_id=%s birthday=%s", old_id, new_id, new_birthday)

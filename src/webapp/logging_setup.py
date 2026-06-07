@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import logging.handlers
+from datetime import datetime
 from pathlib import Path
 
 
@@ -26,3 +27,17 @@ def setup_logging(log_dir: Path) -> None:
     root.setLevel(logging.DEBUG)
     root.addHandler(ops_handler)
     root.addHandler(err_handler)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    import os
+    schema = os.environ.get("POSTGRES_SCHEMA", "")
+    log_prefix = "test" if schema.startswith("test_") else "candidates"
+    candidates_handler = logging.FileHandler(
+        log_dir / f"{timestamp}_{log_prefix}.log", encoding="utf-8"
+    )
+    candidates_handler.setFormatter(fmt)
+    candidates_handler.setLevel(logging.INFO)
+
+    clog = logging.getLogger("candidates")
+    clog.addHandler(candidates_handler)
+    clog.propagate = False
