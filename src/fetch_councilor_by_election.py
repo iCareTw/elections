@@ -33,8 +33,9 @@ def _safe_filename(name: str) -> str:
     return re.sub(r'[\\/:*?"<>|]', "_", name)
 
 
-def output_path(subject_id: str, theme_name: str) -> Path:
-    return DATA_ROOT / subject_id / f"{_safe_filename(theme_name)}.xlsx"
+def output_path(vote_date: str, theme_name: str) -> Path:
+    year = vote_date[:4] if vote_date else "unknown"
+    return DATA_ROOT / year / f"{_safe_filename(theme_name)}.xlsx"
 
 
 def _parse_votes_xls(xls_bytes: bytes, vote_date: str, theme_name: str) -> list[dict]:
@@ -157,7 +158,7 @@ async def _scrape_item(client: httpx.AsyncClient, item: dict, force: bool) -> No
     theme_name = item["theme_name"]
     theme_grp  = item["theme_group"]
     vote_date  = item.get("vote_date", "")
-    path       = output_path(sid, theme_name)
+    path       = output_path(vote_date, theme_name)
 
     if path.exists() and not force:
         print(f"  skip {path.name}")
