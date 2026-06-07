@@ -7,6 +7,7 @@ import yaml
 
 from src import (
     parse_councilor,
+    parse_councilor_by_election,
     parse_indigenous,
     parse_legislator,
     parse_legislator_by_election,
@@ -243,6 +244,27 @@ def _discover_legislator_by_election(root: Path) -> list[dict]:
     return elections
 
 
+def _discover_councilor_by_election(root: Path) -> list[dict]:
+    data_dir = root / "_data" / "councilor-by-election"
+    if not data_dir.exists():
+        return []
+
+    elections = []
+    for sid_dir in _visible_children(data_dir):
+        if not sid_dir.is_dir():
+            continue
+        for path in _visible_children(sid_dir):
+            if path.is_file() and path.suffix.lower() == ".xlsx":
+                elections.append(
+                    _record(
+                        type_="councilor-by-election",
+                        election_id=f"councilor-by-election/{sid_dir.name}/{path.name}",
+                        path=path,
+                    )
+                )
+    return elections
+
+
 def _discover_mna(root: Path) -> list[dict]:
     data_dir = root / "_data" / "mna"
     if not data_dir.exists():
@@ -377,6 +399,7 @@ def discover_elections(root: Path) -> list[dict]:
     elections.extend(_discover_legislator_by_election(root))
     elections.extend(_discover_mna(root))
     elections.extend(_discover_councilor(root))
+    elections.extend(_discover_councilor_by_election(root))
     elections.extend(_discover_township(root))
     elections.extend(_discover_village(root))
     elections.extend(_discover_indigenous(root, "indigenous_chief", "indigenous_chief"))
@@ -406,6 +429,8 @@ def _resolve_parser(election: dict):
         return parse_legislator_by_election.parse_file
     if election_type == "councilor":
         return parse_councilor.parse_file
+    if election_type == "councilor-by-election":
+        return parse_councilor_by_election.parse_file
     if election_type == "township":
         return parse_township.parse_file
     if election_type == "village":

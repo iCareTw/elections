@@ -20,8 +20,8 @@ description: >
 | `C1` | 直轄市長 | parse only（`_data/mayor/` 手動取得 XLSX） |
 | `C2` | 縣市長（含補選） | parse only（同上） |
 | `L0` | 立法委員 | `fetch_legislator.py` + `parse_legislator.py` |
-| `T1` | 直轄市議員 | `fetch_councilor.py` + `parse_councilor.py` |
-| `T2` | 縣市議員 | `fetch_councilor.py` + `parse_councilor.py` |
+| `T1` | 直轄市議員 | `fetch_councilor.py` + `parse_councilor.py`；補選見 `fetch_councilor_by_election.py` |
+| `T2` | 縣市議員 | `fetch_councilor.py` + `parse_councilor.py`；補選見 `fetch_councilor_by_election.py` |
 | `D1` | 直轄市山地原住民區長 | 無 |
 | `D2` | 鄉鎮市長 | `fetch_township.py`（規劃中） |
 | `R1` | 直轄市山地原住民區民代表 | 無 |
@@ -34,6 +34,8 @@ description: >
 ---
 
 ## API 端點公式
+
+### 一般選舉（ELC）
 
 ```
 BASE = https://db.cec.gov.tw/static/elections
@@ -54,6 +56,92 @@ GET {BASE}/data/tickets/ELC/{subject_id}/{legis_id}/{theme_id}/{data_level}/{prv
 - `legis_id`：從 list JSON 的 `legislator_type_id` 欄位取得（多數為 `00`，T1/T2 用 `T1`/`T2`，R1 用 `R3`，R2 用 `R1`/`R2`）
 - `data_level`：從 list JSON 的 `data_level` 欄位取得（`N`=全國, `C`=縣市, `D`=鄉鎮市區, `A`=選區, `L`=村里）
 - `{prv}_{city}`：從 areas API 取得，例如宜蘭縣 = `10_002`，台北市 = `63_000`
+
+---
+
+### 補選（BEL）— 靜態 API
+
+```
+# 1. 取得補選清單（結構與 ELC 不同，見下方說明）
+GET {BASE}/list/BEL_{subject_id}.json
+
+# 2. 取得候選人票選資料（僅 has_data=true 的項目）
+GET {BASE}/data/tickets/BEL/{subject_id}/{legis_id}/{theme_id}/{data_level}/{loc}.json
+```
+
+**BEL list JSON 結構**（與 ELC 完全不同，不要混用）：
+
+```json
+[
+  {
+    "term_index": "...",
+    "time_items": [
+      {
+        "theme_items": [
+          {
+            "subject_id": "T2",
+            "theme_id": "...",
+            "theme_name": "宜蘭縣縣議員缺額補選",
+            "theme_group": "1e40c844df20ebd152829ef5a2a01720",
+            "vote_date": "2024-04-13",
+            "has_data": false,
+            "data_level": "A",
+            "legislator_type_id": "T2"
+          }
+        ]
+      }
+    ]
+  }
+]
+```
+
+- `has_data: true` → 可從 tickets API 取得候選人資料
+- `has_data: false` → tickets API 無資料，**必須改用附件（attachment）路徑**
+- `data_level=C` 的單一選區縣（如花蓮、臺東、新竹縣立委補選）loc 要用 `00_000_00_000_0000` 而非 `{prv}_{city}_00_000_0000`
+
+---
+
+### 補選附件（BEL Attachment）— XLS 備用路徑
+
+當 `has_data=false` 時，用附件端點取得 XLS 檔案：
+
+```
+# 取得附件清單
+GET {BASE}/data/attachments/BEL/{subject_id}/{theme_group}/list.json
+
+# Response 範例：
+[
+  {
+    "file_name": "得票數一覽表.xls",
+    "file_path": "elections/data/attachments/BEL/T2/1e40c844.../得票數一覽表.xls"
+  },
+  ...
+]
+
+# 下載 XLS
+GET https://db.cec.gov.tw/static/{file_path}
+```
+
+⚠️ URL 含中文，需用支援 Unicode URL 的 HTTP 客戶端（`httpx`，不要用 `urllib`）。
+
+**XLS「得票數一覽表」欄位佈局**：
+
+```
+row 0: 標題（含投票日期字串，如「投票日期：113年4月13日」）
+row 1: 選舉名稱
+row 2: 欄位標題（'行\n政\n區\n別', '各候選人得票情形', ...）
+row 3: ['', 1, 2, 3, ...]     ← 候選人號次（float 或 str）
+row 4: ['', name1, name2, ...]  ← 候選人姓名
+row 5: ['', party1, party2, ...] ← 政黨（無黨籍寫 '無'）
+row 6: ['總計', votes1, ...]     ← 全縣總票數
+row 7+: 各行政區分項
+```
+
+解析方式：掃描 row 找「第一欄為空、第二欄為數字 1」作為 row 3 起點；找「第一欄為『總計』」作為 votes row。
+
+⚠️ **已知限制**：
+- T1/T2 補選 XLS 不含性別與出生年，這兩欄留空（`None`）。
+- C2（縣市長）補選全部為**掃描版 PDF**，無法用程式解析（`pdfplumber` 取回空文字），需人工處理。
 
 ---
 
