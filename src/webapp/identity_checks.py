@@ -46,6 +46,9 @@ def find_identity_check_issues(candidates: list[dict[str, Any]]) -> list[dict[st
         regional = _regional_jump_issue(candidate, elections)
         if regional:
             issues.append(regional)
+        zigzag = _region_zigzag_issue(candidate, elections)
+        if zigzag:
+            issues.append(zigzag)
     return issues
 
 
@@ -118,6 +121,28 @@ def _regional_jump_issue(candidate: dict[str, Any], elections: list[dict[str, An
         "issue_type": "regional_jump",
         "severity": "warning",
         "summary": f"{candidate['name']} 有跨地區地方選舉紀錄",
+        "source_record_ids": [r["source_record_id"] for r in refs],
+        "election_refs": refs,
+    }
+
+
+def _region_zigzag_issue(candidate: dict[str, Any], elections: list[dict[str, Any]]) -> dict[str, Any] | None:
+    regional = [e for e in elections if region_root(e.get("region"))]
+    seq: list[str] = []
+    for e in regional:
+        root = region_root(e.get("region"))
+        if not seq or seq[-1] != root:
+            seq.append(root)
+    if len(seq) <= 2:
+        return None
+    refs = _refs(regional)
+    region_display = " → ".join(seq)
+    return {
+        "issue_key": f"region_zigzag:{candidate['id']}",
+        "candidate_id": candidate["id"],
+        "issue_type": "region_zigzag",
+        "severity": "critical",
+        "summary": f"{candidate['name']} 有選區來回變動的參選紀錄 ({region_display})",
         "source_record_ids": [r["source_record_id"] for r in refs],
         "election_refs": refs,
     }
