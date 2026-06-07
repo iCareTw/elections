@@ -245,8 +245,14 @@ def _discover_legislator_by_election(root: Path) -> list[dict]:
 
 
 def _discover_councilor_by_election(root: Path) -> list[dict]:
-    data_dir = root / "_data" / "councilor-by-election"
-    if not data_dir.exists():
+    # Mirror the legislator pattern: by-election data sits inside the main councilor dir
+    data_dir: Path | None = None
+    for dirname in ("councilor", "council"):
+        candidate = root / "_data" / dirname / "by-election-councilor"
+        if candidate.exists():
+            data_dir = candidate
+            break
+    if data_dir is None:
         return []
 
     elections = []
@@ -262,7 +268,7 @@ def _discover_councilor_by_election(root: Path) -> list[dict]:
                 elections.append(
                     _record(
                         type_="councilor-by-election",
-                        election_id=f"councilor/{year_dir.name}/{path.name}",
+                        election_id=f"councilor/by-election-councilor/{year_dir.name}/{path.name}",
                         path=path,
                         year=year,
                     )

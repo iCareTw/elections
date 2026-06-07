@@ -13,7 +13,7 @@ import openpyxl
 import xlrd
 
 BASE_URL = "https://db.cec.gov.tw"
-DATA_ROOT = Path("_data/councilor-by-election")
+DATA_ROOT = Path("_data/council/by-election-councilor")
 
 XLSX_COLUMNS = [
     ("投票日", "vote_date"),
