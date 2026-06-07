@@ -411,6 +411,7 @@ def test_identity_check_templates_render_review_and_preview() -> None:
                 "type": "立法委員",
                 "region": "屏東縣選舉區",
                 "party": "建國黨",
+                "elected": 0,
             },
             {
                 "source_record_id": "council:1",
@@ -419,6 +420,7 @@ def test_identity_check_templates_render_review_and_preview() -> None:
                 "type": "縣市議員",
                 "region": "屏東縣 第03選舉區",
                 "party": "建國黨",
+                "elected": None,
             },
         ],
         "nearby_candidates": [],

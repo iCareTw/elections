@@ -22,7 +22,10 @@
 
 <form method="post" action="/identity-checks/{{ detail.issue.id }}/preview" class="identity-fix-form">
   <section class="panel">
-    <h3>參選紀錄比較</h3>
+    <div class="panel-header-row">
+      <h3>參選紀錄比較</h3>
+      <button type="button" class="button ghost" id="copy-records-btn">複製參選人資訊</button>
+    </div>
     <table class="log-table identity-record-table">
       <colgroup>
         <col class="col-select">
@@ -194,6 +197,42 @@
 </form>
 
 <script>
+(function () {
+  const candidateName = {{ detail.candidate.name | tojson }};
+  const records = [
+    {% for record in detail.records %}
+    {
+      year: {{ record.year | tojson }},
+      type: {{ record.type | tojson }},
+      region: {{ record.region | tojson }},
+      party: {{ record.party | tojson }},
+      elected: {{ record.elected | tojson }},
+    },
+    {% endfor %}
+  ];
+
+  function electedLabel(val) {
+    if (val === 1 || val === true) return "當選";
+    if (val === 0 || val === false) return "未當選";
+    return "N/A";
+  }
+
+  const copyBtn = document.getElementById("copy-records-btn");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", function () {
+      const header = ["年份", "選舉類別", "區域", "參選時黨籍", "是否當選"].join("\t");
+      const rows = records.map(r =>
+        [r.year ?? "", r.type ?? "", r.region ?? "", r.party ?? "", electedLabel(r.elected)].join("\t")
+      );
+      const text = ["候選人：" + candidateName, header, ...rows].join("\n");
+      navigator.clipboard.writeText(text).then(function () {
+        copyBtn.textContent = "已複製！";
+        setTimeout(function () { copyBtn.textContent = "複製參選人資訊"; }, 2000);
+      });
+    });
+  }
+})();
+
 (function () {
   const form = document.querySelector(".identity-fix-form");
   if (!form) return;
