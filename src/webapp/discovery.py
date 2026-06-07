@@ -244,6 +244,9 @@ def _discover_legislator_by_election(root: Path) -> list[dict]:
     return elections
 
 
+_COUNCILOR_BY_ELECTION_LABELS = {"T1": "直轄市議員", "T2": "縣市議員"}
+
+
 def _discover_councilor_by_election(root: Path) -> list[dict]:
     data_dir = root / "_data" / "councilor-by-election"
     if not data_dir.exists():
@@ -253,12 +256,13 @@ def _discover_councilor_by_election(root: Path) -> list[dict]:
     for sid_dir in _visible_children(data_dir):
         if not sid_dir.is_dir():
             continue
+        label = _COUNCILOR_BY_ELECTION_LABELS.get(sid_dir.name, sid_dir.name)
         for path in _visible_children(sid_dir):
             if path.is_file() and path.suffix.lower() == ".xlsx":
                 elections.append(
                     _record(
                         type_="councilor-by-election",
-                        election_id=f"councilor/補選/{sid_dir.name}/{path.name}",
+                        election_id=f"councilor/補選/{label}/{path.name}",
                         path=path,
                     )
                 )
