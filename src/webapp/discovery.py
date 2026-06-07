@@ -244,7 +244,20 @@ def _discover_legislator_by_election(root: Path) -> list[dict]:
     return elections
 
 
-_COUNCILOR_BY_ELECTION_LABELS = {"T1": "直轄市議員", "T2": "縣市議員"}
+def _vote_year_from_xlsx(path: Path) -> int | None:
+    import openpyxl
+    wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
+    ws = wb.active
+    rows = ws.iter_rows(values_only=True)
+    next(rows, None)  # skip header
+    for row in rows:
+        val = row[0]
+        if val:
+            import re as _re
+            m = _re.match(r"(\d{4})", str(val))
+            if m:
+                return int(m.group(1))
+    return None
 
 
 def _discover_councilor_by_election(root: Path) -> list[dict]:
@@ -256,14 +269,16 @@ def _discover_councilor_by_election(root: Path) -> list[dict]:
     for sid_dir in _visible_children(data_dir):
         if not sid_dir.is_dir():
             continue
-        label = _COUNCILOR_BY_ELECTION_LABELS.get(sid_dir.name, sid_dir.name)
         for path in _visible_children(sid_dir):
             if path.is_file() and path.suffix.lower() == ".xlsx":
+                year = _vote_year_from_xlsx(path)
+                year_label = str(year) if year else "補選"
                 elections.append(
                     _record(
                         type_="councilor-by-election",
-                        election_id=f"councilor/補選/{label}/{path.name}",
+                        election_id=f"councilor/補選/{year_label}/{path.name}",
                         path=path,
+                        year=year,
                     )
                 )
     return elections
