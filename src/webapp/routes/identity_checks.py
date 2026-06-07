@@ -84,6 +84,15 @@ async def identity_check_detail(request: Request, issue_id: int):
     if detail is None:
         return RedirectResponse("/identity-checks", status_code=303)
     _prepare_identity_check_detail(detail)
+
+    issue_rows = store.list_identity_check_issues()
+    all_groups, _ = _prepare_identity_check_index(issue_rows)
+    nav_groups = [g for g in all_groups if g["status"] != "stale"]
+    current_candidate_id = detail["candidate"]["id"]
+    current_pos = next((i for i, g in enumerate(nav_groups) if g["candidate_id"] == current_candidate_id), None)
+    prev_issue_id = nav_groups[current_pos - 1]["id"] if current_pos is not None and current_pos > 0 else None
+    next_issue_id = nav_groups[current_pos + 1]["id"] if current_pos is not None and current_pos < len(nav_groups) - 1 else None
+
     return templates.TemplateResponse(request, "identity_check_detail.html", {
         "app_mode": "check",
         "election_tree": _election_tree(root, store),
@@ -92,6 +101,8 @@ async def identity_check_detail(request: Request, issue_id: int):
         "selected_source_record_ids": [],
         "preview": None,
         "error": request.query_params.get("error", ""),
+        "prev_issue_id": prev_issue_id,
+        "next_issue_id": next_issue_id,
     })
 
 
