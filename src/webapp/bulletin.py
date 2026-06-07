@@ -6,6 +6,7 @@ from src.session_years import SESSION_YEARS
 
 _BULLETIN_DIR = "https://bulletin.cec.gov.tw/?dir=01選舉公報"
 _BULLETIN_FILE = "https://bulletin.cec.gov.tw/01選舉公報"
+_BULLETIN_ROOT = "https://bulletin.cec.gov.tw"
 _EE_BULLETIN = "https://eebulletin.cec.gov.tw"
 
 _TOWNSHIP_EEBULLETIN_FROM_ROC = 103
@@ -63,6 +64,39 @@ _EEBULLETIN_COUNTY: dict[str, str] = {
 
 _LEGISLATOR_SESSION_BY_YEAR: dict[int, int] = {
     year: session for session, year in SESSION_YEARS.items()
+}
+
+_MNA_SESSION_BY_YEAR: dict[int, int] = {
+    1991: 2,
+    1996: 3,
+    2001: 3,
+    2005: 4,
+}
+
+_LEGISLATOR_PARTY_LIST_URLS: dict[int, str] = {
+    2: "/01選舉公報/02立法委員/081年第2屆/02全國不分區及僑居國外國民/81年全國不分區及僑居國外國民立委選舉.pdf",
+    3: "/01選舉公報/02立法委員/084年第3屆/02全國不分區及僑居國外國民/84年全國不分區及僑居國外國民立委選舉.pdf",
+    4: "/01選舉公報/02立法委員/087年第4屆/02全國不分區及僑居國外國民/87年全國不分區及僑居國外國民立委選舉.pdf",
+    5: "/01選舉公報/02立法委員/090年第5屆/02全國不分區及僑居國外國民/90年全國不分區及僑居國外國民立委選舉.pdf",
+    6: "/01選舉公報/02立法委員/093年第6屆/02全國不分區及僑居國外國民/93年全國不分區及僑居國外國民立委選舉.pdf",
+    7: "/01選舉公報/02立法委員/097年第7屆/02全國不分區及僑居國外國民/97年全國不分區及僑居國外國民立委選舉.pdf",
+    8: "/01選舉公報/02立法委員/101年第8屆/02全國不分區及僑居國外國民/101年全國不分區及僑居國外國民立委選舉.pdf",
+    9: "/?dir=01選舉公報%2F02立法委員%2F105年第9屆%2F02全國不分區及僑居國外國民",
+    10: "/01選舉公報/02立法委員/109年第10屆/03全國不分區立法委員/全國不分區及僑居國外國民立法委員選舉%20.pdf",
+    11: "/01選舉公報/02立法委員/113年第11屆/05全國不分區及僑居國外國民立法委員/全國不分區及僑居國外國民立法委員.pdf",
+}
+
+_LEGISLATOR_DISTRICT_URLS: dict[int, str] = {
+    2: "/?dir=01選舉公報%2F02立法委員%2F081年第2屆%2F01區域",
+    3: "/?dir=01選舉公報%2F02立法委員%2F084年第3屆%2F01區域",
+    4: "/?dir=01選舉公報%2F02立法委員%2F087年第4屆%2F01區域",
+    5: "/?dir=01選舉公報%2F02立法委員%2F090年第5屆%2F01區域",
+    6: "/?dir=01選舉公報%2F02立法委員%2F093年第6屆%2F01區域",
+    7: "/?dir=01選舉公報%2F02立法委員%2F097年第7屆%2F01區域",
+    8: "/?dir=01選舉公報%2F02立法委員%2F101年第8屆%2F01區域",
+    9: "/?dir=01選舉公報%2F02立法委員%2F105年第9屆%2F01區域",
+    10: "/?dir=01選舉公報%2F02立法委員%2F109年第10屆%2F02區域立法委員",
+    11: "/?dir=01選舉公報%2F02立法委員%2F113年第11屆%2F02區域立法委員",
 }
 
 
@@ -123,12 +157,46 @@ def _councilor_url(year: int, region: str) -> str | None:
 
 
 def _legislator_party_url(year: int, session: int | None) -> str:
-    if session:
-        return _file(
-            f"02立法委員/{_roc(year)}第{session}屆/02全國不分區及僑居國外國民/"
-            f"{_roc_num(year)}年全國不分區及僑居國外國民立委選舉.pdf"
-        )
+    if session and session in _LEGISLATOR_PARTY_LIST_URLS:
+        return f"{_BULLETIN_ROOT}{_LEGISLATOR_PARTY_LIST_URLS[session]}"
     return _dir(f"02立法委員/{_roc(year)}")
+
+
+def _legislator_district_url(year: int, session: int | None) -> str:
+    if session and session in _LEGISLATOR_DISTRICT_URLS:
+        return f"{_BULLETIN_ROOT}{_LEGISLATOR_DISTRICT_URLS[session]}"
+    return _dir(f"02立法委員/{_roc(year)}")
+
+
+def _session_from_election_id(election_id: str) -> int | None:
+    match = re.search(r"(\d+)th", election_id)
+    return int(match.group(1)) if match else None
+
+
+def _mna_url(year: int, region: str, session: int | None) -> str | None:
+    session = session or _MNA_SESSION_BY_YEAR.get(year)
+    is_party_list = region in {"全國", "不分區", "全國不分區及僑居國外國民"}
+
+    if session == 4:
+        return _file("09國大代表/094年/國大第四屆.pdf")
+
+    if session == 3:
+        if is_party_list:
+            return _file(
+                "09國大代表/085年/02全國不分區及僑居國外國民/"
+                "00全國不分區及僑居國外國民國大代表.pdf"
+            )
+        return _dir("09國大代表/085年/01區域")
+
+    if session == 2:
+        if is_party_list:
+            return _file(
+                "09國大代表/080年/02全國不分區及僑居國外國民/"
+                "00全國不分區及僑居國外國民國大代表.pdf"
+            )
+        return _dir("09國大代表/080年/01區域")
+
+    return None
 
 
 def bulletin_url(payload: dict, election_id: str = "") -> str | None:
@@ -143,7 +211,7 @@ def bulletin_url(payload: dict, election_id: str = "") -> str | None:
     year = int(year_raw)
     region = payload.get("region") or ""
     session_raw = payload.get("session")
-    session = int(session_raw) if session_raw is not None else None
+    session = int(session_raw) if session_raw is not None else _session_from_election_id(election_id)
 
     roc = _roc(year)
     city = _city(region)
@@ -156,8 +224,11 @@ def bulletin_url(payload: dict, election_id: str = "") -> str | None:
         if region in {"全國", "不分區", "全國不分區及僑居國外國民"}:
             return _legislator_party_url(year, session)
         if session:
-            return _dir(f"02立法委員/{roc}第{session}屆/01區域")
+            return _legislator_district_url(year, session)
         return _dir(f"02立法委員/{roc}")
+
+    if type_ == "國大代表":
+        return _mna_url(year, region, session)
 
     if type_ == "縣市首長":
         if _is_direct(city, year):
@@ -196,3 +267,11 @@ def bulletin_url(payload: dict, election_id: str = "") -> str | None:
 
 def bulletin_url_from_record(record: dict) -> str | None:
     return bulletin_url(record)
+
+
+def bulletin_link_label(record: dict, url: str | None = None) -> str:
+    if not url:
+        return "無公報"
+    if record.get("type") == "國大代表" and url.startswith(_BULLETIN_DIR):
+        return "選舉公報目錄"
+    return "選舉公報 PDF"

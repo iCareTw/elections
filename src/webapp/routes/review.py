@@ -9,7 +9,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from src.normalize import generate_id
-from src.webapp.bulletin import bulletin_url, bulletin_url_from_record
+from src.webapp.bulletin import bulletin_link_label, bulletin_url, bulletin_url_from_record
 from src.webapp.matching import classify_record
 from src.webapp.store import Store
 from src.webapp.routes.elections import _election_tree
@@ -183,6 +183,7 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
         "current_decision": current_decision,
         "bulletin_url": bulletin_url,
         "bulletin_url_from_record": bulletin_url_from_record,
+        "bulletin_link_label": bulletin_link_label,
     })
 
 

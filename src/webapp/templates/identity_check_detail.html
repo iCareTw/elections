@@ -85,7 +85,7 @@
           {% endfor %}
           <td>
             {% if record.bulletin_url %}
-            <a class="bulletin-inline" href="{{ record.bulletin_url }}" target="_blank" rel="noopener">選舉公報</a>
+            <a class="bulletin-inline" href="{{ record.bulletin_url }}" target="_blank" rel="noopener">{{ record.bulletin_label | default('選舉公報', true) }}</a>
             {% else %}
             <span class="bulletin-missing">無公報</span>
             {% endif %}

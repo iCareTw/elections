@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 
-from src.webapp.bulletin import bulletin_url
+from src.webapp.bulletin import bulletin_link_label, bulletin_url
 from src.webapp.logging_setup import setup_logging
 from src.webapp.routes import aliases, build, elections, identity_checks, review
 from src.webapp.store import Store
@@ -44,6 +44,7 @@ def create_app(root: Path = ROOT) -> FastAPI:
 
     templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
     templates.env.globals["bulletin_url"] = bulletin_url
+    templates.env.globals["bulletin_link_label"] = bulletin_link_label
     app.state.templates = templates
     app.state.root = root
 

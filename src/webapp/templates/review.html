@@ -41,9 +41,11 @@
     {% set incoming_burl = bulletin_url(current_record.payload) %}
     {% endif %}
     {% if incoming_burl %}
+    {% set incoming_bulletin_record = current_record.payload if current_record.payload is defined else current_record %}
+    {% set incoming_bulletin_label = bulletin_link_label(incoming_bulletin_record, incoming_burl) %}
     <div class="record-field bulletin-link">
       <strong>公報</strong>
-      <span><a href="{{ incoming_burl }}" target="_blank" rel="noopener">📋 選舉公報 PDF ↗</a></span>
+      <span><a href="{{ incoming_burl }}" target="_blank" rel="noopener">📋 {{ incoming_bulletin_label }} ↗</a></span>
     </div>
     {% endif %}
   </article>
@@ -127,7 +129,8 @@
             {% else %}
             {% set burl = bulletin_url(e) %}
             {% endif %}
-            <li{% if e.get('is_incoming') %} class="incoming-election-item"{% endif %}>{{ e.year }} {% if is_local %}<span class="tag-type">{{ e.type }}</span>{% else %}{{ e.type }}{% endif %} · {% if is_local %}<span class="tag-region">{{ e.region }}</span>{% else %}{{ e.region }}{% endif %}{% if e.party %} · {{ e.party }}{% endif %}{% if e.elected is defined and e.elected is not none %} · {{ elected_tag(e.elected) }}{% endif %}{% if burl %} <a class="bulletin-inline" href="{{ burl }}" target="_blank" rel="noopener" title="選舉公報 PDF">📋</a>{% else %} <span class="bulletin-missing">無公報</span>{% endif %}{% if e.get('is_incoming') %} <span class="incoming-tag">← 本次</span>{% endif %}</li>
+            {% set burl_label = bulletin_link_label(e, burl) %}
+            <li{% if e.get('is_incoming') %} class="incoming-election-item"{% endif %}>{{ e.year }} {% if is_local %}<span class="tag-type">{{ e.type }}</span>{% else %}{{ e.type }}{% endif %} · {% if is_local %}<span class="tag-region">{{ e.region }}</span>{% else %}{{ e.region }}{% endif %}{% if e.party %} · {{ e.party }}{% endif %}{% if e.elected is defined and e.elected is not none %} · {{ elected_tag(e.elected) }}{% endif %}{% if burl %} <a class="bulletin-inline" href="{{ burl }}" target="_blank" rel="noopener" title="{{ burl_label }}">📋</a>{% else %} <span class="bulletin-missing">無公報</span>{% endif %}{% if e.get('is_incoming') %} <span class="incoming-tag">← 本次</span>{% endif %}</li>
             {% endfor %}
           </ul>
           {% else %}

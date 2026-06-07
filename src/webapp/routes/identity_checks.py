@@ -8,7 +8,7 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from src.webapp.bulletin import bulletin_url
+from src.webapp.bulletin import bulletin_link_label, bulletin_url
 from src.webapp.routes.elections import _election_tree
 from src.webapp.store import Store
 
@@ -257,6 +257,7 @@ def _prepare_identity_check_detail(detail: dict) -> None:
             for field in _COMPARE_FIELDS
         ]
         record["bulletin_url"] = bulletin_url(record, record.get("election_id") or "")
+        record["bulletin_label"] = bulletin_link_label(record, record["bulletin_url"])
 
 
 def _compute_summary(groups: list[dict]) -> dict[str, int]:

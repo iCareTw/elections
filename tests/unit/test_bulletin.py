@@ -2,7 +2,7 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 
-from src.webapp.bulletin import bulletin_url, bulletin_url_from_record
+from src.webapp.bulletin import bulletin_link_label, bulletin_url, bulletin_url_from_record
 
 
 def test_councilor_incoming_record_links_to_county_folder() -> None:
@@ -114,6 +114,117 @@ def test_party_list_legislator_infers_session_from_year() -> None:
     )
 
 
+def test_party_list_legislator_links_use_requested_paths_by_session() -> None:
+    expected_paths = {
+        2: "/01選舉公報/02立法委員/081年第2屆/02全國不分區及僑居國外國民/81年全國不分區及僑居國外國民立委選舉.pdf",
+        3: "/01選舉公報/02立法委員/084年第3屆/02全國不分區及僑居國外國民/84年全國不分區及僑居國外國民立委選舉.pdf",
+        4: "/01選舉公報/02立法委員/087年第4屆/02全國不分區及僑居國外國民/87年全國不分區及僑居國外國民立委選舉.pdf",
+        5: "/01選舉公報/02立法委員/090年第5屆/02全國不分區及僑居國外國民/90年全國不分區及僑居國外國民立委選舉.pdf",
+        6: "/01選舉公報/02立法委員/093年第6屆/02全國不分區及僑居國外國民/93年全國不分區及僑居國外國民立委選舉.pdf",
+        7: "/01選舉公報/02立法委員/097年第7屆/02全國不分區及僑居國外國民/97年全國不分區及僑居國外國民立委選舉.pdf",
+        8: "/01選舉公報/02立法委員/101年第8屆/02全國不分區及僑居國外國民/101年全國不分區及僑居國外國民立委選舉.pdf",
+        9: "/?dir=01選舉公報%2F02立法委員%2F105年第9屆%2F02全國不分區及僑居國外國民",
+        10: "/01選舉公報/02立法委員/109年第10屆/03全國不分區立法委員/全國不分區及僑居國外國民立法委員選舉%20.pdf",
+        11: "/01選舉公報/02立法委員/113年第11屆/05全國不分區及僑居國外國民立法委員/全國不分區及僑居國外國民立法委員.pdf",
+    }
+
+    for session, path in expected_paths.items():
+        assert bulletin_url_from_record({
+            "type": "立法委員",
+            "year": 1911 + int(path.split("/")[3][:3]) if not path.startswith("/?dir=") else 2016,
+            "session": session,
+            "region": "不分區",
+        }) == f"https://bulletin.cec.gov.tw{path}"
+
+
+def test_district_legislator_links_use_requested_paths_by_session() -> None:
+    expected_paths = {
+        2: "/?dir=01選舉公報%2F02立法委員%2F081年第2屆%2F01區域",
+        3: "/?dir=01選舉公報%2F02立法委員%2F084年第3屆%2F01區域",
+        4: "/?dir=01選舉公報%2F02立法委員%2F087年第4屆%2F01區域",
+        5: "/?dir=01選舉公報%2F02立法委員%2F090年第5屆%2F01區域",
+        6: "/?dir=01選舉公報%2F02立法委員%2F093年第6屆%2F01區域",
+        7: "/?dir=01選舉公報%2F02立法委員%2F097年第7屆%2F01區域",
+        8: "/?dir=01選舉公報%2F02立法委員%2F101年第8屆%2F01區域",
+        9: "/?dir=01選舉公報%2F02立法委員%2F105年第9屆%2F01區域",
+        10: "/?dir=01選舉公報%2F02立法委員%2F109年第10屆%2F02區域立法委員",
+        11: "/?dir=01選舉公報%2F02立法委員%2F113年第11屆%2F02區域立法委員",
+    }
+
+    for session, path in expected_paths.items():
+        assert bulletin_url_from_record({
+            "type": "立法委員",
+            "year": 1992,
+            "session": session,
+            "region": "臺北市第01選舉區",
+        }) == f"https://bulletin.cec.gov.tw{path}"
+
+
+def test_fourth_mna_links_to_single_pdf() -> None:
+    record = {
+        "type": "國大代表",
+        "year": 2005,
+        "session": 4,
+        "region": "全國",
+    }
+
+    url = bulletin_url_from_record(record)
+
+    assert url == "https://bulletin.cec.gov.tw/01選舉公報/09國大代表/094年/國大第四屆.pdf"
+    assert bulletin_link_label(record, url) == "選舉公報 PDF"
+
+
+def test_third_mna_district_links_to_region_directory() -> None:
+    record = {
+        "type": "國大代表",
+        "year": 2001,
+        "session": 3,
+        "region": "臺北市",
+    }
+
+    url = bulletin_url_from_record(record)
+
+    assert url == "https://bulletin.cec.gov.tw/?dir=01選舉公報/09國大代表/085年/01區域"
+    assert bulletin_link_label(record, url) == "選舉公報目錄"
+
+
+def test_third_mna_party_list_links_to_pdf() -> None:
+    record = {
+        "type": "國大代表",
+        "year": 2001,
+        "session": 3,
+        "region": "不分區",
+    }
+
+    assert bulletin_url_from_record(record) == (
+        "https://bulletin.cec.gov.tw/01選舉公報/09國大代表/085年/"
+        "02全國不分區及僑居國外國民/00全國不分區及僑居國外國民國大代表.pdf"
+    )
+
+
+def test_second_mna_links_to_requested_directory_and_pdf() -> None:
+    district = {
+        "type": "國大代表",
+        "year": 1991,
+        "session": 2,
+        "region": "臺中市",
+    }
+    party_list = {
+        "type": "國大代表",
+        "year": 1991,
+        "session": 2,
+        "region": "不分區",
+    }
+
+    assert bulletin_url_from_record(district) == (
+        "https://bulletin.cec.gov.tw/?dir=01選舉公報/09國大代表/080年/01區域"
+    )
+    assert bulletin_url_from_record(party_list) == (
+        "https://bulletin.cec.gov.tw/01選舉公報/09國大代表/080年/"
+        "02全國不分區及僑居國外國民/00全國不分區及僑居國外國民國大代表.pdf"
+    )
+
+
 def test_councilor_district_links_use_directory_urls() -> None:
     url = bulletin_url_from_record({
         "type": "縣市議員",
@@ -142,6 +253,7 @@ def test_review_template_renders_incoming_and_possible_candidate_pdf_links() -> 
     templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
     env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
     env.globals["bulletin_url_from_record"] = bulletin_url_from_record
+    env.globals["bulletin_link_label"] = bulletin_link_label
     template = env.get_template("review.html")
 
     incoming_url = bulletin_url(
@@ -190,10 +302,53 @@ def test_review_template_renders_incoming_and_possible_candidate_pdf_links() -> 
     assert possible_url in html
 
 
+def test_review_template_renders_mna_district_bulletin_as_directory() -> None:
+    templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
+    env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
+    env.globals["bulletin_url_from_record"] = bulletin_url_from_record
+    env.globals["bulletin_link_label"] = bulletin_link_label
+    template = env.get_template("review.html")
+
+    html = template.render(
+        election_tree={"children": {}},
+        selected_id="mna/3th-mna.yaml",
+        election={"type": "mna", "year": 2001, "label": "3th-mna"},
+        record_fields=[],
+        bulletin_url=None,
+        matches=[{
+            "id": "id_國代測試_1950",
+            "name": "國代測試",
+            "birthday": 1950,
+            "elections": [{
+                "type": "國大代表",
+                "year": 2001,
+                "session": 3,
+                "region": "臺北市",
+                "party": "測試黨",
+            }],
+        }],
+        incoming_birthday=1950,
+        current_decision=None,
+        current_record={"source_record_id": "src:1", "name": "國代測試"},
+        i=0,
+        display_count=1,
+        total_count=1,
+        resolved_count=0,
+        progress_pct=0,
+        error="",
+        decision_log=[],
+        pending_count=1,
+    )
+
+    assert "https://bulletin.cec.gov.tw/?dir=01選舉公報/09國大代表/085年/01區域" in html
+    assert 'title="選舉公報目錄"' in html
+
+
 def test_review_template_marks_close_birthday_diff_only() -> None:
     templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
     env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
     env.globals["bulletin_url_from_record"] = bulletin_url_from_record
+    env.globals["bulletin_link_label"] = bulletin_link_label
     template = env.get_template("review.html")
 
     html = template.render(
@@ -248,6 +403,7 @@ def test_review_template_tags_local_type_and_region_fields() -> None:
     templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
     env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
     env.globals["bulletin_url_from_record"] = bulletin_url_from_record
+    env.globals["bulletin_link_label"] = bulletin_link_label
     template = env.get_template("review.html")
 
     html = template.render(
@@ -288,6 +444,7 @@ def test_review_template_renders_elected_status_for_incoming_and_possible_matche
     templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
     env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
     env.globals["bulletin_url_from_record"] = bulletin_url_from_record
+    env.globals["bulletin_link_label"] = bulletin_link_label
     template = env.get_template("review.html")
 
     html = template.render(
@@ -329,6 +486,7 @@ def test_review_template_marks_records_without_bulletin() -> None:
     templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
     env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
     env.globals["bulletin_url_from_record"] = bulletin_url_from_record
+    env.globals["bulletin_link_label"] = bulletin_link_label
     template = env.get_template("review.html")
 
     html = template.render(
@@ -375,6 +533,7 @@ def test_review_template_renders_party_list_legislator_pdf_without_session() -> 
     templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
     env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
     env.globals["bulletin_url_from_record"] = bulletin_url_from_record
+    env.globals["bulletin_link_label"] = bulletin_link_label
     template = env.get_template("review.html")
 
     possible_url = bulletin_url_from_record({
