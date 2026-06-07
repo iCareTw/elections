@@ -468,6 +468,10 @@ def test_identity_check_templates_render_review_and_preview() -> None:
     assert "選舉公報" in detail_html
     assert "清除整個來源檔判定" in detail_html
     assert "duplicate-source-file" in detail_html
+    assert 'id="copy-candidate-name-btn"' in detail_html
+    assert 'data-copy-value="劉煜基"' in detail_html
+    assert 'id="copy-candidate-id-btn"' in detail_html
+    assert 'data-copy-value="id_劉煜基_1946"' in detail_html
     assert "/reset-confirm" in detail_html
     assert re.search(r'name="source_record_ids" value="legislator:1"\s+checked', detail_html)
     assert not re.search(r'name="source_record_ids" value="council:1"\s+checked', detail_html)

@@ -695,6 +695,11 @@ button { font: inherit; cursor: pointer; border: 0; }
 .identity-check-table td:nth-child(4) { width: auto; }
 .candidate-id-link { color: var(--accent); text-decoration: none; font-weight: 700; }
 .candidate-id-link:hover { text-decoration: underline; }
+.copy-candidate-name,
+.copy-candidate-id { display: inline; padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; }
+.copy-candidate-name { font: inherit; font-weight: inherit; }
+.copy-candidate-name:hover,
+.copy-candidate-id:hover { color: var(--accent); text-decoration: underline; }
 .resolved-banner { background: #d1fae5; border: 1px solid #6ee7b7; border-radius: 6px; padding: 6px 10px; font-size: 12px; color: #065f46; margin-bottom: 10px; }
 .nav-pending-badge { background: #fef3c7; color: #92400e; border-radius: 10px; padding: 1px 7px; font-size: 10px; margin-left: 5px; }
 .badge-open { background: #fef3c7; color: #92400e; }

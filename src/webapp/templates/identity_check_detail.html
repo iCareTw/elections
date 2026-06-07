@@ -8,8 +8,18 @@
 <div class="workspace-header">
   <div>
     <p class="pathline">Robustness Check / {{ detail.issue.issue_type_label }}</p>
-    <h2>{{ detail.candidate.name }}</h2>
-    <p class="mono">{{ detail.candidate.id }}</p>
+    <h2>
+      <button type="button"
+              class="copy-candidate-name"
+              id="copy-candidate-name-btn"
+              data-copy-value="{{ detail.candidate.name }}"
+              title="複製姓名">{{ detail.candidate.name }}</button>
+    </h2>
+    <button type="button"
+            class="copy-candidate-id mono"
+            id="copy-candidate-id-btn"
+            data-copy-value="{{ detail.candidate.id }}"
+            title="複製 candidate id">{{ detail.candidate.id }}</button>
   </div>
   <div class="nav-buttons">
     {% if prev_issue_id %}<a class="button ghost" href="/identity-checks/{{ prev_issue_id }}">← 上一筆</a>{% endif %}
@@ -199,6 +209,8 @@
 <script>
 (function () {
   const candidateName = {{ detail.candidate.name | tojson }};
+  const candidateNameBtn = document.getElementById("copy-candidate-name-btn");
+  const candidateIdBtn = document.getElementById("copy-candidate-id-btn");
   const records = [
     {% for record in detail.records %}
     {
@@ -218,6 +230,19 @@
   }
 
   const copyBtn = document.getElementById("copy-records-btn");
+  function bindCopyText(btn) {
+    if (!btn) return;
+    const originalText = btn.textContent;
+    btn.addEventListener("click", function () {
+      navigator.clipboard.writeText(btn.dataset.copyValue || originalText).then(function () {
+        btn.textContent = "已複製";
+        setTimeout(function () { btn.textContent = originalText; }, 1600);
+      });
+    });
+  }
+  bindCopyText(candidateNameBtn);
+  bindCopyText(candidateIdBtn);
+
   if (copyBtn) {
     copyBtn.addEventListener("click", function () {
       const header = ["年份", "選舉類別", "區域", "參選時黨籍", "是否當選"].join("\t");
