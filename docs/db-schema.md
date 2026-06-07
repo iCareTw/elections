@@ -178,7 +178,7 @@ commit 後的候選人合理性檢查清單. 每筆代表一個需要人工確�
 | `id`                | SERIAL PK   | 流水號                                        |
 | `issue_key`         | TEXT UNIQUE | 同一疑點的穩定識別碼                           |
 | `candidate_id`      | VARCHAR(64) | 被檢查的候選人 → `candidates.id`              |
-| `issue_type`        | VARCHAR(32) | `same_year_multiple` / `rank_downgrade` / `regional_jump` |
+| `issue_type`        | VARCHAR(32) | `same_year_multiple` / `rank_downgrade` / `regional_jump` / `region_zigzag` |
 | `severity`          | VARCHAR(16) | `critical` / `warning`                       |
 | `summary`           | TEXT        | UI 顯示摘要                                    |
 | `source_record_ids` | TEXT[]      | 牽涉的 committed source records               |
