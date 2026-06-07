@@ -276,7 +276,7 @@ def _discover_councilor_by_election(root: Path) -> list[dict]:
                 elections.append(
                     _record(
                         type_="councilor-by-election",
-                        election_id=f"councilor/補選/{year_label}/{path.name}",
+                        election_id=f"councilor/{year_label}/{path.name}",
                         path=path,
                         year=year,
                     )
