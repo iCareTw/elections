@@ -360,26 +360,38 @@ def test_identity_check_templates_render_review_and_preview() -> None:
             }
         ],
         issue_summary={
-            "critical": 1,
-            "warning": 0,
             "open": 1,
+            "open_critical": 1,
+            "open_warning": 0,
             "stale": 0,
             "resolved": 0,
             "ignored": 0,
             "total": 1,
         },
-        show_expired=True,
+        type_filters=(
+            ("same_year_multiple", "同年多筆參選"),
+            ("regional_jump", "跨地參選"),
+            ("rank_downgrade", "參選較低位階"),
+        ),
+        selected_types=["same_year_multiple", "regional_jump", "rank_downgrade"],
+        eltype_filters=(
+            ("president", "President"),
+            ("legislator", "Legislator"),
+            ("mna", "MNA"),
+            ("mayor", "Mayor"),
+            ("council", "Council"),
+            ("other", "Other"),
+        ),
+        selected_eltypes=["president", "legislator", "mna", "mayor", "council", "other"],
         operations=[],
         generated_count=None,
     )
     assert "疑似誤合併檢查" in index_html
     assert "/identity-checks/1" in index_html
     assert "目前使用 Identity Check" in index_html
-    assert "隱藏已過期" in index_html
     assert "必審 1" in index_html
     assert ">查看<" not in index_html
     assert "修正紀錄" not in index_html
-    assert "checked" not in index_html
     assert "；" not in index_html
     assert "; " in index_html
 
@@ -452,7 +464,7 @@ def test_identity_check_templates_render_review_and_preview() -> None:
     assert "id_劉煜基_1946a" in detail_html
     assert "參選紀錄比較" in detail_html
     assert "選舉公報" in detail_html
-    assert "重置來源檔" in detail_html
+    assert "清除整個來源檔判定" in detail_html
     assert "duplicate-source-file" in detail_html
     assert "/reset-confirm" in detail_html
     assert re.search(r'name="source_record_ids" value="legislator:1"\s+checked', detail_html)

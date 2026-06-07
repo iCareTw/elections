@@ -86,12 +86,13 @@ async def identity_checks_index(request: Request):
         selected_eltypes = list(_ALL_ELTYPES)
 
     issue_rows = store.list_identity_check_issues()
-    issues, summary = _prepare_identity_check_index(issue_rows)
-    issues = [issue for issue in issues if issue["status"] != "stale"]
+    issues, _ = _prepare_identity_check_index(issue_rows)
     selected_set = set(selected_types)
     issues = [issue for issue in issues if issue["issue_types"] & selected_set]
     selected_eltype_set = set(selected_eltypes)
     issues = [issue for issue in issues if _issue_matches_eltypes(issue, selected_eltype_set)]
+    summary = _compute_summary(issues)
+    issues = [issue for issue in issues if issue["status"] != "stale"]
     return templates.TemplateResponse(request, "identity_checks.html", {
         "app_mode": "check",
         "election_tree": _election_tree(root, store),
@@ -256,6 +257,18 @@ def _prepare_identity_check_detail(detail: dict) -> None:
             for field in _COMPARE_FIELDS
         ]
         record["bulletin_url"] = bulletin_url(record, record.get("election_id") or "")
+
+
+def _compute_summary(groups: list[dict]) -> dict[str, int]:
+    summary = {"open": 0, "open_critical": 0, "open_warning": 0, "stale": 0, "resolved": 0, "ignored": 0, "total": 0}
+    for row in groups:
+        status = row["status"]
+        if status in summary:
+            summary[status] += 1
+        if status == "open":
+            summary["open_critical" if row["severity"] == "critical" else "open_warning"] += 1
+    summary["total"] = len(groups)
+    return summary
 
 
 def _issue_matches_eltypes(group: dict, selected: set[str]) -> bool:

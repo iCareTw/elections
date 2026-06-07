@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from src.webapp.identity_checks import find_identity_check_issues, region_root
-from src.webapp.routes.identity_checks import _prepare_identity_check_index
+from src.webapp.routes.identity_checks import _compute_summary, _prepare_identity_check_index
 
 
 def test_find_identity_check_issues_detects_same_year_multiple() -> None:
@@ -67,7 +67,7 @@ def test_region_root_treats_county_city_renames_as_same_region() -> None:
     assert region_root("新北市 第03選舉區") == "新北市"
 
 
-def test_prepare_identity_check_index_groups_issues_by_candidate_and_hides_expired() -> None:
+def test_prepare_identity_check_index_groups_issues_by_candidate() -> None:
     issues = [
         {
             "id": 1,
@@ -76,7 +76,10 @@ def test_prepare_identity_check_index_groups_issues_by_candidate_and_hides_expir
             "status": "open",
             "status_label": "待審",
             "severity": "critical",
+            "issue_type": "same_year_multiple",
             "summary": "1998 年有 2 筆參選紀錄",
+            "candidate_election_types": ["立法委員"],
+            "updated_at": None,
         },
         {
             "id": 2,
@@ -85,7 +88,10 @@ def test_prepare_identity_check_index_groups_issues_by_candidate_and_hides_expir
             "status": "open",
             "status_label": "待審",
             "severity": "warning",
+            "issue_type": "regional_jump",
             "summary": "2002 年有 1 筆參選紀錄",
+            "candidate_election_types": ["立法委員"],
+            "updated_at": None,
         },
         {
             "id": 3,
@@ -94,25 +100,50 @@ def test_prepare_identity_check_index_groups_issues_by_candidate_and_hides_expir
             "status": "stale",
             "status_label": "已過期",
             "severity": "warning",
+            "issue_type": "rank_downgrade",
             "summary": "2010 年的問題已失效",
+            "candidate_election_types": ["縣市議員"],
+            "updated_at": None,
         },
     ]
 
-    rows, summary = _prepare_identity_check_index(issues)
+    rows, _ = _prepare_identity_check_index(issues)
 
     assert len(rows) == 2
     assert rows[0]["candidate_id"] == "id_陳美玲_1965"
     assert rows[0]["reason_text"] == "1998 年有 2 筆參選紀錄; 2002 年有 1 筆參選紀錄"
     assert rows[0]["severity_label"] == "必審"
-    assert summary == {
-        "critical": 1,
-        "warning": 1,
-        "open": 1,
-        "stale": 1,
-        "resolved": 0,
-        "ignored": 0,
-        "total": 2,
-    }
 
     visible_rows = [row for row in rows if row["status"] != "stale"]
     assert len(visible_rows) == 1
+
+
+def test_compute_summary_reflects_filtered_groups() -> None:
+    groups = [
+        {"status": "open", "severity": "critical"},
+        {"status": "open", "severity": "warning"},
+        {"status": "stale", "severity": "warning"},
+        {"status": "ignored", "severity": "warning"},
+    ]
+    summary = _compute_summary(groups)
+    assert summary == {
+        "open": 2,
+        "open_critical": 1,
+        "open_warning": 1,
+        "stale": 1,
+        "resolved": 0,
+        "ignored": 1,
+        "total": 4,
+    }
+
+
+def test_compute_summary_empty() -> None:
+    assert _compute_summary([]) == {
+        "open": 0,
+        "open_critical": 0,
+        "open_warning": 0,
+        "stale": 0,
+        "resolved": 0,
+        "ignored": 0,
+        "total": 0,
+    }
