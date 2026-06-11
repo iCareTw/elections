@@ -634,6 +634,23 @@ class Store:
                 (status, issue_id),
             )
 
+    def ignore_candidate_open_issues(self, issue_id: int) -> int:
+        """Mark every still-open issue of the issue's candidate as ignored."""
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            result = conn.execute(
+                """
+                UPDATE identity_check_issues
+                SET status = 'ignored'
+                WHERE status = 'open'
+                  AND candidate_id = (
+                      SELECT candidate_id FROM identity_check_issues WHERE id = %s
+                  )
+                """,
+                (issue_id,),
+            )
+            return result.rowcount
+
     def preview_identity_fix(
         self,
         *,

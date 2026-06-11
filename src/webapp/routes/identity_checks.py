@@ -212,7 +212,8 @@ async def apply_identity_fix(
 @router.post("/identity-checks/{issue_id:int}/ignore")
 async def ignore_identity_check(request: Request, issue_id: int):
     store: Store = request.app.state.store
-    store.update_identity_check_status(issue_id, "ignored")
+    count = store.ignore_candidate_open_issues(issue_id)
+    logger.info("identity-check ignore issue=%d candidate_issues_marked=%d", issue_id, count)
     return RedirectResponse("/identity-checks", status_code=303)
 
 
