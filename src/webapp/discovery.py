@@ -233,7 +233,7 @@ def _discover_legislator_by_election(root: Path) -> list[dict]:
 
         session = _session_from_text(child.name)
         for path in _visible_children(child):
-            if path.is_file() and path.suffix.lower() == ".xlsx":
+            if path.is_file() and path.suffix.lower() in {".xlsx", ".yaml", ".yml"}:
                 elections.append(
                     _record(
                         type_="legislator-by-election",
