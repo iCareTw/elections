@@ -48,7 +48,7 @@ def parse_file(path: str | Path) -> list[dict]:
         elected = is_victor == "*" if victor_marked else tickets is not None and int(tickets) == max_ticket
         records.append({
             "name": str(name),
-            "birthday": int(birth_year) if birth_year else None,
+            "birthyear": int(birth_year) if birth_year else None,
             "year": _year_from_vote_date(vote_date),
             "type": election_type,
             "region": region,

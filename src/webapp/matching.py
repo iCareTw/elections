@@ -23,16 +23,16 @@ def classify_record_cached(
             [c for c in all_candidates if normalize_name_without_latin(c["name"]) == normalized_wl]
             if normalized_wl else []
         )
-        birthday = record.get("birthday")
-        same_birthday = [c for c in fallback if c.get("birthday") == birthday]
-        if birthday is not None and len(same_birthday) == 1:
-            return {"kind": "auto", "candidate_id": same_birthday[0]["id"]}
-        return {"kind": "new", "candidate_id": generate_id(record["name"], record.get("birthday"))}
+        birthyear = record.get("birthyear")
+        same_birthyear = [c for c in fallback if c.get("birthyear") == birthyear]
+        if birthyear is not None and len(same_birthyear) == 1:
+            return {"kind": "auto", "candidate_id": same_birthyear[0]["id"]}
+        return {"kind": "new", "candidate_id": generate_id(record["name"], record.get("birthyear"))}
 
-    birthday = record.get("birthday")
-    same_birthday = [c for c in matches if c.get("birthday") == birthday]
-    if birthday is not None and len(same_birthday) == 1:
-        return {"kind": "auto", "candidate_id": same_birthday[0]["id"]}
+    birthyear = record.get("birthyear")
+    same_birthyear = [c for c in matches if c.get("birthyear") == birthyear]
+    if birthyear is not None and len(same_birthyear) == 1:
+        return {"kind": "auto", "candidate_id": same_birthyear[0]["id"]}
 
     return {"kind": "manual", "matches": matches}
 
@@ -41,15 +41,15 @@ def classify_record(record: dict[str, Any], store: Store) -> dict[str, Any]:
     matches = store.list_candidates_by_name(record["name"])
     if not matches:
         fallback_matches = store.list_candidates_by_name_without_latin(record["name"])
-        birthday = record.get("birthday")
-        same_birthday = [c for c in fallback_matches if c.get("birthday") == birthday]
-        if birthday is not None and len(same_birthday) == 1:
-            return {"kind": "auto", "candidate_id": same_birthday[0]["id"]}
-        return {"kind": "new", "candidate_id": generate_id(record["name"], record.get("birthday"))}
+        birthyear = record.get("birthyear")
+        same_birthyear = [c for c in fallback_matches if c.get("birthyear") == birthyear]
+        if birthyear is not None and len(same_birthyear) == 1:
+            return {"kind": "auto", "candidate_id": same_birthyear[0]["id"]}
+        return {"kind": "new", "candidate_id": generate_id(record["name"], record.get("birthyear"))}
 
-    birthday = record.get("birthday")
-    same_birthday = [c for c in matches if c.get("birthday") == birthday]
-    if birthday is not None and len(same_birthday) == 1:
-        return {"kind": "auto", "candidate_id": same_birthday[0]["id"]}
+    birthyear = record.get("birthyear")
+    same_birthyear = [c for c in matches if c.get("birthyear") == birthyear]
+    if birthyear is not None and len(same_birthyear) == 1:
+        return {"kind": "auto", "candidate_id": same_birthyear[0]["id"]}
 
     return {"kind": "manual", "matches": matches}

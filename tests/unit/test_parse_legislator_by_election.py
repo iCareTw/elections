@@ -18,7 +18,7 @@ def test_parse_file_reads_vote_year_and_region_from_by_election_xlsx(tmp_path: P
     assert parse_file(path) == [
         {
             "name": "顏寬恒",
-            "birthday": 1977,
+            "birthyear": 1977,
             "year": 2013,
             "session": 8,
             "type": "立法委員",

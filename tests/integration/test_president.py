@@ -11,9 +11,9 @@ CANDIDATES_YAML = Path("candidates.yaml")
 PRESIDENT_DIR = Path("_data/president")
 PRESIDENT_TYPES = {"國家元首_總統", "國家元首_副總統"}
 
-# xlsx 原始資料刊登疏失，已知錯誤，跳過 birthday 比對
+# xlsx 原始資料刊登疏失，已知錯誤，跳過 birthyear 比對
 # key: (year, election_type, ticket)
-KNOWN_BIRTHDAY_ERRORS: set[tuple] = {
+KNOWN_BIRTHYEAR_ERRORS: set[tuple] = {
     (2000, "國家元首_副總統", 2),  # 蕭萬長 10th 誤植為 1942, 正確為 1939
     (2008, "國家元首_副總統", 2),  # 蕭萬長沿用同一筆生日資料
 }
@@ -42,7 +42,7 @@ def _load_yaml_entries() -> list[dict]:
             if election["type"] in PRESIDENT_TYPES:
                 entries.append({
                     "name": normalize_name(candidate["name"]),
-                    "birthday": candidate.get("birthday"),
+                    "birthyear": candidate.get("birthyear"),
                     "year": election["year"],
                     "type": election["type"],
                     "ticket": election["ticket"],
@@ -90,5 +90,5 @@ def test_president_candidates_match_xlsx(year: int, election_type: str) -> None:
         assert x["name"] == y["name"], f"{year}/{election_type}/號次{ticket}: 姓名不符 xlsx={x['name']!r} yaml={y['name']!r}"
         assert x["party"] == y["party"], f"{year}/{election_type}/號次{ticket}: 政黨不符 xlsx={x['party']!r} yaml={y['party']!r}"
         assert x["elected"] == y["elected"], f"{year}/{election_type}/號次{ticket}: 當選不符 xlsx={x['elected']} yaml={y['elected']}"
-        if (year, election_type, ticket) not in KNOWN_BIRTHDAY_ERRORS:
-            assert x["birthday"] == y["birthday"], f"{year}/{election_type}/號次{ticket}: 生日不符 xlsx={x['birthday']} yaml={y['birthday']}"
+        if (year, election_type, ticket) not in KNOWN_BIRTHYEAR_ERRORS:
+            assert x["birthyear"] == y["birthyear"], f"{year}/{election_type}/號次{ticket}: 生日不符 xlsx={x['birthyear']} yaml={y['birthyear']}"

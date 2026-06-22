@@ -25,12 +25,12 @@ def test_parse_single_pair():
     records = parse_workbook(wb, year=2024)
     assert len(records) == 2
     assert records[0] == {
-        'name': '賴清德', 'birthday': 1959, 'year': 2024,
+        'name': '賴清德', 'birthyear': 1959, 'year': 2024,
         'type': '國家元首_總統', 'region': '全國',
         'ticket': 2, 'party': '民主進步黨', 'elected': 1,
     }
     assert records[1] == {
-        'name': '蕭美琴', 'birthday': 1971, 'year': 2024,
+        'name': '蕭美琴', 'birthyear': 1971, 'year': 2024,
         'type': '國家元首_副總統', 'region': '全國',
         'ticket': 2, 'party': '民主進步黨', 'elected': 1,
     }

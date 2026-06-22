@@ -203,7 +203,7 @@ def test_alias_management_page_and_actions(tmp_path: Path) -> None:
             return [{
                 "id": "id_葉毓蘭_1958",
                 "name": "葉毓蘭",
-                "birthday": 1958,
+                "birthyear": 1958,
                 "alias_names": ["游毓蘭"],
             }]
 
@@ -402,7 +402,7 @@ def test_identity_check_templates_render_review_and_preview() -> None:
             "summary": "劉煜基 在 1998 年有 2 筆參選紀錄",
             "source_record_ids": ["legislator:1"],
         },
-        "candidate": {"id": "id_劉煜基_1946", "name": "劉煜基", "birthday": 1946},
+        "candidate": {"id": "id_劉煜基_1946", "name": "劉煜基", "birthyear": 1946},
         "records": [
             {
                 "source_record_id": "legislator:1",
@@ -562,7 +562,7 @@ def test_load_and_review_flow(tmp_path: Path) -> None:
     )
     election_path.parent.mkdir(parents=True)
     election_path.write_text(
-        "- name: 測試候選人\n  party: 測試黨\n  birthday: 1970\n"
+        "- name: 測試候選人\n  party: 測試黨\n  birthyear: 1970\n"
         "  year: 2024\n  region: 全國\n  type: 立法委員\n  elected: 0\n  session: 11\n",
         encoding="utf-8",
     )
@@ -630,9 +630,9 @@ def test_auto_decisions_survive_without_browser_session(tmp_path: Path) -> None:
     )
     election_path.parent.mkdir(parents=True)
     election_path.write_text(
-        "- name: 自動測試候選人\n  party: 測試黨\n  birthday: 1980\n"
+        "- name: 自動測試候選人\n  party: 測試黨\n  birthyear: 1980\n"
         "  year: 2024\n  region: 全國\n  type: 立法委員\n  elected: 0\n  session: 11\n"
-        "- name: 人工測試候選人\n  party: 測試黨\n  birthday: 1990\n"
+        "- name: 人工測試候選人\n  party: 測試黨\n  birthyear: 1990\n"
         "  year: 2024\n  region: 全國\n  type: 立法委員\n  elected: 0\n  session: 11\n",
         encoding="utf-8",
     )
@@ -648,7 +648,7 @@ def test_auto_decisions_survive_without_browser_session(tmp_path: Path) -> None:
         for manual_candidate_id in manual_candidate_ids:
             conn.execute(
                 """
-                INSERT INTO candidates(id, name, birthday)
+                INSERT INTO candidates(id, name, birthyear)
                 VALUES (%s, %s, %s)
                 """,
                 (manual_candidate_id, "人工測試候選人", 1990),

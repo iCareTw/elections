@@ -56,17 +56,17 @@
     <div class="ln gray">比對現有 candidates.yaml ...</div>
     <div class="spacer"></div>
 
-    <div class="ln"><span class="tag-new">NEW</span> &nbsp;<span class="white bold">吳欣盈</span> &nbsp;<span class="gray">birthday:1978 | 國家元首 2024 | 台灣民眾黨 | elected:0</span></div>
+    <div class="ln"><span class="tag-new">NEW</span> &nbsp;<span class="white bold">吳欣盈</span> &nbsp;<span class="gray">birthyear:1978 | 國家元首 2024 | 台灣民眾黨 | elected:0</span></div>
     <div class="ln indent gray">→ 現有 yaml 找不到此人</div>
     <div class="ln indent"><span class="prompt">新增？ [y] 是 &nbsp;[s] 跳過 &nbsp;[e] 編輯後新增 &gt; </span><span class="white">y</span></div>
     <div class="spacer"></div>
 
-    <div class="ln"><span class="tag-exists">EXISTS</span> &nbsp;<span class="white bold">柯文哲</span> &nbsp;<span class="gray">birthday:1959 | 國家元首 2024 | 台灣民眾黨 | elected:0</span></div>
+    <div class="ln"><span class="tag-exists">EXISTS</span> &nbsp;<span class="white bold">柯文哲</span> &nbsp;<span class="gray">birthyear:1959 | 國家元首 2024 | 台灣民眾黨 | elected:0</span></div>
     <div class="ln indent gray">→ 現有 id_柯文哲（已有 2014/2018 縣市首長），將新增一筆 election</div>
     <div class="ln indent"><span class="prompt">合併？ [y] 是 &nbsp;[s] 跳過 &nbsp;[e] 編輯後合併 &gt; </span><span class="white bold">_</span><span class="cursor"></span></div>
     <div class="spacer"></div>
 
-    <div class="ln"><span class="tag-conflict">CONFLICT</span> &nbsp;<span class="white bold">許淑華</span> &nbsp;<span class="gray">birthday:1971 | 國家元首 2024 | 民主進步黨 | elected:0</span></div>
+    <div class="ln"><span class="tag-conflict">CONFLICT</span> &nbsp;<span class="white bold">許淑華</span> &nbsp;<span class="gray">birthyear:1971 | 國家元首 2024 | 民主進步黨 | elected:0</span></div>
     <div class="ln indent gray">→ yaml 中有同名 2 人：</div>
     <div class="ln indent2 blue">[1] id_許淑華_1973 &nbsp;臺北市議員 2016 (民主進步黨)</div>
     <div class="ln indent2 blue">[2] id_許淑華_1975 &nbsp;南投縣長 2014 (中國國民黨)</div>
@@ -101,7 +101,7 @@
     <div class="ln gray"># 現有 yaml 找不到此人，可直接複製貼入</div>
     <div class="ln green">- name: 吳欣盈</div>
     <div class="ln green">  id: id_吳欣盈</div>
-    <div class="ln green">  birthday: 1978</div>
+    <div class="ln green">  birthyear: 1978</div>
     <div class="ln green">  elections:</div>
     <div class="ln green">    - year: 2024</div>
     <div class="ln green">      type: 國家元首</div>
@@ -121,7 +121,7 @@
     <div class="ln gray"># 同名 2 人，請判斷是哪一位，或新增第三人</div>
     <div class="ln gray"># 現有: id_許淑華_1973 (臺北市議員), id_許淑華_1975 (南投縣長)</div>
     <div class="ln red">- name: 許淑華   # ← 請確認</div>
-    <div class="ln red">  birthday: 1971</div>
+    <div class="ln red">  birthyear: 1971</div>
     <div class="ln red">  elections:</div>
     <div class="ln red">    - year: 2024</div>
     <div class="ln red">      type: 國家元首</div>
@@ -145,7 +145,7 @@
     <div class="ln"><span class="tag-conflict">CONFLICT</span> &nbsp;<span class="orange">需人工確認 1 筆</span></div>
     <div class="spacer"></div>
     <div class="ln orange bold">─── 衝突 1 / 1 ───────────────────────────────────────</div>
-    <div class="ln white">新資料：<span class="bold">許淑華</span> &nbsp;birthday:1971 | 國家元首 2024 | 民主進步黨 | elected:0</div>
+    <div class="ln white">新資料：<span class="bold">許淑華</span> &nbsp;birthyear:1971 | 國家元首 2024 | 民主進步黨 | elected:0</div>
     <div class="spacer"></div>
     <div class="ln blue">現有同名候選人：</div>
     <div class="ln indent blue">[1] id_許淑華_1973 &nbsp;生年:1973 &nbsp;臺北市議員 2016 (民主進步黨)</div>

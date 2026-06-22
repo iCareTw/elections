@@ -61,7 +61,7 @@ def _load_yaml_entries() -> list[dict]:
             if election["type"] == ELECTION_TYPE:
                 entries.append({
                     "name": normalize_name(candidate["name"]),
-                    "birthday": candidate.get("birthday"),
+                    "birthyear": candidate.get("birthyear"),
                     "session": election.get("session"),
                     "year": election["year"],
                     "region": election.get("region"),
@@ -98,7 +98,7 @@ def test_district_legislator_candidates_match_xlsx(session: int) -> None:
     )
 
     # xlsx 生年有誤，經人工確認後略過比對
-    birthday_skip = {
+    birthyear_skip = {
         ("徐能安", "新竹縣選舉區"),
         ("吳光訓", "高雄縣選舉區"),
         ("林志隆", "高雄縣選舉區"),
@@ -112,7 +112,7 @@ def test_district_legislator_candidates_match_xlsx(session: int) -> None:
         y_list = yaml_entries[key]
         name, region = key
         for x in x_list:
-            y = next((e for e in y_list if e["birthday"] == x["birthday"]), None)
+            y = next((e for e in y_list if e["birthyear"] == x["birthyear"]), None)
             if y is None and len(y_list) == 1:
                 y = y_list[0]
             if y is None:
@@ -123,9 +123,9 @@ def test_district_legislator_candidates_match_xlsx(session: int) -> None:
             assert x["elected"] == y["elected"], (
                 f"第{session}屆 {name} ({region}): 當選不符 xlsx={x['elected']} yaml={y['elected']}"
             )
-            if x["birthday"] and y["birthday"] and (name, region) not in birthday_skip:
-                assert x["birthday"] == y["birthday"], (
-                    f"第{session}屆 {name} ({region}): 生年不符 xlsx={x['birthday']} yaml={y['birthday']}"
+            if x["birthyear"] and y["birthyear"] and (name, region) not in birthyear_skip:
+                assert x["birthyear"] == y["birthyear"], (
+                    f"第{session}屆 {name} ({region}): 生年不符 xlsx={x['birthyear']} yaml={y['birthyear']}"
                 )
 
 

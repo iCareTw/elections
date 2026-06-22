@@ -30,7 +30,7 @@ def parse_workbook(wb: openpyxl.Workbook, year: int) -> list[dict]:
 
         records.append({
             'name': str(name),
-            'birthday': int(birth_year) if birth_year else None,
+            'birthyear': int(birth_year) if birth_year else None,
             'year': year,
             'type': '縣市首長',
             'region': current_region,

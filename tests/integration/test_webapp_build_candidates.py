@@ -33,7 +33,7 @@ def test_build_candidates_yaml_groups_records_by_candidate_id(tmp_path: Path) ->
     candidate_id = f"id_測試建置候選人_{token[:8]}"
     payload = {
         "name": "測試建置候選人",
-        "birthday": 1959,
+        "birthyear": 1959,
         "year": 2024,
         "type": "立法委員",
         "region": "全國",

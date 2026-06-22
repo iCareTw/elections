@@ -136,7 +136,7 @@ async def load_election(request: Request, election_id: str):
         return RedirectResponse("/", status_code=303)
 
     records = load_election_records(raw_election)
-    _REQUIRED_FIELDS = (("name", "姓名"), ("birthday", "生日"), ("party", "政黨"))
+    _REQUIRED_FIELDS = (("name", "姓名"), ("birthyear", "生日"), ("party", "政黨"))
     invalid_records = []
     for r in records:
         missing = [label for key, label in _REQUIRED_FIELDS if not r.get(key)]

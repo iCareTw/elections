@@ -233,7 +233,7 @@ function field(label, value) {
 function renderRecord(record) {
   return `
     ${field("姓名", record.name)}
-    ${field("生日", record.birthday)}
+    ${field("生日", record.birthyear)}
     ${field("年份", record.year)}
     ${field("選別", record.type)}
     ${field("區域", record.region)}
@@ -266,7 +266,7 @@ function renderCurrentItem() {
     button.innerHTML = `
       <strong>${candidate.name}</strong>
       <span>${candidate.id}</span>
-      <em>birthday: ${candidate.birthday ?? "未知"}</em>
+      <em>birthyear: ${candidate.birthyear ?? "未知"}</em>
     `;
     button.addEventListener("click", () => {
       state.selectedCandidateId = candidate.id;

@@ -72,7 +72,7 @@ def parse_table_rows(rows: list[list[str]], *, region_override: str | None = Non
             records.append(
                 {
                     "name": name,
-                    "birthday": birth_years[index],
+                    "birthyear": birth_years[index],
                     "order_id": order_ids[index],
                     "party": parties[index],
                     "year": 1994,

@@ -74,7 +74,7 @@ def test_loaded_review_election_can_be_reopened_after_switching(tmp_path: Path) 
             for candidate_id in seeded_candidate_ids:
                 conn.execute(
                     """
-                    INSERT INTO candidates(id, name, birthday)
+                    INSERT INTO candidates(id, name, birthyear)
                     VALUES (%s, %s, %s)
                     """,
                     (candidate_id, "李登輝", 1923),

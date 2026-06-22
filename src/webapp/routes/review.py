@@ -34,14 +34,14 @@ def _annotate_match(incoming: dict, match: dict) -> dict:
                     break
         return "、".join(result) if result else "—"
 
-    in_bday = incoming.get("birthday")
-    m_bday = match.get("birthday")
+    in_bday = incoming.get("birthyear")
+    m_bday = match.get("birthyear")
     age_diff: int | None = None
     if in_bday is not None and m_bday is not None:
         age_diff = abs(int(in_bday) - int(m_bday))
-        cmp["birthday"] = "exact" if age_diff == 0 else ("close" if age_diff == 1 else "diff")
+        cmp["birthyear"] = "exact" if age_diff == 0 else ("close" if age_diff == 1 else "diff")
     elif in_bday is not None:
-        cmp["birthday"] = "diff"
+        cmp["birthyear"] = "diff"
 
     in_party = incoming.get("party")
     if in_party:
@@ -77,7 +77,7 @@ def _annotate_match(incoming: dict, match: dict) -> dict:
 
 
 _FIELD_LABELS = {
-    "name": "姓名", "birthday": "生日", "party": "政黨",
+    "name": "姓名", "birthyear": "生日", "party": "政黨",
     "type": "選舉", "region": "地區", "elected": "當選",
     "year": "年份", "session": "屆次", "ticket": "號次",
 }
@@ -117,7 +117,7 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
 
     record_fields = [
         (_FIELD_LABELS.get(k, k), payload[k])
-        for k in ("name", "birthday", "year", "type", "region", "party", "elected")
+        for k in ("name", "birthyear", "year", "type", "region", "party", "elected")
         if k in payload
     ]
 
@@ -167,7 +167,7 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
         "current_record": current_record,
         "record_fields": record_fields,
         "matches": matches,
-        "incoming_birthday": payload.get("birthday"),
+        "incoming_birthyear": payload.get("birthyear"),
         "incoming_type": payload.get("type"),
         "incoming_party": payload.get("party"),
         "incoming_region": payload.get("region"),
@@ -201,26 +201,26 @@ async def resolve(request: Request, election_id: str):
     if mode == "new":
         record = store.get_source_record(source_record_id)
         if record:
-            candidate_id = generate_id(record["name"], record.get("birthday"))
+            candidate_id = generate_id(record["name"], record.get("birthyear"))
         mode = "manual_new"
 
-    birthday_override_raw = str(form.get("birthday_override", "")).strip()
-    birthday_override = int(birthday_override_raw) if birthday_override_raw.isdigit() else None
+    birthyear_override_raw = str(form.get("birthyear_override", "")).strip()
+    birthyear_override = int(birthyear_override_raw) if birthyear_override_raw.isdigit() else None
 
     if mode == "use_match":
         mode = "manual"
 
-    if birthday_override is not None and mode == "manual" and candidate_id:
+    if birthyear_override is not None and mode == "manual" and candidate_id:
         with store.connect() as conn:
             store._setup_conn(conn)
             row = conn.execute(
                 "SELECT name FROM candidates WHERE id = %s", (candidate_id,)
             ).fetchone()
         if row:
-            new_id = generate_id(row["name"], birthday_override)
+            new_id = generate_id(row["name"], birthyear_override)
             if new_id != candidate_id:
                 try:
-                    store.rename_candidate(candidate_id, new_id, birthday_override)
+                    store.rename_candidate(candidate_id, new_id, birthyear_override)
                     candidate_id = new_id
                 except ValueError as e:
                     return RedirectResponse(
@@ -231,8 +231,8 @@ async def resolve(request: Request, election_id: str):
                 with store.connect() as conn:
                     store._setup_conn(conn)
                     conn.execute(
-                        "UPDATE candidates SET birthday = %s WHERE id = %s",
-                        (birthday_override, candidate_id),
+                        "UPDATE candidates SET birthyear = %s WHERE id = %s",
+                        (birthyear_override, candidate_id),
                     )
 
     if source_record_id and mode and candidate_id:

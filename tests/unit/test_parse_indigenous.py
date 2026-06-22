@@ -21,7 +21,7 @@ def test_parse_chief_file_reads_indigenous_chief_records(tmp_path: Path) -> None
     assert parse_chief_file(path) == [
         {
             "name": "測試候選人",
-            "birthday": 1970,
+            "birthyear": 1970,
             "year": 2014,
             "type": "原住民區長",
             "region": "新北市 烏來區",

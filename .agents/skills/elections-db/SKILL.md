@@ -113,7 +113,7 @@ order by e.type, e.year nulls last, e.label;
 Records needing committed resolution:
 
 ```sql
-select sr.source_record_id, sr.election_id, sr.name, sr.birthday, sr.payload
+select sr.source_record_id, sr.election_id, sr.name, sr.birthyear, sr.payload
 from source_records sr
 left join resolutions r on r.source_record_id = sr.source_record_id
 where sr.election_id = %s
@@ -128,11 +128,11 @@ Committed decisions for one election:
 select
     sr.source_record_id,
     sr.name as source_name,
-    sr.birthday as source_birthday,
+    sr.birthyear as source_birthyear,
     r.mode,
     r.candidate_id,
     c.name as candidate_name,
-    c.birthday as candidate_birthday,
+    c.birthyear as candidate_birthyear,
     sr.payload
 from resolutions r
 join source_records sr on sr.source_record_id = r.source_record_id
@@ -148,7 +148,7 @@ Candidate mapping by name:
 select
     c.id,
     c.name,
-    c.birthday,
+    c.birthyear,
     ce.year,
     ce.type,
     ce.region,

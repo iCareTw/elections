@@ -137,7 +137,7 @@ def test_store_lists_election_progress_status() -> None:
         assert row["imported_count"] == 0
         assert row["unresolved_count"] == 0
 
-        payload = {"name": "測試候選人", "birthday": 1970, "year": 2024, "type": "縣市首長", "region": "臺北市"}
+        payload = {"name": "測試候選人", "birthyear": 1970, "year": 2024, "type": "縣市首長", "region": "臺北市"}
         store.insert_source_record(
             source_record_id=source_record_id,
             election_id=election_id,
@@ -213,13 +213,13 @@ def test_store_commit_election_writes_candidates_and_elections() -> None:
         store.insert_source_record(
             source_record_id=src_id,
             election_id=election_id,
-            payload={"name": "測試人", "birthday": 1970, "year": 2024,
+            payload={"name": "測試人", "birthyear": 1970, "year": 2024,
                      "type": "縣市首長", "region": "臺北市", "party": "無黨籍", "elected": 0},
         )
         auto, manual = store.commit_election(
             election_id=election_id,
             decisions={src_id: {"mode": "auto", "candidate_id": candidate_id}},
-            source_records_map={src_id: {"name": "測試人", "birthday": 1970, "year": 2024,
+            source_records_map={src_id: {"name": "測試人", "birthyear": 1970, "year": 2024,
                                          "type": "縣市首長", "region": "臺北市",
                                          "party": "無黨籍", "elected": 0}},
         )
@@ -275,7 +275,7 @@ def test_reset_election_data_removes_committed_rows_and_resyncs_candidate_histor
 
         reset_payload = {
             "name": "重置測試",
-            "birthday": 1970,
+            "birthyear": 1970,
             "year": 2020,
             "type": "縣市議員",
             "region": "臺東縣 第01選舉區",
@@ -284,7 +284,7 @@ def test_reset_election_data_removes_committed_rows_and_resyncs_candidate_histor
         }
         keep_payload = {
             "name": "重置測試",
-            "birthday": 1970,
+            "birthyear": 1970,
             "year": 2024,
             "type": "縣市議員",
             "region": "臺東縣 第01選舉區",
@@ -351,7 +351,7 @@ def test_identity_fix_splits_committed_candidate_with_operation_snapshot() -> No
     src_b = f"{election_id_b}:0"
     payload_a = {
         "name": "疑似誤合併",
-        "birthday": 1970,
+        "birthyear": 1970,
         "year": 1998,
         "type": "立法委員",
         "region": "屏東縣選舉區",
@@ -360,7 +360,7 @@ def test_identity_fix_splits_committed_candidate_with_operation_snapshot() -> No
     }
     payload_b = {
         "name": "疑似誤合併",
-        "birthday": 1970,
+        "birthyear": 1970,
         "year": 1998,
         "type": "縣市議員",
         "region": "屏東縣 第03選舉區",

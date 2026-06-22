@@ -10,7 +10,7 @@ from src.webapp.store import Store
 
 
 def _candidate_sort_key(c: dict[str, Any]) -> tuple:
-    bd = c.get("birthday")
+    bd = c.get("birthyear")
     bkey = (0, 0) if bd is None else (1, -bd)
     return (bkey, c.get("name", ""), c.get("id", ""))
 

@@ -25,7 +25,7 @@ def parse_file(path: str | Path) -> list[dict]:
         village = str(area_name) if area_name else county
         records.append({
             'name': decode_cec_name(str(name)),
-            'birthday': int(birth_year) if birth_year else None,
+            'birthyear': int(birth_year) if birth_year else None,
             'year': year,
             'type': '村里長',
             'region': f'{county} {village}',

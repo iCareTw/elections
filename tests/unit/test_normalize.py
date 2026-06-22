@@ -30,11 +30,11 @@ def test_normalize_name_without_latin():
     assert normalize_name_without_latin("Kolas Yotaka") == ""
 
 
-def test_generate_id_error_birthday():
+def test_generate_id_error_birthyear():
     with pytest.raises(ValueError):
         generate_id("陳阿帥", -1986)
 
 
-def test_generate_id_int_birthday():
-    assert generate_id("陳阿帥", birthday=1973) == "id_陳阿帥_1973"
-    assert generate_id("陳阿帥", birthday="1973") == "id_陳阿帥_1973"
+def test_generate_id_int_birthyear():
+    assert generate_id("陳阿帥", birthyear=1973) == "id_陳阿帥_1973"
+    assert generate_id("陳阿帥", birthyear="1973") == "id_陳阿帥_1973"

@@ -275,7 +275,7 @@ def test_review_template_renders_incoming_and_possible_candidate_pdf_links() -> 
         matches=[{
             "id": "id_陳瑞昌_1957",
             "name": "陳瑞昌",
-            "birthday": 1957,
+            "birthyear": 1957,
             "elections": [{
                 "type": "縣市議員",
                 "year": 2009,
@@ -283,7 +283,7 @@ def test_review_template_renders_incoming_and_possible_candidate_pdf_links() -> 
                 "party": "中國國民黨",
             }],
         }],
-        incoming_birthday=1976,
+        incoming_birthyear=1976,
         current_decision=None,
         current_record={"source_record_id": "src:1", "name": "陳瑞昌"},
         i=0,
@@ -318,7 +318,7 @@ def test_review_template_renders_mna_district_bulletin_as_directory() -> None:
         matches=[{
             "id": "id_國代測試_1950",
             "name": "國代測試",
-            "birthday": 1950,
+            "birthyear": 1950,
             "elections": [{
                 "type": "國大代表",
                 "year": 2001,
@@ -327,7 +327,7 @@ def test_review_template_renders_mna_district_bulletin_as_directory() -> None:
                 "party": "測試黨",
             }],
         }],
-        incoming_birthday=1950,
+        incoming_birthyear=1950,
         current_decision=None,
         current_record={"source_record_id": "src:1", "name": "國代測試"},
         i=0,
@@ -344,7 +344,7 @@ def test_review_template_renders_mna_district_bulletin_as_directory() -> None:
     assert 'title="選舉公報目錄"' in html
 
 
-def test_review_template_marks_close_birthday_diff_only() -> None:
+def test_review_template_marks_close_birthyear_diff_only() -> None:
     templates_dir = Path(__file__).resolve().parents[2] / "src" / "webapp" / "templates"
     env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
     env.globals["bulletin_url_from_record"] = bulletin_url_from_record
@@ -362,9 +362,9 @@ def test_review_template_marks_close_birthday_diff_only() -> None:
             {
                 "id": "id_陳瑞昌_1975",
                 "name": "陳瑞昌",
-                "birthday": 1975,
+                "birthyear": 1975,
                 "elections": [],
-                "cmp": {"birthday": "close"},
+                "cmp": {"birthyear": "close"},
                 "score": 20,
                 "match_count": 1,
                 "total_cmp": 1,
@@ -372,15 +372,15 @@ def test_review_template_marks_close_birthday_diff_only() -> None:
             {
                 "id": "id_陳瑞昌_1974",
                 "name": "陳瑞昌",
-                "birthday": 1974,
+                "birthyear": 1974,
                 "elections": [],
-                "cmp": {"birthday": "diff"},
+                "cmp": {"birthyear": "diff"},
                 "score": 0,
                 "match_count": 0,
                 "total_cmp": 1,
             },
         ],
-        incoming_birthday=1976,
+        incoming_birthyear=1976,
         current_decision=None,
         current_record={"source_record_id": "src:1", "name": "陳瑞昌"},
         i=0,
@@ -417,13 +417,13 @@ def test_review_template_tags_local_type_and_region_fields() -> None:
             {
                 "id": "id_測試候選人_1970",
                 "name": "測試候選人",
-                "birthday": 1970,
+                "birthyear": 1970,
                 "elections": [
                     {"type": "原住民區長", "year": 2014, "region": "新北市 烏來區", "party": "無黨籍"}
                 ],
             }
         ],
-        incoming_birthday=1970,
+        incoming_birthyear=1970,
         current_decision=None,
         current_record={"source_record_id": "src:1", "name": "測試候選人"},
         i=0,
@@ -458,14 +458,14 @@ def test_review_template_renders_elected_status_for_incoming_and_possible_matche
             {
                 "id": "id_測試候選人_1970",
                 "name": "測試候選人",
-                "birthday": 1970,
+                "birthyear": 1970,
                 "elections": [
                     {"type": "縣市議員", "year": 2009, "region": "桃園縣 第05選舉區", "party": "無黨籍", "elected": 0},
                     {"type": "縣市議員", "year": 2014, "region": "桃園市 第05選舉區", "party": "無黨籍", "elected": 1},
                 ],
             }
         ],
-        incoming_birthday=1970,
+        incoming_birthyear=1970,
         current_decision=None,
         current_record={"source_record_id": "src:1", "name": "測試候選人"},
         i=0,
@@ -500,11 +500,11 @@ def test_review_template_marks_records_without_bulletin() -> None:
             {
                 "id": "id_郭哲道_1948",
                 "name": "郭哲道",
-                "birthday": 1948,
+                "birthyear": 1948,
                 "elections": [],
             }
         ],
-        incoming_birthday=1949,
+        incoming_birthyear=1949,
         incoming_election={
             "type": "鄉鎮市長",
             "year": 2002,
@@ -552,7 +552,7 @@ def test_review_template_renders_party_list_legislator_pdf_without_session() -> 
         matches=[{
             "id": "id_陳瑞昌_1975",
             "name": "陳瑞昌",
-            "birthday": 1975,
+            "birthyear": 1975,
             "elections": [{
                 "type": "立法委員",
                 "year": 2004,
@@ -560,7 +560,7 @@ def test_review_template_renders_party_list_legislator_pdf_without_session() -> 
                 "party": "中國國民黨",
             }],
         }],
-        incoming_birthday=1976,
+        incoming_birthyear=1976,
         current_decision=None,
         current_record={"source_record_id": "src:1", "name": "陳瑞昌"},
         i=0,

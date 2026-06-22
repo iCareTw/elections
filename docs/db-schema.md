@@ -65,7 +65,7 @@ Trigger:
 | `source_record_id` | TEXT PK     | 原始記錄唯一識別碼                                                          |
 | `election_id`      | TEXT FK     | 所屬選舉 → `elections.election_id`                                         |
 | `name`             | VARCHAR(64) | 候選人姓名 (原始 source data)                                               |
-| `birthday`         | INTEGER     | 生日, 原始 source data 值, 可能與 `candidates.birthday` 不一致               |
+| `birthyear`         | INTEGER     | 出生年份 (整數 `yyyy`), NOT NULL; 原始 source data 值, 可能與 `candidates.birthyear` 不一致 |
 | `payload`          | JSONB       | source data 完整原始內容                                                   |
 | `original_kind`    | VARCHAR(16) | load 時 classify_record 的結果: `auto` / `new` / `manual` (見下方說明)     |
 
@@ -143,12 +143,19 @@ Index:
 |---------------|----------------|---------------------------------------------------------------------------------|
 | `id`          | VARCHAR(64) PK | 候選人唯一識別碼                                                                  |
 | `name`        | VARCHAR(64)    | 候選人姓名, 經 `normalize_candidate_name` 處理: 移除空白與括號, `‧·•．` 轉為 `.` |
-| `birthday`    | INTEGER        | 生日, YYYYMMDD 格式                                                               |
+| `birthyear`    | INTEGER        | 出生年份, 必填整數 `yyyy` (非 YYYYMMDD); 中選會資料皆含出生年, 實務上無 NULL       |
 | `alias_names` | TEXT[]         | 人工維護的別名, 僅供產出 `candidates.yaml` 使用                                   |
 
 Index:
 
 - `idx_candidates_name` on `(name)`.
+
+### id 與生日設計規則
+
+`id` 格式為 `id_<正規化姓名>_<出生年份>`. 設計取捨:
+
+- **生日只取年份**: 原始資料僅提供出生年, 故 `birthyear` 一律填 `yyyy` 整數.
+- **同名衝突解法**: 一般情況以出生年區隔 (`id_許淑華_1973`); 同名同年 (罕見) 以人工加尾碼處理 (例如 `id_陳進財_1950a`).
 
 ---
 
@@ -170,6 +177,12 @@ Index:
 | `order_id`     | INTEGER        | 排序用流水號                                        |
 
 Unique constraint: `(candidate_id, year, type, region)`.
+
+`region` 標準值 (官方全名, `臺` 不寫作 `台`):
+
+- 22 縣市: 臺北市、新北市、桃園市、臺中市、臺南市、高雄市、基隆市、新竹市、新竹縣、嘉義市、嘉義縣、宜蘭縣、苗栗縣、彰化縣、南投縣、雲林縣、屏東縣、花蓮縣、臺東縣、澎湖縣、金門縣、連江縣
+- 國家元首: `全國`
+- 立委: 選舉區名稱; 縣市議員: 縣市名稱 (不含選區)
 
 ---
 

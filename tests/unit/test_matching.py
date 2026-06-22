@@ -19,10 +19,10 @@ class _FakeStore:
         return [c for c in self._candidates if normalize_name_without_latin(c["name"]) == normalized]
 
 
-def test_classify_record_auto_matches_same_name_same_birthday() -> None:
+def test_classify_record_auto_matches_same_name_same_birthyear() -> None:
     """測試 identity-ui 最核心的基本功能, id 由 name & birth_year 產生, 同名同年出生的紀錄會被自動配對."""
-    record = {"name": "柯文哲", "birthday": 1959}
-    existing = [{"name": "柯文哲", "birthday": 1959, "id": "id_柯文哲_1959"}]
+    record = {"name": "柯文哲", "birthyear": 1959}
+    existing = [{"name": "柯文哲", "birthyear": 1959, "id": "id_柯文哲_1959"}]
 
     result = classify_record(record, _FakeStore(existing))
 
@@ -30,19 +30,19 @@ def test_classify_record_auto_matches_same_name_same_birthday() -> None:
 
 
 @pytest.mark.parametrize(
-    ("record_birthday", "existing_birthday", "existing_id"),
+    ("record_birthyear", "existing_birthyear", "existing_id"),
     [
         (1959, 1960, "id_柯文哲_1960"),
         (None, 1959, "id_柯文哲_1959"),
     ],
 )
-def test_classify_record_manually_matches_same_name_when_birthday_is_not_safe(
-    record_birthday: int | None,
-    existing_birthday: int,
+def test_classify_record_manually_matches_same_name_when_birthyear_is_not_safe(
+    record_birthyear: int | None,
+    existing_birthyear: int,
     existing_id: str,
 ) -> None:
-    record = {"name": "柯文哲", "birthday": record_birthday}
-    existing = [{"name": "柯文哲", "birthday": existing_birthday, "id": existing_id}]
+    record = {"name": "柯文哲", "birthyear": record_birthyear}
+    existing = [{"name": "柯文哲", "birthyear": existing_birthyear, "id": existing_id}]
 
     result = classify_record(record, _FakeStore(existing))
 
@@ -50,28 +50,28 @@ def test_classify_record_manually_matches_same_name_when_birthday_is_not_safe(
 
 
 def test_classify_record_creates_new_id_without_same_name_match() -> None:
-    record = {"name": "黃珊珊", "birthday": 1969}
-    existing = [{"name": "柯文哲", "birthday": 1959, "id": "id_柯文哲_1959"}]
+    record = {"name": "黃珊珊", "birthyear": 1969}
+    existing = [{"name": "柯文哲", "birthyear": 1959, "id": "id_柯文哲_1959"}]
 
     result = classify_record(record, _FakeStore(existing))
 
     assert result == {"kind": "new", "candidate_id": "id_黃珊珊_1969"}
 
 
-def test_classify_record_auto_matches_latin_removed_name_with_same_birthday() -> None:
-    record = {"name": "簡東明Uliw．Qaljupayare", "birthday": 1951}
-    existing = [{"name": "簡東明", "birthday": 1951, "id": "id_簡東明_1951"}]
+def test_classify_record_auto_matches_latin_removed_name_with_same_birthyear() -> None:
+    record = {"name": "簡東明Uliw．Qaljupayare", "birthyear": 1951}
+    existing = [{"name": "簡東明", "birthyear": 1951, "id": "id_簡東明_1951"}]
 
     result = classify_record(record, _FakeStore(existing))
 
     assert result == {"kind": "auto", "candidate_id": "id_簡東明_1951"}
 
 
-def test_classify_record_does_not_latin_fallback_when_birthday_is_ambiguous() -> None:
-    record = {"name": "簡東明Uliw．Qaljupayare", "birthday": 1951}
+def test_classify_record_does_not_latin_fallback_when_birthyear_is_ambiguous() -> None:
+    record = {"name": "簡東明Uliw．Qaljupayare", "birthyear": 1951}
     existing = [
-        {"name": "簡東明", "birthday": 1951, "id": "id_簡東明_1951"},
-        {"name": "簡東明", "birthday": 1951, "id": "id_簡東明_1951_dup"},
+        {"name": "簡東明", "birthyear": 1951, "id": "id_簡東明_1951"},
+        {"name": "簡東明", "birthyear": 1951, "id": "id_簡東明_1951_dup"},
     ]
 
     result = classify_record(record, _FakeStore(existing))

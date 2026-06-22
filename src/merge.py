@@ -1,10 +1,10 @@
 from src.normalize import normalize_name, generate_id
 
 
-def _year_of(birthday) -> int | None:
-    if birthday is None:
+def _year_of(birthyear) -> int | None:
+    if birthyear is None:
         return None
-    return int(str(birthday)[:4])
+    return int(str(birthyear)[:4])
 
 
 def _build_election(r: dict) -> dict:
@@ -24,7 +24,7 @@ def classify_records(records: list[dict], existing: list[dict]) -> dict:
     - auto: 可直接處理（action='new' 或 action='merge'）
     - conflicts: 需人工確認
 
-    自動合併條件：name(正規化) + birthday年份 + party 三者皆符合（party 須曾出現於該候選人的任一 election）。
+    自動合併條件：name(正規化) + birthyear年份 + party 三者皆符合（party 須曾出現於該候選人的任一 election）。
     其餘同名情況均進 conflict。
     """
     index: dict[str, list[dict]] = {}
@@ -43,14 +43,14 @@ def classify_records(records: list[dict], existing: list[dict]) -> dict:
             auto.append({'action': 'new', 'record': r, 'candidate': None})
             continue
 
-        r_year = _year_of(r['birthday'])
+        r_year = _year_of(r['birthyear'])
         r_party = r['party']
 
         # 篩出年份相符的候選人
         if r_year is None:
             year_matches = []
         else:
-            year_matches = [c for c in matches if _year_of(c['birthday']) == r_year]
+            year_matches = [c for c in matches if _year_of(c['birthyear']) == r_year]
 
         if not year_matches:
             conflicts.append({'record': r, 'matches': matches})
@@ -84,8 +84,8 @@ def apply_auto(auto: list[dict], existing: list[dict]) -> list[dict]:
         if item['action'] == 'new':
             result.append({
                 'name': r['name'],
-                'id': generate_id(r['name'], r['birthday']),
-                'birthday': _year_of(r['birthday']),
+                'id': generate_id(r['name'], r['birthyear']),
+                'birthyear': _year_of(r['birthyear']),
                 'elections': [_build_election(r)],
             })
         elif item['action'] == 'merge':

@@ -88,26 +88,26 @@ def _make_election(r: dict) -> dict:
 def _add_as_new(r: dict, matches: list[dict], to_add: list[dict]) -> None:
     """將 r 新增為獨立候選人，並更新現有同名者的 id（加上生日後綴）。"""
     for m in matches:
-        if m['birthday']:
-            m['id'] = generate_id(m['name'], m['birthday'])
+        if m['birthyear']:
+            m['id'] = generate_id(m['name'], m['birthyear'])
     to_add.append({
         'name': r['name'],
-        'id': generate_id(r['name'], r['birthday']),
-        'birthday': r['birthday'],
+        'id': generate_id(r['name'], r['birthyear']),
+        'birthyear': r['birthyear'],
         'elections': [_make_election(r)],
     })
 
 
-def _resolve_birthday(c: dict, r: dict) -> None:
+def _resolve_birthyear(c: dict, r: dict) -> None:
     """生年衝突時，詢問保留哪個。"""
-    print(f'  生年不同：現有 \033[1m{c["birthday"]}\033[0m，新資料 \033[1m{r["birthday"]}\033[0m')
+    print(f'  生年不同：現有 \033[1m{c["birthyear"]}\033[0m，新資料 \033[1m{r["birthyear"]}\033[0m')
     while True:
         ans = input('  以哪個為主？[1] 保留現有  [2] 採用新資料 > ').strip()
         if ans == '1':
             break
         elif ans == '2':
-            c['birthday'] = r['birthday']
-            c['id'] = generate_id(c['name'], c['birthday'])
+            c['birthyear'] = r['birthyear']
+            c['id'] = generate_id(c['name'], c['birthyear'])
             break
 
 
@@ -138,7 +138,7 @@ def _print_election_fields(e: dict, indent: str = '    ') -> None:
 
 
 def _print_conflict_panel(r: dict, matches: list[dict]) -> None:
-    bday_new = r['birthday']
+    bday_new = r['birthyear']
 
     # 新資料
     bday_str = str(bday_new) if bday_new else '不詳'
@@ -149,9 +149,9 @@ def _print_conflict_panel(r: dict, matches: list[dict]) -> None:
     # 現有候選人
     for j, c in enumerate(matches, 1):
         label = f'現有 [{j}]' if len(matches) > 1 else '現有'
-        bday_diff = bool(bday_new and c['birthday'] and bday_new != c['birthday'])
+        bday_diff = bool(bday_new and c['birthyear'] and bday_new != c['birthyear'])
         warn = '  \033[33m⚠️  與新資料不同\033[0m' if bday_diff else ''
-        bday_str_c = str(c['birthday']) if c['birthday'] else '不詳'
+        bday_str_c = str(c['birthyear']) if c['birthyear'] else '不詳'
         print()
         print(f'  \033[34m{label}\033[0m  {c["id"]}')
         print(f'    生年    {bday_str_c}{warn}')
@@ -166,19 +166,19 @@ def _print_conflict_panel(r: dict, matches: list[dict]) -> None:
     print()
 
 
-def _merge_birthday(c: dict, r: dict) -> None:
+def _merge_birthyear(c: dict, r: dict) -> None:
     """當生日不同時，互動式詢問要以哪個生日為主。"""
-    if not r['birthday']:
+    if not r['birthyear']:
         return
-    if c['birthday'] == r['birthday']:
+    if c['birthyear'] == r['birthyear']:
         return
-    if not c['birthday']:
-        upd = input(f'  現有生年為空，是否補上 {r["birthday"]}？[y/n] > ').strip().lower()
+    if not c['birthyear']:
+        upd = input(f'  現有生年為空，是否補上 {r["birthyear"]}？[y/n] > ').strip().lower()
         if upd == 'y':
-            c['birthday'] = r['birthday']
-            c['id'] = generate_id(c['name'], c['birthday'])
+            c['birthyear'] = r['birthyear']
+            c['id'] = generate_id(c['name'], c['birthyear'])
     else:
-        _resolve_birthday(c, r)
+        _resolve_birthyear(c, r)
 
 
 def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]:
@@ -199,7 +199,7 @@ def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]
                     c = matches[0]
                     c['elections'].append(_make_election(r))
                     c['elections'].sort(key=lambda e: e['year'])
-                    _merge_birthday(c, r)
+                    _merge_birthyear(c, r)
                     break
                 elif ans == 'n':
                     _add_as_new(r, matches, to_add)
@@ -217,7 +217,7 @@ def resolve_conflicts(conflicts: list[dict], existing: list[dict]) -> list[dict]
                     c = matches[int(ans) - 1]
                     c['elections'].append(_make_election(r))
                     c['elections'].sort(key=lambda e: e['year'])
-                    _merge_birthday(c, r)
+                    _merge_birthyear(c, r)
                     break
                 elif ans == 'n':
                     _add_as_new(r, matches, to_add)

@@ -33,8 +33,21 @@ uv add <package>
 
 FastAPI + Jinja2 候選人身分判定介面. 以 DB 作為 single source of truth, `candidates.yaml` 由 Build 操作產生.
 
-- 設計規格: `docs/superpowers/specs/2026-04-28-identity-ui-fastapi-refactor-design.md`
 - `identity ui`, `identity-ui`, `mapping app` 為同義詞, 均指此介面
+
+設計原則:
+
+- **資料層職責分離**: `elections` / `source_records` / `resolutions` 為 raw decision log (保留原始資料與判定依據供稽核); `candidates` / `candidate_elections` 為業務資料 (single source of truth, 供 matching 與 export).
+- **以選舉為單位 commit**: 一場選舉所有 source record 都有決策 (pending == 0) 才可 commit; commit 時批次寫入 `resolutions` + `candidates` + `candidate_elections`.
+- **file-based logging**: 操作紀錄寫入 `logs/`, 不設 `operation_logs` table; 選舉的 todo/review/done 狀態由 query 動態推導, 不存欄位.
+
+產品邊界 (刻意不做):
+
+- 通用的 `candidates.yaml` 編輯器
+- 即時監看 `_data/` 變化
+- 多人協作
+- 複雜 merge 視覺化
+- 超出「同名人物身分判斷」的資料治理功能
 
 ## 命名規範
 

@@ -30,7 +30,7 @@ def test_parse_basic():
     records = parse_workbook(wb, year=2022)
     assert len(records) == 2
     assert records[0] == {
-        'name': '蔣萬安', 'birthday': 1978, 'year': 2022,
+        'name': '蔣萬安', 'birthyear': 1978, 'year': 2022,
         'type': '縣市首長', 'region': '臺北市',
         'party': '中國國民黨', 'elected': 1,
     }

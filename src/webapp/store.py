@@ -142,15 +142,17 @@ class Store:
                 raise ConnectionError("PostgreSQL schema is not available")
 
     def init_schema(self) -> None:
-        sql_path = ROOT / "db" / "001_init.sql"
-        ddl = sql_path.read_text(encoding="utf-8")
+        # 套用基線 schema (001) 與後續「schema-agnostic 且冪等」的 migration.
+        # 002 寫死 elections schema, 屬正式 DB 專用, 不在此套用.
+        ddl_files = ("001_init.sql", "004_rename_birthday_to_birthyear.sql")
         with self.connect() as conn:
             conn.execute(
                 sql.SQL("CREATE SCHEMA IF NOT EXISTS {}").format(sql.Identifier(self.config.schema))
             )
             self._setup_conn(conn)
             with conn.transaction():
-                conn.execute(ddl)
+                for name in ddl_files:
+                    conn.execute((ROOT / "db" / name).read_text(encoding="utf-8"))
 
     def upsert_election(self, election: dict[str, Any]) -> None:
         with self.connect() as conn:
@@ -227,12 +229,12 @@ class Store:
             self._setup_conn(conn)
             conn.execute(
                 """
-                INSERT INTO source_records(source_record_id, election_id, name, birthday, payload, original_kind)
+                INSERT INTO source_records(source_record_id, election_id, name, birthyear, payload, original_kind)
                 VALUES (%s, %s, %s, %s, %s, %s)
                 ON CONFLICT(source_record_id) DO UPDATE SET
                     election_id   = EXCLUDED.election_id,
                     name          = EXCLUDED.name,
-                    birthday      = EXCLUDED.birthday,
+                    birthyear      = EXCLUDED.birthyear,
                     payload       = EXCLUDED.payload,
                     original_kind = EXCLUDED.original_kind
                 """,
@@ -240,7 +242,7 @@ class Store:
                     source_record_id,
                     election_id,
                     payload["name"],
-                    payload.get("birthday"),
+                    payload.get("birthyear"),
                     Jsonb(payload),
                     original_kind,
                 ),
@@ -255,12 +257,12 @@ class Store:
                 with conn.cursor() as cur:
                     cur.executemany(
                         """
-                        INSERT INTO source_records(source_record_id, election_id, name, birthday, payload, original_kind)
+                        INSERT INTO source_records(source_record_id, election_id, name, birthyear, payload, original_kind)
                         VALUES (%s, %s, %s, %s, %s, %s)
                         ON CONFLICT(source_record_id) DO UPDATE SET
                             election_id   = EXCLUDED.election_id,
                             name          = EXCLUDED.name,
-                            birthday      = EXCLUDED.birthday,
+                            birthyear      = EXCLUDED.birthyear,
                             payload       = EXCLUDED.payload,
                             original_kind = EXCLUDED.original_kind
                         """,
@@ -269,7 +271,7 @@ class Store:
                                 r["source_record_id"],
                                 r["election_id"],
                                 r["payload"]["name"],
-                                r["payload"].get("birthday"),
+                                r["payload"].get("birthyear"),
                                 Jsonb(r["payload"]),
                                 r["original_kind"],
                             )
@@ -303,7 +305,7 @@ class Store:
         with self.connect() as conn:
             self._setup_conn(conn)
             row = conn.execute(
-                "SELECT source_record_id, election_id, name, birthday, payload FROM source_records WHERE source_record_id = %s",
+                "SELECT source_record_id, election_id, name, birthyear, payload FROM source_records WHERE source_record_id = %s",
                 (source_record_id,),
             ).fetchone()
         return dict(row) if row else None
@@ -313,7 +315,7 @@ class Store:
             self._setup_conn(conn)
             rows = conn.execute(
                 """
-                SELECT source_record_id, election_id, name, birthday, payload, original_kind
+                SELECT source_record_id, election_id, name, birthyear, payload, original_kind
                 FROM source_records
                 WHERE election_id = %s
                 ORDER BY source_record_id
@@ -364,7 +366,7 @@ class Store:
             self._setup_conn(conn)
             rows = conn.execute(
                 """
-                SELECT c.id, c.name, c.birthday,
+                SELECT c.id, c.name, c.birthyear,
                        ce.year, ce.type, ce.region, ce.party,
                        ce.elected, ce.session, ce.ticket, ce.order_id
                 FROM candidates c
@@ -382,7 +384,7 @@ class Store:
                 grouped[cid] = {
                     "id": row["id"],
                     "name": row["name"],
-                    "birthday": row["birthday"],
+                    "birthyear": row["birthyear"],
                     "elections": [],
                 }
             if row["year"] is not None:
@@ -399,7 +401,7 @@ class Store:
             self._setup_conn(conn)
             rows = conn.execute(
                 """
-                SELECT c.id, c.name, c.birthday,
+                SELECT c.id, c.name, c.birthyear,
                        ce.year, ce.type, ce.region, ce.party,
                        ce.elected, ce.session, ce.ticket, ce.order_id
                 FROM candidates c
@@ -414,7 +416,7 @@ class Store:
         for row in rows:
             cid = row["id"]
             if cid not in grouped:
-                grouped[cid] = {"id": cid, "name": row["name"], "birthday": row["birthday"], "elections": []}
+                grouped[cid] = {"id": cid, "name": row["name"], "birthyear": row["birthyear"], "elections": []}
             if row["year"] is not None:
                 election = {k: row[k] for k in ("year", "type", "region", "party", "elected", "session", "ticket", "order_id") if row[k] is not None}
                 grouped[cid]["elections"].append(election)
@@ -441,7 +443,7 @@ class Store:
             rows = conn.execute(
                 """
                 SELECT
-                    c.id, c.name, c.birthday, c.alias_names,
+                    c.id, c.name, c.birthyear, c.alias_names,
                     ce.year, ce.type, ce.region, ce.party,
                     ce.elected, ce.session, ce.ticket, ce.order_id
                 FROM candidates c
@@ -457,7 +459,7 @@ class Store:
                 grouped[cid] = {
                     "id": cid,
                     "name": row["name"],
-                    "birthday": row["birthday"],
+                    "birthyear": row["birthyear"],
                 }
                 if row["alias_names"]:
                     grouped[cid]["alias_names"] = list(row["alias_names"])
@@ -475,7 +477,7 @@ class Store:
             self._setup_conn(conn)
             rows = conn.execute(
                 """
-                SELECT id, name, birthday, alias_names
+                SELECT id, name, birthyear, alias_names
                 FROM candidates
                 WHERE %s = ''
                    OR name ILIKE %s
@@ -484,7 +486,7 @@ class Store:
                        SELECT 1 FROM unnest(alias_names) AS alias_name
                        WHERE alias_name ILIKE %s
                    )
-                ORDER BY name, birthday NULLS LAST, id
+                ORDER BY name, birthyear NULLS LAST, id
                 LIMIT 200
                 """,
                 (query, pattern, pattern, pattern),
@@ -527,7 +529,7 @@ class Store:
             rows = conn.execute(
                 """
                 SELECT
-                    c.id, c.name, c.birthday,
+                    c.id, c.name, c.birthyear,
                     r.source_record_id, r.election_id,
                     sr.payload
                 FROM candidates c
@@ -592,7 +594,7 @@ class Store:
             self._setup_conn(conn)
             rows = conn.execute(
                 """
-                SELECT i.*, c.name, c.birthday,
+                SELECT i.*, c.name, c.birthyear,
                        ARRAY(
                            SELECT DISTINCT ce.type
                            FROM candidate_elections ce
@@ -698,14 +700,14 @@ class Store:
                 if plan["create_candidate"]:
                     conn.execute(
                         """
-                        INSERT INTO candidates(id, name, birthday)
+                        INSERT INTO candidates(id, name, birthyear)
                         VALUES (%s, %s, %s)
                         ON CONFLICT(id) DO NOTHING
                         """,
                         (
                             plan["target_candidate_id"],
                             plan["new_candidate_name"],
-                            plan["new_candidate_birthday"],
+                            plan["new_candidate_birthyear"],
                         ),
                     )
 
@@ -784,7 +786,7 @@ class Store:
                 grouped[cid] = {
                     "id": row["id"],
                     "name": row["name"],
-                    "birthday": row["birthday"],
+                    "birthyear": row["birthyear"],
                     "elections": [],
                 }
             payload = row["payload"]
@@ -799,7 +801,7 @@ class Store:
                 "session": payload.get("session"),
                 "ticket": payload.get("ticket"),
                 "order_id": payload.get("order_id"),
-                "birthday": payload.get("birthday"),
+                "birthyear": payload.get("birthyear"),
                 "name": payload.get("name"),
             }
             grouped[cid]["elections"].append(election)
@@ -810,7 +812,7 @@ class Store:
             self._setup_conn(conn)
             row = conn.execute(
                 """
-                SELECT i.*, c.name, c.birthday
+                SELECT i.*, c.name, c.birthyear
                 FROM identity_check_issues i
                 JOIN candidates c ON c.id = i.candidate_id
                 WHERE i.id = %s
@@ -840,7 +842,7 @@ class Store:
             rows = conn.execute(
                 """
                 SELECT
-                    c.id, c.name, c.birthday,
+                    c.id, c.name, c.birthyear,
                     r.source_record_id, r.election_id,
                     sr.payload
                 FROM candidates c
@@ -856,15 +858,15 @@ class Store:
             real_rows = [r for r in rows if r["source_record_id"] is not None]
             if not real_rows:
                 row = rows[0]
-                return {"id": row["id"], "name": row["name"], "birthday": row["birthday"], "elections": []}
+                return {"id": row["id"], "name": row["name"], "birthyear": row["birthyear"], "elections": []}
             return self._group_committed_candidate_rows(real_rows)[0]
         finally:
             if close_conn:
                 ctx.__exit__(None, None, None)
 
     def _nearby_candidates(self, candidate: dict[str, Any]) -> list[dict[str, Any]]:
-        birthday = candidate.get("birthday")
-        if birthday is None:
+        birthyear = candidate.get("birthyear")
+        if birthyear is None:
             return []
         with self.connect() as conn:
             self._setup_conn(conn)
@@ -874,11 +876,11 @@ class Store:
                 FROM candidates
                 WHERE name = %s
                   AND id <> %s
-                  AND birthday IS NOT NULL
-                  AND ABS(birthday - %s) = 1
+                  AND birthyear IS NOT NULL
+                  AND ABS(birthyear - %s) = 1
                 ORDER BY id
                 """,
-                (candidate["name"], candidate["id"], birthday),
+                (candidate["name"], candidate["id"], birthyear),
             ).fetchall()
         nearby = []
         for row in rows:
@@ -904,7 +906,7 @@ class Store:
 
         create_candidate = False
         new_candidate_name = source["name"]
-        new_candidate_birthday = source["birthday"]
+        new_candidate_birthyear = source["birthyear"]
 
         if action == "target_existing":
             if not target_candidate_id:
@@ -915,7 +917,7 @@ class Store:
             moved = selected
         elif action == "selected_new":
             target_candidate_id = self._next_available_candidate_id(source["id"])
-            target = {"id": target_candidate_id, "name": source["name"], "birthday": source["birthday"], "elections": []}
+            target = {"id": target_candidate_id, "name": source["name"], "birthyear": source["birthyear"], "elections": []}
             create_candidate = True
             moved = selected
         elif action == "others_new":
@@ -923,7 +925,7 @@ class Store:
             if not moved:
                 return {"error": "沒有其他 elections 可以拆出"}
             target_candidate_id = self._next_available_candidate_id(source["id"])
-            target = {"id": target_candidate_id, "name": source["name"], "birthday": source["birthday"], "elections": []}
+            target = {"id": target_candidate_id, "name": source["name"], "birthyear": source["birthyear"], "elections": []}
             create_candidate = True
         else:
             return {"error": "修正方式無效"}
@@ -955,7 +957,7 @@ class Store:
             "after_candidates": after_candidates,
             "create_candidate": create_candidate,
             "new_candidate_name": new_candidate_name,
-            "new_candidate_birthday": new_candidate_birthday,
+            "new_candidate_birthyear": new_candidate_birthyear,
         }
 
     def _candidate_collision(self, candidates: list[dict[str, Any]]) -> str:
@@ -1065,11 +1067,11 @@ class Store:
                     )
                     conn.execute(
                         """
-                        INSERT INTO candidates(id, name, birthday)
+                        INSERT INTO candidates(id, name, birthyear)
                         VALUES (%s, %s, %s)
                         ON CONFLICT(id) DO NOTHING
                         """,
-                        (candidate_id, _normalize_candidate_name(payload["name"]), payload.get("birthday")),
+                        (candidate_id, _normalize_candidate_name(payload["name"]), payload.get("birthyear")),
                     )
                     conn.execute(
                         """
@@ -1193,15 +1195,15 @@ class Store:
             conn.execute("DELETE FROM candidates WHERE id = %s", (candidate_id,))
         _clog.info("DELETE_CANDIDATE candidate_id=%s", candidate_id)
 
-    def rename_candidate(self, old_id: str, new_id: str, new_birthday: int) -> None:
+    def rename_candidate(self, old_id: str, new_id: str, new_birthyear: int) -> None:
         with self.connect() as conn:
             self._setup_conn(conn)
             if conn.execute("SELECT 1 FROM candidates WHERE id = %s", (new_id,)).fetchone():
                 raise ValueError(f"候選人 {new_id} 已存在，id rename 失敗，需人工處理")
             with conn.transaction():
                 conn.execute(
-                    "INSERT INTO candidates(id, name, birthday, alias_names) SELECT %s, name, %s, alias_names FROM candidates WHERE id = %s",
-                    (new_id, new_birthday, old_id),
+                    "INSERT INTO candidates(id, name, birthyear, alias_names) SELECT %s, name, %s, alias_names FROM candidates WHERE id = %s",
+                    (new_id, new_birthyear, old_id),
                 )
                 conn.execute(
                     "UPDATE candidate_elections SET candidate_id = %s WHERE candidate_id = %s",
@@ -1216,4 +1218,4 @@ class Store:
                     (new_id, old_id),
                 )
                 conn.execute("DELETE FROM candidates WHERE id = %s", (old_id,))
-        _clog.info("RENAME_CANDIDATE old_id=%s new_id=%s birthday=%s", old_id, new_id, new_birthday)
+        _clog.info("RENAME_CANDIDATE old_id=%s new_id=%s birthyear=%s", old_id, new_id, new_birthyear)

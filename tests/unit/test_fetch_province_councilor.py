@@ -25,7 +25,7 @@ def test_parse_table_rows() -> None:
     assert records == [
         {
             "name": "楊泰順",
-            "birthday": 1953,
+            "birthyear": 1953,
             "order_id": 1,
             "party": "新黨",
             "year": 1994,
@@ -35,7 +35,7 @@ def test_parse_table_rows() -> None:
         },
         {
             "name": "苗素芳",
-            "birthday": 1928,
+            "birthyear": 1928,
             "order_id": 2,
             "party": "中國國民黨",
             "year": 1994,

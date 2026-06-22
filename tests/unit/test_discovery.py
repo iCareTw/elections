@@ -127,7 +127,7 @@ def test_discover_elections_ignores_underscore_prefixed_files_and_dirs(tmp_path:
 def test_load_election_records_assigns_stable_source_record_ids(tmp_path: Path) -> None:
     path = tmp_path / "_data" / "legislator" / "party-list-legislator" / "11th.yaml"
     path.parent.mkdir(parents=True)
-    path.write_text("- name: 測試\n  party: 測試黨\n  birthday: 1970\n", encoding="utf-8")
+    path.write_text("- name: 測試\n  party: 測試黨\n  birthyear: 1970\n", encoding="utf-8")
     election = {
         "election_id": "legislator/party-list-legislator/11th.yaml",
         "type": "party-list",
@@ -145,7 +145,7 @@ def test_load_election_records_assigns_stable_source_record_ids(tmp_path: Path) 
 def test_load_election_records_uses_taiwan_green_party_name(tmp_path: Path) -> None:
     path = tmp_path / "_data" / "legislator" / "party-list-legislator" / "11th.yaml"
     path.parent.mkdir(parents=True)
-    path.write_text("- name: 綠黨測試\n  party: 綠黨\n  birthday: 1970\n", encoding="utf-8")
+    path.write_text("- name: 綠黨測試\n  party: 綠黨\n  birthyear: 1970\n", encoding="utf-8")
     election = {
         "election_id": "legislator/party-list-legislator/11th.yaml",
         "type": "party-list",
@@ -163,7 +163,7 @@ def test_load_by_election_yaml_records(tmp_path: Path) -> None:
     path.parent.mkdir(parents=True)
     path.write_text(
         "- name: 補選測試\n"
-        "  birthday: 1980\n"
+        "  birthyear: 1980\n"
         "  order_id: 1\n"
         "  party: 測試黨\n"
         "  year: 2019\n"
@@ -192,7 +192,7 @@ def test_load_mna_yaml_records(tmp_path: Path) -> None:
     path.parent.mkdir(parents=True)
     path.write_text(
         "- name: 國代測試\n"
-        "  birthday: 1972\n"
+        "  birthyear: 1972\n"
         "  order_id: 1\n"
         "  party: 測試黨\n"
         "  year: 2005\n"
@@ -221,7 +221,7 @@ def test_load_province_yaml_records(tmp_path: Path) -> None:
     path.parent.mkdir(parents=True)
     path.write_text(
         "- name: 省長測試\n"
-        "  birthday: 1942\n"
+        "  birthyear: 1942\n"
         "  order_id: 1\n"
         "  party: 測試黨\n"
         "  year: 1994\n"
@@ -249,7 +249,7 @@ def test_load_province_councilor_yaml_records(tmp_path: Path) -> None:
     path.parent.mkdir(parents=True)
     path.write_text(
         "- name: 省議員測試\n"
-        "  birthday: 1953\n"
+        "  birthyear: 1953\n"
         "  order_id: 1\n"
         "  party: 測試黨\n"
         "  year: 1994\n"

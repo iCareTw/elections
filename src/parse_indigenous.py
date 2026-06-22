@@ -22,7 +22,7 @@ def _parse(path: str | Path, election_type: str) -> list[dict]:
             continue
         records.append({
             'name': decode_cec_name(str(name)),
-            'birthday': int(birth_year) if birth_year else None,
+            'birthyear': int(birth_year) if birth_year else None,
             'year': year,
             'type': election_type,
             'region': f'{city} {area_name}',

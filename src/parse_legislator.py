@@ -41,7 +41,7 @@ def parse_file(path: str | Path) -> list[dict]:
             region = str(area_name) if area_name else county
         records.append({
             'name': str(name),
-            'birthday': int(birth_year) if birth_year else None,
+            'birthyear': int(birth_year) if birth_year else None,
             'year': year,
             'session': session,
             'type': '立法委員',

@@ -63,18 +63,18 @@
       <input type="hidden" name="i" value="{{ i }}">
       <input type="hidden" name="total_count" value="{{ display_count }}">
 
-      <input type="hidden" name="birthday_override" id="bday-override-field" value="">
+      <input type="hidden" name="birthyear_override" id="bday-override-field" value="">
 
       {% for match in matches %}
-      {% set bday_diff = incoming_birthday is not none and match.birthday != incoming_birthday %}
-      {% set bday_age_diff = ((match.birthday - incoming_birthday) | abs) if incoming_birthday is not none and match.birthday is not none else none %}
+      {% set bday_diff = incoming_birthyear is not none and match.birthyear != incoming_birthyear %}
+      {% set bday_age_diff = ((match.birthyear - incoming_birthyear) | abs) if incoming_birthyear is not none and match.birthyear is not none else none %}
       {% set _cmp = match.get('cmp') or {} %}
       {% set _cmp_val = match.get('cmp_val') or {} %}
-      {% set bday_cmp = _cmp.get('birthday') %}
+      {% set bday_cmp = _cmp.get('birthyear') %}
       {% set party_cmp = _cmp.get('party') %}
       {% set type_cmp = _cmp.get('type') %}
       {% set region_cmp = _cmp.get('region') %}
-      <div class="match-card" data-idx="{{ loop.index }}" data-name="{{ match.name }}" data-id="{{ match.id }}" data-existing-bday="{{ match.birthday }}" data-age-diff="{{ bday_age_diff if bday_age_diff is not none else '' }}">
+      <div class="match-card" data-idx="{{ loop.index }}" data-name="{{ match.name }}" data-id="{{ match.id }}" data-existing-bday="{{ match.birthyear }}" data-age-diff="{{ bday_age_diff if bday_age_diff is not none else '' }}">
         <label class="match-card-main">
           <span class="match-card-head">
             <input class="match-select" type="radio" name="candidate_id" value="{{ match.id }}"
@@ -88,7 +88,7 @@
             {% if bday_cmp %}
             <div class="cmp-row cmp-{{ bday_cmp }}">
               <span class="cmp-label">生日</span>
-              <span class="cmp-value">{{ match.birthday or '—' }}</span>
+              <span class="cmp-value">{{ match.birthyear or '—' }}</span>
               <span class="cmp-indicator">
                 {% if bday_cmp == 'exact' %}✓
                 {% elif bday_age_diff is not none %}差{{ bday_age_diff }}歲
@@ -141,8 +141,8 @@
         {% if bday_diff %}
         <div class="bday-panel" data-idx="{{ loop.index }}">
           <span class="bday-panel-title">合併到 {{ match.id }} 後的生日</span>
-          <div class="bday-opt"><input type="radio" class="bday-radio" name="bday_opt_{{ loop.index }}" value="" checked> 保留 {{ match.birthday }}，來自既有人 {{ match.id }}</div>
-          <div class="bday-opt"><input type="radio" class="bday-radio" name="bday_opt_{{ loop.index }}" value="{{ incoming_birthday }}"> 改為 {{ incoming_birthday }}，來自 incoming record</div>
+          <div class="bday-opt"><input type="radio" class="bday-radio" name="bday_opt_{{ loop.index }}" value="" checked> 保留 {{ match.birthyear }}，來自既有人 {{ match.id }}</div>
+          <div class="bday-opt"><input type="radio" class="bday-radio" name="bday_opt_{{ loop.index }}" value="{{ incoming_birthyear }}"> 改為 {{ incoming_birthyear }}，來自 incoming record</div>
           <div class="bday-opt">
             <input type="radio" class="bday-radio" name="bday_opt_{{ loop.index }}" value="__custom__">
             自行輸入：<input type="number" class="bday-custom" min="1900" max="2010" placeholder="YYYY">
@@ -241,7 +241,7 @@
     return checked ? checked.closest('.match-card') : null;
   }
 
-  function selectedBirthdayValue(card) {
+  function selectedBirthyearValue(card) {
     const panel = card ? card.querySelector('.bday-panel') : null;
     if (!panel) return card ? card.dataset.existingBday : '';
     const checked = panel.querySelector('.bday-radio:checked');
@@ -261,9 +261,9 @@
       return;
     }
     const incomingName = {{ current_record.name | tojson }};
-    const incomingBirthday = {{ incoming_birthday | tojson }};
-    summary.textContent = '將 incoming ' + incomingName + '，生日 ' + incomingBirthday + '，合併到 '
-      + card.dataset.id + '，合併後生日 ' + selectedBirthdayValue(card);
+    const incomingBirthyear = {{ incoming_birthyear | tojson }};
+    summary.textContent = '將 incoming ' + incomingName + '，生日 ' + incomingBirthyear + '，合併到 '
+      + card.dataset.id + '，合併後生日 ' + selectedBirthyearValue(card);
   }
 
   document.querySelectorAll('input[name="candidate_id"], .bday-radio, .bday-custom').forEach(el => {
@@ -273,7 +273,7 @@
 
   updateDecisionSummary();
 
-  // Collect birthday_override on form submit
+  // Collect birthyear_override on form submit
   const resolveForm = document.querySelector('form[action*="/resolve"]');
   if (resolveForm) {
     resolveForm.addEventListener('submit', () => {

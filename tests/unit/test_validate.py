@@ -5,7 +5,7 @@ VALID_TYPES = {'國家元首_總統', '國家元首_副總統', '縣市首長', 
 
 def test_valid_passes():
     candidates = [{
-        'name': '柯文哲', 'id': 'id_柯文哲', 'birthday': 1959,
+        'name': '柯文哲', 'id': 'id_柯文哲', 'birthyear': 1959,
         'elections': [
             {'year': 2014, 'type': '縣市首長', 'region': '臺北市', 'party': '無黨籍', 'elected': 1},
             {'year': 2024, 'type': '國家元首_總統', 'region': '全國', 'party': '台灣民眾黨', 'elected': 0},
@@ -15,14 +15,14 @@ def test_valid_passes():
 
 
 def test_invalid_type():
-    candidates = [{'name': 'X', 'id': 'id_X', 'birthday': None,
+    candidates = [{'name': 'X', 'id': 'id_X', 'birthyear': None,
         'elections': [{'year': 2024, 'type': '未知類型', 'region': '全國', 'party': 'A', 'elected': 0}]}]
     errors = validate_candidates(candidates, VALID_TYPES)
     assert any('未知類型' in e for e in errors)
 
 
 def test_elections_not_sorted():
-    candidates = [{'name': 'X', 'id': 'id_X', 'birthday': None,
+    candidates = [{'name': 'X', 'id': 'id_X', 'birthyear': None,
         'elections': [
             {'year': 2024, 'type': '國家元首_總統', 'region': '全國', 'party': 'A', 'elected': 0},
             {'year': 2018, 'type': '縣市首長', 'region': '臺北市', 'party': 'B', 'elected': 1},
@@ -33,8 +33,8 @@ def test_elections_not_sorted():
 
 def test_duplicate_ids():
     candidates = [
-        {'name': 'X', 'id': 'id_X', 'birthday': None, 'elections': []},
-        {'name': 'Y', 'id': 'id_X', 'birthday': None, 'elections': []},
+        {'name': 'X', 'id': 'id_X', 'birthyear': None, 'elections': []},
+        {'name': 'Y', 'id': 'id_X', 'birthyear': None, 'elections': []},
     ]
     errors = validate_candidates(candidates, VALID_TYPES)
     assert any('id_X' in e for e in errors)

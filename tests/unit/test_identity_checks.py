@@ -9,7 +9,7 @@ def test_find_identity_check_issues_detects_same_year_multiple() -> None:
         {
             "id": "id_劉煜基_1946",
             "name": "劉煜基",
-            "birthday": 1946,
+            "birthyear": 1946,
             "elections": [
                 {
                     "source_record_id": "legislator:1",
@@ -39,7 +39,7 @@ def test_find_identity_check_issues_detects_downgrade_after_elected() -> None:
         {
             "id": "id_測試人_1970",
             "name": "測試人",
-            "birthday": 1970,
+            "birthyear": 1970,
             "elections": [
                 {
                     "source_record_id": "legislator:1",
