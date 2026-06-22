@@ -1,6 +1,6 @@
 # DB Schema
 
-Schema name: `elections`. 此文件記錄 `db/001_init.sql` 建立後的 schema 狀態.
+Schema name: `elections`. 此文件記錄套用 `db/*.sql` 所有 migration 後的最終 schema 狀態.
 
 初始化方式: 使用者先自行建立/切換 schema, 再執行 `db/001_init.sql`. 應用程式啟動時不負責建立或 migration DB schema.
 
@@ -28,6 +28,10 @@ Schema name: `elections`. 此文件記錄 `db/001_init.sql` 建立後的 schema 
 ┌───────────────────────┐        ┌─────────────────────────┐
 │ identity_check_issues │        │ identity_fix_operations │
 └───────────────────────┘        └─────────────────────────┘
+
+candidates.id 另被以下表以 FK 參照 (皆 ON UPDATE/DELETE CASCADE):
+  candidate_elections, identity_check_issues, resolutions, review_decisions
+identity_fix_operations 僅記錄當時的 candidate id, 不設 FK (稽核歷史).
 ```
 
 ---
@@ -87,7 +91,7 @@ Index:
 |--------------------|-------------|---------------------------------------------------|
 | `source_record_id` | TEXT PK FK  | 1-to-1 對應 `source_records.source_record_id`      |
 | `election_id`      | TEXT FK     | 所屬選舉 → `elections.election_id` (denormalized)  |
-| `candidate_id`     | VARCHAR(64) | 審核人員判定對應的候選人 ID                           |
+| `candidate_id`     | VARCHAR(64) FK | 審核人員判定對應的候選人 → `candidates.id` (`ON UPDATE/DELETE CASCADE`) |
 | `mode`             | VARCHAR(16) | 判定方式                                           |
 | `updated_at`       | TIMESTAMPTZ | 最後修改時間, 由 trigger 自動維護                    |
 
@@ -109,7 +113,7 @@ Trigger:
 |--------------------|-------------|---------------------------------------------------|
 | `source_record_id` | TEXT PK FK  | 1-to-1 對應 `source_records.source_record_id`      |
 | `election_id`      | TEXT FK     | 所屬選舉 → `elections.election_id` (denormalized)  |
-| `candidate_id`     | VARCHAR(64) | 對應的候選人 ID, NULL 表示無法判定                    |
+| `candidate_id`     | VARCHAR(64) FK | 對應的候選人 → `candidates.id`, NULL 表示無法判定 (`ON UPDATE/DELETE CASCADE`) |
 | `mode`             | VARCHAR(16) | 判定來源: `auto` / `new` / `manual_new` / `manual` (見下方說明) |
 
 `mode` 值說明:
@@ -155,7 +159,7 @@ Index:
 | field          | type           | description                                        |
 |----------------|----------------|----------------------------------------------------|
 | `id`           | SERIAL PK      | surrogate key                                      |
-| `candidate_id` | VARCHAR(64) FK | 候選人 → `candidates.id`                            |
+| `candidate_id` | VARCHAR(64) FK | 候選人 → `candidates.id` (`ON UPDATE/DELETE CASCADE`)  |
 | `year`         | INTEGER        | 選舉年份                                            |
 | `type`         | VARCHAR(32)    | 選舉類型                                            |
 | `region`       | VARCHAR(32)    | 選區官方全名 (使用臺而非台, 如 `臺北市`)                |
@@ -177,7 +181,7 @@ commit 後的候選人合理性檢查清單. 每筆代表一個需要人工確�
 |---------------------|-------------|----------------------------------------------|
 | `id`                | SERIAL PK   | 流水號                                        |
 | `issue_key`         | TEXT UNIQUE | 同一疑點的穩定識別碼                           |
-| `candidate_id`      | VARCHAR(64) | 被檢查的候選人 → `candidates.id`              |
+| `candidate_id`      | VARCHAR(64) FK | 被檢查的候選人 → `candidates.id` (`ON UPDATE/DELETE CASCADE`) |
 | `issue_type`        | VARCHAR(32) | `same_year_multiple` / `rank_downgrade` / `regional_jump` / `region_zigzag` |
 | `severity`          | VARCHAR(16) | `critical` / `warning`                       |
 | `summary`           | TEXT        | UI 顯示摘要                                    |
