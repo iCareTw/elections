@@ -3,12 +3,14 @@ Scrape 選舉公報 PDFs from bulletin.cec.gov.tw and eebulletin.cec.gov.tw.
 
 Usage:
     uv run python -m src.fetch_voter_guide [--force] [--concurrency 4]
-    uv run python -m src.fetch_voter_guide --site bulletin --force
-    uv run python -m src.fetch_voter_guide --site eebulletin
+    uv run python -m src.fetch_voter_guide --type president,legislator,mayor,councilor,mna
+    uv run python -m src.fetch_voter_guide --site bulletin --type president
+    uv run python -m src.fetch_voter_guide --site eebulletin --type village
 """
 
 import asyncio
 import argparse
+import json
 import re
 from pathlib import Path
 from urllib.parse import urljoin, urlparse, unquote
@@ -75,7 +77,6 @@ def bulletin_pdf_to_local(pdf_url: str) -> Path | None:
             if not middle:
                 return None
             year = _parse_year(middle[0])
-            # Flatten: skip all intermediate dirs (county, 01紙本公報, etc.)
             return DATA_ROOT / 'mayor' / year / filename
 
         case '05直轄市議員' | '06縣市議員':
@@ -134,22 +135,69 @@ def eebulletin_pdf_to_local(pdf_url: str) -> Path | None:
     return None
 
 
-# bulletin: skip 有聲公報 and 罷免案 directories
-_BULLETIN_SKIP = frozenset(['有聲公報', '罷免案'])
+_BULLETIN_ALWAYS_SKIP = frozenset(['有聲公報', '罷免案'])
 
-# eebulletin: only enter these categories under each county
-_EEBULLETIN_WANTED = frozenset(['03原住民區長', '04原住民區民代表', '05村里長'])
+_BULLETIN_TYPE_DIRS: dict[str, frozenset[str]] = {
+    'president':          frozenset(['01總統副總統']),
+    'legislator':         frozenset(['02立法委員']),
+    'mayor':              frozenset(['03直轄市長', '04縣市長']),
+    'councilor':          frozenset(['05直轄市議員', '06縣市議員']),
+    'province':           frozenset(['07省長']),
+    'province_councilor': frozenset(['08省議員']),
+    'mna':                frozenset(['09國大代表']),
+}
+
+_EEBULLETIN_TYPE_CATS: dict[str, frozenset[str]] = {
+    'village':            frozenset(['05村里長']),
+    'indigenous_chief':   frozenset(['03原住民區長']),
+    'indigenous_rep':     frozenset(['04原住民區民代表']),
+}
+
+_ALL_BULLETIN_DIRS = frozenset(d for dirs in _BULLETIN_TYPE_DIRS.values() for d in dirs)
+ALL_TYPES = frozenset(_BULLETIN_TYPE_DIRS) | frozenset(_EEBULLETIN_TYPE_CATS)
+
+CACHE_FILE = DATA_ROOT / '.scan_cache.json'
 
 
-def _bulletin_skip_dir(href: str) -> bool:
-    decoded = unquote(href[5:])  # strip '?dir='
-    return any(seg in _BULLETIN_SKIP for seg in decoded.split('/'))
+def _cache_key(site: str, types: set[str] | None) -> str:
+    return f"{site}:{','.join(sorted(types)) if types else '*'}"
 
 
-def _eebulletin_skip_dir(href: str) -> bool:
-    parts = unquote(href[5:]).split('/')
-    # At category depth (year/county/category), only enter wanted categories
-    return len(parts) >= 3 and parts[2] not in _EEBULLETIN_WANTED
+def _load_cache(site: str, types: set[str] | None) -> list[str] | None:
+    if not CACHE_FILE.exists():
+        return None
+    data = json.loads(CACHE_FILE.read_text())
+    return data.get(_cache_key(site, types))
+
+
+def _save_cache(site: str, types: set[str] | None, urls: list[str]) -> None:
+    data: dict = {}
+    if CACHE_FILE.exists():
+        data = json.loads(CACHE_FILE.read_text())
+    data[_cache_key(site, types)] = urls
+    CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    CACHE_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+
+
+def _bulletin_skip_fn(allowed: frozenset[str] | None):
+    def skip(href: str) -> bool:
+        decoded = unquote(href[5:])
+        parts = decoded.split('/')
+        if any(seg in _BULLETIN_ALWAYS_SKIP for seg in parts):
+            return True
+        if allowed is not None and len(parts) >= 2:
+            type_dir = parts[1]
+            if type_dir in _ALL_BULLETIN_DIRS:
+                return type_dir not in allowed
+        return False
+    return skip
+
+
+def _eebulletin_skip_fn(wanted: frozenset[str]):
+    def skip(href: str) -> bool:
+        parts = unquote(href[5:]).split('/')
+        return len(parts) >= 3 and parts[2] not in wanted
+    return skip
 
 
 async def _crawl(
@@ -222,47 +270,92 @@ async def _download_all(pdf_urls: list[str], mapper, force: bool, concurrency: i
     print(f'  done: saved={saved}, skipped={skipped}, errors={errors}')
 
 
-async def run(site: str | None, force: bool, concurrency: int) -> None:
-    async with async_playwright() as pw:
-        browser = await pw.chromium.launch()
-        page = await browser.new_page()
+async def _scan_or_load(
+    page,
+    site: str,
+    types: set[str] | None,
+    force: bool,
+    start_url: str,
+    skip_fn,
+) -> list[str]:
+    if not force:
+        cached = _load_cache(site, types)
+        if cached is not None:
+            print(f'  (loaded {len(cached)} URLs from cache)')
+            return cached
+    pdf_urls: list[str] = []
+    await _crawl(page, start_url, set(), pdf_urls, skip_dir=skip_fn)
+    _save_cache(site, types, pdf_urls)
+    return pdf_urls
 
-        if site in (None, 'bulletin'):
+
+async def run(site: str | None, types: set[str] | None, force: bool, concurrency: int) -> None:
+    if types is not None:
+        bulletin_allowed: frozenset[str] | None = frozenset(
+            d for t in types if t in _BULLETIN_TYPE_DIRS for d in _BULLETIN_TYPE_DIRS[t]
+        )
+        eebulletin_wanted = frozenset(
+            d for t in types if t in _EEBULLETIN_TYPE_CATS for d in _EEBULLETIN_TYPE_CATS[t]
+        )
+    else:
+        bulletin_allowed = None
+        eebulletin_wanted = frozenset(d for cats in _EEBULLETIN_TYPE_CATS.values() for d in cats)
+
+    run_bulletin = site in (None, 'bulletin') and (types is None or bool(bulletin_allowed))
+    run_eebulletin = site in (None, 'eebulletin') and (types is None or bool(eebulletin_wanted))
+
+    need_browser = (run_bulletin and (force or _load_cache('bulletin', types) is None)) or \
+                   (run_eebulletin and (force or _load_cache('eebulletin', types) is None))
+
+    async with async_playwright() as pw:
+        browser = await pw.chromium.launch() if need_browser else None
+        page = await browser.new_page() if browser else None
+
+        if run_bulletin:
             print('\n=== bulletin.cec.gov.tw ===')
-            pdf_urls: list[str] = []
-            await _crawl(
-                page,
+            pdf_urls = await _scan_or_load(
+                page, 'bulletin', types, force,
                 f'{BULLETIN_BASE}/?dir=01%E9%81%B8%E8%88%89%E5%85%AC%E5%A0%B1',
-                set(),
-                pdf_urls,
-                skip_dir=_bulletin_skip_dir,
+                _bulletin_skip_fn(bulletin_allowed),
             )
             print(f'Found {len(pdf_urls)} PDFs, downloading...')
             await _download_all(pdf_urls, bulletin_pdf_to_local, force, concurrency)
 
-        if site in (None, 'eebulletin'):
+        if run_eebulletin:
             print('\n=== eebulletin.cec.gov.tw ===')
-            pdf_urls = []
-            await _crawl(
-                page,
+            pdf_urls = await _scan_or_load(
+                page, 'eebulletin', types, force,
                 f'{EEBULLETIN_BASE}/',
-                set(),
-                pdf_urls,
-                skip_dir=_eebulletin_skip_dir,
+                _eebulletin_skip_fn(eebulletin_wanted),
             )
             print(f'Found {len(pdf_urls)} PDFs, downloading...')
             await _download_all(pdf_urls, eebulletin_pdf_to_local, force, concurrency)
 
-        await browser.close()
+        if browser:
+            await browser.close()
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description='Scrape 選舉公報 PDFs')
     parser.add_argument('--site', choices=['bulletin', 'eebulletin'], help='scrape only one site')
+    parser.add_argument(
+        '--type',
+        dest='types',
+        metavar='TYPE[,TYPE...]',
+        help=f'comma-separated types to scrape: {",".join(sorted(ALL_TYPES))}',
+    )
     parser.add_argument('--force', action='store_true', help='overwrite existing files')
     parser.add_argument('--concurrency', type=int, default=4, help='parallel download workers (default: 4)')
     args = parser.parse_args()
-    asyncio.run(run(args.site, args.force, args.concurrency))
+
+    types: set[str] | None = None
+    if args.types:
+        types = set(args.types.split(','))
+        unknown = types - ALL_TYPES
+        if unknown:
+            parser.error(f'unknown types: {", ".join(sorted(unknown))}. valid: {", ".join(sorted(ALL_TYPES))}')
+
+    asyncio.run(run(args.site, types, args.force, args.concurrency))
 
 
 if __name__ == '__main__':
