@@ -8,3 +8,4 @@ logs/
 .coverage
 htmlcov/
 .playwright-mcp/
+_out/
