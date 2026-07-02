@@ -243,3 +243,127 @@ Index:
 | function             | description                                      |
 |----------------------|--------------------------------------------------|
 | `touch_updated_at()` | 將 `NEW.updated_at` 設為 `CURRENT_TIMESTAMP`, 供 updated_at triggers 共用 |
+
+---
+
+## guide_* 表群 (選舉公報 web 功能)
+
+`guide_*` 表與 identity UI 獨立, 專供選舉公報 web 檢視/後台使用. `candidate_id` / `election_id` 為預留欄位, 本階段不設 FK, 不填值.
+
+### guide_elections
+
+公報對應的選舉清單.
+
+| field            | type        | description                                    |
+|------------------|-------------|------------------------------------------------|
+| `id`             | TEXT PK     | 公報選舉識別碼                                  |
+| `type`           | VARCHAR(32) | 選舉類型                                        |
+| `year`           | INTEGER     | 選舉年份                                        |
+| `session`        | INTEGER     | 屆次 (可 NULL)                                  |
+| `label`          | TEXT        | 顯示名稱 (可 NULL)                              |
+| `source_pdf_path`| TEXT        | 來源 PDF 路徑 (可 NULL)                         |
+| `election_id`    | TEXT        | 預留; 不設 FK, 本期不填                          |
+
+---
+
+### guide_candidates
+
+公報內每位候選人 (或配對的正/副總統).
+
+| field               | type        | description                                             |
+|---------------------|-------------|---------------------------------------------------------|
+| `id`                | SERIAL PK   | surrogate key                                           |
+| `guide_election_id` | TEXT FK     | 所屬公報選舉 → `guide_elections.id` (CASCADE)            |
+| `ticket`            | INTEGER     | 號次 (可 NULL)                                          |
+| `role`              | VARCHAR(16) | 角色, 如 `president` / `vp` / 空字串, NOT NULL DEFAULT '' |
+| `party`             | VARCHAR(32) | 政黨 (可 NULL)                                          |
+| `photo_path`        | TEXT        | 照片儲存路徑 (可 NULL)                                   |
+| `photo_flagged`     | BOOLEAN     | 照片是否需人工確認, DEFAULT false                         |
+| `photo_note`        | TEXT        | 照片備註 (可 NULL)                                       |
+| `source_page`       | INTEGER     | 來源 PDF 頁碼 (可 NULL)                                  |
+| `candidate_id`      | VARCHAR(64) | 預留; 不設 FK, 本期不填                                  |
+| `order_id`          | INTEGER     | 排序用流水號 (可 NULL)                                   |
+
+Unique constraint: `(guide_election_id, ticket, role)`.
+
+Index: `idx_guide_candidates_election` on `(guide_election_id)`.
+
+---
+
+### guide_fields
+
+每位候選人的欄位化資料 (姓名、學歷、政見等), 一欄一列.
+
+| field               | type        | description                                          |
+|---------------------|-------------|------------------------------------------------------|
+| `id`                | SERIAL PK   | surrogate key                                        |
+| `guide_candidate_id`| INTEGER FK  | 所屬候選人 → `guide_candidates.id` (CASCADE)          |
+| `field_name`        | VARCHAR(32) | 欄位名稱                                              |
+| `value`             | TEXT        | 欄位內容 (可 NULL)                                    |
+| `grade`             | VARCHAR(16) | 解析信心等級 (可 NULL)                                 |
+| `source_crop_path`  | TEXT        | 對應裁圖路徑 (可 NULL)                                 |
+| `flagged`           | BOOLEAN     | 是否需人工確認, DEFAULT false                          |
+| `flag_note`         | TEXT        | 標記備註 (可 NULL)                                    |
+| `update_source`     | VARCHAR(16) | 資料來源: `parse` / `manual` 等, DEFAULT 'parse'      |
+| `updated_at`        | TIMESTAMPTZ | 最後更新時間, DEFAULT current_timestamp               |
+
+Unique constraint: `(guide_candidate_id, field_name)`.
+
+Index: `idx_guide_fields_candidate` on `(guide_candidate_id)`.
+
+---
+
+### guide_snapshots
+
+候選人欄位的版本快照, 供稽核與回復.
+
+| field               | type        | description                                      |
+|---------------------|-------------|--------------------------------------------------|
+| `id`                | SERIAL PK   | surrogate key                                    |
+| `guide_candidate_id`| INTEGER FK  | 所屬候選人 → `guide_candidates.id` (CASCADE)      |
+| `version_no`        | INTEGER     | 版本號                                            |
+| `note`              | TEXT        | 版本備註 (可 NULL)                                 |
+| `created_at`        | TIMESTAMPTZ | 建立時間, DEFAULT current_timestamp               |
+
+Unique constraint: `(guide_candidate_id, version_no)`.
+
+---
+
+### guide_snapshot_fields
+
+快照內各欄位的值.
+
+| field              | type        | description                                 |
+|--------------------|-------------|---------------------------------------------|
+| `id`               | SERIAL PK   | surrogate key                               |
+| `snapshot_id`      | INTEGER FK  | 所屬快照 → `guide_snapshots.id` (CASCADE)    |
+| `field_name`       | VARCHAR(32) | 欄位名稱                                     |
+| `value`            | TEXT        | 欄位內容 (可 NULL)                            |
+| `grade`            | VARCHAR(16) | 解析信心等級 (可 NULL)                         |
+| `source_crop_path` | TEXT        | 對應裁圖路徑 (可 NULL)                         |
+| `flagged`          | BOOLEAN     | 是否標記 (NOT NULL)                           |
+| `flag_note`        | TEXT        | 標記備註 (可 NULL)                            |
+
+Unique constraint: `(snapshot_id, field_name)`.
+
+---
+
+### guide_repair_jobs
+
+文字欄位人工修正任務佇列 (照片不建 job).
+
+| field               | type        | description                                            |
+|---------------------|-------------|--------------------------------------------------------|
+| `id`                | SERIAL PK   | surrogate key                                          |
+| `guide_candidate_id`| INTEGER FK  | 所屬候選人 → `guide_candidates.id` (CASCADE)            |
+| `target`            | VARCHAR(32) | 目標欄位名稱                                            |
+| `status`            | VARCHAR(16) | `queued` / `done` / `error` 等, DEFAULT 'queued'       |
+| `user_note`         | TEXT        | 人工備註 (可 NULL)                                      |
+| `before_value`      | TEXT        | 修正前的值 (可 NULL)                                    |
+| `result_value`      | TEXT        | 修正後的值 (可 NULL)                                    |
+| `error`             | TEXT        | 錯誤訊息 (可 NULL)                                      |
+| `created_at`        | TIMESTAMPTZ | 建立時間, DEFAULT current_timestamp                     |
+| `finished_at`       | TIMESTAMPTZ | 完成時間 (可 NULL)                                      |
+
+Index: `idx_guide_repair_jobs_status` on `(status)`.
+Index: `idx_guide_repair_jobs_cand` on `(guide_candidate_id)`.
