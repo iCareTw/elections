@@ -163,6 +163,7 @@ def parse_pdf(pdf_path: str, tag: str, out_dir: Path, use_vision: bool):
                 crop_type=crop_type, session=session, minguo_year=minguo_year,
                 ticket=g.ticket, name=name, out_dir=out_dir)
             rec = {f: values.get(f) for f in PERSON_FIELDS}
+            rec["頁碼"] = person.page  # 0-based PDF 頁索引,供 load 填 source_page
 
             photo_path = out_dir / crop_filename(type=crop_type, session=session,
                                                   minguo_year=minguo_year, ticket=g.ticket,
