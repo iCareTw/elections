@@ -1463,6 +1463,36 @@ class Store:
             "latest_version": latest_snap["version_no"] if latest_snap else 0,
         }
 
+    def guide_snapshot_view(self, candidate_id: int, version_no: int) -> dict[str, Any]:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            snap_row = conn.execute(
+                "SELECT id FROM guide_snapshots WHERE guide_candidate_id = %s AND version_no = %s",
+                (candidate_id, version_no),
+            ).fetchone()
+            field_rows = conn.execute(
+                """
+                SELECT field_name, value, grade, source_crop_path, flagged, flag_note
+                FROM guide_snapshot_fields
+                WHERE snapshot_id = %s
+                ORDER BY array_position(
+                    ARRAY['姓名','出生年月日','性別','學歷','經歷'],
+                    field_name::text
+                )
+                """,
+                (snap_row["id"],),
+            ).fetchall()
+            bounds = conn.execute(
+                "SELECT MIN(version_no) AS min_v, MAX(version_no) AS max_v FROM guide_snapshots WHERE guide_candidate_id = %s",
+                (candidate_id,),
+            ).fetchone()
+        return {
+            "fields": [dict(r) for r in field_rows],
+            "version_no": version_no,
+            "min_version": bounds["min_v"],
+            "max_version": bounds["max_v"],
+        }
+
     def guide_commit(self, candidate_id: int, note: str | None = None) -> int:
         with self.connect() as conn:
             self._setup_conn(conn)
