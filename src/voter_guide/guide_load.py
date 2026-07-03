@@ -146,3 +146,41 @@ def load_guide(
                 )
 
     return election_id
+
+
+def main() -> None:
+    import argparse
+
+    from src.webapp.store import Store, load_database_config
+
+    ap = argparse.ArgumentParser(description="匯入選舉公報解析產物到 guide_* DB")
+    ap.add_argument("yaml_path", help="parser 產出的 YAML 路徑")
+    ap.add_argument("source_pdf_path", help="來源公報 PDF 路徑(用於推導年份/屆次)")
+    ap.add_argument("crops_base_dir", help="切圖/照片輸出基底目錄(如 _out/parsed)")
+    ap.add_argument("--type", default="president", dest="election_type",
+                    help="選舉類型(預設 president)")
+    ap.add_argument("--force", action="store_true",
+                    help="該場已存在時,刪除既有 guide_* 資料(含已提交 snapshot、人工修正)並重建 v1")
+    args = ap.parse_args()
+
+    store = Store(load_database_config())
+    store.open()
+    try:
+        store.init_schema()
+        election_id = load_guide(
+            store,
+            yaml_path=args.yaml_path,
+            source_pdf_path=args.source_pdf_path,
+            crops_base_dir=args.crops_base_dir,
+            election_type=args.election_type,
+            force=args.force,
+        )
+        print(f"loaded {election_id}")
+    except GuideElectionExists as exc:
+        raise SystemExit(f"{exc}\n(加 --force 可強制重灌,但會刪除該場所有既有資料)")
+    finally:
+        store.close()
+
+
+if __name__ == "__main__":
+    main()

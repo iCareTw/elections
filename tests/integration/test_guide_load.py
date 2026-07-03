@@ -312,3 +312,56 @@ def test_load_guide(tmp_path):
         except Exception:
             pass
         store.close()
+
+
+def test_reload_without_force_raises_and_keeps_data(tmp_path):
+    from src.voter_guide.guide_load import load_guide, GuideElectionExists
+
+    store = _store()
+    try:
+        store.init_schema()
+        store.guide_delete_election(ELECTION_ID)  # clean slate
+
+        yaml_path = _make_fake_yaml(tmp_path)
+        crops_dir = _make_fake_crops(tmp_path)
+        common = dict(yaml_path=yaml_path, source_pdf_path=Path(SOURCE_PDF),
+                      crops_base_dir=crops_dir, election_type="president")
+
+        load_guide(store, **common, force=False)  # first load OK
+
+        def _cand_ids():
+            with store.connect() as conn:
+                store._setup_conn(conn)
+                rows = conn.execute(
+                    "SELECT id FROM guide_candidates WHERE guide_election_id = %s "
+                    "ORDER BY id", (ELECTION_ID,)
+                ).fetchall()
+            return [r["id"] for r in rows]
+
+        before = _cand_ids()
+        assert len(before) == 4
+
+        # 二次載入未帶 force → 應 raise 且資料不變
+        with pytest.raises(GuideElectionExists):
+            load_guide(store, **common, force=False)
+        assert _cand_ids() == before  # 資料原封不動
+
+        # 帶 force → 刪除重建,候選人 id 全新,版本回到 v1
+        load_guide(store, **common, force=True)
+        after = _cand_ids()
+        assert len(after) == 4
+        assert set(after).isdisjoint(before)  # 全被刪除重建
+        with store.connect() as conn:
+            store._setup_conn(conn)
+            versions = conn.execute(
+                "SELECT DISTINCT version_no FROM guide_snapshots s "
+                "JOIN guide_candidates c ON c.id = s.guide_candidate_id "
+                "WHERE c.guide_election_id = %s", (ELECTION_ID,)
+            ).fetchall()
+        assert [v["version_no"] for v in versions] == [1]
+    finally:
+        try:
+            store.guide_delete_election(ELECTION_ID)
+        except Exception:
+            pass
+        store.close()
