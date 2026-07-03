@@ -1463,6 +1463,71 @@ class Store:
             "latest_version": latest_snap["version_no"] if latest_snap else 0,
         }
 
+    def guide_commit(self, candidate_id: int, note: str | None = None) -> int:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            with conn.transaction():
+                max_row = conn.execute(
+                    "SELECT COALESCE(MAX(version_no), 0) AS max_v FROM guide_snapshots WHERE guide_candidate_id = %s",
+                    (candidate_id,),
+                ).fetchone()
+                new_version = max_row["max_v"] + 1
+                snap_row = conn.execute(
+                    "INSERT INTO guide_snapshots(guide_candidate_id, version_no, note) VALUES (%s, %s, %s) RETURNING id",
+                    (candidate_id, new_version, note),
+                ).fetchone()
+                snap_id = snap_row["id"]
+                field_rows = conn.execute(
+                    "SELECT field_name, value, grade, source_crop_path, flagged, flag_note FROM guide_fields WHERE guide_candidate_id = %s",
+                    (candidate_id,),
+                ).fetchall()
+                for fr in field_rows:
+                    conn.execute(
+                        """
+                        INSERT INTO guide_snapshot_fields
+                            (snapshot_id, field_name, value, grade, source_crop_path, flagged, flag_note)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)
+                        """,
+                        (snap_id, fr["field_name"], fr["value"], fr["grade"],
+                         fr["source_crop_path"], fr["flagged"], fr["flag_note"]),
+                    )
+        return new_version
+
+    def guide_discard(self, candidate_id: int) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            with conn.transaction():
+                latest_snap = conn.execute(
+                    """
+                    SELECT id FROM guide_snapshots
+                    WHERE guide_candidate_id = %s
+                    ORDER BY version_no DESC
+                    LIMIT 1
+                    """,
+                    (candidate_id,),
+                ).fetchone()
+                if latest_snap is None:
+                    return
+                snap_fields = conn.execute(
+                    """
+                    SELECT field_name, value, grade, source_crop_path, flagged, flag_note
+                    FROM guide_snapshot_fields
+                    WHERE snapshot_id = %s
+                    """,
+                    (latest_snap["id"],),
+                ).fetchall()
+                for sf in snap_fields:
+                    conn.execute(
+                        """
+                        UPDATE guide_fields
+                        SET value = %s, grade = %s, source_crop_path = %s,
+                            flagged = %s, flag_note = %s, updated_at = current_timestamp
+                        WHERE guide_candidate_id = %s AND field_name = %s
+                        """,
+                        (sf["value"], sf["grade"], sf["source_crop_path"],
+                         sf["flagged"], sf["flag_note"], candidate_id, sf["field_name"]),
+                    )
+
     def guide_set_field_value(self, field_id: int, value: str) -> None:
         with self.connect() as conn:
             self._setup_conn(conn)
