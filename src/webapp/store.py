@@ -1193,6 +1193,55 @@ class Store:
     # guide_* tables
     # ------------------------------------------------------------------
 
+    _GUIDE_FIELD_ORDER = ["姓名", "出生年月日", "性別", "學歷", "經歷"]
+
+    def guide_tree(self) -> list[dict[str, Any]]:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            rows = conn.execute(
+                """
+                SELECT id, label, year, session, type
+                FROM guide_elections
+                ORDER BY type, year DESC NULLS LAST
+                """
+            ).fetchall()
+        grouped: dict[str, dict[str, Any]] = {}
+        for row in rows:
+            t = row["type"]
+            if t not in grouped:
+                grouped[t] = {"type": t, "elections": []}
+            grouped[t]["elections"].append(
+                {"id": row["id"], "label": row["label"], "year": row["year"], "session": row["session"]}
+            )
+        return list(grouped.values())
+
+    def guide_candidates_of(self, election_id: str) -> list[dict[str, Any]]:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            rows = conn.execute(
+                """
+                SELECT
+                    gc.id,
+                    gc.ticket,
+                    gc.role,
+                    gc.party,
+                    gc.photo_flagged,
+                    gc.order_id,
+                    gf_name.value AS name,
+                    (gc.photo_flagged OR COALESCE(
+                        (SELECT bool_or(gf.flagged) FROM guide_fields gf WHERE gf.guide_candidate_id = gc.id),
+                        false
+                    )) AS any_flag
+                FROM guide_candidates gc
+                LEFT JOIN guide_fields gf_name
+                    ON gf_name.guide_candidate_id = gc.id AND gf_name.field_name = '姓名'
+                WHERE gc.guide_election_id = %s
+                ORDER BY gc.order_id
+                """,
+                (election_id,),
+            ).fetchall()
+        return [dict(r) for r in rows]
+
     def guide_election_exists(self, election_id: str) -> bool:
         with self.connect() as conn:
             self._setup_conn(conn)
