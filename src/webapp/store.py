@@ -1375,6 +1375,110 @@ class Store:
                 (snapshot_id, field_name, value, grade, source_crop_path, flagged, flag_note),
             )
 
+    def guide_candidate_view(self, candidate_id: int) -> dict[str, Any]:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+
+            # Candidate meta + election label
+            cand_row = conn.execute(
+                """
+                SELECT
+                    gc.id, gc.ticket, gc.role, gc.party,
+                    gc.photo_path, gc.photo_flagged, gc.photo_note,
+                    gc.source_page, gc.guide_election_id AS election_id,
+                    ge.label AS election_label
+                FROM guide_candidates gc
+                JOIN guide_elections ge ON ge.id = gc.guide_election_id
+                WHERE gc.id = %s
+                """,
+                (candidate_id,),
+            ).fetchone()
+
+            # Fields in stable order
+            field_rows = conn.execute(
+                """
+                SELECT id, field_name, value, grade, source_crop_path, flagged, flag_note
+                FROM guide_fields
+                WHERE guide_candidate_id = %s
+                ORDER BY array_position(
+                    ARRAY['姓名','出生年月日','性別','學歷','經歷'],
+                    field_name::text
+                )
+                """,
+                (candidate_id,),
+            ).fetchall()
+
+            # Latest snapshot
+            latest_snap = conn.execute(
+                """
+                SELECT id, version_no
+                FROM guide_snapshots
+                WHERE guide_candidate_id = %s
+                ORDER BY version_no DESC
+                LIMIT 1
+                """,
+                (candidate_id,),
+            ).fetchone()
+
+            has_uncommitted = False
+            if latest_snap:
+                snap_field_rows = conn.execute(
+                    """
+                    SELECT field_name, value, flagged, flag_note
+                    FROM guide_snapshot_fields
+                    WHERE snapshot_id = %s
+                    """,
+                    (latest_snap["id"],),
+                ).fetchall()
+                snap_map = {r["field_name"]: dict(r) for r in snap_field_rows}
+                current_field_names = {r["field_name"] for r in field_rows}
+                if current_field_names != set(snap_map.keys()):
+                    has_uncommitted = True
+                else:
+                    for fr in field_rows:
+                        sn = snap_map.get(fr["field_name"])
+                        if sn is None:
+                            has_uncommitted = True
+                            break
+                        if (fr["value"] != sn["value"]
+                                or fr["flagged"] != sn["flagged"]
+                                or fr["flag_note"] != sn["flag_note"]):
+                            has_uncommitted = True
+                            break
+
+        cand_meta = dict(cand_row)
+        gender_row = next((r for r in field_rows if r["field_name"] == "性別"), None)
+        cand_meta["gender"] = gender_row["value"] if gender_row else None
+
+        fields = []
+        for fr in field_rows:
+            d = dict(fr)
+            d["can_ai_repair"] = d["source_crop_path"] is not None
+            fields.append(d)
+
+        return {
+            "candidate": cand_meta,
+            "fields": fields,
+            "has_uncommitted": has_uncommitted,
+            "latest_version": latest_snap["version_no"] if latest_snap else 0,
+        }
+
+    def guide_flag_photo(self, candidate_id: int, note: str) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                "UPDATE guide_candidates SET photo_flagged = true, photo_note = %s WHERE id = %s",
+                (note, candidate_id),
+            )
+
+    def guide_unflag_photo(self, candidate_id: int) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                "UPDATE guide_candidates SET photo_flagged = false, photo_note = NULL WHERE id = %s",
+                (candidate_id,),
+            )
+
     def delete_candidate(self, candidate_id: str) -> None:
         with self.connect() as conn:
             self._setup_conn(conn)
