@@ -1463,6 +1463,22 @@ class Store:
             "latest_version": latest_snap["version_no"] if latest_snap else 0,
         }
 
+    def guide_flag_field(self, field_id: int, note: str) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                "UPDATE guide_fields SET flagged = true, flag_note = %s WHERE id = %s",
+                (note, field_id),
+            )
+
+    def guide_unflag_field(self, field_id: int) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                "UPDATE guide_fields SET flagged = false, flag_note = NULL WHERE id = %s",
+                (field_id,),
+            )
+
     def guide_flag_photo(self, candidate_id: int, note: str) -> None:
         with self.connect() as conn:
             self._setup_conn(conn)
