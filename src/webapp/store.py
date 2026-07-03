@@ -1189,6 +1189,143 @@ class Store:
     def delete_election(self, election_id: str) -> None:
         self.reset_election_data(election_id)
 
+    # ------------------------------------------------------------------
+    # guide_* tables
+    # ------------------------------------------------------------------
+
+    def guide_election_exists(self, election_id: str) -> bool:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                "SELECT 1 FROM guide_elections WHERE id = %s", (election_id,)
+            ).fetchone()
+        return row is not None
+
+    def guide_delete_election(self, election_id: str) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute("DELETE FROM guide_elections WHERE id = %s", (election_id,))
+
+    def guide_upsert_election(
+        self,
+        *,
+        election_id: str,
+        election_type: str,
+        year: int,
+        session: int | None,
+        label: str,
+        source_pdf_path: str,
+    ) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                """
+                INSERT INTO guide_elections(id, type, year, session, label, source_pdf_path)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                """,
+                (election_id, election_type, year, session, label, source_pdf_path),
+            )
+
+    def guide_insert_candidate(
+        self,
+        *,
+        guide_election_id: str,
+        ticket: int | None,
+        role: str,
+        party: str | None,
+        photo_path: str | None,
+        source_page: int | None,
+        order_id: int,
+    ) -> int:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                """
+                INSERT INTO guide_candidates
+                    (guide_election_id, ticket, role, party, photo_path, source_page, order_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                RETURNING id
+                """,
+                (guide_election_id, ticket, role, party, photo_path, source_page, order_id),
+            ).fetchone()
+        return row["id"]
+
+    def guide_insert_field(
+        self,
+        *,
+        guide_candidate_id: int,
+        field_name: str,
+        value: str | None,
+        grade: str | None,
+        source_crop_path: str | None,
+        update_source: str = "parse",
+    ) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                """
+                INSERT INTO guide_fields
+                    (guide_candidate_id, field_name, value, grade, source_crop_path, update_source)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                """,
+                (guide_candidate_id, field_name, value, grade, source_crop_path, update_source),
+            )
+
+    def guide_get_fields(self, guide_candidate_id: int) -> list[dict[str, Any]]:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            rows = conn.execute(
+                """
+                SELECT field_name, value, grade, source_crop_path, flagged, flag_note
+                FROM guide_fields
+                WHERE guide_candidate_id = %s
+                ORDER BY id
+                """,
+                (guide_candidate_id,),
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    def guide_create_snapshot(
+        self,
+        *,
+        guide_candidate_id: int,
+        version_no: int = 1,
+        note: str | None = None,
+    ) -> int:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                """
+                INSERT INTO guide_snapshots(guide_candidate_id, version_no, note)
+                VALUES (%s, %s, %s)
+                RETURNING id
+                """,
+                (guide_candidate_id, version_no, note),
+            ).fetchone()
+        return row["id"]
+
+    def guide_insert_snapshot_field(
+        self,
+        *,
+        snapshot_id: int,
+        field_name: str,
+        value: str | None,
+        grade: str | None,
+        source_crop_path: str | None,
+        flagged: bool = False,
+        flag_note: str | None = None,
+    ) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                """
+                INSERT INTO guide_snapshot_fields
+                    (snapshot_id, field_name, value, grade, source_crop_path, flagged, flag_note)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """,
+                (snapshot_id, field_name, value, grade, source_crop_path, flagged, flag_note),
+            )
+
     def delete_candidate(self, candidate_id: str) -> None:
         with self.connect() as conn:
             self._setup_conn(conn)
