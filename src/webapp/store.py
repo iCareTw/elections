@@ -1463,6 +1463,18 @@ class Store:
             "latest_version": latest_snap["version_no"] if latest_snap else 0,
         }
 
+    def guide_set_field_value(self, field_id: int, value: str) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                """
+                UPDATE guide_fields
+                SET value = %s, update_source = 'manual', grade = NULL, updated_at = current_timestamp
+                WHERE id = %s
+                """,
+                (value, field_id),
+            )
+
     def guide_flag_field(self, field_id: int, note: str) -> None:
         with self.connect() as conn:
             self._setup_conn(conn)
