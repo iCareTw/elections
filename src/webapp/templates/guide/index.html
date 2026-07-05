@@ -1,0 +1,13 @@
+{% extends "guide/_base.html" %}
+
+{% block main_col %}
+<div class="placeholder">
+  {% if candidates %}
+  從左側選擇候選人以查看欄位詳情
+  {% elif tree %}
+  從左側選擇選舉年度
+  {% else %}
+  尚無公報資料，請先執行 load 指令匯入
+  {% endif %}
+</div>
+{% endblock %}
