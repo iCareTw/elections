@@ -203,6 +203,7 @@
       {% if not readonly %}
       <div class="indent">
         <div class="btns">
+          <a class="btn btn-primary" href="/guide/candidate/{{ candidate.id }}/crop">🖼 圈選補照片</a>
           <form method="post" action="/guide/candidate/{{ candidate.id }}/photo/unflag" style="display:inline">
             <button class="btn btn-gray" type="submit">解除標記</button>
           </form>
@@ -233,6 +234,7 @@
           </div>
         </form>
       </details>
+      <a class="btn btn-primary" href="/guide/candidate/{{ candidate.id }}/crop" style="margin-left:8px">🖼 圈選補照片</a>
       {% endif %}
     </div>
     {% endif %}

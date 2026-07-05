@@ -3,9 +3,12 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from fastapi import APIRouter, BackgroundTasks, Form, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+import io
 
+from fastapi import APIRouter, BackgroundTasks, Form, HTTPException, Request
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
+
+from src.voter_guide.guide_crop import crop_photo_frac, render_page
 from src.voter_guide.guide_repair import run_repair_job
 
 router = APIRouter(prefix="/guide")
@@ -179,6 +182,52 @@ async def repair_status(request: Request, job_id: int):
         "result_value": job["result_value"],
         "error": job["error"],
     })
+
+
+# --- 照片手動圈選補正 (Phase 7) ---
+
+@router.get("/candidate/{candidate_id}/crop")
+async def crop_page(request: Request, candidate_id: int):
+    ref = request.app.state.store.guide_candidate_pdf_ref(candidate_id)
+    if ref is None:
+        raise HTTPException(status_code=404, detail="candidate not found")
+    has_source = ref["source_page"] is not None and bool(ref["source_pdf_path"])
+    return request.app.state.templates.TemplateResponse(
+        request,
+        "guide/crop.html",
+        {"candidate_id": candidate_id, "has_source": has_source},
+    )
+
+
+@router.get("/candidate/{candidate_id}/page-image")
+async def crop_page_image(request: Request, candidate_id: int):
+    ref = request.app.state.store.guide_candidate_pdf_ref(candidate_id)
+    if ref is None or ref["source_page"] is None or not ref["source_pdf_path"]:
+        raise HTTPException(status_code=404, detail="no source page")
+    img = render_page(ref["source_pdf_path"], ref["source_page"])
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return Response(content=buf.getvalue(), media_type="image/png")
+
+
+@router.post("/candidate/{candidate_id}/crop")
+async def crop_submit(
+    request: Request,
+    candidate_id: int,
+    x0: float = Form(...),
+    y0: float = Form(...),
+    x1: float = Form(...),
+    y1: float = Form(...),
+):
+    store = request.app.state.store
+    ref = store.guide_candidate_pdf_ref(candidate_id)
+    if ref is None or ref["source_page"] is None or not ref["source_pdf_path"]:
+        raise HTTPException(status_code=400, detail="無來源 PDF/頁碼,無法圈選補照片")
+    root = Path(request.app.state.root)
+    dest = root / "_out" / "parsed" / "manual_photos" / f"cand_{candidate_id}.png"
+    crop_photo_frac(ref["source_pdf_path"], ref["source_page"], (x0, y0, x1, y1), dest)
+    store.guide_set_photo_path(candidate_id, str(dest))
+    return RedirectResponse(f"/guide/candidate/{candidate_id}", status_code=303)
 
 
 # ---------------------------------------------------------------------------

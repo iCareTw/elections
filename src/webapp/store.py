@@ -1682,6 +1682,30 @@ class Store:
                 (status, before_value, result_value, error, job_id),
             )
 
+    # --- 照片手動圈選補正 (Phase 7) ---
+
+    def guide_candidate_pdf_ref(self, candidate_id: int) -> dict[str, Any] | None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                """
+                SELECT c.id, c.source_page, c.photo_path, e.source_pdf_path
+                FROM guide_candidates c
+                JOIN guide_elections e ON e.id = c.guide_election_id
+                WHERE c.id = %s
+                """,
+                (candidate_id,),
+            ).fetchone()
+        return dict(row) if row else None
+
+    def guide_set_photo_path(self, candidate_id: int, path: str) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                "UPDATE guide_candidates SET photo_path = %s WHERE id = %s",
+                (path, candidate_id),
+            )
+
     def delete_candidate(self, candidate_id: str) -> None:
         with self.connect() as conn:
             self._setup_conn(conn)

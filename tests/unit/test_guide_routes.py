@@ -932,3 +932,75 @@ class TestRepairRoutes:
         app = _make_guide_app(tmp_path, _MockRepairStore())
         client = TestClient(app, raise_server_exceptions=True)
         assert client.get("/guide/repair/999/status").status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# Task 7.2 — 照片手動圈選補正
+# ---------------------------------------------------------------------------
+
+class _MockCropStore:
+    def __init__(self, source: bool = True):
+        self.source = source
+        self.photo_set = None
+
+    def guide_candidate_pdf_ref(self, candidate_id: int):
+        if self.source:
+            return {"id": candidate_id, "source_page": 0, "photo_path": None,
+                    "source_pdf_path": "/fake/x.pdf"}
+        return {"id": candidate_id, "source_page": None, "photo_path": None,
+                "source_pdf_path": None}
+
+    def guide_set_photo_path(self, candidate_id: int, path: str):
+        self.photo_set = (candidate_id, path)
+
+
+class TestCropRoutes:
+    def test_crop_page_with_source(self, tmp_path: Path) -> None:
+        app = _make_guide_app(tmp_path, _MockCropStore(source=True))
+        client = TestClient(app, raise_server_exceptions=True)
+        r = client.get("/guide/candidate/3/crop")
+        assert r.status_code == 200
+        assert "確認裁切" in r.text
+        assert "page-image" in r.text
+
+    def test_crop_page_without_source_shows_warning(self, tmp_path: Path) -> None:
+        app = _make_guide_app(tmp_path, _MockCropStore(source=False))
+        client = TestClient(app, raise_server_exceptions=True)
+        r = client.get("/guide/candidate/3/crop")
+        assert r.status_code == 200
+        assert "無法圈選補照片" in r.text
+
+    def test_page_image_404_without_source(self, tmp_path: Path) -> None:
+        app = _make_guide_app(tmp_path, _MockCropStore(source=False))
+        client = TestClient(app, raise_server_exceptions=True)
+        assert client.get("/guide/candidate/3/page-image").status_code == 404
+
+    def test_crop_submit_saves_and_redirects(self, tmp_path: Path, monkeypatch) -> None:
+        import src.webapp.routes.guide as guidemod
+
+        store = _MockCropStore(source=True)
+        called = {}
+
+        def fake_crop(pdf, page, frac, dest):
+            called["args"] = (pdf, page, tuple(frac), str(dest))
+            return str(dest)
+
+        monkeypatch.setattr(guidemod, "crop_photo_frac", fake_crop)
+        app = _make_guide_app(tmp_path, store)
+        client = TestClient(app, raise_server_exceptions=True)
+        r = client.post("/guide/candidate/3/crop",
+                        data={"x0": 0.1, "y0": 0.2, "x1": 0.3, "y1": 0.4},
+                        follow_redirects=False)
+        assert r.status_code == 303
+        assert r.headers["location"] == "/guide/candidate/3"
+        assert store.photo_set[0] == 3
+        assert called["args"][1] == 0
+        assert called["args"][2] == (0.1, 0.2, 0.3, 0.4)
+
+    def test_crop_submit_400_without_source(self, tmp_path: Path) -> None:
+        app = _make_guide_app(tmp_path, _MockCropStore(source=False))
+        client = TestClient(app, raise_server_exceptions=True)
+        r = client.post("/guide/candidate/3/crop",
+                        data={"x0": 0.1, "y0": 0.2, "x1": 0.3, "y1": 0.4},
+                        follow_redirects=False)
+        assert r.status_code == 400
