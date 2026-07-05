@@ -1602,6 +1602,76 @@ class Store:
                 (candidate_id,),
             )
 
+    # --- 文字欄 AI 修復工作 (Phase 6) ---
+
+    def guide_get_field(self, candidate_id: int, field_name: str) -> dict[str, Any] | None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                "SELECT id, value, source_crop_path, flagged FROM guide_fields "
+                "WHERE guide_candidate_id = %s AND field_name = %s",
+                (candidate_id, field_name),
+            ).fetchone()
+        return dict(row) if row else None
+
+    def guide_apply_ai_value(self, field_id: int, value: str) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                """
+                UPDATE guide_fields
+                SET value = %s, update_source = 'ai', grade = NULL, updated_at = current_timestamp
+                WHERE id = %s
+                """,
+                (value, field_id),
+            )
+
+    def guide_create_repair_job(self, candidate_id: int, target: str,
+                                user_note: str | None = None) -> int:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                """
+                INSERT INTO guide_repair_jobs(guide_candidate_id, target, status, user_note)
+                VALUES (%s, %s, 'queued', %s)
+                RETURNING id
+                """,
+                (candidate_id, target, user_note),
+            ).fetchone()
+        return row["id"]
+
+    def guide_get_repair_job(self, job_id: int) -> dict[str, Any] | None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                "SELECT * FROM guide_repair_jobs WHERE id = %s", (job_id,)
+            ).fetchone()
+        return dict(row) if row else None
+
+    def guide_set_repair_running(self, job_id: int) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                "UPDATE guide_repair_jobs SET status = 'running' WHERE id = %s",
+                (job_id,),
+            )
+
+    def guide_finish_repair_job(self, job_id: int, *, status: str,
+                                before_value: str | None = None,
+                                result_value: str | None = None,
+                                error: str | None = None) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                """
+                UPDATE guide_repair_jobs
+                SET status = %s, before_value = %s, result_value = %s, error = %s,
+                    finished_at = current_timestamp
+                WHERE id = %s
+                """,
+                (status, before_value, result_value, error, job_id),
+            )
+
     def delete_candidate(self, candidate_id: str) -> None:
         with self.connect() as conn:
             self._setup_conn(conn)

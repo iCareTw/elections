@@ -40,11 +40,13 @@ def crop_cell(pdf_path: str | Path, page_idx: int,
     return crop
 
 
-def _ask(img, field_name: str, timeout: int) -> str:
+def _ask(img, field_name: str, timeout: int, note: str | None = None) -> str:
     prompt = (f"這是台灣選舉公報中『{field_name}』欄位的截圖。"
               f"請逐字讀出該欄位的全部文字，原樣輸出(含頓號、括號)。"
               f"數字一律用阿拉伯數字(例如 31、民國48年8月6日)，不要用中文數字。"
               f"只輸出文字本身，不要加任何說明、標題或標點以外的符號。")
+    if note:
+        prompt += f"\n人工提示(前次判讀有誤，請據此重新判讀)：{note}"
     payload = {
         "model": MODEL,
         "messages": [{"role": "user", "content": [
@@ -93,3 +95,15 @@ def transcribe(pdf_path, page_idx, bbox, field_name, *, key, cache: VisionCache 
     if cache is not None:
         cache.set(key, text)
     return text
+
+
+def transcribe_image(png_path, field_name: str, note: str | None = None,
+                     *, timeout: int = 600) -> str:
+    """讀已存好的切圖 PNG，帶入(可選的)人工提示，請本機視覺模型重新判讀該欄。
+
+    供 web 端 AI 修復使用:不重算 PDF 幾何,直接吃 source_crop_path 那張圖。
+    """
+    from PIL import Image
+
+    img = Image.open(png_path)
+    return _ask(img, field_name, timeout, note=note)
