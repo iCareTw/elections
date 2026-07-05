@@ -3,8 +3,10 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from fastapi import APIRouter, Form, HTTPException, Request
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi import APIRouter, BackgroundTasks, Form, HTTPException, Request
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+
+from src.voter_guide.guide_repair import run_repair_job
 
 router = APIRouter(prefix="/guide")
 logger = logging.getLogger(__name__)
@@ -143,6 +145,40 @@ async def set_field_value(
 ):
     request.app.state.store.guide_set_field_value(field_id, value)
     return RedirectResponse(f"/guide/candidate/{candidate_id}", status_code=303)
+
+
+@router.post("/field/{field_id}/repair")
+async def repair_field(
+    request: Request,
+    field_id: int,
+    background_tasks: BackgroundTasks,
+    candidate_id: int = Form(...),
+    note: str = Form(""),
+):
+    store = request.app.state.store
+    ref = store.guide_field_ref(field_id)
+    if ref is None:
+        raise HTTPException(status_code=404, detail="field not found")
+    if not ref["source_crop_path"]:
+        raise HTTPException(status_code=400, detail="此欄無來源切圖,無法 AI 修復")
+    job_id = store.guide_create_repair_job(
+        ref["guide_candidate_id"], ref["field_name"], note or None)
+    background_tasks.add_task(run_repair_job, store, job_id)
+    return RedirectResponse(
+        f"/guide/candidate/{candidate_id}?repair_job={job_id}", status_code=303)
+
+
+@router.get("/repair/{job_id}/status")
+async def repair_status(request: Request, job_id: int):
+    job = request.app.state.store.guide_get_repair_job(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="job not found")
+    return JSONResponse({
+        "status": job["status"],
+        "target": job["target"],
+        "result_value": job["result_value"],
+        "error": job["error"],
+    })
 
 
 # ---------------------------------------------------------------------------

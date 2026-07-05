@@ -1604,6 +1604,16 @@ class Store:
 
     # --- 文字欄 AI 修復工作 (Phase 6) ---
 
+    def guide_field_ref(self, field_id: int) -> dict[str, Any] | None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                "SELECT guide_candidate_id, field_name, source_crop_path "
+                "FROM guide_fields WHERE id = %s",
+                (field_id,),
+            ).fetchone()
+        return dict(row) if row else None
+
     def guide_get_field(self, candidate_id: int, field_name: str) -> dict[str, Any] | None:
         with self.connect() as conn:
             self._setup_conn(conn)

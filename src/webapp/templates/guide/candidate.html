@@ -122,7 +122,11 @@
         </form>
         <div class="btns">
           {% if field.can_ai_repair %}
-          <button class="btn btn-primary" type="button">🤖 AI 修復</button>
+          <form method="post" action="/guide/field/{{ field.id }}/repair" style="display:inline">
+            <input type="hidden" name="candidate_id" value="{{ candidate.id }}">
+            <input type="hidden" name="note" value="{{ field.flag_note or '' }}">
+            <button class="btn btn-primary" type="submit">🤖 AI 修復</button>
+          </form>
           {% endif %}
           <form method="post" action="/guide/field/{{ field.id }}/value">
             <input type="hidden" name="candidate_id" value="{{ candidate.id }}">
@@ -235,5 +239,41 @@
 
   </div>{# /panel-body #}
 </div>{# /panel #}
+
+{# ---- AI 修復完成通知(背景作業 + 輪詢) ---- #}
+<div id="guide-toast" style="display:none;position:fixed;top:20px;right:20px;padding:12px 16px;border-radius:8px;color:#fff;font-size:13px;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:1000"></div>
+<script>
+(function(){
+  var params = new URLSearchParams(location.search);
+  var jobId = params.get('repair_job');
+  if(!jobId){ return; }
+  var toast = document.getElementById('guide-toast');
+  var candUrl = '/guide/candidate/{{ candidate.id }}';
+  function show(msg, ok){
+    toast.textContent = msg;
+    toast.style.background = ok ? '#065f46' : '#7f1d1d';
+    toast.style.display = 'block';
+  }
+  show('🤖 修復進行中…', true);
+  var tries = 0;
+  var timer = setInterval(function(){
+    tries++;
+    fetch('/guide/repair/' + jobId + '/status')
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if(j.status === 'done'){
+          clearInterval(timer);
+          show('✓ 修復完成:' + (j.target || ''), true);
+          setTimeout(function(){ location.href = candUrl; }, 1200);
+        } else if(j.status === 'failed'){
+          clearInterval(timer);
+          show('✗ 修復失敗:' + (j.error || ''), false);
+        }
+      })
+      .catch(function(){});
+    if(tries > 120){ clearInterval(timer); }  // ~3 分鐘上限
+  }, 1500);
+})();
+</script>
 
 {% endblock %}

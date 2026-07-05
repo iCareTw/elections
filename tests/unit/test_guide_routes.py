@@ -856,3 +856,79 @@ def _seed_guide(store: Any, tmp_path: Path) -> str:
         election_type="president",
         force=True,
     )
+
+
+# ---------------------------------------------------------------------------
+# Task 6.2 — 文字欄 AI 修復 觸發 + 狀態輪詢
+# ---------------------------------------------------------------------------
+
+class _MockRepairStore:
+    def __init__(self):
+        self.jobs: dict = {}
+        self._next = 1
+        self.fields = {
+            7: {"guide_candidate_id": 3, "field_name": "學歷",
+                "source_crop_path": "/x/crop.png"},
+        }
+
+    def guide_field_ref(self, field_id: int):
+        return self.fields.get(field_id)
+
+    def guide_create_repair_job(self, candidate_id: int, target: str, user_note=None) -> int:
+        jid = self._next
+        self._next += 1
+        self.jobs[jid] = {
+            "id": jid, "guide_candidate_id": candidate_id, "target": target,
+            "status": "queued", "user_note": user_note,
+            "before_value": None, "result_value": None, "error": None,
+        }
+        return jid
+
+    def guide_get_repair_job(self, job_id: int):
+        return self.jobs.get(job_id)
+
+
+class TestRepairRoutes:
+    def test_repair_creates_job_and_redirects(self, tmp_path: Path, monkeypatch) -> None:
+        import src.webapp.routes.guide as guidemod
+
+        store = _MockRepairStore()
+
+        def fake_run(store, job_id):           # 背景作業:決定性地標為 done
+            j = store.jobs[job_id]
+            j["status"] = "done"
+            j["result_value"] = "法學博士"
+
+        monkeypatch.setattr(guidemod, "run_repair_job", fake_run)
+
+        app = _make_guide_app(tmp_path, store)
+        client = TestClient(app, raise_server_exceptions=True)
+
+        r = client.post("/guide/field/7/repair",
+                        data={"candidate_id": 3, "note": "學歷讀錯了"},
+                        follow_redirects=False)
+        assert r.status_code == 303
+        assert "repair_job=1" in r.headers["location"]
+        assert store.jobs[1]["user_note"] == "學歷讀錯了"
+
+        s = client.get("/guide/repair/1/status")
+        assert s.status_code == 200
+        body = s.json()
+        assert body["status"] == "done"
+        assert body["result_value"] == "法學博士"
+        assert body["target"] == "學歷"
+
+    def test_repair_rejects_field_without_crop(self, tmp_path: Path) -> None:
+        store = _MockRepairStore()
+        store.fields[7]["source_crop_path"] = None
+        app = _make_guide_app(tmp_path, store)
+        client = TestClient(app, raise_server_exceptions=True)
+        r = client.post("/guide/field/7/repair",
+                        data={"candidate_id": 3, "note": ""},
+                        follow_redirects=False)
+        assert r.status_code == 400
+
+    def test_status_404_for_unknown_job(self, tmp_path: Path) -> None:
+        app = _make_guide_app(tmp_path, _MockRepairStore())
+        client = TestClient(app, raise_server_exceptions=True)
+        assert client.get("/guide/repair/999/status").status_code == 404
