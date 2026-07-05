@@ -219,10 +219,16 @@
       <div class="fval"></div>
       <span class="badge b-none">—</span>
       {% if not readonly %}
-      <form method="post" action="/guide/candidate/{{ candidate.id }}/photo/flag" style="display:inline">
-        <input type="hidden" name="note" value="">
-        <button class="flag-btn" type="submit">⚑ 標記</button>
-      </form>
+      <details class="flag-details">
+        <summary class="flag-btn">⚑ 標記</summary>
+        <form method="post" action="/guide/candidate/{{ candidate.id }}/photo/flag">
+          <div style="margin-top:4px;display:flex;gap:6px;align-items:flex-start">
+            <textarea class="flag-note-input" name="note" rows="2"
+                      placeholder="補充說明(照片哪裡有問題)"></textarea>
+            <button class="btn btn-primary" type="submit" style="flex-shrink:0">確認標記</button>
+          </div>
+        </form>
+      </details>
       {% endif %}
     </div>
     {% endif %}

@@ -764,6 +764,19 @@ class TestVersionNav:
         # ▶ should be dim (at latest)
         assert 'arw dim' in html
 
+    def test_version_nav_next_arrow_enabled_when_snapshot_has_next(self) -> None:
+        """In a snapshot view where version_no < max_version, ▶ is a real link."""
+        html = _render_candidate(
+            candidate=_BASE_CANDIDATE_META,
+            fields=_BASE_FIELDS,
+            version_no=1,
+            min_version=1,
+            max_version=2,
+            readonly=True,
+        )
+        # At v1 of 2, ▶ should be an active link (not dim)
+        assert 'href="/guide/candidate/1?version=2"' in html
+
     def test_mutate_commit_shows_version_2(self, tmp_path: Path) -> None:
         store = StatefulGuideStore()
         store.guide_set_field_value(10, "新值")  # create uncommitted
