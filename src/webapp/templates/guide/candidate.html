@@ -110,6 +110,16 @@
       {% endif %}
       {% if not readonly %}
       <div class="indent">
+        {# Update note form #}
+        <form method="post" action="/guide/field/{{ field.id }}/flag" style="margin-bottom:8px">
+          <input type="hidden" name="candidate_id" value="{{ candidate.id }}">
+          <div class="lbl">更新補充說明</div>
+          <div style="display:flex;gap:6px;align-items:flex-start">
+            <textarea class="flag-note-input" name="note" rows="2"
+                      placeholder="補充說明(說明此欄值哪裡有問題)">{{ field.flag_note or '' }}</textarea>
+            <button class="btn btn-gray" type="submit" style="flex-shrink:0">更新</button>
+          </div>
+        </form>
         <div class="btns">
           {% if field.can_ai_repair %}
           <button class="btn btn-primary" type="button">🤖 AI 修復</button>
@@ -144,11 +154,17 @@
       {{ grade_badge(field.grade) }}
       {{ crop_cell(field.source_crop_path) }}
       {% if not readonly %}
-      <form method="post" action="/guide/field/{{ field.id }}/flag" style="display:inline">
-        <input type="hidden" name="candidate_id" value="{{ candidate.id }}">
-        <input type="hidden" name="note" value="">
-        <button class="flag-btn" type="submit">⚑ 標記</button>
-      </form>
+      <details class="flag-details">
+        <summary class="flag-btn">⚑ 標記</summary>
+        <form method="post" action="/guide/field/{{ field.id }}/flag">
+          <input type="hidden" name="candidate_id" value="{{ candidate.id }}">
+          <div style="margin-top:4px;display:flex;gap:6px;align-items:flex-start">
+            <textarea class="flag-note-input" name="note" rows="2"
+                      placeholder="補充說明(可選，說明此欄值哪裡有問題)"></textarea>
+            <button class="btn btn-primary" type="submit" style="flex-shrink:0">確認標記</button>
+          </div>
+        </form>
+      </details>
       {% endif %}
     </div>
     {% endif %}
