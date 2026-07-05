@@ -1,0 +1,217 @@
+{% extends "guide/_base.html" %}
+
+{% macro grade_badge(grade) %}
+  {% if grade %}
+    {% if grade in ["完全一致", "幾乎一致", "不適用", "EXACT", "NEAR"] %}
+      <span class="badge b-ok">{{ grade }}</span>
+    {% else %}
+      <span class="badge b-warn">{{ grade }}</span>
+    {% endif %}
+  {% else %}
+    <span class="badge b-none">—</span>
+  {% endif %}
+{% endmacro %}
+
+{% macro crop_cell(path) %}
+  {% if path %}
+    <a href="/guide/crop?path={{ path | urlencode }}" target="_blank" rel="noopener">
+      <img class="crop-thumb" src="/guide/crop?path={{ path | urlencode }}" alt="切圖" loading="lazy">
+    </a>
+  {% else %}
+    <div class="crop-empty"></div>
+  {% endif %}
+{% endmacro %}
+
+{% block main_col %}
+
+{# ---- Version nav (in panel header, assembled below) ---- #}
+
+{# ---- Uncommitted banner ---- #}
+{% if has_uncommitted and not readonly %}
+<div class="uncommit">
+  <div class="txt"><b>有未提交變更</b> · 目前的修改尚未建立快照</div>
+  <form method="post" action="/guide/candidate/{{ candidate.id }}/commit" style="display:inline">
+    <input type="hidden" name="note" value="">
+    <button class="btn btn-primary" type="submit">建立快照(Commit)</button>
+  </form>
+  <form method="post" action="/guide/candidate/{{ candidate.id }}/discard" style="display:inline">
+    <button class="btn btn-gray" type="submit">捨棄變更</button>
+  </form>
+</div>
+{% endif %}
+
+{% if readonly %}
+<div class="readonly-banner">唯讀快照 · 此版本已凍結，不可編輯</div>
+{% endif %}
+
+{# ---- Field panel ---- #}
+<div class="panel">
+  <div class="panel-head">
+    <b>
+      第{{ candidate.ticket }}組 · {{ candidate.role }}
+      {% set name_field = fields | selectattr("field_name", "equalto", "姓名") | list %}
+      {% if name_field %}· {{ name_field[0].value or '' }}{% endif %}
+    </b>
+    <div class="vernav">
+      {# ◀ back #}
+      {% if readonly and version_no is not none and min_version is not none and version_no > min_version %}
+        <a class="arw" href="/guide/candidate/{{ candidate.id }}?version={{ version_no - 1 }}">◀</a>
+      {% elif not readonly and version_no > 1 %}
+        <a class="arw" href="/guide/candidate/{{ candidate.id }}?version={{ version_no - 1 }}">◀</a>
+      {% else %}
+        <span class="arw dim">◀</span>
+      {% endif %}
+
+      <span class="cur">
+        v{{ version_no }}
+        {% if has_uncommitted and not readonly %} + 未提交{% endif %}
+      </span>
+
+      {# ▶ forward #}
+      {% if readonly and version_no is not none and max_version is not none and version_no < max_version %}
+        <a class="arw" href="/guide/candidate/{{ candidate.id }}?version={{ version_no + 1 }}">▶</a>
+      {% elif readonly and version_no is not none and max_version is not none and version_no == max_version %}
+        <a class="arw" href="/guide/candidate/{{ candidate.id }}">▶</a>
+      {% else %}
+        <span class="arw dim">▶</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="panel-body">
+
+    {# ---- Text fields ---- #}
+    {% for field in fields %}
+    {% if field.flagged %}
+    <div class="flagged-row">
+      <div class="row">
+        <div class="fname">{{ field.field_name }}</div>
+        <div class="fval">
+          {% if field.field_name == "姓名" %}
+            {% if candidate.gender == "男" %}<span class="gicon g-m">♂</span>
+            {% elif candidate.gender == "女" %}<span class="gicon g-f">♀</span>
+            {% endif %}
+          {% endif %}
+          {{ field.value or '' }}
+        </div>
+        {{ grade_badge(field.grade) }}
+        {{ crop_cell(field.source_crop_path) }}
+        <span class="flag-btn on">⚑ 已標記</span>
+      </div>
+      {% if field.flag_note %}
+      <div class="indent">
+        <div class="lbl">補充說明</div>
+        <div class="tbox">{{ field.flag_note }}</div>
+      </div>
+      {% else %}
+      <div class="indent">
+        <div class="tbox empty">(未填補充說明)</div>
+      </div>
+      {% endif %}
+      {% if not readonly %}
+      <div class="indent">
+        <div class="btns">
+          {% if field.can_ai_repair %}
+          <button class="btn btn-primary" type="button">🤖 AI 修復</button>
+          {% endif %}
+          <form method="post" action="/guide/field/{{ field.id }}/value">
+            <input type="hidden" name="candidate_id" value="{{ candidate.id }}">
+            <div class="edit-form">
+              <input class="edit-input" type="text" name="value"
+                     placeholder="填正確值..." value="{{ field.value or '' }}">
+              <button class="btn btn-ghost" type="submit">✎ 手動填正確值</button>
+            </div>
+          </form>
+          <form method="post" action="/guide/field/{{ field.id }}/unflag" style="display:inline">
+            <input type="hidden" name="candidate_id" value="{{ candidate.id }}">
+            <button class="btn btn-gray" type="submit">解除標記</button>
+          </form>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="row">
+      <div class="fname">{{ field.field_name }}</div>
+      <div class="fval">
+        {% if field.field_name == "姓名" %}
+          {% if candidate.gender == "男" %}<span class="gicon g-m">♂</span>
+          {% elif candidate.gender == "女" %}<span class="gicon g-f">♀</span>
+          {% endif %}
+        {% endif %}
+        {{ field.value or '' }}
+      </div>
+      {{ grade_badge(field.grade) }}
+      {{ crop_cell(field.source_crop_path) }}
+      {% if not readonly %}
+      <form method="post" action="/guide/field/{{ field.id }}/flag" style="display:inline">
+        <input type="hidden" name="candidate_id" value="{{ candidate.id }}">
+        <input type="hidden" name="note" value="">
+        <button class="flag-btn" type="submit">⚑ 標記</button>
+      </form>
+      {% endif %}
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    {# ---- Photo row ---- #}
+    {% if candidate.photo_flagged %}
+    <div class="flagged-row">
+      <div class="row">
+        <div class="fname">相片</div>
+        {% if candidate.photo_path %}
+        <a href="/guide/crop?path={{ candidate.photo_path | urlencode }}" target="_blank">
+          <img class="photo-img" src="/guide/crop?path={{ candidate.photo_path | urlencode }}" alt="相片">
+        </a>
+        {% else %}
+        <div class="photo-empty"></div>
+        {% endif %}
+        <div class="fval"></div>
+        <span class="badge b-none">—</span>
+        <span class="flag-btn on">⚑ 已標記</span>
+      </div>
+      {% if candidate.photo_note %}
+      <div class="indent">
+        <div class="lbl">補充說明</div>
+        <div class="tbox">{{ candidate.photo_note }}</div>
+      </div>
+      {% else %}
+      <div class="indent">
+        <div class="tbox empty">(未填補充說明)</div>
+      </div>
+      {% endif %}
+      {% if not readonly %}
+      <div class="indent">
+        <div class="btns">
+          <form method="post" action="/guide/candidate/{{ candidate.id }}/photo/unflag" style="display:inline">
+            <button class="btn btn-gray" type="submit">解除標記</button>
+          </form>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="row">
+      <div class="fname">相片</div>
+      {% if candidate.photo_path %}
+      <a href="/guide/crop?path={{ candidate.photo_path | urlencode }}" target="_blank">
+        <img class="photo-img" src="/guide/crop?path={{ candidate.photo_path | urlencode }}" alt="相片">
+      </a>
+      {% else %}
+      <div class="photo-empty"></div>
+      {% endif %}
+      <div class="fval"></div>
+      <span class="badge b-none">—</span>
+      {% if not readonly %}
+      <form method="post" action="/guide/candidate/{{ candidate.id }}/photo/flag" style="display:inline">
+        <input type="hidden" name="note" value="">
+        <button class="flag-btn" type="submit">⚑ 標記</button>
+      </form>
+      {% endif %}
+    </div>
+    {% endif %}
+
+  </div>{# /panel-body #}
+</div>{# /panel #}
+
+{% endblock %}
