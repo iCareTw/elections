@@ -144,7 +144,8 @@ class Store:
     def init_schema(self) -> None:
         # 套用基線 schema (001) 與後續「schema-agnostic 且冪等」的 migration.
         # 002 寫死 elections schema, 屬正式 DB 專用, 不在此套用.
-        ddl_files = ("001_init.sql", "004_rename_birthday_to_birthyear.sql", "005_voter_guide.sql")
+        ddl_files = ("001_init.sql", "004_rename_birthday_to_birthyear.sql",
+                     "005_voter_guide.sql", "006_voter_guide_groups.sql")
         with self.connect() as conn:
             conn.execute(
                 sql.SQL("CREATE SCHEMA IF NOT EXISTS {}").format(sql.Identifier(self.config.schema))

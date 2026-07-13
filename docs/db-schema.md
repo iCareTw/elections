@@ -367,3 +367,58 @@ Unique constraint: `(snapshot_id, field_name)`.
 
 Index: `idx_guide_repair_jobs_status` on `(status)`.
 Index: `idx_guide_repair_jobs_cand` on `(guide_candidate_id)`.
+
+---
+
+## iteration 2 變更(組為單位 + 政見,`db/006_*.sql`)
+
+UI 與版本單位由「候選人」改為「組(號次)」。新增組實體與組共用政見、組層級快照;`guide_candidates` 掛到組;汰換每人快照。
+
+### guide_groups — 組(號次)
+
+一個號次一筆。擁有政黨與(關聯的)共用政見、正/副候選人。
+
+| field | type | description |
+|-------|------|-------------|
+| `id` | SERIAL PK | |
+| `guide_election_id` | TEXT FK | → `guide_elections.id` (CASCADE) |
+| `ticket` | INTEGER | 號次 |
+| `party` | VARCHAR(32) | 政黨(由 `guide_candidates` 上移到此) |
+| `order_id` | INTEGER | 排序 |
+
+Unique: `(guide_election_id, ticket)`。
+
+### guide_group_platform — 組共用政見(欄位化)
+
+一組一筆政見工作值(可標記、可 AI 修復)。
+
+| field | type | description |
+|-------|------|-------------|
+| `id` | SERIAL PK | |
+| `guide_group_id` | INTEGER FK UNIQUE | → `guide_groups.id` (CASCADE) |
+| `value` | TEXT | 政見目前值 |
+| `grade` | VARCHAR(16) | 信心分級 |
+| `source_crop_path` | TEXT | 政見合併格切圖路徑 |
+| `flagged` | BOOLEAN | 是否標記疑慮 |
+| `flag_note` | TEXT | 補充說明 |
+| `update_source` | VARCHAR(16) | `parse`/`ai`/`manual` |
+| `updated_at` | TIMESTAMPTZ | |
+
+### guide_group_snapshots / guide_group_snapshot_fields — 組層級版本
+
+取代 iteration 1 的每人快照(`guide_snapshots`/`guide_snapshot_fields` 已 DROP)。一次 commit 凍結整組:正、副候選人各欄 + 政見。
+
+`guide_group_snapshots`: `id`, `guide_group_id` FK, `version_no`(UNIQUE with group), `note`, `created_at`。
+
+`guide_group_snapshot_fields`: `id`, `snapshot_id` FK, `scope`(`總統`/`副總統`/`政見`), `field_name`, `value`, `grade`, `source_crop_path`, `flagged`, `flag_note`。Unique `(snapshot_id, scope, field_name)`。
+
+### guide_candidates 變更
+
+- 移除 `party`(移到 `guide_groups`)、移除 `ticket`(由組提供)。
+- 新增 `guide_group_id INTEGER FK → guide_groups.id` (CASCADE)。
+- Unique 改為 `(guide_group_id, role)`(以 unique index `uq_guide_candidates_group_role` 實作)。
+
+### guide_repair_jobs 變更
+
+- `guide_candidate_id` 改為可 NULL;新增 `guide_group_id INTEGER NULL FK`。
+- 政見修復 job 填 `guide_group_id` + `target='政見'`;文字欄 job 填 `guide_candidate_id` + `target=欄名`。
