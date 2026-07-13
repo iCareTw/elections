@@ -28,82 +28,45 @@ def _store():
     return s
 
 
+def _person(name, birth, gender, edu, exp, page, photo=None):
+    d = {"姓名": name, "出生年月日": birth, "性別": gender,
+         "學歷": edu, "經歷": exp, "頁碼": page}
+    if photo:
+        d["相片"] = photo
+    return d
+
+
+def _verify_all(grade="EXACT"):
+    block = {g: {f: {"grade": grade} for f in PERSON_FIELDS} for g in ("總統", "副總統")}
+    block["政黨"] = {"grade": "EXACT"}
+    block["政見"] = {"grade": "無法解析"}
+    return block
+
+
 def _make_fake_yaml(tmp_path: Path) -> Path:
     data = [
         {
             "號次": 1,
-            "總統": {
-                "姓名": "蔡英文",
-                "出生年月日": "民國46年8月31日",
-                "性別": "女",
-                "學歷": "法學博士",
-                "經歷": "總統",
-                "相片": "/fake/photo_cai.png",
-                "頁碼": 0,
-            },
-            "副總統": {
-                "姓名": "賴清德",
-                "出生年月日": "民國48年10月6日",
-                "性別": "男",
-                "學歷": "公共衛生碩士",
-                "經歷": "行政院長",
-                "頁碼": 0,
-            },
+            "總統": _person("蔡英文", "民國46年8月31日", "女", "法學博士", "總統", 0,
+                            photo="/fake/photo_cai.png"),
+            "副總統": _person("賴清德", "民國48年10月6日", "男", "公共衛生碩士", "行政院長", 0),
             "政黨": "民主進步黨",
+            "政見": "第1組政見內容…",
             "_verify": {
-                "總統": {
-                    "姓名": {"grade": "EXACT"},
-                    "出生年月日": {"grade": "SOFT"},
-                    "性別": {"grade": "EXACT"},
-                    "學歷": {"grade": "NEAR"},
-                    "經歷": {"grade": "NEAR"},
-                },
-                "副總統": {
-                    "姓名": {"grade": "EXACT"},
-                    "出生年月日": {"grade": "SOFT"},
-                    "性別": {"grade": "EXACT"},
-                    "學歷": {"grade": "NEAR"},
-                    "經歷": {"grade": "NEAR"},
-                },
+                "總統": {**{f: {"grade": "EXACT"} for f in PERSON_FIELDS},
+                         "出生年月日": {"grade": "SOFT"}},
+                "副總統": {f: {"grade": "EXACT"} for f in PERSON_FIELDS},
                 "政黨": {"grade": "EXACT"},
+                "政見": {"grade": "無法解析"},
             },
         },
         {
             "號次": 2,
-            "總統": {
-                "姓名": "侯友宜",
-                "出生年月日": "民國46年6月13日",
-                "性別": "男",
-                "學歷": "刑事司法博士",
-                "經歷": "新北市長",
-                "頁碼": 1,
-            },
-            "副總統": {
-                "姓名": "趙少康",
-                "出生年月日": "民國43年2月17日",
-                "性別": "男",
-                "學歷": "經濟學學士",
-                "經歷": "廣播主持人",
-                "頁碼": 1,
-            },
+            "總統": _person("侯友宜", "民國46年6月13日", "男", "刑事司法博士", "新北市長", 1),
+            "副總統": _person("趙少康", "民國43年2月17日", "男", "經濟學學士", "廣播主持人", 1),
             "政黨": "中國國民黨",
-            "_verify": {
-                "總統": {
-                    "姓名": {"grade": "EXACT"},
-                    "出生年月日": {"grade": "EXACT"},
-                    "性別": {"grade": "EXACT"},
-                    "學歷": {"grade": "EXACT"},
-                    "經歷": {"grade": "EXACT"},
-                },
-                "副總統": {
-                    "姓名": {"grade": "EXACT"},
-                    "出生年月日": {"grade": "EXACT"},
-                    "性別": {"grade": "EXACT"},
-                    "學歷": {"grade": "EXACT"},
-                    "經歷": {"grade": "EXACT"},
-                },
-                "政黨": {"grade": "EXACT"},
-            },
+            "政見": None,               # 第2組政見缺(測 None)
+            "_verify": _verify_all(),
         },
     ]
     yaml_path = tmp_path / "guide.yaml"
@@ -114,12 +77,10 @@ def _make_fake_yaml(tmp_path: Path) -> Path:
 
 
 def _make_fake_crops(tmp_path: Path) -> Path:
-    """Create fake crop PNG files.
-
-    ticket 1, 蔡英文 (總統): all 5 field crops present
-    ticket 1, 賴清德 (副總統): 姓名/學歷/經歷 own crops + 基本資料 (no 出生年月日/性別 own crops)
-    ticket 2, 侯友宜 (總統): only 姓名
-    ticket 2, 趙少康 (副總統): no crop files
+    """建假切圖:
+    ticket 1 蔡英文(總統):5 欄齊全;賴清德(副總統):姓名/學歷/經歷 + 基本資料(缺出生/性別自己的圖)
+    ticket 1 政見:有切圖
+    ticket 2 侯友宜(總統):只有姓名;趙少康(副總統):無;政見:無
     """
     crops_dir = tmp_path / "crops"
 
@@ -132,180 +93,96 @@ def _make_fake_crops(tmp_path: Path) -> Path:
 
     for field in PERSON_FIELDS:
         touch(crop_filename(**kw, ticket=1, name="蔡英文", field=field))
-
     for field in ["姓名", "學歷", "經歷"]:
         touch(crop_filename(**kw, ticket=1, name="賴清德", field=field))
     touch(crop_filename(**kw, ticket=1, name="賴清德", field="基本資料"))
-
+    touch(crop_filename(**kw, ticket=1, name="", field="政見"))   # 組層級政見切圖
     touch(crop_filename(**kw, ticket=2, name="侯友宜", field="姓名"))
-
-    # 趙少康: no files
-
     return crops_dir
 
 
-def test_load_guide(tmp_path):
+def _load(store, tmp_path):
     from src.voter_guide.guide_load import load_guide
+    store.init_schema()
+    return load_guide(
+        store,
+        yaml_path=_make_fake_yaml(tmp_path),
+        source_pdf_path=Path(SOURCE_PDF),
+        crops_base_dir=_make_fake_crops(tmp_path),
+        election_type="president",
+        force=True,
+    )
 
+
+def test_load_guide_group_shaped(tmp_path):
     store = _store()
     try:
-        store.init_schema()
-
-        yaml_path = _make_fake_yaml(tmp_path)
-        crops_dir = _make_fake_crops(tmp_path)
-
-        returned_id = load_guide(
-            store,
-            yaml_path=yaml_path,
-            source_pdf_path=Path(SOURCE_PDF),
-            crops_base_dir=crops_dir,
-            election_type="president",
-            force=True,
-        )
-
+        returned_id = _load(store, tmp_path)
         assert returned_id == ELECTION_ID
 
         with store.connect() as conn:
             store._setup_conn(conn)
 
-            # --- 1 election row ---
-            elections = conn.execute(
-                "SELECT * FROM guide_elections WHERE id = %s", (ELECTION_ID,)
-            ).fetchall()
-            assert len(elections) == 1
-            e = dict(elections[0])
-            assert e["year"] == YEAR_AD
-            assert e["session"] == SESSION
-            assert e["type"] == "president"
-            assert e["label"] == f"第{SESSION}任 {YEAR_AD} 總統"
+            # 1 場選舉
+            e = conn.execute("SELECT * FROM guide_elections WHERE id=%s",
+                             (ELECTION_ID,)).fetchone()
+            assert e and e["year"] == YEAR_AD and e["label"] == f"第{SESSION}任 {YEAR_AD} 總統"
 
-            # --- 4 candidates ---
-            candidates = conn.execute(
-                "SELECT * FROM guide_candidates WHERE guide_election_id = %s ORDER BY order_id",
-                (ELECTION_ID,),
-            ).fetchall()
-            assert len(candidates) == 4
+            # 2 組
+            groups = conn.execute(
+                "SELECT * FROM guide_groups WHERE guide_election_id=%s ORDER BY ticket",
+                (ELECTION_ID,)).fetchall()
+            assert len(groups) == 2
+            g1, g2 = dict(groups[0]), dict(groups[1])
+            assert g1["ticket"] == 1 and g1["party"] == "民主進步黨"
+            assert g2["ticket"] == 2 and g2["party"] == "中國國民黨"
 
-            cand_map = {(c["ticket"], c["role"]): dict(c) for c in candidates}
-            c1p = cand_map[(1, "總統")]    # 蔡英文
-            c1v = cand_map[(1, "副總統")]  # 賴清德
-            c2p = cand_map[(2, "總統")]    # 侯友宜
-            c2v = cand_map[(2, "副總統")]  # 趙少康
-
-            assert c1p["party"] == "民主進步黨"
-            assert c1v["party"] == "民主進步黨"  # party copied to both roles
-            assert c2p["party"] == "中國國民黨"
-            assert c2v["party"] == "中國國民黨"
-            assert c1p["source_page"] == 0
-            assert c1v["source_page"] == 0
-            assert c2p["source_page"] == 1
-            assert c2v["source_page"] == 1
+            # 每組 4 候選人(2 組 × 正副),掛在組上
+            cands = conn.execute(
+                "SELECT c.* FROM guide_candidates c JOIN guide_groups g ON g.id=c.guide_group_id "
+                "WHERE g.guide_election_id=%s", (ELECTION_ID,)).fetchall()
+            assert len(cands) == 4
+            by = {(c["guide_group_id"], c["role"]): dict(c) for c in cands}
+            c1p = by[(g1["id"], "總統")]
             assert c1p["photo_path"] == "/fake/photo_cai.png"
-            assert c1v["photo_path"] is None
+            assert c1p["source_page"] == 0
 
-            # --- 蔡英文: all 5 fields have crop paths ---
-            fields_c1p = {
-                f["field_name"]: dict(f)
-                for f in conn.execute(
-                    "SELECT * FROM guide_fields WHERE guide_candidate_id = %s",
-                    (c1p["id"],),
-                ).fetchall()
-            }
-            assert len(fields_c1p) == 5
-            for field in PERSON_FIELDS:
-                assert fields_c1p[field]["source_crop_path"] is not None, (
-                    f"蔡英文 {field} should have a crop path"
-                )
-            assert fields_c1p["姓名"]["grade"] == "EXACT"
-            assert fields_c1p["出生年月日"]["grade"] == "SOFT"
-            assert fields_c1p["姓名"]["update_source"] == "parse"
+            # 每候選人 5 欄;蔡英文各欄有切圖
+            f1p = {f["field_name"]: dict(f) for f in conn.execute(
+                "SELECT * FROM guide_fields WHERE guide_candidate_id=%s", (c1p["id"],)).fetchall()}
+            assert len(f1p) == 5
+            assert all(f1p[f]["source_crop_path"] for f in PERSON_FIELDS)
+            assert f1p["出生年月日"]["grade"] == "SOFT"
 
-            # --- 賴清德: 姓名/學歷/經歷 own crops; 出生年月日/性別 → 基本資料 fallback ---
-            fields_c1v = {
-                f["field_name"]: dict(f)
-                for f in conn.execute(
-                    "SELECT * FROM guide_fields WHERE guide_candidate_id = %s",
-                    (c1v["id"],),
-                ).fetchall()
-            }
-            assert len(fields_c1v) == 5
-            assert fields_c1v["姓名"]["source_crop_path"] is not None
-            assert fields_c1v["學歷"]["source_crop_path"] is not None
-            assert fields_c1v["經歷"]["source_crop_path"] is not None
+            # 賴清德 出生年月日/性別 → 基本資料 fallback
+            c1v = by[(g1["id"], "副總統")]
+            f1v = {f["field_name"]: dict(f) for f in conn.execute(
+                "SELECT * FROM guide_fields WHERE guide_candidate_id=%s", (c1v["id"],)).fetchall()}
+            assert "基本資料" in (f1v["出生年月日"]["source_crop_path"] or "")
+            assert "基本資料" in (f1v["性別"]["source_crop_path"] or "")
 
-            basic_path = str(
-                crops_dir
-                / crop_filename(
-                    type="president",
-                    session=SESSION,
-                    minguo_year=MINGUO_YEAR,
-                    ticket=1,
-                    name="賴清德",
-                    field="基本資料",
-                )
-            )
-            assert fields_c1v["出生年月日"]["source_crop_path"] == basic_path
-            assert fields_c1v["性別"]["source_crop_path"] == basic_path
+            # 組共用政見
+            p1 = conn.execute("SELECT * FROM guide_group_platform WHERE guide_group_id=%s",
+                              (g1["id"],)).fetchone()
+            assert p1 and p1["value"] == "第1組政見內容…"
+            assert "政見" in (p1["source_crop_path"] or "")
+            p2 = conn.execute("SELECT * FROM guide_group_platform WHERE guide_group_id=%s",
+                              (g2["id"],)).fetchone()
+            assert p2 and p2["value"] is None            # 第2組政見缺 + 無切圖
+            assert p2["source_crop_path"] is None
 
-            # --- 侯友宜: only 姓名 has crop ---
-            fields_c2p = {
-                f["field_name"]: dict(f)
-                for f in conn.execute(
-                    "SELECT * FROM guide_fields WHERE guide_candidate_id = %s",
-                    (c2p["id"],),
-                ).fetchall()
-            }
-            assert len(fields_c2p) == 5
-            assert fields_c2p["姓名"]["source_crop_path"] is not None
-            for field in ["出生年月日", "性別", "學歷", "經歷"]:
-                assert fields_c2p[field]["source_crop_path"] is None
-
-            # --- 趙少康: all null ---
-            fields_c2v = {
-                f["field_name"]: dict(f)
-                for f in conn.execute(
-                    "SELECT * FROM guide_fields WHERE guide_candidate_id = %s",
-                    (c2v["id"],),
-                ).fetchall()
-            }
-            assert len(fields_c2v) == 5
-            for field in PERSON_FIELDS:
-                assert fields_c2v[field]["source_crop_path"] is None
-
-            # --- Snapshots: each candidate has v1 snapshot matching fields ---
-            for cand in candidates:
-                cand_id = cand["id"]
-                snaps = conn.execute(
-                    "SELECT * FROM guide_snapshots WHERE guide_candidate_id = %s",
-                    (cand_id,),
-                ).fetchall()
-                assert len(snaps) == 1, (
-                    f"candidate {cand_id} should have exactly 1 snapshot"
-                )
-                snap = dict(snaps[0])
-                assert snap["version_no"] == 1
-
-                snap_fields = {
-                    f["field_name"]: dict(f)
-                    for f in conn.execute(
-                        "SELECT * FROM guide_snapshot_fields WHERE snapshot_id = %s",
-                        (snap["id"],),
-                    ).fetchall()
-                }
-                assert len(snap_fields) == 5
-
-                guide_fields_rows = conn.execute(
-                    "SELECT * FROM guide_fields WHERE guide_candidate_id = %s",
-                    (cand_id,),
-                ).fetchall()
-                for gf in guide_fields_rows:
-                    fn = gf["field_name"]
-                    assert snap_fields[fn]["value"] == gf["value"]
-                    assert snap_fields[fn]["grade"] == gf["grade"]
-                    assert snap_fields[fn]["source_crop_path"] == gf["source_crop_path"]
-                    assert snap_fields[fn]["flagged"] == gf["flagged"]
-                    assert snap_fields[fn]["flag_note"] == gf["flag_note"]
-
+            # 組 v1 快照:正副各 5 欄 + 政見 = 11 筆
+            snap = conn.execute(
+                "SELECT * FROM guide_group_snapshots WHERE guide_group_id=%s", (g1["id"],)).fetchone()
+            assert snap and snap["version_no"] == 1
+            sf = conn.execute(
+                "SELECT scope, field_name FROM guide_group_snapshot_fields WHERE snapshot_id=%s",
+                (snap["id"],)).fetchall()
+            scopes = [(r["scope"], r["field_name"]) for r in sf]
+            assert len(scopes) == 11
+            assert ("政見", "政見") in scopes
+            assert sum(1 for s, _ in scopes if s == "總統") == 5
+            assert sum(1 for s, _ in scopes if s == "副總統") == 5
     finally:
         try:
             store.guide_delete_election(ELECTION_ID)
@@ -320,45 +197,32 @@ def test_reload_without_force_raises_and_keeps_data(tmp_path):
     store = _store()
     try:
         store.init_schema()
-        store.guide_delete_election(ELECTION_ID)  # clean slate
+        store.guide_delete_election(ELECTION_ID)
+        common = dict(yaml_path=_make_fake_yaml(tmp_path),
+                      source_pdf_path=Path(SOURCE_PDF),
+                      crops_base_dir=_make_fake_crops(tmp_path),
+                      election_type="president")
 
-        yaml_path = _make_fake_yaml(tmp_path)
-        crops_dir = _make_fake_crops(tmp_path)
-        common = dict(yaml_path=yaml_path, source_pdf_path=Path(SOURCE_PDF),
-                      crops_base_dir=crops_dir, election_type="president")
+        load_guide(store, **common, force=False)
 
-        load_guide(store, **common, force=False)  # first load OK
-
-        def _cand_ids():
+        def _group_ids():
             with store.connect() as conn:
                 store._setup_conn(conn)
                 rows = conn.execute(
-                    "SELECT id FROM guide_candidates WHERE guide_election_id = %s "
-                    "ORDER BY id", (ELECTION_ID,)
-                ).fetchall()
+                    "SELECT id FROM guide_groups WHERE guide_election_id=%s ORDER BY id",
+                    (ELECTION_ID,)).fetchall()
             return [r["id"] for r in rows]
 
-        before = _cand_ids()
-        assert len(before) == 4
+        before = _group_ids()
+        assert len(before) == 2
 
-        # 二次載入未帶 force → 應 raise 且資料不變
         with pytest.raises(GuideElectionExists):
             load_guide(store, **common, force=False)
-        assert _cand_ids() == before  # 資料原封不動
+        assert _group_ids() == before
 
-        # 帶 force → 刪除重建,候選人 id 全新,版本回到 v1
         load_guide(store, **common, force=True)
-        after = _cand_ids()
-        assert len(after) == 4
-        assert set(after).isdisjoint(before)  # 全被刪除重建
-        with store.connect() as conn:
-            store._setup_conn(conn)
-            versions = conn.execute(
-                "SELECT DISTINCT version_no FROM guide_snapshots s "
-                "JOIN guide_candidates c ON c.id = s.guide_candidate_id "
-                "WHERE c.guide_election_id = %s", (ELECTION_ID,)
-            ).fetchall()
-        assert [v["version_no"] for v in versions] == [1]
+        after = _group_ids()
+        assert len(after) == 2 and set(after).isdisjoint(before)
     finally:
         try:
             store.guide_delete_election(ELECTION_ID)

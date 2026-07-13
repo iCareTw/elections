@@ -1276,13 +1276,32 @@ class Store:
                 (election_id, election_type, year, session, label, source_pdf_path),
             )
 
-    def guide_insert_candidate(
+    def guide_insert_group(
         self,
         *,
         guide_election_id: str,
         ticket: int | None,
-        role: str,
         party: str | None,
+        order_id: int,
+    ) -> int:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                """
+                INSERT INTO guide_groups(guide_election_id, ticket, party, order_id)
+                VALUES (%s, %s, %s, %s)
+                RETURNING id
+                """,
+                (guide_election_id, ticket, party, order_id),
+            ).fetchone()
+        return row["id"]
+
+    def guide_insert_candidate(
+        self,
+        *,
+        guide_election_id: str,
+        guide_group_id: int,
+        role: str,
         photo_path: str | None,
         source_page: int | None,
         order_id: int,
@@ -1292,13 +1311,50 @@ class Store:
             row = conn.execute(
                 """
                 INSERT INTO guide_candidates
-                    (guide_election_id, ticket, role, party, photo_path, source_page, order_id)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    (guide_election_id, guide_group_id, role, photo_path, source_page, order_id)
+                VALUES (%s, %s, %s, %s, %s, %s)
                 RETURNING id
                 """,
-                (guide_election_id, ticket, role, party, photo_path, source_page, order_id),
+                (guide_election_id, guide_group_id, role, photo_path, source_page, order_id),
             ).fetchone()
         return row["id"]
+
+    def guide_upsert_platform(
+        self,
+        *,
+        guide_group_id: int,
+        value: str | None,
+        grade: str | None,
+        source_crop_path: str | None,
+        update_source: str = "parse",
+    ) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                """
+                INSERT INTO guide_group_platform
+                    (guide_group_id, value, grade, source_crop_path, update_source)
+                VALUES (%s, %s, %s, %s, %s)
+                ON CONFLICT (guide_group_id) DO UPDATE SET
+                    value = EXCLUDED.value, grade = EXCLUDED.grade,
+                    source_crop_path = EXCLUDED.source_crop_path,
+                    update_source = EXCLUDED.update_source, updated_at = current_timestamp
+                """,
+                (guide_group_id, value, grade, source_crop_path, update_source),
+            )
+
+    def guide_get_platform(self, guide_group_id: int) -> dict[str, Any] | None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                """
+                SELECT id, guide_group_id, value, grade, source_crop_path,
+                       flagged, flag_note, update_source
+                FROM guide_group_platform WHERE guide_group_id = %s
+                """,
+                (guide_group_id,),
+            ).fetchone()
+        return dict(row) if row else None
 
     def guide_insert_field(
         self,
@@ -1335,10 +1391,10 @@ class Store:
             ).fetchall()
         return [dict(r) for r in rows]
 
-    def guide_create_snapshot(
+    def guide_create_group_snapshot(
         self,
         *,
-        guide_candidate_id: int,
+        guide_group_id: int,
         version_no: int = 1,
         note: str | None = None,
     ) -> int:
@@ -1346,18 +1402,19 @@ class Store:
             self._setup_conn(conn)
             row = conn.execute(
                 """
-                INSERT INTO guide_snapshots(guide_candidate_id, version_no, note)
+                INSERT INTO guide_group_snapshots(guide_group_id, version_no, note)
                 VALUES (%s, %s, %s)
                 RETURNING id
                 """,
-                (guide_candidate_id, version_no, note),
+                (guide_group_id, version_no, note),
             ).fetchone()
         return row["id"]
 
-    def guide_insert_snapshot_field(
+    def guide_insert_group_snapshot_field(
         self,
         *,
         snapshot_id: int,
+        scope: str,
         field_name: str,
         value: str | None,
         grade: str | None,
@@ -1369,11 +1426,11 @@ class Store:
             self._setup_conn(conn)
             conn.execute(
                 """
-                INSERT INTO guide_snapshot_fields
-                    (snapshot_id, field_name, value, grade, source_crop_path, flagged, flag_note)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO guide_group_snapshot_fields
+                    (snapshot_id, scope, field_name, value, grade, source_crop_path, flagged, flag_note)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """,
-                (snapshot_id, field_name, value, grade, source_crop_path, flagged, flag_note),
+                (snapshot_id, scope, field_name, value, grade, source_crop_path, flagged, flag_note),
             )
 
     def guide_candidate_view(self, candidate_id: int) -> dict[str, Any]:
