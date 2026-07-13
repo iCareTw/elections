@@ -15,6 +15,23 @@ def test_crop_filename_president():
     assert got == "president/16th_2024_ticket_1_柯文哲_學歷.png"
 
 
+def test_crop_filename_platform_omits_name():
+    # 政見為組層級,檔名不綁人名
+    got = crop_filename(type="president", session=16, minguo_year=113,
+                        ticket=2, name="任何人", field="政見")
+    assert got == "president/16th_2024_ticket_2_政見.png"
+
+
+def test_parse_pdf_entries_include_platform_key(tmp_path):
+    if not PRESIDENT_PDF.exists():
+        pytest.skip("local president PDF fixture not available")
+    result, _ = parse_pdf(str(PRESIDENT_PDF), "113", tmp_path, use_vision=False)
+    assert result
+    for entry in result:
+        assert "政見" in entry                      # 每組都有政見欄(值可能為 None)
+        assert "政見" in entry["_verify"]
+
+
 def test_parse_pdf_records_include_page(tmp_path):
     if not PRESIDENT_PDF.exists():
         pytest.skip("local president PDF fixture not available")

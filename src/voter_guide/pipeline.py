@@ -29,6 +29,8 @@ _BASIC_PATTERNS = {
 def crop_filename(*, type: str, session: int, minguo_year: int,
                   ticket: int, name: str, field: str) -> str:
     year_ad = minguo_year + 1911
+    if field == "政見":  # 政見為組層級,檔名不綁人名
+        return f"{type}/{session}th_{year_ad}_ticket_{ticket}_政見.png"
     return f"{type}/{session}th_{year_ad}_ticket_{ticket}_{name}_{field}.png"
 
 
@@ -118,6 +120,26 @@ def _verify_party(pdf_path, group, *, cache, use_vision,
     return "無黨籍", {"grade": "不適用"}
 
 
+def _extract_platform(pdf_path, group, *, cache, use_vision,
+                      crop_type: str, session: int, minguo_year: int, out_dir: Path):
+    """政見為組別層級(跨正副兩列的合併格,掛在有格的那列)。表格文字常為空,
+    以切圖 + 看圖讀出。回傳 (value, report)。"""
+    for person in (group.president, group.vice):
+        if person and "政見" in person.cells:
+            cell = person.cells["政見"]
+            crop_path = out_dir / crop_filename(type=crop_type, session=session,
+                                                 minguo_year=minguo_year, ticket=group.ticket,
+                                                 name="", field="政見")
+            key = f"{session}|{group.ticket}|政見"
+            vis = _vision_for(pdf_path, person, "政見", cell.bbox,
+                              key=key, cache=cache,
+                              crop_save=crop_path, use_vision=use_vision)
+            res = verify.verify_field("政見", cell.text, vis)
+            rep = {k: v for k, v in res.items() if k != "value"}
+            return res["value"], rep
+    return None, {"grade": "不適用"}
+
+
 def _save_photo(pdf_path, person, dest: Path, scale=3.0):
     if not person.photo_bbox:
         return None
@@ -175,6 +197,11 @@ def parse_pdf(pdf_path: str, tag: str, out_dir: Path, use_vision: bool):
             verify_block[role] = report
         entry["政黨"] = party
         verify_block["政黨"] = party_rep
+        platform, platform_rep = _extract_platform(
+            pdf_path, g, cache=cache, use_vision=use_vision,
+            crop_type=crop_type, session=session, minguo_year=minguo_year, out_dir=out_dir)
+        entry["政見"] = platform
+        verify_block["政見"] = platform_rep
         entry["_verify"] = verify_block
         result.append(entry)
 
