@@ -1223,17 +1223,22 @@ class Store:
                 """
                 SELECT
                     gc.id,
-                    gc.ticket,
+                    g.ticket,
                     gc.role,
-                    gc.party,
+                    g.party,
+                    gc.guide_group_id,
                     gc.photo_flagged,
                     gc.order_id,
                     gf_name.value AS name,
                     (gc.photo_flagged OR COALESCE(
                         (SELECT bool_or(gf.flagged) FROM guide_fields gf WHERE gf.guide_candidate_id = gc.id),
                         false
+                    ) OR COALESCE(
+                        (SELECT gp.flagged FROM guide_group_platform gp WHERE gp.guide_group_id = g.id),
+                        false
                     )) AS any_flag
                 FROM guide_candidates gc
+                JOIN guide_groups g ON g.id = gc.guide_group_id
                 LEFT JOIN guide_fields gf_name
                     ON gf_name.guide_candidate_id = gc.id AND gf_name.field_name = '姓名'
                 WHERE gc.guide_election_id = %s
@@ -1433,188 +1438,243 @@ class Store:
                 (snapshot_id, scope, field_name, value, grade, source_crop_path, flagged, flag_note),
             )
 
-    def guide_candidate_view(self, candidate_id: int) -> dict[str, Any]:
-        with self.connect() as conn:
-            self._setup_conn(conn)
+    _FIELD_ORDER_SQL = ("array_position(ARRAY['姓名','出生年月日','性別','學歷','經歷'], "
+                        "field_name::text)")
 
-            # Candidate meta + election label
-            cand_row = conn.execute(
-                """
-                SELECT
-                    gc.id, gc.ticket, gc.role, gc.party,
-                    gc.photo_path, gc.photo_flagged, gc.photo_note,
-                    gc.source_page, gc.guide_election_id AS election_id,
-                    ge.label AS election_label
-                FROM guide_candidates gc
-                JOIN guide_elections ge ON ge.id = gc.guide_election_id
-                WHERE gc.id = %s
-                """,
-                (candidate_id,),
-            ).fetchone()
-
-            # Fields in stable order
-            field_rows = conn.execute(
-                """
-                SELECT id, field_name, value, grade, source_crop_path, flagged, flag_note
-                FROM guide_fields
-                WHERE guide_candidate_id = %s
-                ORDER BY array_position(
-                    ARRAY['姓名','出生年月日','性別','學歷','經歷'],
-                    field_name::text
-                )
-                """,
-                (candidate_id,),
-            ).fetchall()
-
-            # Latest snapshot
-            latest_snap = conn.execute(
-                """
-                SELECT id, version_no
-                FROM guide_snapshots
-                WHERE guide_candidate_id = %s
-                ORDER BY version_no DESC
-                LIMIT 1
-                """,
-                (candidate_id,),
-            ).fetchone()
-
-            has_uncommitted = False
-            if latest_snap:
-                snap_field_rows = conn.execute(
-                    """
-                    SELECT field_name, value, flagged, flag_note
-                    FROM guide_snapshot_fields
-                    WHERE snapshot_id = %s
-                    """,
-                    (latest_snap["id"],),
-                ).fetchall()
-                snap_map = {r["field_name"]: dict(r) for r in snap_field_rows}
-                current_field_names = {r["field_name"] for r in field_rows}
-                if current_field_names != set(snap_map.keys()):
-                    has_uncommitted = True
-                else:
-                    for fr in field_rows:
-                        sn = snap_map.get(fr["field_name"])
-                        if sn is None:
-                            has_uncommitted = True
-                            break
-                        if (fr["value"] != sn["value"]
-                                or fr["flagged"] != sn["flagged"]
-                                or fr["flag_note"] != sn["flag_note"]):
-                            has_uncommitted = True
-                            break
-
-        cand_meta = dict(cand_row)
-        gender_row = next((r for r in field_rows if r["field_name"] == "性別"), None)
-        cand_meta["gender"] = gender_row["value"] if gender_row else None
-
+    def _guide_candidate_block(self, conn, candidate_id: int) -> dict[str, Any]:
+        cand = conn.execute(
+            """
+            SELECT gc.id, gc.role, gc.photo_path, gc.photo_flagged,
+                   gc.photo_note, gc.source_page
+            FROM guide_candidates gc WHERE gc.id = %s
+            """,
+            (candidate_id,),
+        ).fetchone()
+        field_rows = conn.execute(
+            f"""
+            SELECT id, field_name, value, grade, source_crop_path, flagged, flag_note
+            FROM guide_fields WHERE guide_candidate_id = %s
+            ORDER BY {self._FIELD_ORDER_SQL}
+            """,
+            (candidate_id,),
+        ).fetchall()
+        meta = dict(cand)
+        gender = next((r["value"] for r in field_rows if r["field_name"] == "性別"), None)
+        meta["gender"] = gender
         fields = []
         for fr in field_rows:
             d = dict(fr)
             d["can_ai_repair"] = d["source_crop_path"] is not None
             fields.append(d)
+        return {"candidate": meta, "fields": fields}
 
-        return {
-            "candidate": cand_meta,
-            "fields": fields,
-            "has_uncommitted": has_uncommitted,
-            "latest_version": latest_snap["version_no"] if latest_snap else 0,
-        }
+    def _guide_group_current_state(self, conn, group_id: int) -> dict[tuple[str, str], dict]:
+        """組目前狀態:{(scope, field_name): {value, flagged, flag_note}}。scope=角色 或 政見。"""
+        state: dict[tuple[str, str], dict] = {}
+        rows = conn.execute(
+            """
+            SELECT gc.role AS scope, gf.field_name, gf.value, gf.flagged, gf.flag_note
+            FROM guide_fields gf JOIN guide_candidates gc ON gc.id = gf.guide_candidate_id
+            WHERE gc.guide_group_id = %s
+            """,
+            (group_id,),
+        ).fetchall()
+        for r in rows:
+            state[(r["scope"], r["field_name"])] = {
+                "value": r["value"], "flagged": r["flagged"], "flag_note": r["flag_note"]}
+        plat = conn.execute(
+            "SELECT value, flagged, flag_note FROM guide_group_platform WHERE guide_group_id = %s",
+            (group_id,),
+        ).fetchone()
+        if plat is not None:
+            state[("政見", "政見")] = {
+                "value": plat["value"], "flagged": plat["flagged"], "flag_note": plat["flag_note"]}
+        return state
 
-    def guide_snapshot_view(self, candidate_id: int, version_no: int) -> dict[str, Any]:
+    def guide_group_view(self, election_id: str, ticket: int) -> dict[str, Any] | None:
         with self.connect() as conn:
             self._setup_conn(conn)
-            snap_row = conn.execute(
-                "SELECT id FROM guide_snapshots WHERE guide_candidate_id = %s AND version_no = %s",
-                (candidate_id, version_no),
-            ).fetchone()
-            field_rows = conn.execute(
+            grp = conn.execute(
                 """
-                SELECT field_name, value, grade, source_crop_path, flagged, flag_note
-                FROM guide_snapshot_fields
-                WHERE snapshot_id = %s
-                ORDER BY array_position(
-                    ARRAY['姓名','出生年月日','性別','學歷','經歷'],
-                    field_name::text
-                )
+                SELECT g.id, g.ticket, g.party, g.guide_election_id AS election_id,
+                       ge.label AS election_label
+                FROM guide_groups g JOIN guide_elections ge ON ge.id = g.guide_election_id
+                WHERE g.guide_election_id = %s AND g.ticket = %s
                 """,
-                (snap_row["id"],),
+                (election_id, ticket),
+            ).fetchone()
+            if grp is None:
+                return None
+            group_id = grp["id"]
+
+            cand_rows = conn.execute(
+                "SELECT id, role FROM guide_candidates WHERE guide_group_id = %s", (group_id,)
+            ).fetchall()
+            blocks = {r["role"]: self._guide_candidate_block(conn, r["id"]) for r in cand_rows}
+
+            plat_row = conn.execute(
+                """
+                SELECT value, grade, source_crop_path, flagged, flag_note
+                FROM guide_group_platform WHERE guide_group_id = %s
+                """,
+                (group_id,),
+            ).fetchone()
+            platform = dict(plat_row) if plat_row else {
+                "value": None, "grade": None, "source_crop_path": None,
+                "flagged": False, "flag_note": None}
+            platform["can_ai_repair"] = bool(platform.get("source_crop_path"))
+
+            latest = conn.execute(
+                "SELECT id, version_no FROM guide_group_snapshots WHERE guide_group_id = %s "
+                "ORDER BY version_no DESC LIMIT 1",
+                (group_id,),
+            ).fetchone()
+
+            has_uncommitted = False
+            if latest:
+                snap = {(r["scope"], r["field_name"]): r for r in conn.execute(
+                    "SELECT scope, field_name, value, flagged, flag_note "
+                    "FROM guide_group_snapshot_fields WHERE snapshot_id = %s",
+                    (latest["id"],),
+                ).fetchall()}
+                cur = self._guide_group_current_state(conn, group_id)
+                if set(cur.keys()) != set(snap.keys()):
+                    has_uncommitted = True
+                else:
+                    for k, c in cur.items():
+                        s = snap[k]
+                        if (c["value"] != s["value"] or c["flagged"] != s["flagged"]
+                                or c["flag_note"] != s["flag_note"]):
+                            has_uncommitted = True
+                            break
+
+        return {
+            "group": {"id": group_id, "ticket": grp["ticket"], "party": grp["party"],
+                      "election_id": grp["election_id"], "election_label": grp["election_label"]},
+            "president": blocks.get("總統"),
+            "vice": blocks.get("副總統"),
+            "platform": platform,
+            "has_uncommitted": has_uncommitted,
+            "latest_version": latest["version_no"] if latest else 0,
+        }
+
+    def guide_group_snapshot_view(self, group_id: int, version_no: int) -> dict[str, Any]:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            snap = conn.execute(
+                "SELECT id FROM guide_group_snapshots WHERE guide_group_id = %s AND version_no = %s",
+                (group_id, version_no),
+            ).fetchone()
+            rows = conn.execute(
+                f"""
+                SELECT scope, field_name, value, grade, source_crop_path, flagged, flag_note
+                FROM guide_group_snapshot_fields WHERE snapshot_id = %s
+                ORDER BY array_position(ARRAY['總統','副總統','政見'], scope::text), {self._FIELD_ORDER_SQL}
+                """,
+                (snap["id"],),
             ).fetchall()
             bounds = conn.execute(
-                "SELECT MIN(version_no) AS min_v, MAX(version_no) AS max_v FROM guide_snapshots WHERE guide_candidate_id = %s",
-                (candidate_id,),
+                "SELECT MIN(version_no) AS min_v, MAX(version_no) AS max_v "
+                "FROM guide_group_snapshots WHERE guide_group_id = %s",
+                (group_id,),
             ).fetchone()
         return {
-            "fields": [dict(r) for r in field_rows],
+            "fields": [dict(r) for r in rows],
             "version_no": version_no,
             "min_version": bounds["min_v"],
             "max_version": bounds["max_v"],
         }
 
-    def guide_commit(self, candidate_id: int, note: str | None = None) -> int:
+    def guide_group_commit(self, group_id: int, note: str | None = None) -> int:
         with self.connect() as conn:
             self._setup_conn(conn)
             with conn.transaction():
-                max_row = conn.execute(
-                    "SELECT COALESCE(MAX(version_no), 0) AS max_v FROM guide_snapshots WHERE guide_candidate_id = %s",
-                    (candidate_id,),
+                mx = conn.execute(
+                    "SELECT COALESCE(MAX(version_no),0) AS m FROM guide_group_snapshots WHERE guide_group_id = %s",
+                    (group_id,),
                 ).fetchone()
-                new_version = max_row["max_v"] + 1
-                snap_row = conn.execute(
-                    "INSERT INTO guide_snapshots(guide_candidate_id, version_no, note) VALUES (%s, %s, %s) RETURNING id",
-                    (candidate_id, new_version, note),
-                ).fetchone()
-                snap_id = snap_row["id"]
-                field_rows = conn.execute(
-                    "SELECT field_name, value, grade, source_crop_path, flagged, flag_note FROM guide_fields WHERE guide_candidate_id = %s",
-                    (candidate_id,),
+                new_version = mx["m"] + 1
+                snap_id = conn.execute(
+                    "INSERT INTO guide_group_snapshots(guide_group_id, version_no, note) "
+                    "VALUES (%s, %s, %s) RETURNING id",
+                    (group_id, new_version, note),
+                ).fetchone()["id"]
+                # 正副各欄
+                rows = conn.execute(
+                    """
+                    SELECT gc.role AS scope, gf.field_name, gf.value, gf.grade,
+                           gf.source_crop_path, gf.flagged, gf.flag_note
+                    FROM guide_fields gf JOIN guide_candidates gc ON gc.id = gf.guide_candidate_id
+                    WHERE gc.guide_group_id = %s
+                    """,
+                    (group_id,),
                 ).fetchall()
-                for fr in field_rows:
+                for r in rows:
                     conn.execute(
-                        """
-                        INSERT INTO guide_snapshot_fields
-                            (snapshot_id, field_name, value, grade, source_crop_path, flagged, flag_note)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s)
-                        """,
-                        (snap_id, fr["field_name"], fr["value"], fr["grade"],
-                         fr["source_crop_path"], fr["flagged"], fr["flag_note"]),
+                        "INSERT INTO guide_group_snapshot_fields "
+                        "(snapshot_id, scope, field_name, value, grade, source_crop_path, flagged, flag_note) "
+                        "VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
+                        (snap_id, r["scope"], r["field_name"], r["value"], r["grade"],
+                         r["source_crop_path"], r["flagged"], r["flag_note"]),
+                    )
+                # 政見
+                plat = conn.execute(
+                    "SELECT value, grade, source_crop_path, flagged, flag_note "
+                    "FROM guide_group_platform WHERE guide_group_id = %s",
+                    (group_id,),
+                ).fetchone()
+                if plat is not None:
+                    conn.execute(
+                        "INSERT INTO guide_group_snapshot_fields "
+                        "(snapshot_id, scope, field_name, value, grade, source_crop_path, flagged, flag_note) "
+                        "VALUES (%s,'政見','政見',%s,%s,%s,%s,%s)",
+                        (snap_id, plat["value"], plat["grade"], plat["source_crop_path"],
+                         plat["flagged"], plat["flag_note"]),
                     )
         return new_version
 
-    def guide_discard(self, candidate_id: int) -> None:
+    def guide_group_discard(self, group_id: int) -> None:
         with self.connect() as conn:
             self._setup_conn(conn)
             with conn.transaction():
-                latest_snap = conn.execute(
-                    """
-                    SELECT id FROM guide_snapshots
-                    WHERE guide_candidate_id = %s
-                    ORDER BY version_no DESC
-                    LIMIT 1
-                    """,
-                    (candidate_id,),
+                latest = conn.execute(
+                    "SELECT id FROM guide_group_snapshots WHERE guide_group_id = %s "
+                    "ORDER BY version_no DESC LIMIT 1",
+                    (group_id,),
                 ).fetchone()
-                if latest_snap is None:
+                if latest is None:
                     return
-                snap_fields = conn.execute(
-                    """
-                    SELECT field_name, value, grade, source_crop_path, flagged, flag_note
-                    FROM guide_snapshot_fields
-                    WHERE snapshot_id = %s
-                    """,
-                    (latest_snap["id"],),
+                sfields = conn.execute(
+                    "SELECT scope, field_name, value, grade, source_crop_path, flagged, flag_note "
+                    "FROM guide_group_snapshot_fields WHERE snapshot_id = %s",
+                    (latest["id"],),
                 ).fetchall()
-                for sf in snap_fields:
-                    conn.execute(
-                        """
-                        UPDATE guide_fields
-                        SET value = %s, grade = %s, source_crop_path = %s,
-                            flagged = %s, flag_note = %s, updated_at = current_timestamp
-                        WHERE guide_candidate_id = %s AND field_name = %s
-                        """,
-                        (sf["value"], sf["grade"], sf["source_crop_path"],
-                         sf["flagged"], sf["flag_note"], candidate_id, sf["field_name"]),
-                    )
+                for sf in sfields:
+                    if sf["scope"] == "政見":
+                        conn.execute(
+                            """
+                            UPDATE guide_group_platform
+                            SET value=%s, grade=%s, source_crop_path=%s, flagged=%s,
+                                flag_note=%s, updated_at=current_timestamp
+                            WHERE guide_group_id = %s
+                            """,
+                            (sf["value"], sf["grade"], sf["source_crop_path"],
+                             sf["flagged"], sf["flag_note"], group_id),
+                        )
+                    else:
+                        conn.execute(
+                            """
+                            UPDATE guide_fields gf
+                            SET value=%s, grade=%s, source_crop_path=%s, flagged=%s,
+                                flag_note=%s, updated_at=current_timestamp
+                            FROM guide_candidates gc
+                            WHERE gf.guide_candidate_id = gc.id
+                              AND gc.guide_group_id = %s AND gc.role = %s
+                              AND gf.field_name = %s
+                            """,
+                            (sf["value"], sf["grade"], sf["source_crop_path"],
+                             sf["flagged"], sf["flag_note"], group_id, sf["scope"], sf["field_name"]),
+                        )
 
     def guide_set_field_value(self, field_id: int, value: str) -> None:
         with self.connect() as conn:
@@ -1642,6 +1702,57 @@ class Store:
             conn.execute(
                 "UPDATE guide_fields SET flagged = false, flag_note = NULL WHERE id = %s",
                 (field_id,),
+            )
+
+    # --- 組共用政見:標記 / 手動 / 修復目標 ---
+
+    def guide_flag_platform(self, group_id: int, note: str) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                "UPDATE guide_group_platform SET flagged = true, flag_note = %s WHERE guide_group_id = %s",
+                (note, group_id),
+            )
+
+    def guide_unflag_platform(self, group_id: int) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                "UPDATE guide_group_platform SET flagged = false, flag_note = NULL WHERE guide_group_id = %s",
+                (group_id,),
+            )
+
+    def guide_set_platform_value(self, group_id: int, value: str) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                """
+                UPDATE guide_group_platform
+                SET value = %s, update_source = 'manual', grade = NULL, updated_at = current_timestamp
+                WHERE guide_group_id = %s
+                """,
+                (value, group_id),
+            )
+
+    def guide_platform_ref(self, group_id: int) -> dict[str, Any] | None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                "SELECT guide_group_id, value, source_crop_path FROM guide_group_platform WHERE guide_group_id = %s",
+                (group_id,),
+            ).fetchone()
+        return dict(row) if row else None
+
+    def guide_apply_ai_platform(self, group_id: int, value: str) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                """
+                UPDATE guide_group_platform
+                SET value = %s, update_source = 'ai', grade = NULL, updated_at = current_timestamp
+                WHERE guide_group_id = %s
+                """,
+                (value, group_id),
             )
 
     def guide_flag_photo(self, candidate_id: int, note: str) -> None:
