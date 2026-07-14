@@ -273,20 +273,21 @@ Index:
 | field               | type        | description                                             |
 |---------------------|-------------|---------------------------------------------------------|
 | `id`                | SERIAL PK   | surrogate key                                           |
-| `guide_election_id` | TEXT FK     | 所屬公報選舉 → `guide_elections.id` (CASCADE)            |
-| `ticket`            | INTEGER     | 號次 (可 NULL)                                          |
-| `role`              | VARCHAR(16) | 角色, 如 `president` / `vp` / 空字串, NOT NULL DEFAULT '' |
-| `party`             | VARCHAR(32) | 政黨 (可 NULL)                                          |
+| `guide_election_id` | TEXT FK     | 所屬公報選舉 → `guide_elections.id` (CASCADE, denormalized) |
+| `guide_group_id`    | INTEGER FK  | 所屬組 → `guide_groups.id` (CASCADE)                     |
+| `role`              | VARCHAR(16) | 角色, 如 `總統` / `副總統` / 空字串, NOT NULL DEFAULT '' |
 | `photo_path`        | TEXT        | 照片儲存路徑 (可 NULL)                                   |
 | `photo_flagged`     | BOOLEAN     | 照片是否需人工確認, DEFAULT false                         |
 | `photo_note`        | TEXT        | 照片備註 (可 NULL)                                       |
-| `source_page`       | INTEGER     | 來源 PDF 頁碼 (可 NULL)                                  |
+| `source_page`       | INTEGER     | 來源 PDF 頁碼 (0-based, 可 NULL)                         |
 | `candidate_id`      | VARCHAR(64) | 預留; 不設 FK, 本期不填                                  |
 | `order_id`          | INTEGER     | 排序用流水號 (可 NULL)                                   |
 
-Unique constraint: `(guide_election_id, ticket, role)`.
+號次 (`ticket`) 與政黨 (`party`) 移至 `guide_groups`。
 
-Index: `idx_guide_candidates_election` on `(guide_election_id)`.
+Unique constraint: `(guide_group_id, role)` (以 unique index `uq_guide_candidates_group_role` 實作).
+
+Index: `idx_guide_candidates_election` on `(guide_election_id)`, `idx_guide_candidates_group` on `(guide_group_id)`.
 
 ---
 
@@ -313,51 +314,23 @@ Index: `idx_guide_fields_candidate` on `(guide_candidate_id)`.
 
 ---
 
-### guide_snapshots
+### 每人快照(已移除)
 
-候選人欄位的版本快照, 供稽核與回復.
-
-| field               | type        | description                                      |
-|---------------------|-------------|--------------------------------------------------|
-| `id`                | SERIAL PK   | surrogate key                                    |
-| `guide_candidate_id`| INTEGER FK  | 所屬候選人 → `guide_candidates.id` (CASCADE)      |
-| `version_no`        | INTEGER     | 版本號                                            |
-| `note`              | TEXT        | 版本備註 (可 NULL)                                 |
-| `created_at`        | TIMESTAMPTZ | 建立時間, DEFAULT current_timestamp               |
-
-Unique constraint: `(guide_candidate_id, version_no)`.
-
----
-
-### guide_snapshot_fields
-
-快照內各欄位的值.
-
-| field              | type        | description                                 |
-|--------------------|-------------|---------------------------------------------|
-| `id`               | SERIAL PK   | surrogate key                               |
-| `snapshot_id`      | INTEGER FK  | 所屬快照 → `guide_snapshots.id` (CASCADE)    |
-| `field_name`       | VARCHAR(32) | 欄位名稱                                     |
-| `value`            | TEXT        | 欄位內容 (可 NULL)                            |
-| `grade`            | VARCHAR(16) | 解析信心等級 (可 NULL)                         |
-| `source_crop_path` | TEXT        | 對應裁圖路徑 (可 NULL)                         |
-| `flagged`          | BOOLEAN     | 是否標記 (NOT NULL)                           |
-| `flag_note`        | TEXT        | 標記備註 (可 NULL)                            |
-
-Unique constraint: `(snapshot_id, field_name)`.
+`guide_snapshots` / `guide_snapshot_fields`(iteration 1 的每候選人快照)已由後續 migration DROP,改以組層級快照取代,見下方 `guide_group_snapshots` / `guide_group_snapshot_fields`。
 
 ---
 
 ### guide_repair_jobs
 
-文字欄位人工修正任務佇列 (照片不建 job).
+文字欄位或組共用政見的人工修正任務佇列 (照片不建 job).
 
 | field               | type        | description                                            |
 |---------------------|-------------|--------------------------------------------------------|
 | `id`                | SERIAL PK   | surrogate key                                          |
-| `guide_candidate_id`| INTEGER FK  | 所屬候選人 → `guide_candidates.id` (CASCADE)            |
-| `target`            | VARCHAR(32) | 目標欄位名稱                                            |
-| `status`            | VARCHAR(16) | `queued` / `done` / `error` 等, DEFAULT 'queued'       |
+| `guide_candidate_id`| INTEGER FK  | 文字欄修復對象 → `guide_candidates.id` (CASCADE, 可 NULL) |
+| `guide_group_id`    | INTEGER FK  | 政見修復對象 → `guide_groups.id` (CASCADE, 可 NULL)      |
+| `target`            | VARCHAR(32) | 目標欄位名稱;政見填 `政見`                              |
+| `status`            | VARCHAR(16) | `queued` / `running` / `done` / `failed`, DEFAULT 'queued' |
 | `user_note`         | TEXT        | 人工備註 (可 NULL)                                      |
 | `before_value`      | TEXT        | 修正前的值 (可 NULL)                                    |
 | `result_value`      | TEXT        | 修正後的值 (可 NULL)                                    |
@@ -365,14 +338,15 @@ Unique constraint: `(snapshot_id, field_name)`.
 | `created_at`        | TIMESTAMPTZ | 建立時間, DEFAULT current_timestamp                     |
 | `finished_at`       | TIMESTAMPTZ | 完成時間 (可 NULL)                                      |
 
-Index: `idx_guide_repair_jobs_status` on `(status)`.
-Index: `idx_guide_repair_jobs_cand` on `(guide_candidate_id)`.
+文字欄 job 填 `guide_candidate_id` + `target=欄名`;政見 job 填 `guide_group_id` + `target='政見'`(二者擇一)。
+
+Index: `idx_guide_repair_jobs_status` on `(status)`, `idx_guide_repair_jobs_cand` on `(guide_candidate_id)`.
 
 ---
 
-## iteration 2 變更(組為單位 + 政見,`db/006_*.sql`)
+## iteration 2 變更(組為單位 + 政見)
 
-UI 與版本單位由「候選人」改為「組(號次)」。新增組實體與組共用政見、組層級快照;`guide_candidates` 掛到組;汰換每人快照。
+UI 與版本單位由「候選人」改為「組(號次)」。新增組實體與組共用政見、組層級快照;`guide_candidates` 掛到組(見上方最終定義);汰換每人快照。
 
 ### guide_groups — 組(號次)
 
@@ -412,13 +386,4 @@ Unique: `(guide_election_id, ticket)`。
 
 `guide_group_snapshot_fields`: `id`, `snapshot_id` FK, `scope`(`總統`/`副總統`/`政見`), `field_name`, `value`, `grade`, `source_crop_path`, `flagged`, `flag_note`。Unique `(snapshot_id, scope, field_name)`。
 
-### guide_candidates 變更
-
-- 移除 `party`(移到 `guide_groups`)、移除 `ticket`(由組提供)。
-- 新增 `guide_group_id INTEGER FK → guide_groups.id` (CASCADE)。
-- Unique 改為 `(guide_group_id, role)`(以 unique index `uq_guide_candidates_group_role` 實作)。
-
-### guide_repair_jobs 變更
-
-- `guide_candidate_id` 改為可 NULL;新增 `guide_group_id INTEGER NULL FK`。
-- 政見修復 job 填 `guide_group_id` + `target='政見'`;文字欄 job 填 `guide_candidate_id` + `target=欄名`。
+註:`guide_candidates`(移除 party/ticket、掛 `guide_group_id`)與 `guide_repair_jobs`(`guide_candidate_id` 可 NULL、新增 `guide_group_id`)的最終定義見前面各該節。
