@@ -1248,6 +1248,14 @@ class Store:
             ).fetchall()
         return [dict(r) for r in rows]
 
+    def guide_election_row(self, election_id: str) -> dict[str, Any] | None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                "SELECT * FROM guide_elections WHERE id = %s", (election_id,)
+            ).fetchone()
+        return dict(row) if row else None
+
     def guide_election_exists(self, election_id: str) -> bool:
         with self.connect() as conn:
             self._setup_conn(conn)
@@ -1888,6 +1896,24 @@ class Store:
                 "UPDATE guide_candidates SET photo_path = %s WHERE id = %s",
                 (path, candidate_id),
             )
+
+    def guide_group_locate(self, group_id: int) -> dict[str, Any] | None:
+        """group_id → {election_id, ticket}(供 web 由 group_id 導到組視圖)。"""
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                "SELECT guide_election_id AS election_id, ticket FROM guide_groups WHERE id = %s",
+                (group_id,),
+            ).fetchone()
+        return dict(row) if row else None
+
+    def guide_candidate_group_id(self, candidate_id: int) -> int | None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                "SELECT guide_group_id FROM guide_candidates WHERE id = %s", (candidate_id,)
+            ).fetchone()
+        return row["guide_group_id"] if row else None
 
     def delete_candidate(self, candidate_id: str) -> None:
         with self.connect() as conn:

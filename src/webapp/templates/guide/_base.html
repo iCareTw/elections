@@ -361,8 +361,8 @@ a { color: inherit; text-decoration: none; }
     <div class="grp">
       <div class="grp-h">第{{ ticket }}組{% if first.party %} · {{ first.party }}{% endif %}</div>
       {% for c in members %}
-      <a class="cand {% if selected_candidate_id == c.id %}on{% endif %}"
-         href="/guide/candidate/{{ c.id }}">
+      <a class="cand {% if selected_group_id == c.guide_group_id %}on{% endif %}"
+         href="/guide/group/{{ c.guide_group_id }}">
         <span class="dot {% if c.any_flag %}warn{% endif %}"></span>
         {{ c.role }} {{ c.name or '' }}
       </a>
