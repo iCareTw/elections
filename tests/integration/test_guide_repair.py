@@ -53,8 +53,8 @@ def test_run_repair_job_updates_field(tmp_path):
 
         updated = store.guide_get_field(cid, "學歷")
         job = store.guide_get_repair_job(job_id)
-        view = store.guide_candidate_view(cid)
-        f = next(x for x in view["fields"] if x["field_name"] == "學歷")
+        gview = store.guide_group_view(ELECTION_ID, 1)   # 蔡英文為第1組總統
+        f = next(x for x in gview["president"]["fields"] if x["field_name"] == "學歷")
 
         assert updated["value"] == "法學博士(修復後)"
         assert f["value"] == "法學博士(修復後)"
@@ -62,7 +62,7 @@ def test_run_repair_job_updates_field(tmp_path):
         assert job["status"] == "done"
         assert job["result_value"] == "法學博士(修復後)"
         assert job["before_value"] == "法學博士"
-        assert view["has_uncommitted"] is True           # 值變了 → 未提交
+        assert gview["has_uncommitted"] is True           # 值變了 → 未提交
     finally:
         try:
             store.guide_delete_election(ELECTION_ID)
@@ -91,6 +91,65 @@ def test_run_repair_job_fails_without_crop(tmp_path):
         assert job["error"]
         # 值未變
         assert store.guide_get_field(cid, "學歷")["value"] == field["value"]
+    finally:
+        try:
+            store.guide_delete_election(ELECTION_ID)
+        except Exception:
+            pass
+        store.close()
+
+
+def _group_id(store, ticket):
+    for c in store.guide_candidates_of(ELECTION_ID):
+        if c["ticket"] == ticket:
+            return c["guide_group_id"]
+    raise AssertionError(f"group {ticket} not found")
+
+
+def test_run_repair_job_platform(tmp_path):
+    store = _store()
+    try:
+        _seed(store, tmp_path)
+        gid = _group_id(store, 1)                       # 第1組政見有切圖
+        job_id = store.guide_create_platform_repair_job(gid, "政見讀錯了")
+
+        captured = {}
+        def fake_transcribe_image(png_path, field_name, note=None):
+            captured["args"] = (png_path, field_name, note)
+            return "修復後政見"
+
+        run_repair_job(store, job_id, transcribe_image=fake_transcribe_image)
+
+        assert captured["args"][1] == "政見"
+        assert captured["args"][2] == "政見讀錯了"
+
+        job = store.guide_get_repair_job(job_id)
+        v = store.guide_group_view(ELECTION_ID, 1)
+        assert job["status"] == "done"
+        assert job["result_value"] == "修復後政見"
+        assert v["platform"]["value"] == "修復後政見"
+        assert v["has_uncommitted"] is True
+    finally:
+        try:
+            store.guide_delete_election(ELECTION_ID)
+        except Exception:
+            pass
+        store.close()
+
+
+def test_platform_repair_fails_without_crop(tmp_path):
+    store = _store()
+    try:
+        _seed(store, tmp_path)
+        gid = _group_id(store, 2)                       # 第2組政見無切圖
+        job_id = store.guide_create_platform_repair_job(gid, None)
+
+        def boom(*a, **k):
+            raise AssertionError("不應呼叫 transcribe(無切圖)")
+
+        run_repair_job(store, job_id, transcribe_image=boom)
+        job = store.guide_get_repair_job(job_id)
+        assert job["status"] == "failed" and job["error"]
     finally:
         try:
             store.guide_delete_election(ELECTION_ID)

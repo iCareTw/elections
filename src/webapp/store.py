@@ -1819,6 +1819,20 @@ class Store:
             ).fetchone()
         return row["id"]
 
+    def guide_create_platform_repair_job(self, group_id: int,
+                                         user_note: str | None = None) -> int:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                """
+                INSERT INTO guide_repair_jobs(guide_group_id, target, status, user_note)
+                VALUES (%s, '政見', 'queued', %s)
+                RETURNING id
+                """,
+                (group_id, user_note),
+            ).fetchone()
+        return row["id"]
+
     def guide_get_repair_job(self, job_id: int) -> dict[str, Any] | None:
         with self.connect() as conn:
             self._setup_conn(conn)
