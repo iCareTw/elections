@@ -281,7 +281,17 @@ async def crop_submit(request: Request, candidate_id: int,
     if ref is None or ref["source_page"] is None or not ref["source_pdf_path"]:
         raise HTTPException(status_code=400, detail="無來源 PDF/頁碼,無法圈選補照片")
     root = Path(request.app.state.root)
-    dest = root / "_out" / "parsed" / "manual_photos" / f"cand_{candidate_id}.png"
+    out_dir = (root / "_out").resolve()
+    # 就地覆蓋該候選人現有的照片檔(語意檔名);無現存照片才另存
+    stored = ref.get("photo_path")
+    dest = None
+    if stored:
+        p = Path(stored)
+        cand = (p if p.is_absolute() else root / p).resolve()
+        if _within(cand, out_dir):
+            dest = cand
+    if dest is None:
+        dest = root / "_out" / "parsed" / "manual_photos" / f"cand_{candidate_id}.png"
     crop_photo_frac(ref["source_pdf_path"], ref["source_page"], (x0, y0, x1, y1), dest)
     store.guide_set_photo_path(candidate_id, str(dest))
     gid = store.guide_candidate_group_id(candidate_id)
