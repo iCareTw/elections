@@ -183,7 +183,7 @@ async def repair_field(request: Request, field_id: int, background_tasks: Backgr
         raise HTTPException(status_code=400, detail="此欄無來源切圖,無法 AI 修復")
     job_id = store.guide_create_repair_job(ref["guide_candidate_id"], ref["field_name"], note or None)
     background_tasks.add_task(run_repair_job, store, job_id)
-    return RedirectResponse(_group_url(group_id, repair_job=job_id), status_code=303)
+    return JSONResponse({"job_id": job_id})
 
 
 # ---------------------------------------------------------------------------
@@ -219,7 +219,7 @@ async def repair_platform(request: Request, group_id: int, background_tasks: Bac
         raise HTTPException(status_code=400, detail="政見無來源切圖,無法 AI 修復")
     job_id = store.guide_create_platform_repair_job(group_id, note or None)
     background_tasks.add_task(run_repair_job, store, job_id)
-    return RedirectResponse(_group_url(group_id, repair_job=job_id), status_code=303)
+    return JSONResponse({"job_id": job_id})
 
 
 @router.get("/repair/{job_id}/status")

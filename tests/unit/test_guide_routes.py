@@ -82,15 +82,15 @@ def test_candidate_link_redirects_to_group(tmp_path):
 # 標記 / 手動 / commit(redirect 回組)
 # ---------------------------------------------------------------------------
 
-def test_field_flag_and_uncommitted_banner(tmp_path):
+def test_field_manual_edit_and_uncommitted_banner(tmp_path):
     client, store = _client_with_data(tmp_path)
     try:
         _, gid, fid, _ = _ctx(store)
-        r = client.post(f"/guide/field/{fid}/flag",
-                        data={"group_id": gid, "note": "學歷錯"}, follow_redirects=False)
+        r = client.post(f"/guide/field/{fid}/value",
+                        data={"group_id": gid, "value": "手動改的學歷"}, follow_redirects=False)
         assert r.status_code == 303 and r.headers["location"] == f"/guide/group/{gid}"
         page = client.get(f"/guide/group/{gid}").text
-        assert "已標記" in page and "有未提交變更" in page
+        assert "手動改的學歷" in page and "有未提交變更" in page
     finally:
         _teardown(store)
 
@@ -137,16 +137,15 @@ def test_field_repair_creates_job(tmp_path, monkeypatch):
     client, store = _client_with_data(tmp_path)
     try:
         _, gid, fid, _ = _ctx(store)
-        store.guide_flag_field(fid, "讀錯")
 
         def fake_run(store, job_id):
             store.guide_finish_repair_job(job_id, status="done", result_value="修復值")
         monkeypatch.setattr(guidemod, "run_repair_job", fake_run)
 
         r = client.post(f"/guide/field/{fid}/repair",
-                        data={"group_id": gid, "note": "讀錯"}, follow_redirects=False)
-        assert r.status_code == 303 and "repair_job=" in r.headers["location"]
-        job_id = int(r.headers["location"].split("repair_job=")[1])
+                        data={"group_id": gid, "note": "讀錯"})
+        assert r.status_code == 200
+        job_id = r.json()["job_id"]
         s = client.get(f"/guide/repair/{job_id}/status")
         assert s.status_code == 200 and s.json()["status"] == "done"
     finally:
@@ -161,9 +160,8 @@ def test_platform_repair_creates_job(tmp_path, monkeypatch):
         _, gid, _, _ = _ctx(store)          # 第1組政見有切圖
         monkeypatch.setattr(guidemod, "run_repair_job",
                             lambda store, jid: store.guide_finish_repair_job(jid, status="done"))
-        r = client.post(f"/guide/group/{gid}/platform/repair",
-                        data={"note": "政見錯"}, follow_redirects=False)
-        assert r.status_code == 303 and "repair_job=" in r.headers["location"]
+        r = client.post(f"/guide/group/{gid}/platform/repair", data={"note": "政見錯"})
+        assert r.status_code == 200 and "job_id" in r.json()
     finally:
         _teardown(store)
 

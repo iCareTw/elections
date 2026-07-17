@@ -45,6 +45,14 @@ def create_app(root: Path = ROOT) -> FastAPI:
     templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
     templates.env.globals["bulletin_url"] = bulletin_url
     templates.env.globals["bulletin_link_label"] = bulletin_link_label
+
+    import markdown as _markdown
+    from markupsafe import Markup
+
+    def _md(text: str | None) -> Markup:
+        return Markup(_markdown.markdown(text or "", extensions=["nl2br", "sane_lists"]))
+
+    templates.env.filters["md"] = _md
     app.state.templates = templates
     app.state.root = root
 

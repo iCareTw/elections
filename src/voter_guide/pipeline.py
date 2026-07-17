@@ -94,7 +94,11 @@ def _process_person(pdf_path, person: geo.Person, *, cache, use_vision,
             continue
 
         res = verify.verify_field(field, geo_text, vis_text)
-        values[field] = res["value"]
+        # 學歷/經歷 以 model 的 markdown 輸出為準(幾何無法保留條列格式)
+        if field in ("學歷", "經歷") and vis_text:
+            values[field] = vis_text
+        else:
+            values[field] = res["value"]
         report[field] = {k: v for k, v in res.items() if k != "value"}
     return values, report
 

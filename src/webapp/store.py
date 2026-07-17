@@ -46,6 +46,16 @@ _OPERATION_LABELS = {
 }
 
 
+# 紅點:AI 判讀文字與截圖不一致(仍為解析原值、尚未人工/AI 編輯過)時提示複核。
+_GUIDE_CLEAN_GRADES = {"完全一致", "幾乎一致", "不適用", "EXACT", "NEAR"}
+
+
+def _guide_has_concern(grade, update_source) -> bool:
+    if update_source and update_source != "parse":   # 已編輯 → 視為已確認,紅點消失
+        return False
+    return bool(grade) and grade not in _GUIDE_CLEAN_GRADES
+
+
 @dataclass(frozen=True)
 class DatabaseConfig:
     database_url: str
@@ -1460,7 +1470,7 @@ class Store:
         ).fetchone()
         field_rows = conn.execute(
             f"""
-            SELECT id, field_name, value, grade, source_crop_path, flagged, flag_note
+            SELECT id, field_name, value, grade, source_crop_path, flagged, flag_note, update_source
             FROM guide_fields WHERE guide_candidate_id = %s
             ORDER BY {self._FIELD_ORDER_SQL}
             """,
@@ -1473,6 +1483,7 @@ class Store:
         for fr in field_rows:
             d = dict(fr)
             d["can_ai_repair"] = d["source_crop_path"] is not None
+            d["concern"] = _guide_has_concern(d.get("grade"), d.get("update_source"))
             fields.append(d)
         return {"candidate": meta, "fields": fields}
 
@@ -1522,15 +1533,17 @@ class Store:
 
             plat_row = conn.execute(
                 """
-                SELECT value, grade, source_crop_path, flagged, flag_note
+                SELECT id, value, grade, source_crop_path, flagged, flag_note, update_source
                 FROM guide_group_platform WHERE guide_group_id = %s
                 """,
                 (group_id,),
             ).fetchone()
             platform = dict(plat_row) if plat_row else {
-                "value": None, "grade": None, "source_crop_path": None,
-                "flagged": False, "flag_note": None}
+                "id": None, "value": None, "grade": None, "source_crop_path": None,
+                "flagged": False, "flag_note": None, "update_source": None}
             platform["can_ai_repair"] = bool(platform.get("source_crop_path"))
+            platform["concern"] = _guide_has_concern(platform.get("grade"),
+                                                     platform.get("update_source"))
 
             latest = conn.execute(
                 "SELECT id, version_no FROM guide_group_snapshots WHERE guide_group_id = %s "

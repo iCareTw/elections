@@ -1,142 +1,54 @@
 {% extends "guide/_base.html" %}
 
-{% macro grade_badge(grade) %}
-  {% if grade %}
-    {% if grade in ["完全一致", "幾乎一致", "不適用", "EXACT", "NEAR"] %}
-      <span class="badge b-ok">{{ grade }}</span>
-    {% else %}
-      <span class="badge b-warn">{{ grade }}</span>
-    {% endif %}
-  {% else %}
-    <span class="badge b-none">—</span>
-  {% endif %}
+{% macro fval_html(field) %}
+  {% if field.field_name in ['學歷', '經歷'] %}
+    <div class="md-content">{{ field.value | md }}</div>
+  {% else %}{{ field.value or '' }}{% endif %}
 {% endmacro %}
 
-{% macro crop_cell(path) %}
-  {% if path %}
-    <a href="/guide/crop?path={{ path | urlencode }}" target="_blank" rel="noopener">
-      <img class="crop-thumb" src="/guide/crop?path={{ path | urlencode }}" alt="切圖" loading="lazy">
-    </a>
-  {% else %}
-    <div class="crop-empty"></div>
-  {% endif %}
-{% endmacro %}
-
-{# ---- one text field row (flagged expands with actions) ---- #}
-{% macro text_field(field, gender, gid) %}
-  {% if field.flagged %}
-  <div class="flagged-row">
-    <div class="row">
-      <div class="fname">{{ field.field_name }}</div>
-      <div class="fval">
-        {% if field.field_name == "姓名" %}
-          {% if gender == "男" %}<span class="gicon g-m">♂</span>
-          {% elif gender == "女" %}<span class="gicon g-f">♀</span>{% endif %}
-        {% endif %}{{ field.value or '' }}
-      </div>
-      {{ grade_badge(field.grade) }}
-      {{ crop_cell(field.source_crop_path) }}
-      <span class="flag-btn on">⚑ 已標記</span>
-    </div>
-    <div class="indent">
-      <div class="lbl">補充說明</div>
-      <div class="tbox {% if not field.flag_note %}empty{% endif %}">{{ field.flag_note or '(未填補充說明)' }}</div>
-    </div>
-    {% if not readonly %}
-    <div class="indent">
-      <div class="btns">
-        {% if field.can_ai_repair %}
-        <form method="post" action="/guide/field/{{ field.id }}/repair" style="display:inline">
-          <input type="hidden" name="group_id" value="{{ gid }}">
-          <input type="hidden" name="note" value="{{ field.flag_note or '' }}">
-          <button class="btn btn-primary" type="submit">🤖 AI 修復</button>
-        </form>
-        {% endif %}
-        <form method="post" action="/guide/field/{{ field.id }}/value">
-          <input type="hidden" name="group_id" value="{{ gid }}">
-          <div class="edit-form">
-            <input class="edit-input" type="text" name="value" placeholder="填正確值..." value="{{ field.value or '' }}">
-            <button class="btn btn-ghost" type="submit">✎ 手動填正確值</button>
-          </div>
-        </form>
-        <form method="post" action="/guide/field/{{ field.id }}/unflag" style="display:inline">
-          <input type="hidden" name="group_id" value="{{ gid }}">
-          <button class="btn btn-gray" type="submit">解除標記</button>
-        </form>
-      </div>
-    </div>
-    {% endif %}
+{# 一個文字欄的列:值(可 markdown) + 紅點 + 修改鈕 #}
+{% macro text_row(field, gender, save_url, repair_url) %}
+<div class="frow">
+  <div class="fname">{{ field.field_name }}</div>
+  <div class="fval">
+    {% if field.field_name == '姓名' %}
+      {% if gender == '男' %}<span class="gicon g-m">♂</span>
+      {% elif gender == '女' %}<span class="gicon g-f">♀</span>{% endif %}
+    {% endif %}{{ fval_html(field) }}
   </div>
-  {% else %}
-  <div class="row">
-    <div class="fname">{{ field.field_name }}</div>
-    <div class="fval">
-      {% if field.field_name == "姓名" %}
-        {% if gender == "男" %}<span class="gicon g-m">♂</span>
-        {% elif gender == "女" %}<span class="gicon g-f">♀</span>{% endif %}
-      {% endif %}{{ field.value or '' }}
-    </div>
-    {{ grade_badge(field.grade) }}
-    {{ crop_cell(field.source_crop_path) }}
-    {% if not readonly %}
-    <details class="flag-details">
-      <summary class="flag-btn">⚑ 標記</summary>
-      <form method="post" action="/guide/field/{{ field.id }}/flag">
-        <input type="hidden" name="group_id" value="{{ gid }}">
-        <div style="margin-top:4px;display:flex;gap:6px;align-items:flex-start">
-          <textarea class="flag-note-input" name="note" rows="2" placeholder="補充說明(可選,說明此欄值哪裡有問題)"></textarea>
-          <button class="btn btn-primary" type="submit" style="flex-shrink:0">確認標記</button>
-        </div>
-      </form>
-    </details>
-    {% endif %}
-  </div>
+  {% if field.concern %}<span class="reddot" title="AI 判讀與截圖可能不符,建議複核"></span>{% endif %}
+  {% if not readonly %}
+  <button type="button" class="btn btn-ghost btn-sm edit-btn"
+          data-title="{{ field.field_name }}"
+          data-value="{{ field.value or '' }}"
+          data-crop="{% if field.source_crop_path %}/guide/crop?path={{ field.source_crop_path | urlencode }}{% endif %}"
+          data-save="{{ save_url }}"
+          data-repair="{% if field.can_ai_repair %}{{ repair_url }}{% endif %}">✎ 修改</button>
   {% endif %}
+</div>
 {% endmacro %}
 
-{# ---- one candidate panel (role + fields + photo) ---- #}
 {% macro person_panel(block, gid) %}
   {% if block %}
   {% set cand = block.candidate %}
   <div class="panel" style="flex:1;min-width:340px">
     <div class="panel-head"><b>{{ cand.role }}</b></div>
     <div class="panel-body">
-      {% for field in block.fields %}{{ text_field(field, cand.gender, gid) }}{% endfor %}
-
-      {# ---- photo ---- #}
-      <div class="row" style="{% if cand.photo_flagged %}border-bottom:0{% endif %}">
+      {% for field in block.fields %}
+        {{ text_row(field, cand.gender, '/guide/field/' ~ field.id ~ '/value', '/guide/field/' ~ field.id ~ '/repair') }}
+      {% endfor %}
+      {# 相片:顯示 + 圈選補照片(照片的「修改」) #}
+      <div class="frow">
         <div class="fname">相片</div>
         {% if cand.photo_path %}
         <a href="/guide/crop?path={{ cand.photo_path | urlencode }}" target="_blank">
-          <img class="photo-img" src="/guide/crop?path={{ cand.photo_path | urlencode }}" alt="相片">
-        </a>
+          <img class="photo-img" src="/guide/crop?path={{ cand.photo_path | urlencode }}" alt="相片"></a>
         {% else %}<div class="photo-empty"></div>{% endif %}
         <div class="fval"></div>
-        {% if cand.photo_flagged %}<span class="flag-btn on">⚑ 已標記</span>
-        {% elif not readonly %}
-        <details class="flag-details">
-          <summary class="flag-btn">⚑ 標記</summary>
-          <form method="post" action="/guide/candidate/{{ cand.id }}/photo/flag">
-            <input type="hidden" name="group_id" value="{{ gid }}">
-            <div style="margin-top:4px;display:flex;gap:6px;align-items:flex-start">
-              <textarea class="flag-note-input" name="note" rows="2" placeholder="補充說明(照片哪裡有問題)"></textarea>
-              <button class="btn btn-primary" type="submit" style="flex-shrink:0">確認標記</button>
-            </div>
-          </form>
-        </details>
+        {% if not readonly %}
+        <a class="btn btn-ghost btn-sm" href="/guide/candidate/{{ cand.id }}/crop">🖼 圈選補照片</a>
         {% endif %}
       </div>
-      {% if not readonly %}
-      <div class="btns" style="padding-left:96px">
-        <a class="btn btn-primary" href="/guide/candidate/{{ cand.id }}/crop">🖼 圈選補照片</a>
-        {% if cand.photo_flagged %}
-        <form method="post" action="/guide/candidate/{{ cand.id }}/photo/unflag" style="display:inline">
-          <input type="hidden" name="group_id" value="{{ gid }}">
-          <button class="btn btn-gray" type="submit">解除標記</button>
-        </form>
-        {% endif %}
-      </div>
-      {% endif %}
     </div>
   </div>
   {% endif %}
@@ -145,7 +57,36 @@
 {% block main_col %}
 {% set gid = group.id %}
 
-{# ---- uncommitted banner ---- #}
+<style>
+.frow { display:flex; align-items:flex-start; gap:12px; padding:11px 4px; border-bottom:1px solid #f0f0f0; }
+.frow:last-child { border-bottom:0; }
+.frow .fname { width:78px; flex-shrink:0; color:#6b7280; padding-top:2px; }
+.frow .fval { flex:1; font-weight:600; color:#111827; }
+.reddot { width:11px; height:11px; border-radius:50%; background:#dc2626; flex-shrink:0; margin-top:5px;
+          box-shadow:0 0 0 3px rgba(220,38,38,.18); }
+.btn-sm { padding:4px 10px; font-size:12px; }
+.md-content { font-weight:400; }
+.md-content ul { margin:2px 0; padding-left:20px; }
+.md-content li { margin:2px 0; }
+.md-content h2 { font-size:14px; margin:8px 0 4px; }
+.md-content p { margin:4px 0; }
+/* 修改彈窗 */
+.modal-overlay { position:fixed; inset:0; background:rgba(17,24,39,.55); display:none;
+                 align-items:center; justify-content:center; z-index:2000; }
+.modal { background:#fff; border-radius:12px; width:min(920px,94vw); max-height:90vh; display:flex; flex-direction:column; overflow:hidden; }
+.modal-head { background:#1f2937; color:#fff; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; font-weight:600; }
+.modal-head button { background:none; border:0; color:#d1d5db; font-size:18px; cursor:pointer; }
+.modal-body { display:flex; gap:14px; padding:16px; overflow:auto; }
+.modal-col { flex:1; min-width:0; display:flex; flex-direction:column; }
+.modal-col > label { font-size:12px; color:#6b7280; margin-bottom:4px; }
+#m-text { width:100%; min-height:260px; border:1px solid #d1d5db; border-radius:8px; padding:10px; font-family:inherit; font-size:14px; resize:vertical; }
+.modal-ai { display:flex; gap:6px; margin-top:8px; }
+.modal-ai input { flex:1; border:1px solid #d1d5db; border-radius:6px; padding:7px 10px; font-family:inherit; font-size:13px; }
+#m-status { font-size:12px; color:#6b7280; margin-top:6px; min-height:16px; }
+#m-img { max-width:100%; border:1px solid #e5e7eb; border-radius:6px; display:block; }
+.modal-foot { padding:12px 16px; border-top:1px solid #e5e7eb; display:flex; gap:8px; justify-content:flex-end; }
+</style>
+
 {% if has_uncommitted and not readonly %}
 <div class="uncommit">
   <div class="txt"><b>有未提交變更</b> · 這組的修改尚未建立快照</div>
@@ -158,117 +99,123 @@
   </form>
 </div>
 {% endif %}
-{% if readonly %}
-<div class="readonly-banner">唯讀快照 · 此版本已凍結,不可編輯</div>
-{% endif %}
+{% if readonly %}<div class="readonly-banner">唯讀快照 · 此版本已凍結,不可編輯</div>{% endif %}
 
-{# ---- group header ---- #}
 <div class="panel" style="margin-bottom:14px">
   <div class="panel-head">
     <b>第{{ group.ticket }}組 · {{ group.party or '' }} · {{ group.election_label }}</b>
     <div style="display:flex;align-items:center;gap:14px">
-      <a class="btn btn-gray" href="/guide/election/{{ group.election_id }}/pdf" target="_blank"
-         style="font-size:12px;padding:5px 10px">📄 開啟公報 PDF</a>
+      <a class="btn btn-gray btn-sm" href="/guide/election/{{ group.election_id }}/pdf" target="_blank">📄 開啟公報 PDF</a>
       <div class="vernav">
-        {% if version_no > min_version %}
-        <a class="arw" href="/guide/group/{{ gid }}?version={{ version_no - 1 }}">◀</a>
+        {% if version_no > min_version %}<a class="arw" href="/guide/group/{{ gid }}?version={{ version_no - 1 }}">◀</a>
         {% else %}<span class="arw dim">◀</span>{% endif %}
         <span class="cur">v{{ version_no }}{% if has_uncommitted and not readonly %} + 未提交{% endif %}</span>
-        {% if readonly and version_no < max_version %}
-        <a class="arw" href="/guide/group/{{ gid }}?version={{ version_no + 1 }}">▶</a>
-        {% elif readonly %}
-        <a class="arw" href="/guide/group/{{ gid }}">▶</a>
+        {% if readonly and version_no < max_version %}<a class="arw" href="/guide/group/{{ gid }}?version={{ version_no + 1 }}">▶</a>
+        {% elif readonly %}<a class="arw" href="/guide/group/{{ gid }}">▶</a>
         {% else %}<span class="arw dim">▶</span>{% endif %}
       </div>
     </div>
   </div>
 </div>
 
-{# ---- 正副並排 ---- #}
 <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px">
   {{ person_panel(president, gid) }}
   {{ person_panel(vice, gid) }}
 </div>
 
-{# ---- 組共用政見 ---- #}
 <div class="panel">
   <div class="panel-head"><b>政見(正副共用)</b></div>
   <div class="panel-body">
-    {% if platform.flagged %}
-    <div class="flagged-row">
-      <div class="row">
-        <div class="fname">政見</div>
-        <div class="fval" style="white-space:pre-wrap">{{ platform.value or '' }}</div>
-        {{ grade_badge(platform.grade) }}
-        {{ crop_cell(platform.source_crop_path) }}
-        <span class="flag-btn on">⚑ 已標記</span>
-      </div>
-      <div class="indent">
-        <div class="lbl">補充說明</div>
-        <div class="tbox {% if not platform.flag_note %}empty{% endif %}">{{ platform.flag_note or '(未填補充說明)' }}</div>
-      </div>
-      {% if not readonly %}
-      <div class="indent"><div class="btns">
-        {% if platform.can_ai_repair %}
-        <form method="post" action="/guide/group/{{ gid }}/platform/repair" style="display:inline">
-          <input type="hidden" name="note" value="{{ platform.flag_note or '' }}">
-          <button class="btn btn-primary" type="submit">🤖 AI 修復</button>
-        </form>
-        {% endif %}
-        <form method="post" action="/guide/group/{{ gid }}/platform/value">
-          <div class="edit-form">
-            <input class="edit-input" type="text" name="value" placeholder="填正確政見..." value="{{ platform.value or '' }}">
-            <button class="btn btn-ghost" type="submit">✎ 手動填正確值</button>
-          </div>
-        </form>
-        <form method="post" action="/guide/group/{{ gid }}/platform/unflag" style="display:inline">
-          <button class="btn btn-gray" type="submit">解除標記</button>
-        </form>
-      </div></div>
-      {% endif %}
-    </div>
-    {% else %}
-    <div class="row" style="align-items:flex-start">
+    <div class="frow">
       <div class="fname">政見</div>
-      <div class="fval" style="white-space:pre-wrap">{{ platform.value or '(無)' }}</div>
-      {{ grade_badge(platform.grade) }}
-      {{ crop_cell(platform.source_crop_path) }}
+      <div class="fval"><div class="md-content">{{ platform.value | md if platform.value else '(無)' }}</div></div>
+      {% if platform.concern %}<span class="reddot" title="AI 判讀與截圖可能不符,建議複核"></span>{% endif %}
       {% if not readonly %}
-      <details class="flag-details">
-        <summary class="flag-btn">⚑ 標記</summary>
-        <form method="post" action="/guide/group/{{ gid }}/platform/flag">
-          <div style="margin-top:4px;display:flex;gap:6px;align-items:flex-start">
-            <textarea class="flag-note-input" name="note" rows="2" placeholder="補充說明(政見哪裡有問題)"></textarea>
-            <button class="btn btn-primary" type="submit" style="flex-shrink:0">確認標記</button>
-          </div>
-        </form>
-      </details>
+      <button type="button" class="btn btn-ghost btn-sm edit-btn"
+              data-title="政見"
+              data-value="{{ platform.value or '' }}"
+              data-crop="{% if platform.source_crop_path %}/guide/crop?path={{ platform.source_crop_path | urlencode }}{% endif %}"
+              data-save="/guide/group/{{ gid }}/platform/value"
+              data-repair="{% if platform.can_ai_repair %}/guide/group/{{ gid }}/platform/repair{% endif %}">✎ 修改</button>
       {% endif %}
     </div>
-    {% endif %}
   </div>
 </div>
 
-{# ---- AI 修復完成通知(輪詢) ---- #}
-<div id="guide-toast" style="display:none;position:fixed;top:20px;right:20px;padding:12px 16px;border-radius:8px;color:#fff;font-size:13px;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:1000"></div>
+{# ---- 共用修改彈窗 ---- #}
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-head"><span id="m-title">修改</span><button type="button" onclick="guideModal.close()">✕</button></div>
+    <div class="modal-body">
+      <div class="modal-col">
+        <label>內容(可直接編輯)</label>
+        <textarea id="m-text"></textarea>
+        <div class="modal-ai" id="m-ai">
+          <input id="m-summary" placeholder="給 AI 的修復摘要(說明哪裡要改)">
+          <button type="button" class="btn btn-primary btn-sm" onclick="guideModal.ai()">🤖 AI 修復</button>
+        </div>
+        <div id="m-status"></div>
+      </div>
+      <div class="modal-col">
+        <label>公報截圖(對照打字)</label>
+        <div id="m-img-wrap"><img id="m-img" alt="該欄截圖"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-primary" onclick="guideModal.save()">保存</button>
+      <button type="button" class="btn btn-gray" onclick="guideModal.close()">放棄</button>
+    </div>
+  </div>
+</div>
+
 <script>
-(function(){
-  var params = new URLSearchParams(location.search);
-  var jobId = params.get('repair_job');
-  if(!jobId){ return; }
-  var toast = document.getElementById('guide-toast');
-  var url = '/guide/group/{{ gid }}';
-  function show(msg, ok){ toast.textContent = msg; toast.style.background = ok ? '#065f46' : '#7f1d1d'; toast.style.display='block'; }
-  show('🤖 修復進行中…', true);
-  var tries = 0;
-  var timer = setInterval(function(){
-    tries++;
-    fetch('/guide/repair/' + jobId + '/status').then(function(r){ return r.json(); }).then(function(j){
-      if(j.status === 'done'){ clearInterval(timer); show('✓ 修復完成:' + (j.target||''), true); setTimeout(function(){ location.href = url; }, 1200); }
-      else if(j.status === 'failed'){ clearInterval(timer); show('✗ 修復失敗:' + (j.error||''), false); }
-    }).catch(function(){});
-    if(tries > 120){ clearInterval(timer); }
-  }, 1500);
+var GUIDE_GID = {{ gid }};
+var guideModal = (function(){
+  var overlay = document.getElementById('edit-modal');
+  var cur = {};
+  function form(url, body){
+    return fetch(url, {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:body});
+  }
+  function open(btn){
+    cur = { save: btn.dataset.save, repair: btn.dataset.repair, crop: btn.dataset.crop };
+    document.getElementById('m-title').textContent = '修改 · ' + btn.dataset.title;
+    document.getElementById('m-text').value = btn.dataset.value || '';
+    document.getElementById('m-summary').value = '';
+    document.getElementById('m-status').textContent = '';
+    var img = document.getElementById('m-img'), wrap = document.getElementById('m-img-wrap');
+    if (cur.crop) { img.src = cur.crop; wrap.style.display=''; } else { wrap.style.display='none'; }
+    document.getElementById('m-ai').style.display = cur.repair ? '' : 'none';
+    overlay.style.display = 'flex';
+  }
+  function close(){ overlay.style.display = 'none'; }
+  function save(){
+    var v = encodeURIComponent(document.getElementById('m-text').value);
+    form(cur.save, 'value=' + v + '&group_id=' + GUIDE_GID).then(function(){ location.href = '/guide/group/' + GUIDE_GID; });
+  }
+  function ai(){
+    var note = encodeURIComponent(document.getElementById('m-summary').value);
+    var st = document.getElementById('m-status');
+    st.textContent = '🤖 AI 修復中…';
+    form(cur.repair, 'note=' + note + '&group_id=' + GUIDE_GID)
+      .then(function(r){ return r.json(); })
+      .then(function(j){ poll(j.job_id, st); })
+      .catch(function(){ st.textContent = '✗ 無法啟動修復'; });
+  }
+  function poll(jobId, st){
+    var n = 0;
+    var t = setInterval(function(){
+      n++;
+      fetch('/guide/repair/' + jobId + '/status').then(function(r){ return r.json(); }).then(function(j){
+        if (j.status === 'done'){ clearInterval(t); st.textContent = '✓ 完成,更新中…'; location.href = '/guide/group/' + GUIDE_GID; }
+        else if (j.status === 'failed'){ clearInterval(t); st.textContent = '✗ 修復失敗:' + (j.error||''); }
+      }).catch(function(){});
+      if (n > 120) clearInterval(t);
+    }, 1500);
+  }
+  document.addEventListener('click', function(e){
+    var b = e.target.closest('.edit-btn'); if (b) open(b);
+  });
+  return { open:open, close:close, save:save, ai:ai };
 })();
 </script>
 {% endblock %}
