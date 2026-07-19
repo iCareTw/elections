@@ -19,6 +19,14 @@ test-integration:
 cov:
 	 open htmlcov/index.html
 
+## 啟動整合網頁(身分判定 + 公報校對台,同一 app;頂部分頁切換)
+## 覆寫: WEB_PORT、WEB_SCHEMA(如 guide_demo 做隔離測試,預設用 .env)
+WEB_PORT   ?= 23088
+WEB_SCHEMA ?=
+.PHONY: web
+web:
+	$(if $(WEB_SCHEMA),POSTGRES_SCHEMA=$(WEB_SCHEMA) ,)uv run uvicorn "src.webapp.app:create_app" --factory --host 127.0.0.1 --port $(WEB_PORT)
+
 .PHONY: ui
 ui:
 	uv run python -m src.webapp.app
@@ -85,3 +93,31 @@ crawl-indigenous:
 # 	uv run python main.py --type party-list --session 9
 # 	uv run python main.py --type party-list --session 10
 # 	uv run python main.py --type party-list --session 11
+
+.PHONY: voter_guide
+voter_guide:
+	uv run python -m src.fetch_voter_guide --type president,legislator,mayor,councilor,mna
+
+# ==================== 公報校對台 (guide) ====================
+# 解析公報 PDF → 匯入 DB → 網頁校對(標記 / AI 修復 / 手動 / 圈選補照片 / 版本)
+# 可覆寫變數: GUIDE_PDF、GUIDE_YAML、GUIDE_PORT、GUIDE_SCHEMA(隔離測試用,如 guide_demo)、FORCE=1
+GUIDE_PDF    ?= _data/voter_guide/president/113年第16任總統副總統.pdf
+GUIDE_YAML   ?= _out/parsed/113.yaml
+GUIDE_PORT   ?= 23099
+GUIDE_SCHEMA ?=
+guide_env = $(if $(GUIDE_SCHEMA),POSTGRES_SCHEMA=$(GUIDE_SCHEMA) ,)
+
+## 解析一份公報 PDF,產出 YAML + 切圖 + 照片到 _out/parsed
+.PHONY: guide-parse
+guide-parse:
+	uv run python -m src.voter_guide.pipeline "$(GUIDE_PDF)" --out-dir _out/parsed
+
+## 匯入解析結果到 DB(重複載入需加 FORCE=1 強制重灌)
+.PHONY: guide-load
+guide-load:
+	$(guide_env)uv run python -m src.voter_guide.guide_load "$(GUIDE_YAML)" "$(GUIDE_PDF)" _out/parsed $(if $(FORCE),--force,)
+
+## 啟動校對台網頁,瀏覽器開 http://127.0.0.1:$(GUIDE_PORT)/guide
+.PHONY: guide-web
+guide-web:
+	$(guide_env)uv run uvicorn "src.webapp.app:create_app" --factory --host 127.0.0.1 --port $(GUIDE_PORT)
