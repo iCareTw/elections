@@ -229,3 +229,35 @@ def test_reload_without_force_raises_and_keeps_data(tmp_path):
         except Exception:
             pass
         store.close()
+
+
+def test_manual_photo_survives_force_reload(tmp_path):
+    """手動更正的照片,在 --force 重載後仍套回對應候選人。"""
+    store = _store()
+    try:
+        store.guide_delete_election(ELECTION_ID)
+        _clear_manual(store)
+        _load(store, tmp_path)                              # v1
+
+        manual = tmp_path / "manual_ticket2_president.png"
+        manual.write_bytes(b"PNG_MANUAL")
+        store.guide_upsert_manual_photo(ELECTION_ID, 2, "總統", str(manual))
+
+        _load(store, tmp_path)                              # --force 重載 → 應套回手動照片
+
+        cid = next(c["id"] for c in store.guide_candidates_of(ELECTION_ID)
+                   if c["ticket"] == 2 and c["role"] == "總統")
+        assert store.guide_candidate_pdf_ref(cid)["photo_path"] == str(manual)
+    finally:
+        try:
+            store.guide_delete_election(ELECTION_ID)
+            _clear_manual(store)
+        except Exception:
+            pass
+        store.close()
+
+
+def _clear_manual(store):
+    with store.connect() as conn:
+        store._setup_conn(conn)
+        conn.execute("DELETE FROM guide_manual_photos WHERE election_id = %s", (ELECTION_ID,))

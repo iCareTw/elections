@@ -387,3 +387,22 @@ Unique: `(guide_election_id, ticket)`。
 `guide_group_snapshot_fields`: `id`, `snapshot_id` FK, `scope`(`總統`/`副總統`/`政見`), `field_name`, `value`, `grade`, `source_crop_path`, `flagged`, `flag_note`。Unique `(snapshot_id, scope, field_name)`。
 
 註:`guide_candidates`(移除 party/ticket、掛 `guide_group_id`)與 `guide_repair_jobs`(`guide_candidate_id` 可 NULL、新增 `guide_group_id`)的最終定義見前面各該節。
+
+---
+
+## 手動照片保留(guide_manual_photos)
+
+手動「圈選補照片」的結果獨立保存,重載(`--force`)與重跑解析都不會遺失。
+
+| field | type | description |
+|-------|------|-------------|
+| `id` | SERIAL PK | |
+| `election_id` | TEXT | 公報選舉識別碼(穩定鍵,**刻意不設 FK**,故 `--force` 刪選舉時本表不被 cascade 清掉) |
+| `ticket` | INTEGER | 號次 |
+| `role` | VARCHAR(16) | 角色(總統/副總統) |
+| `path` | TEXT | 手動照片檔路徑(存於 `_out/guide_manual/`,解析器不會覆蓋) |
+| `updated_at` | TIMESTAMPTZ | 更新時間 |
+
+Unique: `(election_id, ticket, role)`。
+
+機制:圈選補照片時存到 `_out/guide_manual/{election_id}/ticket{n}_{role}.png` 並 upsert 本表;`load` 完成後以 `guide_apply_manual_photos(election_id)` 依穩定鍵把仍存在的手動照片套回對應候選人的 `guide_candidates.photo_path`。

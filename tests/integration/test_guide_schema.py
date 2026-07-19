@@ -7,6 +7,8 @@ GUIDE_TABLES = [
     # iteration 2 組結構
     "guide_groups", "guide_group_platform",
     "guide_group_snapshots", "guide_group_snapshot_fields",
+    # 手動照片保留機制
+    "guide_manual_photos",
 ]
 
 # iteration 2 汰換的每人快照表

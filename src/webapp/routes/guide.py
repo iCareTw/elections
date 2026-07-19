@@ -278,21 +278,15 @@ async def crop_submit(request: Request, candidate_id: int,
                       x1: float = Form(...), y1: float = Form(...)):
     store = request.app.state.store
     ref = store.guide_candidate_pdf_ref(candidate_id)
-    if ref is None or ref["source_page"] is None or not ref["source_pdf_path"]:
+    ident = store.guide_candidate_identity(candidate_id)
+    if ref is None or ident is None or ref["source_page"] is None or not ref["source_pdf_path"]:
         raise HTTPException(status_code=400, detail="無來源 PDF/頁碼,無法圈選補照片")
     root = Path(request.app.state.root)
-    out_dir = (root / "_out").resolve()
-    # 就地覆蓋該候選人現有的照片檔(語意檔名);無現存照片才另存
-    stored = ref.get("photo_path")
-    dest = None
-    if stored:
-        p = Path(stored)
-        cand = (p if p.is_absolute() else root / p).resolve()
-        if _within(cand, out_dir):
-            dest = cand
-    if dest is None:
-        dest = root / "_out" / "parsed" / "manual_photos" / f"cand_{candidate_id}.png"
+    # 存到解析器不會碰的獨立目錄,並以穩定鍵(選舉+號次+角色)登記 → 重載/重解析都保留
+    dest = (root / "_out" / "guide_manual" / ident["election_id"]
+            / f"ticket{ident['ticket']}_{ident['role']}.png").resolve()
     crop_photo_frac(ref["source_pdf_path"], ref["source_page"], (x0, y0, x1, y1), dest)
+    store.guide_upsert_manual_photo(ident["election_id"], ident["ticket"], ident["role"], str(dest))
     store.guide_set_photo_path(candidate_id, str(dest))
     gid = store.guide_candidate_group_id(candidate_id)
     return RedirectResponse(_group_url(gid), status_code=303)

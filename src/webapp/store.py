@@ -155,7 +155,8 @@ class Store:
         # 套用基線 schema (001) 與後續「schema-agnostic 且冪等」的 migration.
         # 002 寫死 elections schema, 屬正式 DB 專用, 不在此套用.
         ddl_files = ("001_init.sql", "004_rename_birthday_to_birthyear.sql",
-                     "005_voter_guide.sql", "006_voter_guide_groups.sql")
+                     "005_voter_guide.sql", "006_voter_guide_groups.sql",
+                     "007_guide_manual_photos.sql")
         with self.connect() as conn:
             conn.execute(
                 sql.SQL("CREATE SCHEMA IF NOT EXISTS {}").format(sql.Identifier(self.config.schema))
@@ -1909,6 +1910,61 @@ class Store:
                 "UPDATE guide_candidates SET photo_path = %s WHERE id = %s",
                 (path, candidate_id),
             )
+
+    def guide_candidate_identity(self, candidate_id: int) -> dict[str, Any] | None:
+        """candidate_id → {election_id, ticket, role}(手動照片的穩定鍵)。"""
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                """
+                SELECT g.guide_election_id AS election_id, g.ticket, gc.role
+                FROM guide_candidates gc JOIN guide_groups g ON g.id = gc.guide_group_id
+                WHERE gc.id = %s
+                """,
+                (candidate_id,),
+            ).fetchone()
+        return dict(row) if row else None
+
+    def guide_upsert_manual_photo(self, election_id: str, ticket: int, role: str,
+                                  path: str) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                """
+                INSERT INTO guide_manual_photos(election_id, ticket, role, path)
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (election_id, ticket, role) DO UPDATE SET
+                    path = EXCLUDED.path, updated_at = current_timestamp
+                """,
+                (election_id, ticket, role, path),
+            )
+
+    def guide_apply_manual_photos(self, election_id: str) -> int:
+        """把已登記的手動照片(檔案存在者)套回對應候選人的 photo_path。回傳套用筆數。
+
+        供 load 完成後呼叫,確保重載/重解析後手動更正不遺失。
+        """
+        applied = 0
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            rows = conn.execute(
+                "SELECT ticket, role, path FROM guide_manual_photos WHERE election_id = %s",
+                (election_id,),
+            ).fetchall()
+            for r in rows:
+                if not Path(r["path"]).exists():
+                    continue
+                conn.execute(
+                    """
+                    UPDATE guide_candidates gc SET photo_path = %s
+                    FROM guide_groups g
+                    WHERE gc.guide_group_id = g.id AND g.guide_election_id = %s
+                      AND g.ticket = %s AND gc.role = %s
+                    """,
+                    (r["path"], election_id, r["ticket"], r["role"]),
+                )
+                applied += 1
+        return applied
 
     def guide_group_locate(self, group_id: int) -> dict[str, Any] | None:
         """group_id → {election_id, ticket}(供 web 由 group_id 導到組視圖)。"""

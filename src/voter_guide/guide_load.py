@@ -137,6 +137,9 @@ def load_guide(
                 source_crop_path=plat["source_crop_path"],
                 flagged=plat["flagged"], flag_note=plat["flag_note"])
 
+    # 套回手動更正的照片(獨立保存,重載/重解析都保留)
+    store.guide_apply_manual_photos(election_id)
+
     return election_id
 
 
