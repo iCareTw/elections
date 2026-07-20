@@ -1,0 +1,83 @@
+{% extends "guide/_base.html" %}
+
+{% block main_col %}
+<style>
+.imp-wrap { max-width: 720px; }
+.imp-note { color:#6b7280; font-size:13px; margin:4px 0 16px; }
+.pdf-list { border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; background:#fff; }
+.pdf-item { display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid #f0f0f0; cursor:pointer; }
+.pdf-item:last-child { border-bottom:0; }
+.pdf-item:hover { background:#f9fafb; }
+.pdf-item input { margin:0; }
+.pdf-name { flex:1; font-weight:600; }
+.pdf-type { color:#9ca3af; font-size:12px; }
+.imp-bar { margin:16px 0; display:flex; gap:8px; align-items:center; }
+.prog { display:none; margin-top:16px; border:1px solid #e5e7eb; border-radius:10px; padding:14px; background:#fff; }
+.prog .msg { font-size:14px; font-weight:600; }
+.prog .track { height:8px; background:#eef2ff; border-radius:6px; margin-top:10px; overflow:hidden; }
+.prog .fill { height:100%; width:0; background:#4f46e5; transition:width .3s; }
+.prog .done { color:#065f46; } .prog .fail { color:#b91c1c; }
+</style>
+
+<div class="imp-wrap">
+  <h2 style="margin:0 0 2px">匯入公報</h2>
+  <div class="imp-note">選一份公報 PDF,系統會用本機視覺模型逐欄判讀再匯入(一份約需數分鐘,期間請保持本機模型執行)。</div>
+
+  {% if pdfs %}
+  <div class="pdf-list">
+    {% for f in pdfs %}
+    <label class="pdf-item">
+      <input type="radio" name="pdf" value="{{ f.path }}" {% if loop.first %}checked{% endif %}>
+      <span class="pdf-name">{{ f.name }}</span>
+      <span class="pdf-type">{{ f.type }}</span>
+    </label>
+    {% endfor %}
+  </div>
+  <div class="imp-bar">
+    <button class="btn btn-primary" id="imp-btn" onclick="startImport()">開始匯入</button>
+  </div>
+  {% else %}
+  <div class="imp-note">在 <code>_data/voter_guide/president/</code> 下找不到公報 PDF。</div>
+  {% endif %}
+
+  <div class="prog" id="prog">
+    <div class="msg" id="prog-msg">準備中…</div>
+    <div class="track"><div class="fill" id="prog-fill"></div></div>
+    <div id="prog-link" style="margin-top:12px"></div>
+  </div>
+</div>
+
+<script>
+function startImport(){
+  var sel = document.querySelector('input[name="pdf"]:checked');
+  if(!sel){ return; }
+  var btn = document.getElementById('imp-btn');
+  btn.disabled = true; btn.textContent = '匯入中…';
+  var prog = document.getElementById('prog'); prog.style.display = 'block';
+  var msg = document.getElementById('prog-msg'), fill = document.getElementById('prog-fill'), link = document.getElementById('prog-link');
+  msg.textContent = '開始解析…'; msg.className = 'msg';
+  fetch('/guide/import', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:'pdf=' + encodeURIComponent(sel.value)})
+    .then(function(r){ return r.json(); })
+    .then(function(j){ poll(j.job_id); })
+    .catch(function(){ msg.textContent = '✗ 無法啟動匯入'; msg.className = 'msg fail'; btn.disabled=false; btn.textContent='開始匯入'; });
+
+  function poll(jobId){
+    var t = setInterval(function(){
+      fetch('/guide/import/status/' + jobId).then(function(r){ return r.json(); }).then(function(j){
+        msg.textContent = j.message || '處理中…';
+        if(j.total > 0){ fill.style.width = Math.round(j.done / j.total * 100) + '%'; }
+        if(j.status === 'done'){
+          clearInterval(t); fill.style.width = '100%';
+          msg.textContent = '✓ 匯入完成'; msg.className = 'msg done';
+          link.innerHTML = '<a class="btn btn-primary" href="/guide/election/' + j.election_id + '">前往校對台檢視</a>';
+        } else if(j.status === 'failed'){
+          clearInterval(t); msg.textContent = '✗ 匯入失敗:' + (j.error || '');
+          msg.className = 'msg fail'; btn.disabled=false; btn.textContent='重試';
+        }
+      }).catch(function(){});
+    }, 1500);
+  }
+}
+</script>
+{% endblock %}

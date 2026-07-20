@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import io
+import itertools
 import logging
+import threading
 from pathlib import Path
 
 from fastapi import APIRouter, BackgroundTasks, Form, HTTPException, Request
@@ -12,6 +14,10 @@ from src.voter_guide.guide_repair import run_repair_job
 
 router = APIRouter(prefix="/guide")
 logger = logging.getLogger(__name__)
+
+# 匯入工作(單一程序內、記憶體註冊表)
+_IMPORT_JOBS: dict[int, dict] = {}
+_import_counter = itertools.count(1)
 
 
 def _group_url(group_id: int) -> str:
@@ -38,6 +44,67 @@ async def guide_election(request: Request, election_id: str):
         "candidates": store.guide_candidates_of(election_id),
         "selected_group_id": None,
     })
+
+
+# ---------------------------------------------------------------------------
+# 匯入公報 PDF(選現有檔 → 背景解析 + 載入)
+# ---------------------------------------------------------------------------
+
+def _list_pdfs(root: Path) -> list[dict]:
+    """列出 _data/voter_guide/ 下可匯入的公報 PDF(目前解析器支援總統)。"""
+    base = root / "_data" / "voter_guide"
+    out = []
+    for pdf in sorted(base.glob("president/*.pdf")):
+        out.append({"path": str(pdf.relative_to(root)), "name": pdf.stem, "type": "president"})
+    return out
+
+
+@router.get("/import")
+async def import_page(request: Request):
+    return request.app.state.templates.TemplateResponse(request, "guide/import.html", {
+        "tree": request.app.state.store.guide_tree(),
+        "selected_election_id": None,
+        "candidates": None,
+        "selected_group_id": None,
+        "pdfs": _list_pdfs(Path(request.app.state.root)),
+    })
+
+
+@router.post("/import")
+async def import_start(request: Request, pdf: str = Form(...)):
+    root = Path(request.app.state.root)
+    base = (root / "_data" / "voter_guide").resolve()
+    p = Path(pdf)
+    p = (p if p.is_absolute() else root / p).resolve()
+    if not _within(p, base) or not p.is_file():
+        raise HTTPException(status_code=400, detail="PDF 不在允許的公報目錄")
+
+    job_id = next(_import_counter)
+    _IMPORT_JOBS[job_id] = {"status": "running", "message": "排隊中",
+                            "done": 0, "total": 0, "election_id": None, "error": None}
+    store = request.app.state.store
+
+    def _run():
+        def prog(msg, done, total):
+            _IMPORT_JOBS[job_id].update(message=msg, done=done, total=total)
+        try:
+            from src.voter_guide.guide_import import import_pdf
+            eid = import_pdf(store, str(p), progress=prog)
+            _IMPORT_JOBS[job_id].update(status="done", message="完成", election_id=eid)
+        except Exception as exc:  # noqa: BLE001 - 任何失敗都回報給前端
+            logger.error("import failed: %s", exc, exc_info=True)
+            _IMPORT_JOBS[job_id].update(status="failed", error=str(exc))
+
+    threading.Thread(target=_run, daemon=True).start()
+    return JSONResponse({"job_id": job_id})
+
+
+@router.get("/import/status/{job_id}")
+async def import_status(request: Request, job_id: int):
+    job = _IMPORT_JOBS.get(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="job not found")
+    return JSONResponse(job)
 
 
 @router.get("/group/{group_id}")

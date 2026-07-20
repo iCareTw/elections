@@ -166,14 +166,18 @@ def _pdf_session_year(pdf_path: str) -> tuple[int, int]:
     return 0, 0
 
 
-def parse_pdf(pdf_path: str, tag: str, out_dir: Path, use_vision: bool):
+def parse_pdf(pdf_path: str, tag: str, out_dir: Path, use_vision: bool, progress=None):
     session, minguo_year = _pdf_session_year(pdf_path)
     crop_type = "president"
 
     cache = VisionCache(out_dir / "vision_cache" / f"{tag}.json")
 
+    groups = list(geo.parse(pdf_path))
+    total = len(groups)
     result = []
-    for g in geo.parse(pdf_path):
+    for gi, g in enumerate(groups):
+        if progress:
+            progress(gi, total, f"解析第{g.ticket}組")
         entry: dict = {"號次": g.ticket}
         verify_block: dict = {}
         party, party_rep = _verify_party(pdf_path, g, cache=cache,

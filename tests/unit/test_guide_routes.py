@@ -184,3 +184,64 @@ def test_crop_route_path_safety(tmp_path):
         assert client.get("/guide/crop", params={"path": "../../etc/passwd"}).status_code == 403
     finally:
         _teardown(store)
+
+
+# ---------------------------------------------------------------------------
+# 匯入公報 PDF
+# ---------------------------------------------------------------------------
+
+def _mk_pdf(tmp_path, name="113年第16任總統副總統.pdf"):
+    p = tmp_path / "_data" / "voter_guide" / "president" / name
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_bytes(b"%PDF-1.4 fake")
+    return p
+
+
+def test_import_page_lists_pdfs(tmp_path):
+    client, store = _client_with_data(tmp_path)
+    try:
+        _mk_pdf(tmp_path)
+        r = client.get("/guide/import")
+        assert r.status_code == 200
+        assert "匯入公報" in r.text and "113年第16任" in r.text
+    finally:
+        _teardown(store)
+
+
+def test_import_rejects_outside_path(tmp_path):
+    client, store = _client_with_data(tmp_path)
+    try:
+        r = client.post("/guide/import", data={"pdf": "/etc/passwd"}, follow_redirects=False)
+        assert r.status_code == 400
+    finally:
+        _teardown(store)
+
+
+def test_import_start_and_status(tmp_path, monkeypatch):
+    import time
+    import src.voter_guide.guide_import as gi
+
+    client, store = _client_with_data(tmp_path)
+    try:
+        _mk_pdf(tmp_path, "x.pdf")
+
+        def fake_import(store, p, progress=None):
+            if progress:
+                progress("完成", 1, 1)
+            return "president_2024_16"
+        monkeypatch.setattr(gi, "import_pdf", fake_import)
+
+        r = client.post("/guide/import",
+                        data={"pdf": "_data/voter_guide/president/x.pdf"})
+        assert r.status_code == 200
+        job_id = r.json()["job_id"]
+
+        s = {"status": "running"}
+        for _ in range(60):
+            s = client.get(f"/guide/import/status/{job_id}").json()
+            if s["status"] != "running":
+                break
+            time.sleep(0.05)
+        assert s["status"] == "done" and s["election_id"] == "president_2024_16"
+    finally:
+        _teardown(store)
