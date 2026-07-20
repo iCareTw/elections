@@ -35,7 +35,6 @@ def test_run_repair_job_updates_field(tmp_path):
         cid = _candidate_id(store, "蔡英文")           # 該候選人各欄皆有切圖
         field = store.guide_get_field(cid, "學歷")
         assert field["source_crop_path"] is not None
-        store.guide_flag_field(field["id"], "學歷讀錯了")  # 先標記,驗證不自動解除
 
         job_id = store.guide_create_repair_job(cid, "學歷", "請重讀學歷欄")
 
@@ -58,7 +57,6 @@ def test_run_repair_job_updates_field(tmp_path):
 
         assert updated["value"] == "法學博士(修復後)"
         assert f["value"] == "法學博士(修復後)"
-        assert f["flagged"] is True                     # 標記不自動解除
         assert job["status"] == "done"
         assert job["result_value"] == "法學博士(修復後)"
         assert job["before_value"] == "法學博士"

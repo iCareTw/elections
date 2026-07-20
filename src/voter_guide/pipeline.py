@@ -140,7 +140,9 @@ def _extract_platform(pdf_path, group, *, cache, use_vision,
                               crop_save=crop_path, use_vision=use_vision)
             res = verify.verify_field("政見", cell.text, vis)
             rep = {k: v for k, v in res.items() if k != "value"}
-            return res["value"], rep
+            # 政見以 model 的 markdown 原文為準(verify 取值會清掉換行/空白 → 排版糊掉)
+            value = vis if vis else res["value"]
+            return value, rep
     return None, {"grade": "不適用"}
 
 

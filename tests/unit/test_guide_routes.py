@@ -95,13 +95,10 @@ def test_field_manual_edit_and_uncommitted_banner(tmp_path):
         _teardown(store)
 
 
-def test_platform_flag_value_and_commit(tmp_path):
+def test_platform_value_and_commit(tmp_path):
     client, store = _client_with_data(tmp_path)
     try:
         _, gid, _, _ = _ctx(store)
-        # 標記政見
-        assert client.post(f"/guide/group/{gid}/platform/flag",
-                           data={"note": "政見錯"}, follow_redirects=False).status_code == 303
         # 手動填政見
         assert client.post(f"/guide/group/{gid}/platform/value",
                            data={"value": "新政見"}, follow_redirects=False).status_code == 303

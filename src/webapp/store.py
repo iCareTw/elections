@@ -47,7 +47,8 @@ _OPERATION_LABELS = {
 
 
 # 紅點:AI 判讀文字與截圖不一致(仍為解析原值、尚未人工/AI 編輯過)時提示複核。
-_GUIDE_CLEAN_GRADES = {"完全一致", "幾乎一致", "不適用", "EXACT", "NEAR"}
+# 乾淨分級對齊 verify.py 的 OK 集合(含「看圖存疑」= 幾何為準欄位看圖不同但已採幾何值,不標紅)。
+_GUIDE_CLEAN_GRADES = {"完全一致", "幾乎一致", "看圖存疑", "不適用"}
 
 
 def _guide_has_concern(grade, update_source) -> bool:
@@ -1238,16 +1239,8 @@ class Store:
                     gc.role,
                     g.party,
                     gc.guide_group_id,
-                    gc.photo_flagged,
                     gc.order_id,
-                    gf_name.value AS name,
-                    (gc.photo_flagged OR COALESCE(
-                        (SELECT bool_or(gf.flagged) FROM guide_fields gf WHERE gf.guide_candidate_id = gc.id),
-                        false
-                    ) OR COALESCE(
-                        (SELECT gp.flagged FROM guide_group_platform gp WHERE gp.guide_group_id = g.id),
-                        false
-                    )) AS any_flag
+                    gf_name.value AS name
                 FROM guide_candidates gc
                 JOIN guide_groups g ON g.id = gc.guide_group_id
                 LEFT JOIN guide_fields gf_name
@@ -1672,12 +1665,13 @@ class Store:
                     (latest["id"],),
                 ).fetchall()
                 for sf in sfields:
+                    # 還原時把 update_source 一併回到 'parse',紅點(concern)才會依還原後的 grade 正確重算
                     if sf["scope"] == "政見":
                         conn.execute(
                             """
                             UPDATE guide_group_platform
                             SET value=%s, grade=%s, source_crop_path=%s, flagged=%s,
-                                flag_note=%s, updated_at=current_timestamp
+                                flag_note=%s, update_source='parse', updated_at=current_timestamp
                             WHERE guide_group_id = %s
                             """,
                             (sf["value"], sf["grade"], sf["source_crop_path"],
@@ -1688,7 +1682,7 @@ class Store:
                             """
                             UPDATE guide_fields gf
                             SET value=%s, grade=%s, source_crop_path=%s, flagged=%s,
-                                flag_note=%s, updated_at=current_timestamp
+                                flag_note=%s, update_source='parse', updated_at=current_timestamp
                             FROM guide_candidates gc
                             WHERE gf.guide_candidate_id = gc.id
                               AND gc.guide_group_id = %s AND gc.role = %s
@@ -1710,39 +1704,7 @@ class Store:
                 (value, field_id),
             )
 
-    def guide_flag_field(self, field_id: int, note: str) -> None:
-        with self.connect() as conn:
-            self._setup_conn(conn)
-            conn.execute(
-                "UPDATE guide_fields SET flagged = true, flag_note = %s WHERE id = %s",
-                (note, field_id),
-            )
-
-    def guide_unflag_field(self, field_id: int) -> None:
-        with self.connect() as conn:
-            self._setup_conn(conn)
-            conn.execute(
-                "UPDATE guide_fields SET flagged = false, flag_note = NULL WHERE id = %s",
-                (field_id,),
-            )
-
-    # --- 組共用政見:標記 / 手動 / 修復目標 ---
-
-    def guide_flag_platform(self, group_id: int, note: str) -> None:
-        with self.connect() as conn:
-            self._setup_conn(conn)
-            conn.execute(
-                "UPDATE guide_group_platform SET flagged = true, flag_note = %s WHERE guide_group_id = %s",
-                (note, group_id),
-            )
-
-    def guide_unflag_platform(self, group_id: int) -> None:
-        with self.connect() as conn:
-            self._setup_conn(conn)
-            conn.execute(
-                "UPDATE guide_group_platform SET flagged = false, flag_note = NULL WHERE guide_group_id = %s",
-                (group_id,),
-            )
+    # --- 組共用政見:手動 / 修復目標 ---
 
     def guide_set_platform_value(self, group_id: int, value: str) -> None:
         with self.connect() as conn:
@@ -1775,22 +1737,6 @@ class Store:
                 WHERE guide_group_id = %s
                 """,
                 (value, group_id),
-            )
-
-    def guide_flag_photo(self, candidate_id: int, note: str) -> None:
-        with self.connect() as conn:
-            self._setup_conn(conn)
-            conn.execute(
-                "UPDATE guide_candidates SET photo_flagged = true, photo_note = %s WHERE id = %s",
-                (note, candidate_id),
-            )
-
-    def guide_unflag_photo(self, candidate_id: int) -> None:
-        with self.connect() as conn:
-            self._setup_conn(conn)
-            conn.execute(
-                "UPDATE guide_candidates SET photo_flagged = false, photo_note = NULL WHERE id = %s",
-                (candidate_id,),
             )
 
     # --- 文字欄 AI 修復工作 (Phase 6) ---

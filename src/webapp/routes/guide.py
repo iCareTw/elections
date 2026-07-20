@@ -14,11 +14,8 @@ router = APIRouter(prefix="/guide")
 logger = logging.getLogger(__name__)
 
 
-def _group_url(group_id: int, *, repair_job: int | None = None) -> str:
-    url = f"/guide/group/{group_id}"
-    if repair_job is not None:
-        url += f"?repair_job={repair_job}"
-    return url
+def _group_url(group_id: int) -> str:
+    return f"/guide/group/{group_id}"
 
 
 @router.get("")
@@ -152,19 +149,6 @@ async def serve_crop(request: Request, path: str):
 # 文字欄動作(候選人層)— redirect 回組視圖
 # ---------------------------------------------------------------------------
 
-@router.post("/field/{field_id}/flag")
-async def flag_field(request: Request, field_id: int,
-                     note: str = Form(""), group_id: int = Form(...)):
-    request.app.state.store.guide_flag_field(field_id, note)
-    return RedirectResponse(_group_url(group_id), status_code=303)
-
-
-@router.post("/field/{field_id}/unflag")
-async def unflag_field(request: Request, field_id: int, group_id: int = Form(...)):
-    request.app.state.store.guide_unflag_field(field_id)
-    return RedirectResponse(_group_url(group_id), status_code=303)
-
-
 @router.post("/field/{field_id}/value")
 async def set_field_value(request: Request, field_id: int,
                           value: str = Form(...), group_id: int = Form(...)):
@@ -189,18 +173,6 @@ async def repair_field(request: Request, field_id: int, background_tasks: Backgr
 # ---------------------------------------------------------------------------
 # 政見動作(組層級)
 # ---------------------------------------------------------------------------
-
-@router.post("/group/{group_id}/platform/flag")
-async def flag_platform(request: Request, group_id: int, note: str = Form("")):
-    request.app.state.store.guide_flag_platform(group_id, note)
-    return RedirectResponse(_group_url(group_id), status_code=303)
-
-
-@router.post("/group/{group_id}/platform/unflag")
-async def unflag_platform(request: Request, group_id: int):
-    request.app.state.store.guide_unflag_platform(group_id)
-    return RedirectResponse(_group_url(group_id), status_code=303)
-
 
 @router.post("/group/{group_id}/platform/value")
 async def set_platform_value(request: Request, group_id: int, value: str = Form(...)):
@@ -234,21 +206,8 @@ async def repair_status(request: Request, job_id: int):
 
 
 # ---------------------------------------------------------------------------
-# 照片動作 + 手動圈選補正(候選人層)
+# 手動圈選補正照片(候選人層)
 # ---------------------------------------------------------------------------
-
-@router.post("/candidate/{candidate_id}/photo/flag")
-async def flag_photo(request: Request, candidate_id: int,
-                     note: str = Form(""), group_id: int = Form(...)):
-    request.app.state.store.guide_flag_photo(candidate_id, note)
-    return RedirectResponse(_group_url(group_id), status_code=303)
-
-
-@router.post("/candidate/{candidate_id}/photo/unflag")
-async def unflag_photo(request: Request, candidate_id: int, group_id: int = Form(...)):
-    request.app.state.store.guide_unflag_photo(candidate_id)
-    return RedirectResponse(_group_url(group_id), status_code=303)
-
 
 @router.get("/candidate/{candidate_id}/crop")
 async def crop_page(request: Request, candidate_id: int):

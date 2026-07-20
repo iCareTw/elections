@@ -76,28 +76,6 @@ def test_group_view_none_when_absent(tmp_path):
         store.close()
 
 
-def test_flag_field_and_platform_cause_uncommitted(tmp_path):
-    store = _store()
-    try:
-        v = _view(store, tmp_path, 1)
-        fid = _pres_field(v, "學歷")["id"]
-        gid = v["group"]["id"]
-
-        store.guide_flag_field(fid, "學歷有問題")
-        assert store.guide_group_view(ELECTION_ID, 1)["has_uncommitted"] is True
-
-        store.guide_unflag_field(fid)
-        assert store.guide_group_view(ELECTION_ID, 1)["has_uncommitted"] is False
-
-        store.guide_flag_platform(gid, "政見讀錯")
-        v2 = store.guide_group_view(ELECTION_ID, 1)
-        assert v2["has_uncommitted"] is True
-        assert v2["platform"]["flagged"] is True
-    finally:
-        store.guide_delete_election(ELECTION_ID)
-        store.close()
-
-
 def test_manual_values(tmp_path):
     store = _store()
     try:
@@ -122,23 +100,9 @@ def test_has_uncommitted_excludes_photo(tmp_path):
     try:
         v = _view(store, tmp_path, 1)
         cand_id = v["president"]["candidate"]["id"]
-        store.guide_flag_photo(cand_id, "照片錯")
+        store.guide_set_photo_path(cand_id, "/tmp/whatever.png")
         # 照片不參與版本狀態
         assert store.guide_group_view(ELECTION_ID, 1)["has_uncommitted"] is False
-    finally:
-        store.guide_delete_election(ELECTION_ID)
-        store.close()
-
-
-def test_any_flag_reflects_platform(tmp_path):
-    store = _store()
-    try:
-        v = _view(store, tmp_path, 1)
-        gid = v["group"]["id"]
-        store.guide_flag_platform(gid, "政見")
-        cands = store.guide_candidates_of(ELECTION_ID)
-        grp1 = [c for c in cands if c["ticket"] == 1]
-        assert all(c["any_flag"] for c in grp1)   # 政見標記 → 整組亮
     finally:
         store.guide_delete_election(ELECTION_ID)
         store.close()
