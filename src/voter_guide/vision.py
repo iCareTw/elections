@@ -10,6 +10,7 @@ import io
 import json
 import os
 import urllib.request
+from functools import lru_cache
 from pathlib import Path
 
 import pypdfium2 as pdfium
@@ -26,18 +27,22 @@ def _b64(img) -> str:
     return base64.b64encode(buf.getvalue()).decode()
 
 
+@lru_cache(maxsize=8)
+def _render_page(pdf_path: str, page_idx: int, scale: float):
+    """整頁渲染成 PIL 圖,以 (pdf, 頁, scale) 快取——同一頁多個欄位切圖只渲染一次。"""
+    pdoc = pdfium.PdfDocument(pdf_path)
+    try:
+        return pdoc[page_idx].render(scale=scale).to_pil()
+    finally:
+        pdoc.close()
+
+
 def crop_cell(pdf_path: str | Path, page_idx: int,
               bbox: tuple[float, float, float, float], scale: float = RENDER_SCALE):
-    pdoc = pdfium.PdfDocument(str(pdf_path))
-    try:
-        pil = pdoc[page_idx].render(scale=scale).to_pil()
-    finally:
-        pass
+    pil = _render_page(str(pdf_path), page_idx, float(scale))
     x0, top, x1, bottom = bbox
-    crop = pil.crop((max(0, int(x0 * scale) - PAD), max(0, int(top * scale) - PAD),
+    return pil.crop((max(0, int(x0 * scale) - PAD), max(0, int(top * scale) - PAD),
                      int(x1 * scale) + PAD, int(bottom * scale) + PAD))
-    pdoc.close()
-    return crop
 
 
 def _ask(img, field_name: str, timeout: int, note: str | None = None) -> str:

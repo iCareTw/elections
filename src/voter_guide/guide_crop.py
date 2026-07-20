@@ -43,9 +43,6 @@ def crop_photo_frac(pdf_path, page: int, frac_bbox, dest) -> str:
 
 
 def render_page(pdf_path, page: int, scale: float = 2.0):
-    """整頁渲染成 PIL 圖(供 web 圈選頁顯示)。"""
-    pdoc = pdfium.PdfDocument(str(pdf_path))
-    try:
-        return pdoc[page].render(scale=scale).to_pil()
-    finally:
-        pdoc.close()
+    """整頁渲染成 PIL 圖(供 web 圈選頁顯示)。共用 vision 的頁面渲染快取。"""
+    from src.voter_guide.vision import _render_page
+    return _render_page(str(pdf_path), page, float(scale))

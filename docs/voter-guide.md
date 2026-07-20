@@ -8,8 +8,7 @@
 # 解析 PDF → 每屆一份 YAML（含每欄信心標記）與相片
 uv run python -m src.voter_guide.pipeline <pdf...> --out-dir <dir>
 
-# 依輸出產生可用瀏覽器檢視的報告
-uv run python -m src.voter_guide.report <dir>      # → <dir>/report.html
+# 匯入 DB 後於網頁檢視/校對(公報校對台):make web → /guide
 ```
 
 ## 運作方式
@@ -21,4 +20,4 @@ uv run python -m src.voter_guide.report <dir>      # → <dir>/report.html
 
 ## 模組
 
-`src/voter_guide/`：`geometry`（切分）、`vision`（盲讀）、`verify`（信心）、`pipeline`（串接）、`report`（檢視頁）。
+`src/voter_guide/`：`geometry`（切分）、`vision`（盲讀）、`verify`（信心）、`pipeline`（串接）、`guide_load`（匯入 DB）、`guide_repair`（AI 修復）、`guide_crop`（照片裁切）。網頁檢視/校對在 `src/webapp/routes/guide.py` 與 `templates/guide/`。
