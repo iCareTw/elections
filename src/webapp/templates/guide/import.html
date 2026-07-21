@@ -57,11 +57,18 @@ function startImport(){
   var prog = document.getElementById('prog'); prog.style.display = 'block';
   var msg = document.getElementById('prog-msg'), fill = document.getElementById('prog-fill'), link = document.getElementById('prog-link');
   msg.textContent = '開始解析…'; msg.className = 'msg';
+  function failed(reason){
+    msg.textContent = '✗ 無法啟動匯入:' + reason; msg.className = 'msg fail';
+    btn.disabled = false; btn.textContent = '開始匯入';
+  }
   fetch('/guide/import', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
       body:'pdf=' + encodeURIComponent(sel.value)})
-    .then(function(r){ return r.json(); })
+    .then(function(r){
+      if(!r.ok){ return r.text().then(function(t){ throw new Error('伺服器回應 ' + r.status + ' ' + t.slice(0,200)); }); }
+      return r.json();
+    })
     .then(function(j){ poll(j.job_id); })
-    .catch(function(){ msg.textContent = '✗ 無法啟動匯入'; msg.className = 'msg fail'; btn.disabled=false; btn.textContent='開始匯入'; });
+    .catch(function(e){ failed((e && e.message) || '伺服器沒有回應(請確認 make web 仍在執行)'); });
 
   function poll(jobId){
     var t = setInterval(function(){
