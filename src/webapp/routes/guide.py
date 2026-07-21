@@ -51,10 +51,10 @@ async def guide_election(request: Request, election_id: str):
 # ---------------------------------------------------------------------------
 
 def _list_pdfs(root: Path) -> list[dict]:
-    """列出 _data/voter_guide/ 下可匯入的公報 PDF(目前解析器支援總統)。"""
+    """列出 _data/voter_guide/ 下可匯入的公報 PDF(目前解析器支援總統)。新到舊排序。"""
     base = root / "_data" / "voter_guide"
     out = []
-    for pdf in sorted(base.glob("president/*.pdf")):
+    for pdf in sorted(base.glob("president/*.pdf"), reverse=True):
         out.append({"path": str(pdf.relative_to(root)), "name": pdf.stem, "type": "president"})
     return out
 
