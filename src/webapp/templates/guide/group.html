@@ -148,7 +148,7 @@
     <div class="modal-head"><span id="m-title">修改</span><button type="button" onclick="guideModal.close()">✕</button></div>
     <div class="modal-body">
       <div class="modal-col">
-        <label>內容(可直接編輯)</label>
+        <label>內容(可直接編輯 · Enter 保存 · Shift+Enter 換行 · Esc 放棄)</label>
         <textarea id="m-text"></textarea>
         <div class="modal-ai" id="m-ai">
           <input id="m-summary" placeholder="給 AI 的修復摘要(說明哪裡要改)">
@@ -186,7 +186,10 @@ var guideModal = (function(){
     if (cur.crop) { img.src = cur.crop; wrap.style.display=''; } else { wrap.style.display='none'; }
     document.getElementById('m-ai').style.display = cur.repair ? '' : 'none';
     overlay.style.display = 'flex';
+    var ta = document.getElementById('m-text');
+    ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
   }
+  function isOpen(){ return overlay.style.display === 'flex'; }
   function close(){ overlay.style.display = 'none'; }
   function save(){
     var v = encodeURIComponent(document.getElementById('m-text').value);
@@ -214,6 +217,16 @@ var guideModal = (function(){
   }
   document.addEventListener('click', function(e){
     var b = e.target.closest('.edit-btn'); if (b) open(b);
+  });
+  // 快捷鍵:Esc 放棄、Enter 保存(文字區 Shift+Enter 換行)
+  document.addEventListener('keydown', function(e){
+    if (!isOpen()) return;
+    if (e.key === 'Escape') { e.preventDefault(); close(); }
+    else if (e.key === 'Enter') {
+      if (e.target.id === 'm-text' && e.shiftKey) return;   // 多行欄位換行
+      if (e.isComposing) return;                            // 中文輸入法組字中不觸發
+      e.preventDefault(); save();
+    }
   });
   return { open:open, close:close, save:save, ai:ai };
 })();
