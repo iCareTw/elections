@@ -107,11 +107,11 @@
     <div style="display:flex;align-items:center;gap:14px">
       <a class="btn btn-gray btn-sm" href="/guide/election/{{ group.election_id }}/pdf" target="_blank">📄 開啟公報 PDF</a>
       <div class="vernav">
-        {% if version_no > min_version %}<a class="arw" href="/guide/group/{{ gid }}?version={{ version_no - 1 }}">◀</a>
+        {% if version_no > min_version %}<a class="arw" id="ver-prev" href="/guide/group/{{ gid }}?version={{ version_no - 1 }}">◀</a>
         {% else %}<span class="arw dim">◀</span>{% endif %}
         <span class="cur">v{{ version_no }}{% if has_uncommitted and not readonly %} + 未提交{% endif %}</span>
-        {% if readonly and version_no < max_version %}<a class="arw" href="/guide/group/{{ gid }}?version={{ version_no + 1 }}">▶</a>
-        {% elif readonly %}<a class="arw" href="/guide/group/{{ gid }}">▶</a>
+        {% if readonly and version_no < max_version - 1 %}<a class="arw" id="ver-next" href="/guide/group/{{ gid }}?version={{ version_no + 1 }}">▶</a>
+        {% elif readonly %}<a class="arw" id="ver-next" href="/guide/group/{{ gid }}">▶</a>
         {% else %}<span class="arw dim">▶</span>{% endif %}
       </div>
     </div>
@@ -218,15 +218,23 @@ var guideModal = (function(){
   document.addEventListener('click', function(e){
     var b = e.target.closest('.edit-btn'); if (b) open(b);
   });
-  // 快捷鍵:Esc 放棄、Enter 保存(文字區 Shift+Enter 換行)
+  // 快捷鍵:
+  //  彈窗開啟時 → Esc 放棄、Enter 保存(文字區 Shift+Enter 換行)
+  //  彈窗關閉時 → ← / → 切換版本
   document.addEventListener('keydown', function(e){
-    if (!isOpen()) return;
-    if (e.key === 'Escape') { e.preventDefault(); close(); }
-    else if (e.key === 'Enter') {
-      if (e.target.id === 'm-text' && e.shiftKey) return;   // 多行欄位換行
-      if (e.isComposing) return;                            // 中文輸入法組字中不觸發
-      e.preventDefault(); save();
+    if (isOpen()) {
+      if (e.key === 'Escape') { e.preventDefault(); close(); }
+      else if (e.key === 'Enter') {
+        if (e.target.id === 'm-text' && e.shiftKey) return;   // 多行欄位換行
+        if (e.isComposing) return;                            // 中文輸入法組字中不觸發
+        e.preventDefault(); save();
+      }
+      return;
     }
+    var tag = (e.target.tagName || '').toUpperCase();
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;        // 打字時不搶按鍵
+    if (e.key === 'ArrowLeft') { var p = document.getElementById('ver-prev'); if (p) { e.preventDefault(); p.click(); } }
+    else if (e.key === 'ArrowRight') { var n = document.getElementById('ver-next'); if (n) { e.preventDefault(); n.click(); } }
   });
   return { open:open, close:close, save:save, ai:ai };
 })();
