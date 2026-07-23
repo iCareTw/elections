@@ -1,4 +1,4 @@
-{% extends "guide/_base.html" %}
+{% extends "guide/_layout.html" %}
 
 {% macro fval_html(field) %}
   {% if field.field_name in ['學歷', '經歷'] %}
@@ -58,42 +58,12 @@
 {% block main_col %}
 {% set gid = group.id %}
 
-<style>
-.frow { display:flex; align-items:flex-start; gap:12px; padding:11px 4px; border-bottom:1px solid #f0f0f0; }
-.frow:last-child { border-bottom:0; }
-.frow .fname { width:78px; flex-shrink:0; color:#6b7280; padding-top:2px; }
-.frow .fval { flex:1; font-weight:600; color:#111827; }
-.reddot { width:11px; height:11px; border-radius:50%; background:#dc2626; flex-shrink:0; margin-top:5px;
-          box-shadow:0 0 0 3px rgba(220,38,38,.18); }
-.btn-sm { padding:4px 10px; font-size:12px; }
-.md-content { font-weight:400; }
-.md-content ul { margin:2px 0; padding-left:20px; }
-.md-content li { margin:2px 0; }
-.md-content h2 { font-size:14px; margin:8px 0 4px; }
-.md-content p { margin:4px 0; }
-/* 修改彈窗 */
-.modal-overlay { position:fixed; inset:0; background:rgba(17,24,39,.55); display:none;
-                 align-items:center; justify-content:center; z-index:2000; }
-.modal { background:#fff; border-radius:12px; width:min(920px,94vw); max-height:90vh; display:flex; flex-direction:column; overflow:hidden; }
-.modal-head { background:#1f2937; color:#fff; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; font-weight:600; }
-.modal-head button { background:none; border:0; color:#d1d5db; font-size:18px; cursor:pointer; }
-.modal-body { display:flex; gap:14px; padding:16px; overflow:auto; }
-.modal-col { flex:1; min-width:0; display:flex; flex-direction:column; }
-.modal-col > label { font-size:12px; color:#6b7280; margin-bottom:4px; }
-#m-text { width:100%; min-height:260px; border:1px solid #d1d5db; border-radius:8px; padding:10px; font-family:inherit; font-size:14px; resize:vertical; }
-.modal-ai { display:flex; gap:6px; margin-top:8px; }
-.modal-ai input { flex:1; border:1px solid #d1d5db; border-radius:6px; padding:7px 10px; font-family:inherit; font-size:13px; }
-#m-status { font-size:12px; color:#6b7280; margin-top:6px; min-height:16px; }
-#m-img { max-width:100%; border:1px solid #e5e7eb; border-radius:6px; display:block; }
-.modal-foot { padding:12px 16px; border-top:1px solid #e5e7eb; display:flex; gap:8px; justify-content:flex-end; }
-</style>
-
 {% if has_uncommitted and not readonly %}
 <div class="uncommit">
-  <div class="txt"><b>有未提交變更</b> · 這組的修改尚未建立快照</div>
-  <form method="post" action="/guide/group/{{ gid }}/commit" style="display:inline">
+  <div class="txt"><b>有未提交變更</b> · 這組的修改尚未建立快照 · <kbd>⌘/Ctrl + Enter</kbd> 直接提交</div>
+  <form method="post" action="/guide/group/{{ gid }}/commit" style="display:inline" id="commit-form">
     <input type="hidden" name="note" value="">
-    <button class="btn btn-primary" type="submit">建立快照(Commit)</button>
+    <button class="btn btn-primary" type="submit" title="⌘/Ctrl + Enter 直接提交">建立快照(Commit)</button>
   </form>
   <form method="post" action="/guide/group/{{ gid }}/discard" style="display:inline">
     <button class="btn btn-gray" type="submit">捨棄變更</button>
@@ -231,6 +201,12 @@ var guideModal = (function(){
         if (e.isComposing) return;                            // 中文輸入法組字中不觸發
         e.preventDefault(); save();
       }
+      return;
+    }
+    // ⌘/Ctrl + Enter:直接提交這組(僅在有未提交變更時 commit-form 才存在)
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      var cf = document.getElementById('commit-form');
+      if (cf) { e.preventDefault(); cf.submit(); }
       return;
     }
     var tag = (e.target.tagName || '').toUpperCase();

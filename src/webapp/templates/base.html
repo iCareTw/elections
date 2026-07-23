@@ -40,6 +40,11 @@
       <button class="button ghost collapse-btn" onclick="goHome()" title="Home">⌂</button>
     </div>
 
+    <a class="import-pill" id="import-pill" href="/guide/import">
+      <span class="import-spin"></span>
+      <span class="pill-msg">匯入進行中…</span>
+    </a>
+
     {% if mode == 'identity' %}
     <div class="election-list" id="election-tree">
       {% macro render_tree(node) %}
@@ -88,6 +93,33 @@
         </button>
       </form>
     </div>
+    {% elif mode == 'guide' %}
+    <div class="guide-tree" id="guide-tree">
+      {% for group in tree %}
+      {% set ns = namespace(sel=false) %}
+      {% for e in group.elections %}{% if e.id == selected_election_id %}{% set ns.sel = true %}{% endif %}{% endfor %}
+      <details class="tree-node dir" {% if ns.sel %}open{% endif %}>
+        <summary class="tree-dir">
+          <span class="tree-dir-label">{{ group.type }}</span>
+          {% if group.pending_commit_count %}
+          <span class="badge badge-pending tree-dir-pending">{{ group.pending_commit_count }}</span>
+          {% endif %}
+        </summary>
+        <div class="tree-children">
+          {% for e in group.elections %}
+          <a class="tree-row {% if selected_election_id == e.id %}selected{% endif %}"
+             href="/guide/election/{{ e.id }}">
+            <span class="tree-label">{% if e.session %}第{{ e.session }}任 {% endif %}{{ e.year }}</span>
+            {% if e.pending_commit_count %}
+            <span class="badge badge-pending" title="{{ e.pending_commit_count }} 組尚未提交">{{ e.pending_commit_count }}</span>
+            {% endif %}
+          </a>
+          {% endfor %}
+        </div>
+      </details>
+      {% endfor %}
+      {% if not tree %}<div class="guide-tree-empty">尚無公報資料</div>{% endif %}
+    </div>
     {% endif %}
 
     <script>
@@ -98,7 +130,7 @@
           details.forEach(d => d.removeAttribute('open'));
         }
         sessionStorage.setItem('nav-scroll', '0');
-        window.location.href = {{ ('/identity-checks' if mode == 'check' else ('/aliases' if mode == 'aliases' else '/')) | tojson }};
+        window.location.href = {{ ('/identity-checks' if mode == 'check' else ('/aliases' if mode == 'aliases' else ('/guide' if mode == 'guide' else '/'))) | tojson }};
       }
 
       const navList = document.querySelector('.election-list');
@@ -128,6 +160,10 @@
       <p class="build-result">✓ {{ generated }} 位候選人已匯出</p>
       {% endif %}
     </div>
+    {% elif mode == 'guide' %}
+    <div class="nav-footer">
+      <a class="generate-btn" href="/guide/import">＋ 匯入公報</a>
+    </div>
     {% endif %}
   </aside>
 
@@ -135,7 +171,7 @@
 
   <section class="workspace">
     <div class="mode-banner mode-{{ mode }}">
-      目前使用 {% if mode == "check" %}Identity Check{% elif mode == "aliases" %}別名管理{% else %}Identity UI{% endif %}
+      目前使用 {% if mode == "check" %}Identity Check{% elif mode == "aliases" %}別名管理{% elif mode == "guide" %}公報校對台{% else %}Identity UI{% endif %}
     </div>
     {% block workspace %}{% endblock %}
   </section>
@@ -194,6 +230,29 @@
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
   });
+})();
+</script>
+<script>
+// 全站常駐:輪詢是否有進行中的公報匯入,有就顯示側欄指示,可點入看進度。
+(function() {
+  const pill = document.getElementById('import-pill');
+  if (!pill) return;
+  const msg = pill.querySelector('.pill-msg');
+  async function tick() {
+    try {
+      const r = await fetch('/guide/import/active', { cache: 'no-store' });
+      const j = await r.json();
+      if (j.active) {
+        pill.href = '/guide/import';
+        msg.textContent = (j.pdf_name ? j.pdf_name + ' · ' : '') + (j.message || '匯入進行中…');
+        pill.classList.add('show');
+      } else {
+        pill.classList.remove('show');
+      }
+    } catch (e) { /* 忽略暫時性錯誤 */ }
+  }
+  tick();
+  setInterval(tick, 3000);
 })();
 </script>
 </body>

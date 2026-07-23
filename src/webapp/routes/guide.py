@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import io
-import itertools
 import logging
 import threading
 from pathlib import Path
@@ -15,10 +14,6 @@ from src.voter_guide.guide_repair import run_repair_job
 router = APIRouter(prefix="/guide")
 logger = logging.getLogger(__name__)
 
-# 匯入工作(單一程序內、記憶體註冊表)
-_IMPORT_JOBS: dict[int, dict] = {}
-_import_counter = itertools.count(1)
-
 
 def _group_url(group_id: int) -> str:
     return f"/guide/group/{group_id}"
@@ -28,6 +23,7 @@ def _group_url(group_id: int) -> str:
 async def guide_home(request: Request):
     store = request.app.state.store
     return request.app.state.templates.TemplateResponse(request, "guide/index.html", {
+        "app_mode": "guide",
         "tree": store.guide_tree(),
         "selected_election_id": None,
         "candidates": None,
@@ -39,6 +35,7 @@ async def guide_home(request: Request):
 async def guide_election(request: Request, election_id: str):
     store = request.app.state.store
     return request.app.state.templates.TemplateResponse(request, "guide/index.html", {
+        "app_mode": "guide",
         "tree": store.guide_tree(),
         "selected_election_id": election_id,
         "candidates": store.guide_candidates_of(election_id),
@@ -62,6 +59,7 @@ def _list_pdfs(root: Path) -> list[dict]:
 @router.get("/import")
 async def import_page(request: Request):
     return request.app.state.templates.TemplateResponse(request, "guide/import.html", {
+        "app_mode": "guide",
         "tree": request.app.state.store.guide_tree(),
         "selected_election_id": None,
         "candidates": None,
@@ -79,21 +77,20 @@ async def import_start(request: Request, pdf: str = Form(...)):
     if not _within(p, base) or not p.is_file():
         raise HTTPException(status_code=400, detail="PDF 不在允許的公報目錄")
 
-    job_id = next(_import_counter)
-    _IMPORT_JOBS[job_id] = {"status": "running", "message": "排隊中",
-                            "done": 0, "total": 0, "election_id": None, "error": None}
     store = request.app.state.store
+    job_id = store.guide_create_import_job(str(p), p.stem)
 
     def _run():
         def prog(msg, done, total):
-            _IMPORT_JOBS[job_id].update(message=msg, done=done, total=total)
+            store.guide_update_import_progress(job_id, msg, done, total)
         try:
             from src.voter_guide.guide_import import import_pdf
             eid = import_pdf(store, str(p), progress=prog)
-            _IMPORT_JOBS[job_id].update(status="done", message="完成", election_id=eid)
+            store.guide_finish_import_job(job_id, status="done", message="完成",
+                                          election_id=eid)
         except Exception as exc:  # noqa: BLE001 - 任何失敗都回報給前端
             logger.error("import failed: %s", exc, exc_info=True)
-            _IMPORT_JOBS[job_id].update(status="failed", error=str(exc))
+            store.guide_finish_import_job(job_id, status="failed", error=str(exc))
 
     threading.Thread(target=_run, daemon=True).start()
     return JSONResponse({"job_id": job_id})
@@ -101,10 +98,27 @@ async def import_start(request: Request, pdf: str = Form(...)):
 
 @router.get("/import/status/{job_id}")
 async def import_status(request: Request, job_id: int):
-    job = _IMPORT_JOBS.get(job_id)
+    job = request.app.state.store.guide_get_import_job(job_id)
     if job is None:
         raise HTTPException(status_code=404, detail="job not found")
-    return JSONResponse(job)
+    return JSONResponse({
+        "status": job["status"], "message": job["message"],
+        "done": job["done"], "total": job["total"],
+        "election_id": job["election_id"], "error": job["error"],
+    })
+
+
+@router.get("/import/active")
+async def import_active(request: Request):
+    """全站側欄常駐指示用:目前是否有進行中的匯入。"""
+    job = request.app.state.store.guide_active_import_job()
+    if job is None:
+        return JSONResponse({"active": False})
+    return JSONResponse({
+        "active": True, "job_id": job["id"], "message": job["message"],
+        "done": job["done"], "total": job["total"],
+        "pdf_name": job["pdf_name"],
+    })
 
 
 @router.get("/group/{group_id}")
@@ -120,6 +134,7 @@ async def guide_group(request: Request, group_id: int):
     candidates = store.guide_candidates_of(loc["election_id"])
 
     ctx = {
+        "app_mode": "guide",
         "tree": tree,
         "selected_election_id": loc["election_id"],
         "candidates": candidates,

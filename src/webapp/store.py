@@ -157,7 +157,7 @@ class Store:
         # 002 寫死 elections schema, 屬正式 DB 專用, 不在此套用.
         ddl_files = ("001_init.sql", "004_rename_birthday_to_birthyear.sql",
                      "005_voter_guide.sql", "006_voter_guide_groups.sql",
-                     "007_guide_manual_photos.sql")
+                     "007_guide_manual_photos.sql", "008_guide_import_jobs.sql")
         with self.connect() as conn:
             conn.execute(
                 sql.SQL("CREATE SCHEMA IF NOT EXISTS {}").format(sql.Identifier(self.config.schema))
@@ -1218,14 +1218,25 @@ class Store:
                 ORDER BY type, year DESC NULLS LAST
                 """
             ).fetchall()
+            # 每場選舉未 commit 的組數(供左樹提醒記號)
+            pending: dict[str, int] = {}
+            for gr in conn.execute(
+                "SELECT id, guide_election_id FROM guide_groups"
+            ).fetchall():
+                if self._group_has_uncommitted(conn, gr["id"]):
+                    eid = gr["guide_election_id"]
+                    pending[eid] = pending.get(eid, 0) + 1
         grouped: dict[str, dict[str, Any]] = {}
         for row in rows:
             t = row["type"]
             if t not in grouped:
-                grouped[t] = {"type": t, "elections": []}
+                grouped[t] = {"type": t, "elections": [], "pending_commit_count": 0}
+            n = pending.get(row["id"], 0)
             grouped[t]["elections"].append(
-                {"id": row["id"], "label": row["label"], "year": row["year"], "session": row["session"]}
+                {"id": row["id"], "label": row["label"], "year": row["year"],
+                 "session": row["session"], "pending_commit_count": n}
             )
+            grouped[t]["pending_commit_count"] += n
         return list(grouped.values())
 
     def guide_candidates_of(self, election_id: str) -> list[dict[str, Any]]:
@@ -1504,6 +1515,30 @@ class Store:
                 "value": plat["value"], "flagged": plat["flagged"], "flag_note": plat["flag_note"]}
         return state
 
+    def _group_has_uncommitted(self, conn, group_id: int) -> bool:
+        """組目前狀態是否與最新快照不同(未提交變更)。無快照視為無變更。"""
+        latest = conn.execute(
+            "SELECT id FROM guide_group_snapshots WHERE guide_group_id = %s "
+            "ORDER BY version_no DESC LIMIT 1",
+            (group_id,),
+        ).fetchone()
+        if not latest:
+            return False
+        snap = {(r["scope"], r["field_name"]): r for r in conn.execute(
+            "SELECT scope, field_name, value, flagged, flag_note "
+            "FROM guide_group_snapshot_fields WHERE snapshot_id = %s",
+            (latest["id"],),
+        ).fetchall()}
+        cur = self._guide_group_current_state(conn, group_id)
+        if set(cur.keys()) != set(snap.keys()):
+            return True
+        for k, c in cur.items():
+            s = snap[k]
+            if (c["value"] != s["value"] or c["flagged"] != s["flagged"]
+                    or c["flag_note"] != s["flag_note"]):
+                return True
+        return False
+
     def guide_group_view(self, election_id: str, ticket: int) -> dict[str, Any] | None:
         with self.connect() as conn:
             self._setup_conn(conn)
@@ -1545,23 +1580,7 @@ class Store:
                 (group_id,),
             ).fetchone()
 
-            has_uncommitted = False
-            if latest:
-                snap = {(r["scope"], r["field_name"]): r for r in conn.execute(
-                    "SELECT scope, field_name, value, flagged, flag_note "
-                    "FROM guide_group_snapshot_fields WHERE snapshot_id = %s",
-                    (latest["id"],),
-                ).fetchall()}
-                cur = self._guide_group_current_state(conn, group_id)
-                if set(cur.keys()) != set(snap.keys()):
-                    has_uncommitted = True
-                else:
-                    for k, c in cur.items():
-                        s = snap[k]
-                        if (c["value"] != s["value"] or c["flagged"] != s["flagged"]
-                                or c["flag_note"] != s["flag_note"]):
-                            has_uncommitted = True
-                            break
+            has_uncommitted = self._group_has_uncommitted(conn, group_id)
 
         return {
             "group": {"id": group_id, "ticket": grp["ticket"], "party": grp["party"],
@@ -1772,6 +1791,71 @@ class Store:
                 """,
                 (value, field_id),
             )
+
+    # --- 公報匯入工作 (DB 佇列,狀態可跨頁面查詢) ---
+
+    def guide_create_import_job(self, pdf_path: str, pdf_name: str | None = None) -> int:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                """
+                INSERT INTO guide_import_jobs(pdf_path, pdf_name, status, message)
+                VALUES (%s, %s, 'running', '排隊中')
+                RETURNING id
+                """,
+                (pdf_path, pdf_name),
+            ).fetchone()
+        return row["id"]
+
+    def guide_update_import_progress(self, job_id: int, message: str,
+                                     done: int, total: int) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                """
+                UPDATE guide_import_jobs
+                SET message = %s, done = %s, total = %s, updated_at = current_timestamp
+                WHERE id = %s
+                """,
+                (message, done, total, job_id),
+            )
+
+    def guide_finish_import_job(self, job_id: int, *, status: str,
+                                message: str | None = None,
+                                election_id: str | None = None,
+                                error: str | None = None) -> None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            conn.execute(
+                """
+                UPDATE guide_import_jobs
+                SET status = %s, message = %s, election_id = %s, error = %s,
+                    updated_at = current_timestamp, finished_at = current_timestamp
+                WHERE id = %s
+                """,
+                (status, message, election_id, error, job_id),
+            )
+
+    def guide_get_import_job(self, job_id: int) -> dict[str, Any] | None:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                "SELECT * FROM guide_import_jobs WHERE id = %s", (job_id,)
+            ).fetchone()
+        return dict(row) if row else None
+
+    def guide_active_import_job(self) -> dict[str, Any] | None:
+        """最近一筆仍在進行的匯入(供全站側欄常駐指示)。"""
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                """
+                SELECT * FROM guide_import_jobs
+                WHERE status IN ('queued', 'running')
+                ORDER BY id DESC LIMIT 1
+                """
+            ).fetchone()
+        return dict(row) if row else None
 
     def guide_create_repair_job(self, candidate_id: int, target: str,
                                 user_note: str | None = None) -> int:

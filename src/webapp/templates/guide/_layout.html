@@ -1,0 +1,30 @@
+{# 公報校對台版面:併入 base.html 外框(左側 navigator 已顯示公報選舉樹)。
+   workspace 內為「候選人 rail + 主欄」兩欄,內容包在 .guide-scope 以套用公報專用樣式。
+   app_mode='guide' 由各 route context 傳入。 #}
+{% extends "base.html" %}
+
+{% block workspace %}
+<div class="guide-scope">
+  <div class="guide-cols">
+    <aside class="guide-rail">
+      {% if candidates %}
+      {% for ticket, members in candidates | groupby("ticket") %}
+      {% set first = members | first %}
+      <div class="grp">
+        <div class="grp-h">第{{ ticket }}組{% if first.party %} · {{ first.party }}{% endif %}</div>
+        {% for c in members %}
+        <a class="cand {% if selected_group_id == c.guide_group_id %}on{% endif %}"
+           href="/guide/group/{{ c.guide_group_id }}">
+          {{ c.role }} {{ c.name or '' }}
+        </a>
+        {% endfor %}
+      </div>
+      {% endfor %}
+      {% endif %}
+    </aside>
+    <div class="guide-main">
+      {% block main_col %}{% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}

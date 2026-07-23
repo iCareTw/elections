@@ -406,3 +406,25 @@ Unique: `(guide_election_id, ticket)`。
 Unique: `(election_id, ticket, role)`。
 
 機制:圈選補照片時存到 `_out/guide_manual/{election_id}/ticket{n}_{role}.png` 並 upsert 本表;`load` 完成後以 `guide_apply_manual_photos(election_id)` 依穩定鍵把仍存在的手動照片套回對應候選人的 `guide_candidates.photo_path`。
+
+---
+
+## 公報匯入工作(guide_import_jobs)
+
+匯入公報 PDF 的背景工作狀態。改存 DB(原本只在 web 程序記憶體),使匯入進度可跨頁面查詢:離開匯入頁後仍能在側欄看到「匯入進行中」。**刻意不設 FK** 到 `guide_elections`,匯入失敗或選舉被刪時工作紀錄仍保留供查閱。
+
+| field | type | description |
+|-------|------|-------------|
+| `id` | SERIAL PK | |
+| `pdf_path` | TEXT | 來源公報 PDF 路徑 |
+| `pdf_name` | TEXT | 顯示名(PDF stem) |
+| `status` | VARCHAR(16) | `queued` / `running` / `done` / `failed`(建立即為 `running`) |
+| `message` | TEXT | 目前進度訊息 |
+| `done` / `total` | INTEGER | 進度分子/分母(供進度條) |
+| `election_id` | TEXT | 完成後產生的公報選舉識別碼 |
+| `error` | TEXT | 失敗原因 |
+| `created_at` / `updated_at` / `finished_at` | TIMESTAMPTZ | |
+
+Index: `idx_guide_import_jobs_status` on `(status)`。
+
+側欄常駐指示由 `guide_active_import_job()`(取最近一筆 `queued`/`running`)驅動,前端輪詢 `GET /guide/import/active`。

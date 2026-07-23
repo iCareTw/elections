@@ -1,27 +1,10 @@
-{% extends "guide/_base.html" %}
+{% extends "guide/_layout.html" %}
 
 {% block main_col %}
-<style>
-.imp-wrap { max-width: 720px; }
-.imp-note { color:#6b7280; font-size:13px; margin:4px 0 16px; }
-.pdf-list { border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; background:#fff; }
-.pdf-item { display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid #f0f0f0; cursor:pointer; }
-.pdf-item:last-child { border-bottom:0; }
-.pdf-item:hover { background:#f9fafb; }
-.pdf-item input { margin:0; }
-.pdf-name { flex:1; font-weight:600; }
-.pdf-type { color:#9ca3af; font-size:12px; }
-.imp-bar { margin:16px 0; display:flex; gap:8px; align-items:center; }
-.prog { display:none; margin-top:16px; border:1px solid #e5e7eb; border-radius:10px; padding:14px; background:#fff; }
-.prog .msg { font-size:14px; font-weight:600; }
-.prog .track { height:8px; background:#eef2ff; border-radius:6px; margin-top:10px; overflow:hidden; }
-.prog .fill { height:100%; width:0; background:#4f46e5; transition:width .3s; }
-.prog .done { color:#065f46; } .prog .fail { color:#b91c1c; }
-</style>
-
 <div class="imp-wrap">
-  <h2 style="margin:0 0 2px">匯入公報</h2>
+  <h2 class="guide-h2">匯入公報</h2>
   <div class="imp-note">選一份公報 PDF,系統會用本機視覺模型逐欄判讀再匯入(一份約需數分鐘,期間請保持本機模型執行)。<br>
+    匯入開始後可直接離開此頁,左側會常駐「匯入進行中」指示,完成前隨時可回來查看。<br>
     目前解析器主要驗證於近年格式(如 113 年);較舊年份版面不同,可能解析不到候選人。</div>
 
   {% if pdfs %}
