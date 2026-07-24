@@ -47,25 +47,110 @@ async def guide_election(request: Request, election_id: str):
 # 匯入公報 PDF(選現有檔 → 背景解析 + 載入)
 # ---------------------------------------------------------------------------
 
-def _list_pdfs(root: Path) -> list[dict]:
+def _list_pdfs(root: Path, imported: set[str], active: set[str]) -> list[dict]:
     """列出 _data/voter_guide/ 下可匯入的公報 PDF(目前解析器支援總統)。新到舊排序。"""
     base = root / "_data" / "voter_guide"
     out = []
     for pdf in sorted(base.glob("president/*.pdf"), reverse=True):
-        out.append({"path": str(pdf.relative_to(root)), "name": pdf.stem, "type": "president"})
+        rp = str(pdf.resolve())
+        out.append({"path": str(pdf.relative_to(root)), "name": pdf.stem,
+                    "type": "president",
+                    "imported": rp in imported, "active": rp in active})
     return out
+
+
+# --- 單一背景 worker:依序處理佇列中的匯入工作 ---------------------------------
+_worker_lock = threading.Lock()
+_worker_running = False
+
+
+def _process_import_job(store, job: dict) -> None:
+    job_id = job["id"]
+    p = job["pdf_path"]
+
+    def prog(msg, done, total):
+        store.guide_update_import_progress(job_id, msg, done, total)
+    try:
+        from src.voter_guide.guide_import import import_pdf
+        eid = import_pdf(store, p, progress=prog)
+        store.guide_finish_import_job(job_id, status="done", message="完成",
+                                      election_id=eid)
+    except Exception as exc:  # noqa: BLE001 - 任何失敗都回報給前端
+        logger.error("import failed: %s", exc, exc_info=True)
+        store.guide_finish_import_job(job_id, status="failed", error=str(exc))
+
+
+def _import_worker(store) -> None:
+    global _worker_running
+    while True:
+        job = store.guide_claim_next_import_job()
+        if job is None:
+            with _worker_lock:
+                job = store.guide_claim_next_import_job()  # 上鎖內再確認,避免漏接
+                if job is None:
+                    _worker_running = False
+                    return
+        _process_import_job(store, job)
+
+
+def _ensure_import_worker(store) -> None:
+    """確保佇列 worker 正在執行(單一實例)。"""
+    global _worker_running
+    with _worker_lock:
+        if _worker_running:
+            return
+        _worker_running = True
+    threading.Thread(target=_import_worker, args=(store,), daemon=True).start()
 
 
 @router.get("/import")
 async def import_page(request: Request):
+    store = request.app.state.store
+    from src.voter_guide.vision import endpoint_available, BASE_URL
     return request.app.state.templates.TemplateResponse(request, "guide/import.html", {
         "app_mode": "guide",
-        "tree": request.app.state.store.guide_tree(),
+        "tree": store.guide_tree(),
         "selected_election_id": None,
         "candidates": None,
         "selected_group_id": None,
-        "pdfs": _list_pdfs(Path(request.app.state.root)),
+        "pdfs": _list_pdfs(Path(request.app.state.root),
+                           store.guide_imported_pdf_paths(),
+                           store.guide_active_import_paths()),
+        "model_ok": endpoint_available(),
+        "model_url": BASE_URL,
     })
+
+
+@router.get("/import/model-status")
+async def import_model_status(request: Request):
+    """前端可重新檢查本機視覺模型是否已啟動。"""
+    from src.voter_guide.vision import endpoint_available, BASE_URL
+    return JSONResponse({"ok": endpoint_available(), "url": BASE_URL})
+
+
+@router.get("/import/pdf")
+async def import_pdf_view(request: Request, path: str):
+    """直接檢視待匯入的本地公報 PDF(限 _data/voter_guide 目錄內)。"""
+    root = Path(request.app.state.root)
+    base = (root / "_data" / "voter_guide").resolve()
+    p = Path(path)
+    p = (p if p.is_absolute() else root / p).resolve()
+    if not _within(p, base) or not p.is_file():
+        raise HTTPException(status_code=404, detail="PDF 不在允許的公報目錄")
+    return FileResponse(str(p), media_type="application/pdf",
+                        content_disposition_type="inline")
+
+
+@router.get("/import/jobs")
+async def import_jobs(request: Request):
+    """匯入佇列現況(供匯入頁輪詢渲染)。"""
+    store = request.app.state.store
+    jobs = [{
+        "id": j["id"], "pdf_name": j["pdf_name"], "status": j["status"],
+        "message": j["message"], "done": j["done"], "total": j["total"],
+        "election_id": j["election_id"], "error": j["error"],
+    } for j in store.guide_list_import_jobs()]
+    return JSONResponse({"jobs": jobs})
 
 
 @router.post("/import")
@@ -78,21 +163,17 @@ async def import_start(request: Request, pdf: str = Form(...)):
         raise HTTPException(status_code=400, detail="PDF 不在允許的公報目錄")
 
     store = request.app.state.store
+    rp = str(p.resolve())
+    if rp in store.guide_imported_pdf_paths():
+        raise HTTPException(status_code=409, detail="這份公報已匯入過")
+    if rp in store.guide_active_import_paths():
+        raise HTTPException(status_code=409, detail="這份公報已在佇列中")
+    from src.voter_guide.vision import endpoint_available, BASE_URL
+    if not endpoint_available():
+        raise HTTPException(status_code=503,
+                            detail=f"本機視覺模型未啟動({BASE_URL})。請先啟動模型再匯入。")
     job_id = store.guide_create_import_job(str(p), p.stem)
-
-    def _run():
-        def prog(msg, done, total):
-            store.guide_update_import_progress(job_id, msg, done, total)
-        try:
-            from src.voter_guide.guide_import import import_pdf
-            eid = import_pdf(store, str(p), progress=prog)
-            store.guide_finish_import_job(job_id, status="done", message="完成",
-                                          election_id=eid)
-        except Exception as exc:  # noqa: BLE001 - 任何失敗都回報給前端
-            logger.error("import failed: %s", exc, exc_info=True)
-            store.guide_finish_import_job(job_id, status="failed", error=str(exc))
-
-    threading.Thread(target=_run, daemon=True).start()
+    _ensure_import_worker(store)
     return JSONResponse({"job_id": job_id})
 
 
@@ -117,7 +198,7 @@ async def import_active(request: Request):
     return JSONResponse({
         "active": True, "job_id": job["id"], "message": job["message"],
         "done": job["done"], "total": job["total"],
-        "pdf_name": job["pdf_name"],
+        "pdf_name": job["pdf_name"], "queued_count": job.get("queued_count", 0),
     })
 
 

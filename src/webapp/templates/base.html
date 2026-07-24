@@ -244,7 +244,8 @@
       const j = await r.json();
       if (j.active) {
         pill.href = '/guide/import';
-        msg.textContent = (j.pdf_name ? j.pdf_name + ' · ' : '') + (j.message || '匯入進行中…');
+        const queued = j.queued_count > 0 ? ' · 佇列還有 ' + j.queued_count + ' 份' : '';
+        msg.textContent = (j.pdf_name ? j.pdf_name + ' · ' : '') + (j.message || '匯入進行中…') + queued;
         pill.classList.add('show');
       } else {
         pill.classList.remove('show');

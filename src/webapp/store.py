@@ -1263,6 +1263,22 @@ class Store:
             ).fetchall()
         return [dict(r) for r in rows]
 
+    def guide_imported_pdf_paths(self) -> set[str]:
+        """已匯入公報的來源 PDF 絕對路徑集合(供匯入清單標記已匯入)。"""
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            rows = conn.execute(
+                "SELECT source_pdf_path FROM guide_elections "
+                "WHERE source_pdf_path IS NOT NULL"
+            ).fetchall()
+        out = set()
+        for r in rows:
+            try:
+                out.add(str(Path(r["source_pdf_path"]).resolve()))
+            except Exception:
+                out.add(r["source_pdf_path"])
+        return out
+
     def guide_election_row(self, election_id: str) -> dict[str, Any] | None:
         with self.connect() as conn:
             self._setup_conn(conn)
@@ -1795,17 +1811,87 @@ class Store:
     # --- 公報匯入工作 (DB 佇列,狀態可跨頁面查詢) ---
 
     def guide_create_import_job(self, pdf_path: str, pdf_name: str | None = None) -> int:
+        """把一份公報排入匯入佇列(狀態 queued),由單一 worker 依序處理。"""
         with self.connect() as conn:
             self._setup_conn(conn)
             row = conn.execute(
                 """
                 INSERT INTO guide_import_jobs(pdf_path, pdf_name, status, message)
-                VALUES (%s, %s, 'running', '排隊中')
+                VALUES (%s, %s, 'queued', '排隊中')
                 RETURNING id
                 """,
                 (pdf_path, pdf_name),
             ).fetchone()
         return row["id"]
+
+    def guide_requeue_running_import_jobs(self) -> int:
+        """把先前程序中斷遺留的 running 工作重設回 queued(啟動時復原)。回傳筆數。"""
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            rows = conn.execute(
+                "UPDATE guide_import_jobs SET status = 'queued', message = '排隊中', "
+                "done = 0, total = 0, updated_at = current_timestamp "
+                "WHERE status = 'running' RETURNING id"
+            ).fetchall()
+        return len(rows)
+
+    def guide_has_queued_import_jobs(self) -> bool:
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                "SELECT 1 FROM guide_import_jobs WHERE status = 'queued' LIMIT 1"
+            ).fetchone()
+        return row is not None
+
+    def guide_claim_next_import_job(self) -> dict[str, Any] | None:
+        """原子取出最舊的 queued 工作並標記 running;佇列空時回傳 None。"""
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                """
+                UPDATE guide_import_jobs SET status = 'running', message = '開始解析…',
+                    updated_at = current_timestamp
+                WHERE id = (
+                    SELECT id FROM guide_import_jobs WHERE status = 'queued'
+                    ORDER BY id LIMIT 1 FOR UPDATE SKIP LOCKED
+                )
+                RETURNING *
+                """
+            ).fetchone()
+        return dict(row) if row else None
+
+    def guide_active_import_paths(self) -> set[str]:
+        """佇列中或解析中的公報來源路徑(供匯入清單禁選)。"""
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            rows = conn.execute(
+                "SELECT pdf_path FROM guide_import_jobs "
+                "WHERE status IN ('queued', 'running')"
+            ).fetchall()
+        out = set()
+        for r in rows:
+            try:
+                out.add(str(Path(r["pdf_path"]).resolve()))
+            except Exception:
+                out.add(r["pdf_path"])
+        return out
+
+    def guide_list_import_jobs(self, limit: int = 20) -> list[dict[str, Any]]:
+        """近期匯入工作(佇列 + 進行中優先,其餘依新到舊),供匯入頁佇列清單。"""
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            rows = conn.execute(
+                """
+                SELECT * FROM guide_import_jobs
+                ORDER BY
+                    CASE status WHEN 'running' THEN 0 WHEN 'queued' THEN 1 ELSE 2 END,
+                    CASE WHEN status IN ('queued', 'running') THEN id END ASC,
+                    id DESC
+                LIMIT %s
+                """,
+                (limit,),
+            ).fetchall()
+        return [dict(r) for r in rows]
 
     def guide_update_import_progress(self, job_id: int, message: str,
                                      done: int, total: int) -> None:
@@ -1845,17 +1931,25 @@ class Store:
         return dict(row) if row else None
 
     def guide_active_import_job(self) -> dict[str, Any] | None:
-        """最近一筆仍在進行的匯入(供全站側欄常駐指示)。"""
+        """供全站側欄常駐指示:優先顯示解析中那筆,並附佇列剩餘份數 queued_count。"""
         with self.connect() as conn:
             self._setup_conn(conn)
             row = conn.execute(
                 """
                 SELECT * FROM guide_import_jobs
                 WHERE status IN ('queued', 'running')
-                ORDER BY id DESC LIMIT 1
+                ORDER BY CASE status WHEN 'running' THEN 0 ELSE 1 END, id ASC
+                LIMIT 1
                 """
             ).fetchone()
-        return dict(row) if row else None
+            if row is None:
+                return None
+            n = conn.execute(
+                "SELECT count(*) AS c FROM guide_import_jobs WHERE status = 'queued'"
+            ).fetchone()["c"]
+        out = dict(row)
+        out["queued_count"] = n
+        return out
 
     def guide_create_repair_job(self, candidate_id: int, target: str,
                                 user_note: str | None = None) -> int:

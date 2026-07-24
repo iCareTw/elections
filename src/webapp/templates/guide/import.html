@@ -3,72 +3,113 @@
 {% block main_col %}
 <div class="imp-wrap">
   <h2 class="guide-h2">匯入公報</h2>
-  <div class="imp-note">選一份公報 PDF,系統會用本機視覺模型逐欄判讀再匯入(一份約需數分鐘,期間請保持本機模型執行)。<br>
-    匯入開始後可直接離開此頁,左側會常駐「匯入進行中」指示,完成前隨時可回來查看。<br>
-    目前解析器主要驗證於近年格式(如 113 年);較舊年份版面不同,可能解析不到候選人。</div>
+  <div class="imp-note">選一份公報 PDF,系統會用本機視覺模型逐欄判讀後匯入,一份約需數分鐘。可連續加入多份,系統會依序處理。</div>
+
+  <div class="imp-model {% if model_ok %}ok{% else %}down{% endif %}" id="model-box">
+    {% if model_ok %}
+    <span class="dot"></span>本機視覺模型已就緒
+    {% else %}
+    <span class="dot"></span>本機視覺模型未啟動({{ model_url }})。請先啟動模型才能匯入。
+    <button type="button" class="btn btn-mini" onclick="recheckModel()">重新檢查</button>
+    {% endif %}
+  </div>
 
   {% if pdfs %}
   <div class="pdf-list">
     {% for f in pdfs %}
-    <label class="pdf-item">
-      <input type="radio" name="pdf" value="{{ f.path }}" {% if loop.first %}checked{% endif %}>
+    <label class="pdf-item {% if f.imported or f.active %}is-disabled{% endif %}"
+           data-path="{{ f.path }}">
+      <input type="radio" name="pdf" value="{{ f.path }}"
+             {% if f.imported or f.active %}disabled{% endif %}>
       <span class="pdf-name">{{ f.name }}</span>
+      {% if f.imported %}<span class="pdf-badge">已匯入</span>
+      {% elif f.active %}<span class="pdf-badge queued">佇列中</span>{% endif %}
+      <a class="pdf-view" href="/guide/import/pdf?path={{ f.path | urlencode }}"
+         target="_blank" rel="noopener" onclick="event.stopPropagation()">檢視 PDF</a>
       <span class="pdf-type">{{ f.type }}</span>
     </label>
     {% endfor %}
   </div>
   <div class="imp-bar">
-    <button class="btn btn-primary" id="imp-btn" onclick="startImport()">開始匯入</button>
+    <button class="btn btn-primary" id="imp-btn" onclick="startImport()"
+            {% if not model_ok %}disabled{% endif %}>加入佇列</button>
+    <span class="imp-hint" id="imp-hint"></span>
   </div>
   {% else %}
   <div class="imp-note">在 <code>_data/voter_guide/president/</code> 下找不到公報 PDF。</div>
   {% endif %}
 
-  <div class="prog" id="prog">
-    <div class="msg" id="prog-msg">準備中…</div>
-    <div class="track"><div class="fill" id="prog-fill"></div></div>
-    <div id="prog-link" style="margin-top:12px"></div>
+  <div class="job-queue" id="job-queue" style="display:none">
+    <div class="jq-title">匯入佇列</div>
+    <div class="jq-list" id="jq-list"></div>
   </div>
 </div>
 
 <script>
+function recheckModel(){
+  fetch('/guide/import/model-status').then(function(r){ return r.json(); }).then(function(j){
+    if(j.ok){ location.reload(); }
+  }).catch(function(){});
+}
+
+var STATUS_TXT = {queued:'排隊中', running:'解析中', done:'完成', failed:'失敗'};
+
+function renderJobs(jobs){
+  var wrap = document.getElementById('job-queue'), list = document.getElementById('jq-list');
+  if(!jobs || !jobs.length){ wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  list.innerHTML = jobs.map(function(j){
+    var pct = j.total > 0 ? Math.round(j.done / j.total * 100) : 0;
+    var right = '';
+    if(j.status === 'running'){
+      right = '<span class="jq-msg">' + (j.message || '解析中…') + '</span>' +
+              '<span class="jq-track"><span class="jq-fill" style="width:' + pct + '%"></span></span>';
+    } else if(j.status === 'done'){
+      right = '<a class="jq-link" href="/guide/election/' + j.election_id + '">前往校對台 →</a>';
+    } else if(j.status === 'failed'){
+      right = '<span class="jq-err">' + (j.error || '失敗') + '</span>';
+    } else {
+      right = '<span class="jq-msg">' + (j.message || '排隊中') + '</span>';
+    }
+    return '<div class="jq-row jq-' + j.status + '">' +
+      '<span class="jq-badge">' + (STATUS_TXT[j.status] || j.status) + '</span>' +
+      '<span class="jq-name">' + (j.pdf_name || '') + '</span>' +
+      '<span class="jq-right">' + right + '</span></div>';
+  }).join('');
+}
+
+function pollJobs(){
+  fetch('/guide/import/jobs', {cache:'no-store'}).then(function(r){ return r.json(); })
+    .then(function(j){ renderJobs(j.jobs); }).catch(function(){});
+}
+
 function startImport(){
   var sel = document.querySelector('input[name="pdf"]:checked');
-  if(!sel){ return; }
-  var btn = document.getElementById('imp-btn');
-  btn.disabled = true; btn.textContent = '匯入中…';
-  var prog = document.getElementById('prog'); prog.style.display = 'block';
-  var msg = document.getElementById('prog-msg'), fill = document.getElementById('prog-fill'), link = document.getElementById('prog-link');
-  msg.textContent = '開始解析…'; msg.className = 'msg';
-  function failed(reason){
-    msg.textContent = '✗ 無法啟動匯入:' + reason; msg.className = 'msg fail';
-    btn.disabled = false; btn.textContent = '開始匯入';
-  }
+  var hint = document.getElementById('imp-hint');
+  if(!sel){ hint.textContent = '請先選一份公報'; return; }
+  hint.textContent = '';
+  var row = sel.closest('.pdf-item');
   fetch('/guide/import', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
       body:'pdf=' + encodeURIComponent(sel.value)})
     .then(function(r){
       if(!r.ok){ return r.text().then(function(t){ throw new Error('伺服器回應 ' + r.status + ' ' + t.slice(0,200)); }); }
       return r.json();
     })
-    .then(function(j){ poll(j.job_id); })
-    .catch(function(e){ failed((e && e.message) || '伺服器沒有回應(請確認 make web 仍在執行)'); });
-
-  function poll(jobId){
-    var t = setInterval(function(){
-      fetch('/guide/import/status/' + jobId).then(function(r){ return r.json(); }).then(function(j){
-        msg.textContent = j.message || '處理中…';
-        if(j.total > 0){ fill.style.width = Math.round(j.done / j.total * 100) + '%'; }
-        if(j.status === 'done'){
-          clearInterval(t); fill.style.width = '100%';
-          msg.textContent = '✓ 匯入完成'; msg.className = 'msg done';
-          link.innerHTML = '<a class="btn btn-primary" href="/guide/election/' + j.election_id + '">前往校對台檢視</a>';
-        } else if(j.status === 'failed'){
-          clearInterval(t); msg.textContent = '✗ 匯入失敗:' + (j.error || '');
-          msg.className = 'msg fail'; btn.disabled=false; btn.textContent='重試';
-        }
-      }).catch(function(){});
-    }, 1500);
-  }
+    .then(function(){
+      // 加入佇列成功:該份禁選並標「佇列中」
+      sel.checked = false; sel.disabled = true;
+      row.classList.add('is-disabled');
+      if(!row.querySelector('.pdf-badge')){
+        var b = document.createElement('span');
+        b.className = 'pdf-badge queued'; b.textContent = '佇列中';
+        row.insertBefore(b, row.querySelector('.pdf-type'));
+      }
+      pollJobs();
+    })
+    .catch(function(e){ hint.textContent = (e && e.message) || '加入失敗(請確認伺服器仍在執行)'; });
 }
+
+pollJobs();
+setInterval(pollJobs, 1500);
 </script>
 {% endblock %}

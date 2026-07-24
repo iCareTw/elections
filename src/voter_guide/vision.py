@@ -15,10 +15,20 @@ from pathlib import Path
 
 import pypdfium2 as pdfium
 
-ENDPOINT = os.environ.get("LMSTUDIO_URL", "http://localhost:1234") + "/v1/chat/completions"
+BASE_URL = os.environ.get("LMSTUDIO_URL", "http://localhost:1234")
+ENDPOINT = BASE_URL + "/v1/chat/completions"
 MODEL = os.environ.get("VOTER_GUIDE_VISION_MODEL", "google/gemma-4-e4b")
 RENDER_SCALE = 3.0
 PAD = 4
+
+
+def endpoint_available(timeout: int = 3) -> bool:
+    """本機視覺模型是否可用(能連上 /v1/models)。匯入前先檢查用。"""
+    try:
+        with urllib.request.urlopen(BASE_URL + "/v1/models", timeout=timeout):
+            return True
+    except Exception:
+        return False
 
 
 def _b64(img) -> str:

@@ -27,6 +27,11 @@ async def lifespan(app: FastAPI):
     try:
         store.init_schema()
         app.state.store = store
+        # 復原前次程序中斷的匯入工作,並在有佇列時啟動 worker
+        store.guide_requeue_running_import_jobs()
+        if store.guide_has_queued_import_jobs():
+            from src.webapp.routes.guide import _ensure_import_worker
+            _ensure_import_worker(store)
         yield
     finally:
         store.close()
