@@ -12,12 +12,18 @@ from pathlib import Path
 
 import yaml
 
+from . import apple_ocr
 from . import geometry as geo
+from . import scan_parse
 from . import verify
 from .vision import VisionCache, crop_cell, transcribe
 
 PERSON_FIELDS = ["姓名", "出生年月日", "性別", "學歷", "經歷"]
 BASIC_SUBFIELDS = {"出生年月日", "性別"}
+
+SOURCE_TEXT = "PDF 文字"
+SOURCE_OCR = "圖像辨識"
+SOURCE_SCAN = "掃描圖重建"
 
 _BASIC_PATTERNS = {
     "出生年月日": r"出生年月日[:：]\s*(.+?)(?=性別[:：]|出生地[:：]|$)",
@@ -58,7 +64,8 @@ def _vision_for(pdf_path, person, field, bbox, *, key, cache, crop_save, use_vis
 
 def _process_person(pdf_path, person: geo.Person, *, cache, use_vision,
                     crop_type: str, session: int, minguo_year: int,
-                    ticket: int, name: str, out_dir: Path):
+                    ticket: int, name: str, out_dir: Path,
+                    source: str = SOURCE_TEXT):
     values: dict[str, str | None] = {}
     report: dict[str, dict] = {}
 
@@ -94,8 +101,12 @@ def _process_person(pdf_path, person: geo.Person, *, cache, use_vision,
             continue
 
         res = verify.verify_field(field, geo_text, vis_text)
-        # 學歷/經歷 以 model 的 markdown 輸出為準(幾何無法保留條列格式)
-        if field in ("學歷", "經歷") and vis_text:
+        if field in verify.BULLET_FIELDS and source == SOURCE_OCR:
+            # OCR 有可靠的視覺行結構 → 用它切條目,看圖那路只做交叉驗證。
+            # (模型會改壞字:倫敦→備敬、成淵→成潮,而 OCR 逐字正確)
+            values[field] = verify.to_bullets(geo_text) or res["value"]
+        elif field in verify.BULLET_FIELDS and vis_text:
+            # PDF 內嵌文字的行序不保證(113 直排數字會落到別行) → 仍用 model 排版
             values[field] = vis_text
         else:
             values[field] = res["value"]
@@ -147,6 +158,9 @@ def _extract_platform(pdf_path, group, *, cache, use_vision,
 
 
 def _save_photo(pdf_path, person, dest: Path, scale=3.0):
+    if getattr(person, "photo_image", None) is not None:
+        person.photo_image.save(dest_mk(dest))   # 掃描圖:已裁好的圖
+        return dest
     if not person.photo_bbox:
         return None
     crop_cell(pdf_path, person.page, person.photo_bbox, scale=scale).save(dest_mk(dest))
@@ -166,14 +180,34 @@ def _pdf_session_year(pdf_path: str) -> tuple[int, int]:
     return 0, 0
 
 
+def _parse_structure(pdf_path: str) -> tuple[list[geo.Group], str]:
+    """A 路來源，依 PDF 裡實際有什麼逐級退讓。純程式判斷，不打模型：
+
+    1. 有內嵌文字 → 直接讀(101/109/113)
+    2. 只有向量格線 → 逐格看圖(105:文字被轉成曲線)
+    3. 什麼都沒有,只有掃描照片 → 自己找格線重建(085/089/093/097)
+    """
+    groups = list(geo.parse(pdf_path))
+    if groups:
+        return groups, SOURCE_TEXT
+    if not apple_ocr.available():
+        return [], SOURCE_TEXT
+    groups = list(apple_ocr.parse(pdf_path))
+    if groups:
+        return groups, SOURCE_OCR
+    return list(scan_parse.parse(pdf_path)), SOURCE_SCAN
+
+
 def parse_pdf(pdf_path: str, tag: str, out_dir: Path, use_vision: bool, progress=None):
     session, minguo_year = _pdf_session_year(pdf_path)
     crop_type = "president"
 
     cache = VisionCache(out_dir / "vision_cache" / f"{tag}.json")
 
-    groups = list(geo.parse(pdf_path))
+    groups, source = _parse_structure(pdf_path)
     total = len(groups)
+    if progress and total:
+        progress(0, total, f"以{source}讀出 {total} 組")
     result = []
     for gi, g in enumerate(groups):
         if progress:
@@ -193,7 +227,7 @@ def parse_pdf(pdf_path: str, tag: str, out_dir: Path, use_vision: bool, progress
             values, report = _process_person(
                 pdf_path, person, cache=cache, use_vision=use_vision,
                 crop_type=crop_type, session=session, minguo_year=minguo_year,
-                ticket=g.ticket, name=name, out_dir=out_dir)
+                ticket=g.ticket, name=name, out_dir=out_dir, source=source)
             rec = {f: values.get(f) for f in PERSON_FIELDS}
             rec["頁碼"] = person.page  # 0-based PDF 頁索引,供 load 填 source_page
 
@@ -255,7 +289,7 @@ def main():
         print(f"\n=== {pdf} (tag={tag}, vision={not args.no_vision}) ===")
         result, out_file = parse_pdf(pdf, tag, out_dir, use_vision=not args.no_vision)
         if not result:
-            print(f"  0 組 → 需 OCR 來源（掃描圖、無可解析文字/格線），現有幾何無法處理")
+            print("  0 組 → PDF 文字與圖像辨識都讀不到表格（掃描圖或未支援的版面）")
         else:
             print(f"  {len(result)} 組 → {out_file}；需注意欄位 {_count_flagged(result)} 個")
 

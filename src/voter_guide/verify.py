@@ -18,6 +18,9 @@ SOFT = "看圖存疑"         # 幾何為準欄位，看圖不同但已採幾何
 # 這些短欄位幾何最準、看圖最不準 → 以幾何為準，看圖僅供參考、不輕易標紅
 GEO_AUTH = {"姓名", "性別", "出生地", "登記方式"}
 
+# 條列欄位：值以 A 路(幾何/OCR)原文切條目,不採看圖那路的排版(模型會改壞字)
+BULLET_FIELDS = {"學歷", "經歷"}
+
 DATE_RE = re.compile(r"(\d+)年(\d+)月(\d+)日")
 _PUNCT = "、，,。.;；:：()（）「」-－　 \n\t"
 
@@ -64,6 +67,44 @@ def clean_field(field: str, text: str | None) -> str | None:
         return re.sub(r"\s+", "", text).strip() or None
     # 住址 / 學歷 / 經歷 / 政見：去除換行與空白，保留頓號
     return re.sub(r"\s+", "", text).strip() or None
+
+
+def to_bullets(text: str | None) -> str | None:
+    """學歷/經歷原文 → Markdown 無序清單。
+
+    公報這兩欄有兩種排版，靠行的形狀分辨：
+    - 連續文字硬換行(經歷、長學歷)：條目以『、』分隔，換行只是斷行。
+      認法是有行以『、』開頭，或除末行外每行長度相近(都排滿欄寬)。
+    - 一行一條目(多數學歷)：直接按行切；行內的『、』屬同一條(如『碩士、博士』)。
+
+    長度用相對差異判斷:排滿的行差在數個字內(徐欣瑩經歷 6%),一行一條目的
+    行長參差(她的學歷 29%)。
+    """
+    if not text:
+        return None
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    if not lines:
+        return None
+
+    widths = [len(ln) for ln in lines[:-1]]
+    wrapped = (any(ln.startswith("、") for ln in lines)
+               or (len(lines) >= 3
+                   and max(widths) - min(widths) <= 0.15 * max(widths)))
+    if wrapped and "、" in "".join(lines):
+        items = "".join(lines).split("、")
+    else:
+        items = lines
+    items = [it.strip("、 ") for it in items]
+    items = [it for it in items if it]
+
+    # 並列的屆數(『第16、17屆縣議員』)不是兩條,切開後接回去
+    merged: list[str] = []
+    for it in items:
+        if merged and merged[-1][-1].isdigit() and it[0].isdigit():
+            merged[-1] = f"{merged[-1]}、{it}"
+        else:
+            merged.append(it)
+    return "\n".join(f"- {it}" for it in merged) or None
 
 
 def parse_minguo(text: str | None) -> str | None:

@@ -42,6 +42,7 @@ class Person:
     basic_cell: Cell | None = None  # 113 把出生年月日/性別/出生地 疊在「基本資料」合併格
     photo_bbox: tuple[float, float, float, float] | None = None
     row_bbox: tuple[float, float, float, float] | None = None
+    photo_image: object | None = None  # 掃描圖來源:無 bbox 可裁,直接帶 PIL 圖
 
 
 @dataclass

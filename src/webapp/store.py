@@ -1877,12 +1877,18 @@ class Store:
         return out
 
     def guide_list_import_jobs(self, limit: int = 20) -> list[dict[str, Any]]:
-        """近期匯入工作(佇列 + 進行中優先,其餘依新到舊),供匯入頁佇列清單。"""
+        """近期匯入工作(佇列 + 進行中優先,其餘依新到舊),供匯入頁佇列清單。
+
+        每份公報只留最新一筆:重跑成功後,舊的失敗紀錄對決策已無用(詳情在 log)。
+        """
         with self.connect() as conn:
             self._setup_conn(conn)
             rows = conn.execute(
                 """
-                SELECT * FROM guide_import_jobs
+                SELECT * FROM (
+                    SELECT DISTINCT ON (pdf_path) * FROM guide_import_jobs
+                    ORDER BY pdf_path, id DESC
+                ) latest
                 ORDER BY
                     CASE status WHEN 'running' THEN 0 WHEN 'queued' THEN 1 ELSE 2 END,
                     CASE WHEN status IN ('queued', 'running') THEN id END ASC,

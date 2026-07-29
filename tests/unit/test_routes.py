@@ -56,6 +56,12 @@ def test_app_startup_prepares_database(monkeypatch: pytest.MonkeyPatch, tmp_path
         def close(self) -> None:
             events.append("close")
 
+        def guide_requeue_running_import_jobs(self) -> int:
+            return 0
+
+        def guide_has_queued_import_jobs(self) -> bool:
+            return False
+
     monkeypatch.setattr(app_module, "Store", FakeStore)
 
     with TestClient(app_module.create_app(root=tmp_path)):

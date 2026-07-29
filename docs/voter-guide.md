@@ -16,8 +16,22 @@ uv run python -m src.voter_guide.pipeline <pdf...> --out-dir <dir>
 - **切分**：以表格框線把每位參選人、每個欄位切成單格取文字（`geometry`）。
 - **驗證**：把單格截圖交給本機視覺模型「盲讀」當獨立第二來源（`vision`），
   程式比對兩路一致度，標成五級信心：完全一致／幾乎一致／大部分一致／資料不可靠／無法解析（`verify`）。
-- 掃描圖無內嵌文字時，改用 macOS 內建 Vision OCR 取字。
+- **切分來源三選一**，依 PDF 裡實際有什麼自動退讓（純程式判斷，不打模型）：
+
+  | PDF 裡有什麼 | 怎麼切 | 適用 |
+  |---|---|---|
+  | 內嵌文字 | 直接讀（`geometry`） | 101、109、113 |
+  | 只有向量格線 | 逐格看圖（`apple_ocr`） | 105 |
+  | 只有一張掃描照片 | 自己找格線重建（`scan_parse`） | 085、089、093、097 |
+
+- **不預設版面長相**：欄位名（姓名、出生年月日…）共線的方向就是表頭軸，垂直於它
+  的方向就是候選人並排的方向；表頭軸靠頁面右緣即為早期的直書右到左版式。八份
+  president 公報涵蓋六種版面，全部由此推導，沒有為年份寫特例。
 
 ## 模組
 
-`src/voter_guide/`：`geometry`（切分）、`vision`（盲讀）、`verify`（信心）、`pipeline`（串接）、`guide_load`（匯入 DB）、`guide_repair`（AI 修復）、`guide_crop`（照片裁切）。網頁檢視/校對在 `src/webapp/routes/guide.py` 與 `templates/guide/`。
+`src/voter_guide/`：`geometry`（讀 PDF 文字）、`apple_ocr`（Vision OCR 逐格）、`layout`（版面推導）、`scan_grid`（掃描圖找格線）、`scan_parse`（掃描圖解析）、`vision`（盲讀）、`verify`（信心）、`pipeline`（串接）、`guide_load`（匯入 DB）、`guide_repair`（AI 修復）、`guide_crop`（照片裁切）。網頁檢視/校對在 `src/webapp/routes/guide.py` 與 `templates/guide/`。
+
+掃描圖那條路的三個關鍵（都是實測踩出來的）：掃描歪 0.2 度就會讓投影找不到線，需
+先校正；085 是淺藍印刷，二值化門檻必須看背景亮度定；直排文字整欄都是墨，只能靠
+「線很細、貫穿整個表格高度」與文字欄區分。
