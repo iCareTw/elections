@@ -22,8 +22,24 @@
       <input type="radio" name="pdf" value="{{ f.path }}"
              {% if f.imported or f.active %}disabled{% endif %}>
       <span class="pdf-name">{{ f.name }}</span>
-      {% if f.imported %}<span class="pdf-badge">已匯入</span>
-      {% elif f.active %}<span class="pdf-badge queued">佇列中</span>{% endif %}
+      <span class="pdf-status">
+        {%- if f.imported %}
+        <span class="pdf-badge done">已匯入</span>
+        {%- if f.election_id %}
+        <a class="pdf-link" href="/guide/election/{{ f.election_id }}"
+           onclick="event.stopPropagation()">前往校對台 →</a>
+        {%- endif %}
+        {%- elif f.status == 'running' %}
+        <span class="pdf-badge running">解析中</span>
+        <span class="pdf-msg">{{ f.message }}</span>
+        <span class="pdf-track"><span class="pdf-fill" style="width:{{ f.pct }}%"></span></span>
+        {%- elif f.status == 'queued' %}
+        <span class="pdf-badge queued">排隊中</span>
+        {%- elif f.status == 'failed' %}
+        <span class="pdf-badge failed">{{ f.when }} 失敗</span>
+        <span class="pdf-err" title="{{ f.error }}">{{ f.error }}</span>
+        {%- endif %}
+      </span>
       <a class="pdf-view" href="/guide/import/pdf?path={{ f.path | urlencode }}"
          target="_blank" rel="noopener" onclick="event.stopPropagation()">檢視 PDF</a>
       <span class="pdf-type">{{ f.type }}</span>
@@ -39,10 +55,6 @@
   <div class="imp-note">在 <code>_data/voter_guide/president/</code> 下找不到公報 PDF。</div>
   {% endif %}
 
-  <div class="job-queue" id="job-queue" style="display:none">
-    <div class="jq-title">匯入佇列</div>
-    <div class="jq-list" id="jq-list"></div>
-  </div>
 </div>
 
 <script>
@@ -52,35 +64,51 @@ function recheckModel(){
   }).catch(function(){});
 }
 
-var STATUS_TXT = {queued:'排隊中', running:'解析中', done:'完成', failed:'失敗'};
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[c];
+  });
+}
 
-function renderJobs(jobs){
-  var wrap = document.getElementById('job-queue'), list = document.getElementById('jq-list');
-  if(!jobs || !jobs.length){ wrap.style.display = 'none'; return; }
-  wrap.style.display = 'block';
-  list.innerHTML = jobs.map(function(j){
-    var pct = j.total > 0 ? Math.round(j.done / j.total * 100) : 0;
-    var right = '';
-    if(j.status === 'running'){
-      right = '<span class="jq-msg">' + (j.message || '解析中…') + '</span>' +
-              '<span class="jq-track"><span class="jq-fill" style="width:' + pct + '%"></span></span>';
-    } else if(j.status === 'done'){
-      right = '<a class="jq-link" href="/guide/election/' + j.election_id + '">前往校對台 →</a>';
-    } else if(j.status === 'failed'){
-      right = '<span class="jq-err">' + (j.error || '失敗') + '</span>';
-    } else {
-      right = '<span class="jq-msg">' + (j.message || '排隊中') + '</span>';
+// 與 import.html 上方 Jinja 渲染的 .pdf-status 內容一致
+function statusHtml(f){
+  if(f.imported){
+    return '<span class="pdf-badge done">已匯入</span>' + (f.election_id
+      ? '<a class="pdf-link" href="/guide/election/' + esc(f.election_id) +
+        '" onclick="event.stopPropagation()">前往校對台 →</a>' : '');
+  }
+  if(f.status === 'running'){
+    return '<span class="pdf-badge running">解析中</span>' +
+      '<span class="pdf-msg">' + esc(f.message) + '</span>' +
+      '<span class="pdf-track"><span class="pdf-fill" style="width:' + f.pct + '%"></span></span>';
+  }
+  if(f.status === 'queued'){ return '<span class="pdf-badge queued">排隊中</span>'; }
+  if(f.status === 'failed'){
+    return '<span class="pdf-badge failed">' + esc(f.when) + ' 失敗</span>' +
+      '<span class="pdf-err" title="' + esc(f.error) + '">' + esc(f.error) + '</span>';
+  }
+  return '';
+}
+
+function renderRows(rows){
+  (rows || []).forEach(function(f){
+    var row = document.querySelector('.pdf-item[data-path="' + f.path.replace(/"/g, '\\"') + '"]');
+    if(!row){ return; }
+    var cell = row.querySelector('.pdf-status');
+    if(cell){ cell.innerHTML = statusHtml(f); }
+    var lock = f.imported || f.active;
+    row.classList.toggle('is-disabled', !!lock);
+    var input = row.querySelector('input[name="pdf"]');
+    if(input){
+      if(lock){ input.checked = false; }
+      input.disabled = !!lock;
     }
-    return '<div class="jq-row jq-' + j.status + '">' +
-      '<span class="jq-badge">' + (STATUS_TXT[j.status] || j.status) + '</span>' +
-      '<span class="jq-name">' + (j.pdf_name || '') + '</span>' +
-      '<span class="jq-right">' + right + '</span></div>';
-  }).join('');
+  });
 }
 
 function pollJobs(){
   fetch('/guide/import/jobs', {cache:'no-store'}).then(function(r){ return r.json(); })
-    .then(function(j){ renderJobs(j.jobs); }).catch(function(){});
+    .then(function(j){ renderRows(j.rows); }).catch(function(){});
 }
 
 function startImport(){
@@ -88,24 +116,13 @@ function startImport(){
   var hint = document.getElementById('imp-hint');
   if(!sel){ hint.textContent = '請先選一份公報'; return; }
   hint.textContent = '';
-  var row = sel.closest('.pdf-item');
   fetch('/guide/import', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
       body:'pdf=' + encodeURIComponent(sel.value)})
     .then(function(r){
       if(!r.ok){ return r.text().then(function(t){ throw new Error('伺服器回應 ' + r.status + ' ' + t.slice(0,200)); }); }
       return r.json();
     })
-    .then(function(){
-      // 加入佇列成功:該份禁選並標「佇列中」
-      sel.checked = false; sel.disabled = true;
-      row.classList.add('is-disabled');
-      if(!row.querySelector('.pdf-badge')){
-        var b = document.createElement('span');
-        b.className = 'pdf-badge queued'; b.textContent = '佇列中';
-        row.insertBefore(b, row.querySelector('.pdf-type'));
-      }
-      pollJobs();
-    })
+    .then(function(){ pollJobs(); })  // 該列狀態改由 renderRows 統一更新
     .catch(function(e){ hint.textContent = (e && e.message) || '加入失敗(請確認伺服器仍在執行)'; });
 }
 

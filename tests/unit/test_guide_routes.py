@@ -208,6 +208,32 @@ def test_import_page_lists_pdfs(tmp_path):
         _teardown(store)
 
 
+def test_import_row_shows_last_failure_with_date(tmp_path):
+    """失敗原因長在該份公報那一列,並附日期,避免舊紀錄被當成現況。"""
+    client, store = _client_with_data(tmp_path)
+    try:
+        p = _mk_pdf(tmp_path, "089年第10任總統副總統.pdf")
+        job_id = store.guide_create_import_job(str(p.resolve()), p.stem)
+        store.guide_finish_import_job(job_id, status="failed", error="解析不到任何候選人組別")
+
+        rows = client.get("/guide/import/jobs").json()["rows"]
+        row = next(r for r in rows if r["name"] == p.stem)
+        assert row["status"] == "failed"
+        assert row["error"] == "解析不到任何候選人組別"
+        assert row["when"]                      # 有日期才看得出是不是舊紀錄
+        assert not row["imported"] and not row["active"]   # 仍可重選重跑
+
+        r = client.get("/guide/import")
+        assert "解析不到任何候選人組別" in r.text
+        assert "匯入佇列" not in r.text          # 佇列面板已移除
+    finally:
+        with store.connect() as conn:
+            store._setup_conn(conn)
+            conn.execute("DELETE FROM guide_import_jobs WHERE pdf_path = %s",
+                         (str(p.resolve()),))
+        _teardown(store)
+
+
 def test_import_rejects_outside_path(tmp_path):
     client, store = _client_with_data(tmp_path)
     try:

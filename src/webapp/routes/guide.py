@@ -47,15 +47,34 @@ async def guide_election(request: Request, election_id: str):
 # 匯入公報 PDF(選現有檔 → 背景解析 + 載入)
 # ---------------------------------------------------------------------------
 
-def _list_pdfs(root: Path, imported: set[str], active: set[str]) -> list[dict]:
-    """列出 _data/voter_guide/ 下可匯入的公報 PDF(目前解析器支援總統)。新到舊排序。"""
+def _list_pdfs(root: Path, imported: dict[str, str],
+               jobs: dict[str, dict]) -> list[dict]:
+    """列出 _data/voter_guide/ 下可匯入的公報 PDF(目前解析器支援總統)。新到舊排序。
+
+    每列自帶最新狀態(已匯入 / 排隊中 / 解析中 / 上次失敗),讓清單本身就是現況。
+    """
     base = root / "_data" / "voter_guide"
     out = []
     for pdf in sorted(base.glob("president/*.pdf"), reverse=True):
         rp = str(pdf.resolve())
-        out.append({"path": str(pdf.relative_to(root)), "name": pdf.stem,
-                    "type": "president",
-                    "imported": rp in imported, "active": rp in active})
+        job = jobs.get(rp) or {}
+        status = job.get("status") or ""
+        total = job.get("total") or 0
+        done = job.get("done") or 0
+        finished = job.get("finished_at")
+        out.append({
+            "path": str(pdf.relative_to(root)), "name": pdf.stem,
+            "type": "president",
+            "imported": rp in imported,
+            "election_id": imported.get(rp),
+            "active": status in ("queued", "running"),
+            "status": status,
+            "message": job.get("message") or "",
+            "pct": round(done / total * 100) if total else 0,
+            # 失敗訊息附上日期:一眼看出是舊紀錄還是剛剛的結果
+            "error": job.get("error") or "" if status == "failed" else "",
+            "when": f"{finished.month}/{finished.day}" if finished else "",
+        })
     return out
 
 
@@ -114,8 +133,8 @@ async def import_page(request: Request):
         "candidates": None,
         "selected_group_id": None,
         "pdfs": _list_pdfs(Path(request.app.state.root),
-                           store.guide_imported_pdf_paths(),
-                           store.guide_active_import_paths()),
+                           store.guide_imported_pdf_map(),
+                           store.guide_latest_import_by_path()),
         "model_ok": endpoint_available(),
         "model_url": BASE_URL,
     })
@@ -143,14 +162,12 @@ async def import_pdf_view(request: Request, path: str):
 
 @router.get("/import/jobs")
 async def import_jobs(request: Request):
-    """匯入佇列現況(供匯入頁輪詢渲染)。"""
+    """各公報最新狀態(供匯入頁輪詢更新清單各列),欄位與初次渲染一致。"""
     store = request.app.state.store
-    jobs = [{
-        "id": j["id"], "pdf_name": j["pdf_name"], "status": j["status"],
-        "message": j["message"], "done": j["done"], "total": j["total"],
-        "election_id": j["election_id"], "error": j["error"],
-    } for j in store.guide_list_import_jobs()]
-    return JSONResponse({"jobs": jobs})
+    rows = _list_pdfs(Path(request.app.state.root),
+                      store.guide_imported_pdf_map(),
+                      store.guide_latest_import_by_path())
+    return JSONResponse({"rows": rows})
 
 
 @router.post("/import")

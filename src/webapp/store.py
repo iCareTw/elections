@@ -1263,21 +1263,25 @@ class Store:
             ).fetchall()
         return [dict(r) for r in rows]
 
-    def guide_imported_pdf_paths(self) -> set[str]:
-        """已匯入公報的來源 PDF 絕對路徑集合(供匯入清單標記已匯入)。"""
+    def guide_imported_pdf_map(self) -> dict[str, str]:
+        """已匯入公報:來源 PDF 絕對路徑 → guide_elections.id(供匯入清單標記與連往校對台)。"""
         with self.connect() as conn:
             self._setup_conn(conn)
             rows = conn.execute(
-                "SELECT source_pdf_path FROM guide_elections "
+                "SELECT id, source_pdf_path FROM guide_elections "
                 "WHERE source_pdf_path IS NOT NULL"
             ).fetchall()
-        out = set()
+        out = {}
         for r in rows:
             try:
-                out.add(str(Path(r["source_pdf_path"]).resolve()))
+                out[str(Path(r["source_pdf_path"]).resolve())] = r["id"]
             except Exception:
-                out.add(r["source_pdf_path"])
+                out[r["source_pdf_path"]] = r["id"]
         return out
+
+    def guide_imported_pdf_paths(self) -> set[str]:
+        """已匯入公報的來源 PDF 絕對路徑集合(供匯入清單標記已匯入)。"""
+        return set(self.guide_imported_pdf_map())
 
     def guide_election_row(self, election_id: str) -> dict[str, Any] | None:
         with self.connect() as conn:
@@ -1898,6 +1902,16 @@ class Store:
                 (limit,),
             ).fetchall()
         return [dict(r) for r in rows]
+
+    def guide_latest_import_by_path(self) -> dict[str, dict[str, Any]]:
+        """每份公報最新一筆匯入工作,以絕對路徑為 key(供匯入清單標示各列狀態)。"""
+        out = {}
+        for j in self.guide_list_import_jobs(limit=200):
+            try:
+                out[str(Path(j["pdf_path"]).resolve())] = j
+            except Exception:
+                out[j["pdf_path"]] = j
+        return out
 
     def guide_update_import_progress(self, job_id: int, message: str,
                                      done: int, total: int) -> None:

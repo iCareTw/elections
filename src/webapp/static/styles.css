@@ -908,30 +908,24 @@ button { font: inherit; cursor: pointer; border: 0; }
 .guide-scope .pdf-view:hover { background: rgba(15,118,110,.1); }
 .guide-scope .pdf-item.is-disabled { cursor: default; opacity: .55; }
 .guide-scope .pdf-item.is-disabled:hover { background: transparent; }
-.guide-scope .pdf-badge { font-size: 11px; font-weight: 700; color: var(--muted);
-  border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; }
-.guide-scope .pdf-badge.queued { color: #b7791f; border-color: #e6c67a; }
 .guide-scope .imp-hint { font-size: 12px; color: #a33; }
-.guide-scope .job-queue { margin-top: 20px; border: 1px solid var(--line);
-  border-radius: 12px; background: var(--panel); overflow: hidden; }
-.guide-scope .jq-title { font-size: 13px; font-weight: 700; color: var(--muted);
-  padding: 10px 14px; border-bottom: 1px solid rgba(217,205,182,.5); }
-.guide-scope .jq-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px;
-  border-bottom: 1px solid rgba(217,205,182,.5); font-size: 13px; }
-.guide-scope .jq-row:last-child { border-bottom: 0; }
-.guide-scope .jq-badge { font-size: 11px; font-weight: 700; border-radius: 999px;
-  padding: 1px 8px; border: 1px solid var(--line); color: var(--muted); flex: none; }
-.guide-scope .jq-running .jq-badge { color: #0f766e; border-color: #7fc3ba; }
-.guide-scope .jq-done .jq-badge { color: #0f766e; border-color: #0f766e; }
-.guide-scope .jq-failed .jq-badge { color: #a33; border-color: #d99; }
-.guide-scope .jq-name { flex: 1; font-weight: 600; }
-.guide-scope .jq-right { display: flex; align-items: center; gap: 8px; }
-.guide-scope .jq-msg { color: var(--muted); font-size: 12px; }
-.guide-scope .jq-err { color: #a33; font-size: 12px; }
-.guide-scope .jq-link { color: #0f766e; font-weight: 700; text-decoration: none; }
-.guide-scope .jq-track { display: inline-block; width: 120px; height: 6px; border-radius: 999px;
-  background: rgba(15,118,110,.15); overflow: hidden; }
-.guide-scope .jq-fill { display: block; height: 100%; background: #0f766e; transition: width .3s; }
+.guide-scope .pdf-status { display: flex; align-items: center; gap: 8px;
+  min-width: 0; max-width: 55%; }
+.guide-scope .pdf-badge { font-size: 11px; font-weight: 700; color: var(--muted);
+  border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; flex: none; }
+.guide-scope .pdf-badge.queued { color: #b7791f; border-color: #e6c67a; }
+.guide-scope .pdf-badge.running { color: #0f766e; border-color: #7fc3ba; }
+.guide-scope .pdf-badge.done { color: #0f766e; border-color: #0f766e; }
+.guide-scope .pdf-badge.failed { color: #a33; border-color: #d99; }
+.guide-scope .pdf-msg { color: var(--muted); font-size: 12px; }
+.guide-scope .pdf-err { color: #a33; font-size: 12px; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.guide-scope .pdf-link { color: #0f766e; font-size: 12px; font-weight: 700;
+  text-decoration: none; flex: none; }
+.guide-scope .pdf-link:hover { text-decoration: underline; }
+.guide-scope .pdf-track { display: inline-block; width: 120px; height: 6px; border-radius: 999px;
+  background: rgba(15,118,110,.15); overflow: hidden; flex: none; }
+.guide-scope .pdf-fill { display: block; height: 100%; background: #0f766e; transition: width .3s; }
 .guide-scope .imp-model { display: flex; align-items: center; gap: 8px; font-size: 13px;
   border-radius: 10px; padding: 9px 12px; margin: 0 0 16px; }
 .guide-scope .imp-model .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
