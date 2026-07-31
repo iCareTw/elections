@@ -34,11 +34,14 @@ async def guide_home(request: Request):
 @router.get("/election/{election_id}")
 async def guide_election(request: Request, election_id: str):
     store = request.app.state.store
+    candidates = store.guide_candidates_of(election_id)
+    if candidates:
+        return RedirectResponse(_group_url(candidates[0]["guide_group_id"]), status_code=303)
     return request.app.state.templates.TemplateResponse(request, "guide/index.html", {
         "app_mode": "guide",
         "tree": store.guide_tree(),
         "selected_election_id": election_id,
-        "candidates": store.guide_candidates_of(election_id),
+        "candidates": candidates,
         "selected_group_id": None,
     })
 

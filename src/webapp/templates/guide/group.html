@@ -190,6 +190,18 @@ var guideModal = (function(){
   document.addEventListener('click', function(e){
     var b = e.target.closest('.edit-btn'); if (b) open(b);
   });
+  function moveCandidate(offset){
+    var seen = {};
+    var links = Array.from(document.querySelectorAll('.guide-rail .cand')).filter(function(link){
+      var href = link.getAttribute('href');
+      if (seen[href]) return false;
+      seen[href] = true;
+      return true;
+    });
+    var current = links.findIndex(function(link){ return link.classList.contains('on'); });
+    var target = links[current + offset];
+    if (target) location.href = target.href;
+  }
   // 快捷鍵:
   //  彈窗開啟時 → Esc 放棄、Enter 保存(文字區 Shift+Enter 換行)
   //  彈窗關閉時 → ← / → 切換版本
@@ -211,7 +223,9 @@ var guideModal = (function(){
     }
     var tag = (e.target.tagName || '').toUpperCase();
     if (tag === 'INPUT' || tag === 'TEXTAREA') return;        // 打字時不搶按鍵
-    if (e.key === 'ArrowLeft') { var p = document.getElementById('ver-prev'); if (p) { e.preventDefault(); p.click(); } }
+    if (e.key === 'n' || e.key === 'N') { moveCandidate(1); }
+    else if (e.key === 'b' || e.key === 'B') { moveCandidate(-1); }
+    else if (e.key === 'ArrowLeft') { var p = document.getElementById('ver-prev'); if (p) { e.preventDefault(); p.click(); } }
     else if (e.key === 'ArrowRight') { var n = document.getElementById('ver-next'); if (n) { e.preventDefault(); n.click(); } }
     else if (e.key === 'e' || e.key === 'E') {               // e:編輯滑鼠所在欄位(等同該欄「修改」)
       var b = document.querySelector('.frow:hover .edit-btn');
