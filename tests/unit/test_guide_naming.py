@@ -10,14 +10,14 @@ PRESIDENT_PDF = ROOT / "_data/voter_guide/president/113年第16任總統副總�
 
 def test_crop_filename_president():
     # 民國113 → 西元2024;第16任;第1組;柯文哲;學歷
-    got = crop_filename(type="president", session=16, minguo_year=113,
+    got = crop_filename(slug="president/16th_2024",
                         ticket=1, name="柯文哲", field="學歷")
     assert got == "president/16th_2024_ticket_1_柯文哲_學歷.png"
 
 
 def test_crop_filename_platform_omits_name():
     # 政見為組層級,檔名不綁人名
-    got = crop_filename(type="president", session=16, minguo_year=113,
+    got = crop_filename(slug="president/16th_2024",
                         ticket=2, name="任何人", field="政見")
     assert got == "president/16th_2024_ticket_2_政見.png"
 

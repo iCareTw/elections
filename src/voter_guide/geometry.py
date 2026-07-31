@@ -47,10 +47,22 @@ class Person:
 
 @dataclass
 class Group:
+    """一個號次。總統公報一組兩人(正副),縣市長一號一人。"""
     ticket: int | None
     page: int
-    president: Person | None = None
-    vice: Person | None = None
+    members: list[Person] = dc_field(default_factory=list)
+    party_cell: Cell | None = None   # 政黨自成一欄時(縣市長「推薦之政黨」)
+
+    def by_role(self, role: str) -> Person | None:
+        return next((p for p in self.members if p.role == role), None)
+
+    @property
+    def president(self) -> Person | None:
+        return self.by_role("總統")
+
+    @property
+    def vice(self) -> Person | None:
+        return self.by_role("副總統")
 
 
 def decode(s: str | None) -> str:
@@ -142,10 +154,7 @@ def parse(pdf_path: str | Path) -> list[Group]:
                     if combined_ci is not None:
                         person.basic_cell = mkcell(combined_ci)
 
-                    if person.role == "總統":
-                        cur.president = person
-                    else:
-                        cur.vice = person
+                    cur.members.append(person)
                     page_persons.append(person)
 
                 if photo_x:

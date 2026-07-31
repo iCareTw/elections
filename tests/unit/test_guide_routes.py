@@ -25,8 +25,8 @@ def _client_with_data(tmp_path):
 def _ctx(store):
     v = store.guide_group_view(ELECTION_ID, 1)
     gid = v["group"]["id"]
-    fid = next(f for f in v["president"]["fields"] if f["field_name"] == "學歷")["id"]
-    cid = v["president"]["candidate"]["id"]
+    fid = next(f for f in v["members"][0]["fields"] if f["field_name"] == "學歷")["id"]
+    cid = v["members"][0]["candidate"]["id"]
     return v, gid, fid, cid
 
 
@@ -217,7 +217,7 @@ def test_import_row_shows_last_failure_with_date(tmp_path):
         store.guide_finish_import_job(job_id, status="failed", error="解析不到任何候選人組別")
 
         rows = client.get("/guide/import/jobs").json()["rows"]
-        row = next(r for r in rows if r["name"] == p.stem)
+        row = next(r for r in rows if Path(r["path"]).name == p.name)
         assert row["status"] == "failed"
         assert row["error"] == "解析不到任何候選人組別"
         assert row["when"]                      # 有日期才看得出是不是舊紀錄

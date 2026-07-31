@@ -89,7 +89,7 @@ def _make_fake_crops(tmp_path: Path) -> Path:
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_bytes(b"PNG_FAKE")
 
-    kw = dict(type="president", session=SESSION, minguo_year=MINGUO_YEAR)
+    kw = dict(slug=f"president/{SESSION}th_{MINGUO_YEAR + 1911}")
 
     for field in PERSON_FIELDS:
         touch(crop_filename(**kw, ticket=1, name="蔡英文", field=field))
@@ -109,7 +109,6 @@ def _load(store, tmp_path):
         yaml_path=_make_fake_yaml(tmp_path),
         source_pdf_path=Path(SOURCE_PDF),
         crops_base_dir=_make_fake_crops(tmp_path),
-        election_type="president",
         force=True,
     )
 
@@ -200,8 +199,7 @@ def test_reload_without_force_raises_and_keeps_data(tmp_path):
         store.guide_delete_election(ELECTION_ID)
         common = dict(yaml_path=_make_fake_yaml(tmp_path),
                       source_pdf_path=Path(SOURCE_PDF),
-                      crops_base_dir=_make_fake_crops(tmp_path),
-                      election_type="president")
+                      crops_base_dir=_make_fake_crops(tmp_path))
 
         load_guide(store, **common, force=False)
 

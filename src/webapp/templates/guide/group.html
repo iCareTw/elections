@@ -39,7 +39,7 @@
         {{ text_row(field, cand.gender, '/guide/field/' ~ field.id ~ '/value', '/guide/field/' ~ field.id ~ '/repair') }}
       {% endfor %}
       {# 相片:顯示 + 圈選補照片(照片的「修改」) #}
-      <div class="frow">
+      <div class="frow photo-row">
         <div class="fname">相片</div>
         {% if cand.photo_path %}
         <a href="/guide/crop?path={{ cand.photo_path | urlencode }}" target="_blank">
@@ -47,7 +47,7 @@
         {% else %}<div class="photo-empty"></div>{% endif %}
         <div class="fval"></div>
         {% if not readonly %}
-        <a class="btn btn-ghost btn-sm" href="/guide/candidate/{{ cand.id }}/crop">🖼 圈選補照片</a>
+        <a class="btn btn-ghost btn-sm photo-edit" href="/guide/candidate/{{ cand.id }}/crop">🖼 圈選補照片</a>
         {% endif %}
       </div>
     </div>
@@ -74,7 +74,7 @@
 
 <div class="panel" style="margin-bottom:14px">
   <div class="panel-head">
-    <b>第{{ group.ticket }}組 · {{ group.party or '' }} · {{ group.election_label }}</b>
+    <b>第{{ group.ticket }}{{ group.ticket_label }} · {{ group.party or '' }} · {{ group.election_label }}</b>
     <div style="display:flex;align-items:center;gap:14px">
       <a class="btn btn-gray btn-sm" href="/guide/election/{{ group.election_id }}/pdf" target="_blank">📄 開啟公報 PDF</a>
       <div class="vernav">
@@ -90,12 +90,11 @@
 </div>
 
 <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px">
-  {{ person_panel(president, gid) }}
-  {{ person_panel(vice, gid) }}
+  {% for m in members %}{{ person_panel(m, gid) }}{% endfor %}
 </div>
 
 <div class="panel">
-  <div class="panel-head"><b>政見(正副共用)</b></div>
+  <div class="panel-head"><b>政見{% if members | length > 1 %}(正副共用){% endif %}</b></div>
   <div class="panel-body">
     <div class="frow">
       <div class="fname">政見</div>
@@ -229,7 +228,9 @@ var guideModal = (function(){
     else if (e.key === 'ArrowRight') { var n = document.getElementById('ver-next'); if (n) { e.preventDefault(); n.click(); } }
     else if (e.key === 'e' || e.key === 'E') {               // e:編輯滑鼠所在欄位(等同該欄「修改」)
       var b = document.querySelector('.frow:hover .edit-btn');
-      if (b) { e.preventDefault(); open(b); }
+      if (b) { e.preventDefault(); open(b); return; }
+      var photo = document.querySelector('.photo-row:hover .photo-edit');
+      if (photo) { e.preventDefault(); photo.click(); }
     }
   });
   return { open:open, close:close, save:save, ai:ai };

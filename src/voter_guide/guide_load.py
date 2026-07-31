@@ -1,11 +1,11 @@
 """匯入選舉公報解析產物到 guide_* DB 資料表，並建立 v1 snapshot。"""
 from __future__ import annotations
 
-import re
 from pathlib import Path
 
 import yaml
 
+from src.voter_guide import election_meta
 from src.voter_guide.pipeline import BASIC_SUBFIELDS, PERSON_FIELDS, crop_filename
 
 
@@ -19,28 +19,16 @@ def load_guide(
     yaml_path,
     source_pdf_path,
     crops_base_dir,
-    election_type: str = "president",
     force: bool = False,
 ) -> str:
     """Load parser YAML output into guide_* DB tables and create v1 snapshots per candidate.
 
-    Returns the guide_elections.id created (e.g. 'president_2024_16').
+    Returns the guide_elections.id created (e.g. 'president_2024_16'、'mayor_2022_臺北市').
     Raises GuideElectionExists if the election already exists and force=False.
     """
     source_pdf_path = Path(source_pdf_path)
-    m = re.search(r"(\d+)年第(\d+)任", source_pdf_path.name)
-    if not m:
-        raise ValueError(
-            f"Cannot parse election year/session from filename: {source_pdf_path.name}"
-        )
-
-    minguo_year = int(m.group(1))
-    session = int(m.group(2))
-    year_ad = minguo_year + 1911
-
-    election_id = f"{election_type}_{year_ad}_{session}"
-    type_label = "總統" if election_type == "president" else election_type
-    label = f"第{session}任 {year_ad} {type_label}"
+    meta = election_meta.from_pdf_path(source_pdf_path)
+    election_id = meta.election_id
 
     if store.guide_election_exists(election_id):
         if not force:
@@ -51,10 +39,11 @@ def load_guide(
 
     store.guide_upsert_election(
         election_id=election_id,
-        election_type=election_type,
-        year=year_ad,
-        session=session,
-        label=label,
+        election_type=meta.type,
+        year=meta.year,
+        session=meta.session,
+        label=meta.label,
+        region=meta.region,
         source_pdf_path=str(source_pdf_path),
     )
 
@@ -63,17 +52,13 @@ def load_guide(
     order_counter = 0
 
     def _crop(name_clean: str, field: str) -> str | None:
-        rel = crop_filename(type=election_type, session=session,
-                            minguo_year=minguo_year, ticket=ticket,
-                            name=name_clean, field=field)
-        p = crops_base / rel
+        p = crops_base / crop_filename(slug=meta.crop_slug, ticket=ticket,
+                                       name=name_clean, field=field)
         if p.exists():
             return str(p)
-        if field in BASIC_SUBFIELDS:   # 113 出生年月日/性別 → 基本資料合併格
-            rel_b = crop_filename(type=election_type, session=session,
-                                  minguo_year=minguo_year, ticket=ticket,
-                                  name=name_clean, field="基本資料")
-            pb = crops_base / rel_b
+        if field in BASIC_SUBFIELDS:   # 出生年月日/性別 疊在「基本資料」合併格
+            pb = crops_base / crop_filename(slug=meta.crop_slug, ticket=ticket,
+                                            name=name_clean, field="基本資料")
             return str(pb) if pb.exists() else None
         return None
 
@@ -95,7 +80,7 @@ def load_guide(
             source_crop_path=_crop("", "政見"), update_source="parse")
 
         candidate_ids: dict[str, int] = {}
-        for role in ("總統", "副總統"):
+        for role in meta.roles:
             role_dict = entry.get(role)
             if role_dict is None:
                 continue
@@ -152,8 +137,6 @@ def main() -> None:
     ap.add_argument("yaml_path", help="parser 產出的 YAML 路徑")
     ap.add_argument("source_pdf_path", help="來源公報 PDF 路徑(用於推導年份/屆次)")
     ap.add_argument("crops_base_dir", help="切圖/照片輸出基底目錄(如 _out/parsed)")
-    ap.add_argument("--type", default="president", dest="election_type",
-                    help="選舉類型(預設 president)")
     ap.add_argument("--force", action="store_true",
                     help="該場已存在時,刪除既有 guide_* 資料(含已提交 snapshot、人工修正)並重建 v1")
     args = ap.parse_args()
@@ -167,7 +150,6 @@ def main() -> None:
             yaml_path=args.yaml_path,
             source_pdf_path=args.source_pdf_path,
             crops_base_dir=args.crops_base_dir,
-            election_type=args.election_type,
             force=args.force,
         )
         print(f"loaded {election_id}")

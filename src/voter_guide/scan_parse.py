@@ -375,7 +375,5 @@ def parse(pdf_path: str, *, scale: float = RENDER_SCALE) -> list[geo.Group]:
         if not is_vice or current is None:
             current = geo.Group(ticket=len(groups) + 1, page=0)
             groups.append(current)
-            current.president = person
-        else:
-            current.vice = person
+        current.members.append(person)
     return groups

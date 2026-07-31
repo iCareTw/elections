@@ -11,7 +11,7 @@
       {% for ticket, members in candidates | groupby("ticket") %}
       {% set first = members | first %}
       <div class="grp">
-        <div class="grp-h">第{{ ticket }}組{% if first.party %} · {{ first.party }}{% endif %}</div>
+        <div class="grp-h">第{{ ticket }}{{ '組' if members | length > 1 else '號' }}{% if first.party %} · {{ first.party }}{% endif %}</div>
         {% for c in members %}
         <a class="cand {% if selected_group_id == c.guide_group_id %}on{% endif %}"
            href="/guide/group/{{ c.guide_group_id }}">

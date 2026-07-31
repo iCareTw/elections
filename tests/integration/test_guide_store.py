@@ -18,7 +18,7 @@ def _view(store, tmp_path, ticket=1):
 
 
 def _pres_field(view, field_name):
-    return next(f for f in view["president"]["fields"] if f["field_name"] == field_name)
+    return next(f for f in view["members"][0]["fields"] if f["field_name"] == field_name)
 
 
 def test_guide_tree(tmp_path):
@@ -27,7 +27,8 @@ def test_guide_tree(tmp_path):
         _load(store, tmp_path)
         tree = store.guide_tree()
         pres = next(t for t in tree if t["type"] == "president")
-        assert any(e["id"] == ELECTION_ID for e in pres["elections"])
+        assert any(e["id"] == ELECTION_ID
+                   for y in pres["years"] for e in y["elections"])
     finally:
         store.guide_delete_election(ELECTION_ID)
         store.close()
@@ -53,11 +54,11 @@ def test_group_view_shape(tmp_path):
     try:
         v = _view(store, tmp_path, 1)
         assert v["group"]["ticket"] == 1 and v["group"]["party"] == "民主進步黨"
-        assert v["president"]["candidate"]["role"] == "總統"
-        assert v["vice"]["candidate"]["role"] == "副總統"
-        assert [f["field_name"] for f in v["president"]["fields"]] == \
+        assert v["members"][0]["candidate"]["role"] == "總統"
+        assert v["members"][1]["candidate"]["role"] == "副總統"
+        assert [f["field_name"] for f in v["members"][0]["fields"]] == \
             ["姓名", "出生年月日", "性別", "學歷", "經歷"]
-        assert v["president"]["candidate"]["gender"] == "女"   # 蔡英文
+        assert v["members"][0]["candidate"]["gender"] == "女"   # 蔡英文
         assert v["platform"]["value"] == "第1組政見內容…"
         assert v["platform"]["can_ai_repair"] is True
         assert v["has_uncommitted"] is False and v["latest_version"] == 1
@@ -99,7 +100,7 @@ def test_has_uncommitted_excludes_photo(tmp_path):
     store = _store()
     try:
         v = _view(store, tmp_path, 1)
-        cand_id = v["president"]["candidate"]["id"]
+        cand_id = v["members"][0]["candidate"]["id"]
         store.guide_set_photo_path(cand_id, "/tmp/whatever.png")
         # 照片不參與版本狀態
         assert store.guide_group_view(ELECTION_ID, 1)["has_uncommitted"] is False

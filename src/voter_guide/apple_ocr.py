@@ -369,10 +369,7 @@ def parse(pdf_path: str | Path, scale: float = RENDER_SCALE) -> list[geo.Group]:
                 if "基本資料" in special and (rect := by_col.get(special["基本資料"])):
                     person.basic_cell = geo.Cell(text=sheet.text(rect), bbox=rect)
 
-                if person.role == "總統":
-                    cur.president = person
-                else:
-                    cur.vice = person
+                cur.members.append(person)
                 page_persons.append(person)
 
             if photo_x:

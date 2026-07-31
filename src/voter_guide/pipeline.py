@@ -1,4 +1,7 @@
-"""總統公報解析主流程：幾何切分(A) + 盲讀裁判(B) + 信心分級 → YAML + 相片。
+"""公報解析主流程：幾何切分(A) + 盲讀裁判(B) + 信心分級 → YAML + 相片。
+
+總統(正副成組)與縣市長(單人一號)走同一條流程,差別只在「一組有哪些角色」與
+「用哪個切分器」,都由 `election_meta` 依 PDF 放的位置判定。
 
 用法:
     uv run python -m src.voter_guide.pipeline <pdf> [<pdf> ...] [--no-vision]
@@ -13,8 +16,11 @@ from pathlib import Path
 import yaml
 
 from . import apple_ocr
+from . import election_meta
 from . import geometry as geo
 from . import scan_parse
+from . import scan_table
+from . import table_parse
 from . import verify
 from .vision import VisionCache, crop_cell, transcribe
 
@@ -32,12 +38,11 @@ _BASIC_PATTERNS = {
 }
 
 
-def crop_filename(*, type: str, session: int, minguo_year: int,
-                  ticket: int, name: str, field: str) -> str:
-    year_ad = minguo_year + 1911
+def crop_filename(*, slug: str, ticket: int, name: str, field: str) -> str:
+    """切圖檔名。slug 由 election_meta 給(如 president/16th_2024、mayor/2022_臺北市)。"""
     if field == "政見":  # 政見為組層級,檔名不綁人名
-        return f"{type}/{session}th_{year_ad}_ticket_{ticket}_政見.png"
-    return f"{type}/{session}th_{year_ad}_ticket_{ticket}_{name}_{field}.png"
+        return f"{slug}_ticket_{ticket}_政見.png"
+    return f"{slug}_ticket_{ticket}_{name}_{field}.png"
 
 
 def _split_basic(text: str | None, field: str) -> str | None:
@@ -63,8 +68,7 @@ def _vision_for(pdf_path, person, field, bbox, *, key, cache, crop_save, use_vis
 
 
 def _process_person(pdf_path, person: geo.Person, *, cache, use_vision,
-                    crop_type: str, session: int, minguo_year: int,
-                    ticket: int, name: str, out_dir: Path,
+                    slug: str, ticket: int, name: str, out_dir: Path,
                     source: str = SOURCE_TEXT):
     values: dict[str, str | None] = {}
     report: dict[str, dict] = {}
@@ -72,10 +76,9 @@ def _process_person(pdf_path, person: geo.Person, *, cache, use_vision,
     # 113：出生年月日/性別/出生地 疊在「基本資料」合併格 → 只呼叫一次看圖、再切子欄
     basic_block = None
     if person.basic_cell:
-        basic_crop = out_dir / crop_filename(type=crop_type, session=session,
-                                              minguo_year=minguo_year, ticket=ticket,
-                                              name=name, field="基本資料")
-        basic_key = f"{session}|{ticket}|{person.role}|基本資料"
+        basic_crop = out_dir / crop_filename(slug=slug, ticket=ticket,
+                                             name=name, field="基本資料")
+        basic_key = f"{slug}|{ticket}|{person.role}|基本資料"
         basic_block = _vision_for(pdf_path, person, "基本資料(出生年月日、性別、出生地)",
                                    person.basic_cell.bbox,
                                    key=basic_key, cache=cache,
@@ -85,10 +88,9 @@ def _process_person(pdf_path, person: geo.Person, *, cache, use_vision,
         if field in person.cells:                      # 獨立欄(109 各欄、姓名/住址/學歷/經歷)
             cell = person.cells[field]
             geo_text = cell.text
-            crop_path = out_dir / crop_filename(type=crop_type, session=session,
-                                                 minguo_year=minguo_year, ticket=ticket,
-                                                 name=name, field=field)
-            key = f"{session}|{ticket}|{person.role}|{field}"
+            crop_path = out_dir / crop_filename(slug=slug, ticket=ticket,
+                                                name=name, field=field)
+            key = f"{slug}|{ticket}|{person.role}|{field}"
             vis_text = _vision_for(pdf_path, person, field, cell.bbox,
                                     key=key, cache=cache,
                                     crop_save=crop_path, use_vision=use_vision)
@@ -114,38 +116,43 @@ def _process_person(pdf_path, person: geo.Person, *, cache, use_vision,
     return values, report
 
 
-def _verify_party(pdf_path, group, *, cache, use_vision,
-                  crop_type: str, session: int, minguo_year: int, out_dir: Path):
-    """政黨為組別層級(登記方式欄常合併跨兩列)，只在有格的那列驗一次。"""
-    for person in (group.president, group.vice):
-        if person and "登記方式" in person.cells:
-            cell = person.cells["登記方式"]
-            pname = "".join(person.cells["姓名"].text.split()) if "姓名" in person.cells else ""
-            crop_path = out_dir / crop_filename(type=crop_type, session=session,
-                                                 minguo_year=minguo_year, ticket=group.ticket,
-                                                 name=pname, field="登記方式")
-            key = f"{session}|{group.ticket}|{person.role}|登記方式"
-            vis = _vision_for(pdf_path, person, "登記方式", cell.bbox,
-                              key=key, cache=cache,
-                              crop_save=crop_path, use_vision=use_vision)
-            res = verify.verify_field("登記方式", cell.text, vis)
-            party = (res["value"] or "").replace("推薦", "").strip() or "無黨籍"
-            rep = {k: v for k, v in res.items() if k != "value"}
-            return party, rep
-    return "無黨籍", {"grade": "不適用"}
+def _party_cell(group) -> tuple[geo.Person | None, geo.Cell | None, str]:
+    """政黨欄的位置。總統公報叫「登記方式」(合併跨正副兩列),縣市長叫「推薦之政黨」。"""
+    for person in group.members:
+        if "登記方式" in person.cells:
+            return person, person.cells["登記方式"], "登記方式"
+    if group.party_cell is not None:
+        return (group.members[0] if group.members else None), group.party_cell, "推薦之政黨"
+    return None, None, "登記方式"
 
 
-def _extract_platform(pdf_path, group, *, cache, use_vision,
-                      crop_type: str, session: int, minguo_year: int, out_dir: Path):
-    """政見為組別層級(跨正副兩列的合併格,掛在有格的那列)。表格文字常為空,
+def _verify_party(pdf_path, group, *, cache, use_vision, slug: str, out_dir: Path):
+    """政黨掛在組別層級,只驗一次。"""
+    person, cell, field = _party_cell(group)
+    if person is None or cell is None:
+        return "無黨籍", {"grade": "不適用"}
+    pname = "".join(person.cells["姓名"].text.split()) if "姓名" in person.cells else ""
+    crop_path = out_dir / crop_filename(slug=slug, ticket=group.ticket,
+                                        name=pname, field=field)
+    key = f"{slug}|{group.ticket}|{person.role}|{field}"
+    vis = _vision_for(pdf_path, person, field, cell.bbox,
+                      key=key, cache=cache,
+                      crop_save=crop_path, use_vision=use_vision)
+    res = verify.verify_field(field, cell.text, vis)
+    party = (res["value"] or "").replace("推薦", "").strip() or "無黨籍"
+    rep = {k: v for k, v in res.items() if k != "value"}
+    return party, rep
+
+
+def _extract_platform(pdf_path, group, *, cache, use_vision, slug: str, out_dir: Path):
+    """政見掛在組別層級(總統公報是跨正副兩列的合併格)。表格文字常為空,
     以切圖 + 看圖讀出。回傳 (value, report)。"""
-    for person in (group.president, group.vice):
-        if person and "政見" in person.cells:
+    for person in group.members:
+        if "政見" in person.cells:
             cell = person.cells["政見"]
-            crop_path = out_dir / crop_filename(type=crop_type, session=session,
-                                                 minguo_year=minguo_year, ticket=group.ticket,
-                                                 name="", field="政見")
-            key = f"{session}|{group.ticket}|政見"
+            crop_path = out_dir / crop_filename(slug=slug, ticket=group.ticket,
+                                                name="", field="政見")
+            key = f"{slug}|{group.ticket}|政見"
             vis = _vision_for(pdf_path, person, "政見", cell.bbox,
                               key=key, cache=cache,
                               crop_save=crop_path, use_vision=use_vision)
@@ -172,26 +179,26 @@ def dest_mk(dest: Path) -> Path:
     return dest
 
 
-def _pdf_session_year(pdf_path: str) -> tuple[int, int]:
-    """PDF 檔名 → (session, minguo_year). 找不到時 return (0, 0)."""
-    m = re.search(r"(\d+)年第(\d+)任", Path(pdf_path).stem)
-    if m:
-        return int(m.group(2)), int(m.group(1))
-    return 0, 0
-
-
-def _parse_structure(pdf_path: str) -> tuple[list[geo.Group], str]:
+def _parse_structure(pdf_path: str, meta=None) -> tuple[list[geo.Group], str]:
     """A 路來源，依 PDF 裡實際有什麼逐級退讓。純程式判斷，不打模型：
 
-    1. 有內嵌文字 → 直接讀(101/109/113)
+    1. 有內嵌文字 → 直接讀(101/109/113、多數縣市長公報)
     2. 只有向量格線 → 逐格看圖(105:文字被轉成曲線)
     3. 什麼都沒有,只有掃描照片 → 自己找格線重建(085/089/093/097)
     """
-    groups = list(geo.parse(pdf_path))
+    if meta is None:
+        meta = election_meta.from_pdf_path(pdf_path)
+    if meta.paired:
+        groups = list(geo.parse(pdf_path))
+    else:
+        groups = list(table_parse.parse(pdf_path, role=meta.roles[0]))
     if groups:
         return groups, SOURCE_TEXT
     if not apple_ocr.available():
         return [], SOURCE_TEXT
+    if not meta.paired:
+        # 縣市長公報抽不到文字時,多半是整頁被畫成向量曲線 → 畫出來自己找格線
+        return list(scan_table.parse(pdf_path, role=meta.roles[0])), SOURCE_SCAN
     groups = list(apple_ocr.parse(pdf_path))
     if groups:
         return groups, SOURCE_OCR
@@ -199,51 +206,46 @@ def _parse_structure(pdf_path: str) -> tuple[list[geo.Group], str]:
 
 
 def parse_pdf(pdf_path: str, tag: str, out_dir: Path, use_vision: bool, progress=None):
-    session, minguo_year = _pdf_session_year(pdf_path)
-    crop_type = "president"
+    meta = election_meta.from_pdf_path(pdf_path)
+    slug = meta.crop_slug
 
     cache = VisionCache(out_dir / "vision_cache" / f"{tag}.json")
 
-    groups, source = _parse_structure(pdf_path)
+    groups, source = _parse_structure(pdf_path, meta)
     total = len(groups)
     if progress and total:
-        progress(0, total, f"以{source}讀出 {total} 組")
+        progress(0, total, f"以{source}讀出 {total} 位候選人")
     result = []
     for gi, g in enumerate(groups):
         if progress:
-            progress(gi, total, f"解析第{g.ticket}組")
+            progress(gi, total, f"解析第{g.ticket}{meta.ticket_label}")
         entry: dict = {"號次": g.ticket}
         verify_block: dict = {}
         party, party_rep = _verify_party(pdf_path, g, cache=cache,
-                                          use_vision=use_vision,
-                                          crop_type=crop_type, session=session,
-                                          minguo_year=minguo_year, out_dir=out_dir)
-        for role, person in (("總統", g.president), ("副總統", g.vice)):
-            if person is None:
-                continue
+                                         use_vision=use_vision,
+                                         slug=slug, out_dir=out_dir)
+        for person in g.members:
             # 先讀姓名(幾何)，避免切圖命名的雞生蛋問題
             name = "".join(person.cells["姓名"].text.split()) if "姓名" in person.cells else ""
 
             values, report = _process_person(
                 pdf_path, person, cache=cache, use_vision=use_vision,
-                crop_type=crop_type, session=session, minguo_year=minguo_year,
-                ticket=g.ticket, name=name, out_dir=out_dir, source=source)
+                slug=slug, ticket=g.ticket, name=name, out_dir=out_dir, source=source)
             rec = {f: values.get(f) for f in PERSON_FIELDS}
             rec["頁碼"] = person.page  # 0-based PDF 頁索引,供 load 填 source_page
 
-            photo_path = out_dir / crop_filename(type=crop_type, session=session,
-                                                  minguo_year=minguo_year, ticket=g.ticket,
-                                                  name=name, field="相片")
+            photo_path = out_dir / crop_filename(slug=slug, ticket=g.ticket,
+                                                 name=name, field="相片")
             photo = _save_photo(pdf_path, person, photo_path)
             if photo:
                 rec["相片"] = str(photo)
-            entry[role] = rec
-            verify_block[role] = report
+            entry[person.role] = rec
+            verify_block[person.role] = report
         entry["政黨"] = party
         verify_block["政黨"] = party_rep
         platform, platform_rep = _extract_platform(
             pdf_path, g, cache=cache, use_vision=use_vision,
-            crop_type=crop_type, session=session, minguo_year=minguo_year, out_dir=out_dir)
+            slug=slug, out_dir=out_dir)
         entry["政見"] = platform
         verify_block["政見"] = platform_rep
         entry["_verify"] = verify_block
@@ -257,8 +259,11 @@ def parse_pdf(pdf_path: str, tag: str, out_dir: Path, use_vision: bool, progress
 
 
 def _default_tag(pdf_path: str) -> str:
-    m = re.search(r"(\d+)年第(\d+)任", Path(pdf_path).stem)
-    return m.group(1) if m else Path(pdf_path).stem
+    """輸出檔名標籤:用選舉身分,同年不同縣市不會互相覆蓋。"""
+    try:
+        return election_meta.from_pdf_path(pdf_path).election_id
+    except election_meta.UnknownGazette:
+        return Path(pdf_path).stem
 
 
 _OK_GRADES = (verify.EXACT, verify.SOFT, verify.NEAR, "不適用")
@@ -268,15 +273,17 @@ def _count_flagged(result) -> int:
     """需注意 = 大部分一致 / 資料不可靠 / 無法解析(SOFT、完全一致、幾乎一致不計)。"""
     n = 0
     for entry in result:
-        for role in ("總統", "副總統"):
-            for r in entry.get("_verify", {}).get(role, {}).values():
-                if r.get("grade") not in _OK_GRADES:
+        for scope, report in entry.get("_verify", {}).items():
+            if not isinstance(report, dict) or scope == "政黨":
+                continue
+            for r in report.values():
+                if isinstance(r, dict) and r.get("grade") not in _OK_GRADES:
                     n += 1
     return n
 
 
 def main():
-    ap = argparse.ArgumentParser(description="總統公報解析(幾何+盲讀裁判+信心分級)")
+    ap = argparse.ArgumentParser(description="公報解析(幾何+盲讀裁判+信心分級)")
     ap.add_argument("pdfs", nargs="+")
     ap.add_argument("--out-dir", default="_out/parsed")
     ap.add_argument("--tag", default=None, help="輸出檔名標籤(預設用民國年)")

@@ -7,8 +7,9 @@ from __future__ import annotations
 from pathlib import Path
 from urllib.error import URLError
 
+from src.voter_guide import election_meta
 from src.voter_guide.guide_load import load_guide
-from src.voter_guide.pipeline import parse_pdf, _pdf_session_year
+from src.voter_guide.pipeline import parse_pdf
 
 OUT_DIR = "_out/parsed"
 
@@ -17,14 +18,15 @@ class ImportError_(RuntimeError):
     """匯入失敗,message 為給 user 看的白話說明。"""
 
 
-def import_pdf(store, pdf_path, *, out_dir: str = OUT_DIR,
-               election_type: str = "president", use_vision: bool = True,
+def import_pdf(store, pdf_path, *, out_dir: str = OUT_DIR, use_vision: bool = True,
                force: bool = True, progress=None) -> str:
     """解析並匯入一份公報 PDF,回傳 guide_elections.id。失敗丟 ImportError_(白話訊息)。"""
     pdf_path = str(pdf_path)
     out = Path(out_dir)
-    _, minguo = _pdf_session_year(pdf_path)
-    tag = str(minguo) if minguo else Path(pdf_path).stem
+    try:
+        tag = election_meta.from_pdf_path(pdf_path).election_id
+    except election_meta.UnknownGazette as exc:
+        raise ImportError_(str(exc)) from exc
 
     def _p(msg, done=0, total=0):
         if progress:
@@ -42,13 +44,12 @@ def import_pdf(store, pdf_path, *, out_dir: str = OUT_DIR,
 
     if not result:
         raise ImportError_(
-            "解析不到任何候選人組別 — 此公報的版面目前解析器不支援"
-            "(目前僅驗證過近年格式,例如 113 年)。")
+            "解析不到任何候選人 — 這份公報只有掃描圖或版面尚未支援。")
 
     _p("匯入資料庫中")
     election_id = load_guide(
         store, yaml_path=yaml_file, source_pdf_path=pdf_path,
-        crops_base_dir=out, election_type=election_type, force=force)
+        crops_base_dir=out, force=force)
 
     _p("完成", 1, 1)
     return election_id

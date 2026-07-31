@@ -52,13 +52,19 @@ async def guide_election(request: Request, election_id: str):
 
 def _list_pdfs(root: Path, imported: dict[str, str],
                jobs: dict[str, dict]) -> list[dict]:
-    """列出 _data/voter_guide/ 下可匯入的公報 PDF(目前解析器支援總統)。新到舊排序。
+    """列出 _data/voter_guide/ 下可匯入的公報 PDF(總統、縣市長)。新到舊排序。
 
     每列自帶最新狀態(已匯入 / 排隊中 / 解析中 / 上次失敗),讓清單本身就是現況。
     """
+    from src.voter_guide import election_meta
+
     base = root / "_data" / "voter_guide"
+    found = list(base.glob("president/*.pdf")) + list(base.glob("mayor/*/*.pdf"))
+    metas = [(p, election_meta.from_pdf_path(p)) for p in found
+             if election_meta.is_gazette(p)]
+    metas.sort(key=lambda pm: (-pm[1].year, pm[1].type, pm[1].region or ""))
     out = []
-    for pdf in sorted(base.glob("president/*.pdf"), reverse=True):
+    for pdf, meta in metas:
         rp = str(pdf.resolve())
         job = jobs.get(rp) or {}
         status = job.get("status") or ""
@@ -66,8 +72,8 @@ def _list_pdfs(root: Path, imported: dict[str, str],
         done = job.get("done") or 0
         finished = job.get("finished_at")
         out.append({
-            "path": str(pdf.relative_to(root)), "name": pdf.stem,
-            "type": "president",
+            "path": str(pdf.relative_to(root)), "name": meta.label,
+            "type": meta.type,
             "imported": rp in imported,
             "election_id": imported.get(rp),
             "active": status in ("queued", "running"),
@@ -184,9 +190,10 @@ async def import_start(request: Request, pdf: str = Form(...)):
 
     store = request.app.state.store
     rp = str(p.resolve())
-    if rp in store.guide_imported_pdf_paths():
+    if rp in store.guide_imported_pdf_map():
         raise HTTPException(status_code=409, detail="這份公報已匯入過")
-    if rp in store.guide_active_import_paths():
+    latest = store.guide_latest_import_by_path().get(rp) or {}
+    if latest.get("status") in ("queued", "running"):
         raise HTTPException(status_code=409, detail="這份公報已在佇列中")
     from src.voter_guide.vision import endpoint_available, BASE_URL
     if not endpoint_available():
@@ -241,24 +248,22 @@ async def guide_group(request: Request, group_id: int):
         "candidates": candidates,
         "selected_group_id": group_id,
         "group": view["group"],
-        "president": view["president"],
-        "vice": view["vice"],
+        "members": view["members"],
         "platform": view["platform"],
     }
 
     version_str = request.query_params.get("version")
     if version_str is not None:
         snap = store.guide_group_snapshot_view(group_id, int(version_str))
-        pres_fields = [{**f, "id": None, "can_ai_repair": False}
-                       for f in snap["fields"] if f["scope"] == "總統"]
-        vice_fields = [{**f, "id": None, "can_ai_repair": False}
-                       for f in snap["fields"] if f["scope"] == "副總統"]
         plat = next((f for f in snap["fields"] if f["scope"] == "政見"), None)
         ctx.update({
-            "president": {"candidate": view["president"]["candidate"], "fields": pres_fields}
-            if view["president"] else None,
-            "vice": {"candidate": view["vice"]["candidate"], "fields": vice_fields}
-            if view["vice"] else None,
+            "members": [
+                {"candidate": m["candidate"],
+                 "fields": [{**f, "id": None, "can_ai_repair": False}
+                            for f in snap["fields"]
+                            if f["scope"] == m["candidate"]["role"]]}
+                for m in view["members"]
+            ],
             "platform": {**(plat or {}), "can_ai_repair": False},
             "has_uncommitted": False,
             "latest_version": view["latest_version"],

@@ -18,7 +18,7 @@ def _seed(store, tmp_path):
     yaml_path = _make_fake_yaml(tmp_path)
     crops_dir = _make_fake_crops(tmp_path)
     load_guide(store, yaml_path=yaml_path, source_pdf_path=Path(SOURCE_PDF),
-               crops_base_dir=crops_dir, election_type="president", force=True)
+               crops_base_dir=crops_dir, force=True)
 
 
 def _candidate_id(store, name):
@@ -53,7 +53,7 @@ def test_run_repair_job_updates_field(tmp_path):
         updated = store.guide_get_field(cid, "學歷")
         job = store.guide_get_repair_job(job_id)
         gview = store.guide_group_view(ELECTION_ID, 1)   # 蔡英文為第1組總統
-        f = next(x for x in gview["president"]["fields"] if x["field_name"] == "學歷")
+        f = next(x for x in gview["members"][0]["fields"] if x["field_name"] == "學歷")
 
         assert updated["value"] == "法學博士(修復後)"
         assert f["value"] == "法學博士(修復後)"

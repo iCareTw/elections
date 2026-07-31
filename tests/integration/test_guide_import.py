@@ -20,19 +20,22 @@ def _pdf(name: str) -> Path:
     return p
 
 
-def test_import_rejects_unparseable_layout():
-    """老年份(085)版面解析不到組別 → 明確報錯,不匯入空選舉。"""
+def test_import_rejects_unparseable_layout(monkeypatch):
+    """解析不到候選人 → 明確報錯,而且不留下一場空選舉。
+
+    版面支援度會隨解析器成長而變(085 一度解析不了,現在可以),所以不綁特定年份,
+    直接讓解析結果為空來驗這條錯誤路徑。
+    """
     p = _pdf("085年第9任總統副總統.pdf")
+    monkeypatch.setattr("src.voter_guide.guide_import.parse_pdf",
+                        lambda *a, **kw: ([], Path("unused.yaml")))
     store = _store()
     try:
         store.init_schema()
         with pytest.raises(ImportError_):
             import_pdf(store, str(p), progress=lambda *a: None)
+        assert not store.guide_election_exists("president_1996_9")
     finally:
-        try:
-            store.guide_delete_election("president_1996_9")
-        except Exception:
-            pass
         store.close()
 
 

@@ -157,7 +157,8 @@ class Store:
         # 002 寫死 elections schema, 屬正式 DB 專用, 不在此套用.
         ddl_files = ("001_init.sql", "004_rename_birthday_to_birthyear.sql",
                      "005_voter_guide.sql", "006_voter_guide_groups.sql",
-                     "007_guide_manual_photos.sql", "008_guide_import_jobs.sql")
+                     "007_guide_manual_photos.sql", "008_guide_import_jobs.sql",
+                     "009_guide_election_region.sql")
         with self.connect() as conn:
             conn.execute(
                 sql.SQL("CREATE SCHEMA IF NOT EXISTS {}").format(sql.Identifier(self.config.schema))
@@ -1213,9 +1214,9 @@ class Store:
             self._setup_conn(conn)
             rows = conn.execute(
                 """
-                SELECT id, label, year, session, type
+                SELECT id, label, year, session, type, region
                 FROM guide_elections
-                ORDER BY type, year DESC NULLS LAST
+                ORDER BY type, year DESC NULLS LAST, region NULLS FIRST
                 """
             ).fetchall()
             # 每場選舉未 commit 的組數(供左樹提醒記號)
@@ -1226,17 +1227,24 @@ class Store:
                 if self._group_has_uncommitted(conn, gr["id"]):
                     eid = gr["guide_election_id"]
                     pending[eid] = pending.get(eid, 0) + 1
+        # 類型 → 年份 → 選舉。同年只有一場(總統)時,年份那層由樣板攤平不另開一層。
         grouped: dict[str, dict[str, Any]] = {}
         for row in rows:
             t = row["type"]
-            if t not in grouped:
-                grouped[t] = {"type": t, "elections": [], "pending_commit_count": 0}
+            group = grouped.setdefault(
+                t, {"type": t, "years": [], "pending_commit_count": 0})
+            year = next((y for y in group["years"] if y["year"] == row["year"]), None)
+            if year is None:
+                year = {"year": row["year"], "elections": [], "pending_commit_count": 0}
+                group["years"].append(year)
             n = pending.get(row["id"], 0)
-            grouped[t]["elections"].append(
+            year["elections"].append(
                 {"id": row["id"], "label": row["label"], "year": row["year"],
-                 "session": row["session"], "pending_commit_count": n}
+                 "session": row["session"], "region": row["region"],
+                 "pending_commit_count": n}
             )
-            grouped[t]["pending_commit_count"] += n
+            year["pending_commit_count"] += n
+            group["pending_commit_count"] += n
         return list(grouped.values())
 
     def guide_candidates_of(self, election_id: str) -> list[dict[str, Any]]:
@@ -1279,10 +1287,6 @@ class Store:
                 out[r["source_pdf_path"]] = r["id"]
         return out
 
-    def guide_imported_pdf_paths(self) -> set[str]:
-        """已匯入公報的來源 PDF 絕對路徑集合(供匯入清單標記已匯入)。"""
-        return set(self.guide_imported_pdf_map())
-
     def guide_election_row(self, election_id: str) -> dict[str, Any] | None:
         with self.connect() as conn:
             self._setup_conn(conn)
@@ -1313,15 +1317,18 @@ class Store:
         session: int | None,
         label: str,
         source_pdf_path: str,
+        region: str | None = None,
     ) -> None:
         with self.connect() as conn:
             self._setup_conn(conn)
             conn.execute(
                 """
-                INSERT INTO guide_elections(id, type, year, session, label, source_pdf_path)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO guide_elections
+                    (id, type, year, session, label, region, source_pdf_path)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """,
-                (election_id, election_type, year, session, label, source_pdf_path),
+                (election_id, election_type, year, session, label, region,
+                 source_pdf_path),
             )
 
     def guide_insert_group(
@@ -1565,7 +1572,7 @@ class Store:
             grp = conn.execute(
                 """
                 SELECT g.id, g.ticket, g.party, g.guide_election_id AS election_id,
-                       ge.label AS election_label
+                       ge.label AS election_label, ge.type AS election_type
                 FROM guide_groups g JOIN guide_elections ge ON ge.id = g.guide_election_id
                 WHERE g.guide_election_id = %s AND g.ticket = %s
                 """,
@@ -1576,9 +1583,10 @@ class Store:
             group_id = grp["id"]
 
             cand_rows = conn.execute(
-                "SELECT id, role FROM guide_candidates WHERE guide_group_id = %s", (group_id,)
+                "SELECT id, role FROM guide_candidates WHERE guide_group_id = %s "
+                "ORDER BY order_id", (group_id,)
             ).fetchall()
-            blocks = {r["role"]: self._guide_candidate_block(conn, r["id"]) for r in cand_rows}
+            members = [self._guide_candidate_block(conn, r["id"]) for r in cand_rows]
 
             plat_row = conn.execute(
                 """
@@ -1604,9 +1612,11 @@ class Store:
 
         return {
             "group": {"id": group_id, "ticket": grp["ticket"], "party": grp["party"],
-                      "election_id": grp["election_id"], "election_label": grp["election_label"]},
-            "president": blocks.get("總統"),
-            "vice": blocks.get("副總統"),
+                      "election_id": grp["election_id"],
+                      "election_label": grp["election_label"],
+                      "election_type": grp["election_type"],
+                      "ticket_label": "組" if len(members) > 1 else "號"},
+            "members": members,
             "platform": platform,
             "has_uncommitted": has_uncommitted,
             "latest_version": latest["version_no"] if latest else 0,
@@ -1623,7 +1633,9 @@ class Store:
                 f"""
                 SELECT scope, field_name, value, grade, source_crop_path, flagged, flag_note
                 FROM guide_group_snapshot_fields WHERE snapshot_id = %s
-                ORDER BY array_position(ARRAY['總統','副總統','政見'], scope::text), {self._FIELD_ORDER_SQL}
+                ORDER BY CASE scope WHEN '總統' THEN 0 WHEN '副總統' THEN 1
+                                    WHEN '政見' THEN 9 ELSE 0 END,
+                         scope, {self._FIELD_ORDER_SQL}
                 """,
                 (snap["id"],),
             ).fetchall()
@@ -1863,22 +1875,6 @@ class Store:
                 """
             ).fetchone()
         return dict(row) if row else None
-
-    def guide_active_import_paths(self) -> set[str]:
-        """佇列中或解析中的公報來源路徑(供匯入清單禁選)。"""
-        with self.connect() as conn:
-            self._setup_conn(conn)
-            rows = conn.execute(
-                "SELECT pdf_path FROM guide_import_jobs "
-                "WHERE status IN ('queued', 'running')"
-            ).fetchall()
-        out = set()
-        for r in rows:
-            try:
-                out.add(str(Path(r["pdf_path"]).resolve()))
-            except Exception:
-                out.add(r["pdf_path"])
-        return out
 
     def guide_list_import_jobs(self, limit: int = 20) -> list[dict[str, Any]]:
         """近期匯入工作(佇列 + 進行中優先,其餘依新到舊),供匯入頁佇列清單。

@@ -261,6 +261,7 @@ Index:
 | `year`           | INTEGER     | 選舉年份                                        |
 | `session`        | INTEGER     | 屆次 (可 NULL)                                  |
 | `label`          | TEXT        | 顯示名稱 (可 NULL)                              |
+| `region`         | VARCHAR(16) | 地區 (縣市長用; 總統為 NULL)                     |
 | `source_pdf_path`| TEXT        | 來源 PDF 路徑 (可 NULL)                         |
 | `election_id`    | TEXT        | 預留; 不設 FK, 本期不填                          |
 
@@ -275,7 +276,7 @@ Index:
 | `id`                | SERIAL PK   | surrogate key                                           |
 | `guide_election_id` | TEXT FK     | 所屬公報選舉 → `guide_elections.id` (CASCADE, denormalized) |
 | `guide_group_id`    | INTEGER FK  | 所屬組 → `guide_groups.id` (CASCADE)                     |
-| `role`              | VARCHAR(16) | 角色, 如 `總統` / `副總統` / 空字串, NOT NULL DEFAULT '' |
+| `role`              | VARCHAR(16) | 角色, 如 `總統` / `副總統` / `市長` / `縣長`, NOT NULL DEFAULT '' |
 | `photo_path`        | TEXT        | 照片儲存路徑 (可 NULL)                                   |
 | `photo_flagged`     | BOOLEAN     | 照片是否需人工確認, DEFAULT false                         |
 | `photo_note`        | TEXT        | 照片備註 (可 NULL)                                       |
