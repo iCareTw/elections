@@ -83,6 +83,41 @@ def test_section_marker_inside_table_splits_mayor_from_councillors():
     assert _names("臺中市市長.pdf") == [(1, "陳美妃"), (2, "蔡其昌"), (3, "盧秀燕")]
 
 
+def test_name_split_across_rows_is_one_candidate():
+    """直書姓名被列邊界切斷(『李驥』/『羣』)要併回同一位,不能變成多一位候選人。"""
+    pdf = ROOT / "_data/voter_guide/mayor/107/新竹市市長.pdf"
+    if not pdf.exists():
+        pytest.skip("local gazette fixture not available: 107/新竹市市長.pdf")
+    meta = election_meta.from_pdf_path(pdf)
+    got = [(g.ticket, "".join(g.members[0].cells["姓名"].text.split()))
+           for g in table_parse.parse(pdf, role=meta.roles[0])]
+    assert got == [(1, "謝文進"), (2, "李驥羣"), (3, "黃源甫"),
+                   (4, "許明財"), (5, "郭榮睿"), (6, "林智堅")]
+
+
+def test_ticket_restart_ends_the_election():
+    """議員段落的標題是直排美術字、抽不出文字時,靠「號次退回 1」收尾。
+
+    2018 臺北市長只有 5 位,其後接的是議員(號次從 1 重新編)。
+    """
+    pdf = ROOT / "_data/voter_guide/mayor/107/臺北市市長.pdf"
+    if not pdf.exists():
+        pytest.skip("local gazette fixture not available: 107/臺北市市長.pdf")
+    meta = election_meta.from_pdf_path(pdf)
+    got = [(g.ticket, "".join(g.members[0].cells["姓名"].text.split()))
+           for g in table_parse.parse(pdf, role=meta.roles[0])]
+    assert got == [(1, "吳蕚洋"), (2, "丁守中"), (3, "姚文智"),
+                   (4, "柯文哲"), (5, "李錫錕")]
+
+
+def test_region_read_from_gazette_title_when_filename_is_useless():
+    """檔名看不出縣市時改讀公報抬頭;內文提到的別的縣市不能蓋過抬頭。"""
+    pdf = ROOT / "_data/voter_guide/mayor/107/第18屆縣長候選人選舉公報.pdf"
+    if not pdf.exists():
+        pytest.skip("local gazette fixture not available")
+    assert election_meta.from_pdf_path(pdf).election_id == "mayor_2018_雲林縣"
+
+
 def test_split_label_rows_are_merged():
     """金門的欄名被列邊界切成上下兩段,併回去才讀得到值。"""
     got = _names("金門縣縣長.pdf")

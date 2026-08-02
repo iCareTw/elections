@@ -282,6 +282,17 @@ def _header_blocks(grid: _Grid, ri: int) -> list[dict[str, int]]:
 
 _Record = tuple[dict[str, tuple[int, int]], tuple[int, int, int, int]]
 
+# 直書姓名被列邊界切斷時,下一列只剩姓名的尾字(『李驥』/『羣』)
+_NAME_TAIL = "姓名續"
+
+
+def _is_name_tail(grid: _Grid, ri: int, colmap: dict[str, int], name_ci: int) -> bool:
+    """只有姓名欄有字、其餘欄全空 → 這列是上一位候選人姓名的接續,不是新的候選人。"""
+    if not grid.text[ri][name_ci]:
+        return False
+    return not any(grid.text[ri][ci] for f, ci in colmap.items()
+                   if f not in ("姓名", "號次·姓名", "相片"))
+
 
 def _records_style_h(grid: _Grid) -> list[_Record]:
     """表頭列之後、有姓名的每一列各是一位候選人。"""
@@ -298,8 +309,12 @@ def _records_style_h(grid: _Grid) -> list[_Record]:
                 continue
             c0 = starts[bi]
             c1 = starts[bi + 1] if bi + 1 < len(starts) else ncols
+            block_start = len(out)
             for ri in range(header_ri + 1, min(stop, grid.nrows)):
                 if not grid.text[ri][name_ci]:
+                    continue
+                if len(out) > block_start and _is_name_tail(grid, ri, colmap, name_ci):
+                    out[-1][0][_NAME_TAIL] = (ri, name_ci)
                     continue
                 cellmap = {f: (ri, ci) for f, ci in colmap.items() if f != "號次·姓名"}
                 if "號次·姓名" in colmap:
@@ -388,7 +403,7 @@ def _mk_person(grid: _Grid, role: str, cellmap: dict[str, tuple[int, int]],
     person = geo.Person(role=role, page=grid.page)
     person.row_bbox = row_bbox
     for field, (ri, ci) in cellmap.items():
-        if field in ("號次", "相片"):
+        if field in ("號次", "相片", _NAME_TAIL):
             continue
         cell = geo.Cell(text=grid.value(ri, ci), bbox=grid.bbox[ri][ci])
         if field == _BASIC_LABEL:
@@ -399,7 +414,20 @@ def _mk_person(grid: _Grid, role: str, cellmap: dict[str, tuple[int, int]],
                                            bbox=cell.bbox)
         else:
             person.cells[field] = cell
+    tail = cellmap.get(_NAME_TAIL)
+    if tail is not None and "姓名" in person.cells:
+        head = person.cells["姓名"]
+        head_box, tail_box = head.bbox, grid.bbox[tail[0]][tail[1]]
+        person.cells["姓名"] = geo.Cell(
+            text=head.text + grid.value(*tail),
+            bbox=_union(head_box, tail_box))
     return person
+
+
+def _union(a, b):
+    if a is None or b is None:
+        return a or b
+    return (min(a[0], b[0]), min(a[1], b[1]), max(a[2], b[2]), max(a[3], b[3]))
 
 
 def _ticket(grid: _Grid, cellmap: dict[str, tuple[int, int]], fallback: int) -> int:
@@ -442,6 +470,7 @@ def parse(pdf_path: str | Path, *, role: str) -> list[geo.Group]:
         found = [[(t, _to_grid(page, t, pi)) for t in page.find_tables()]
                  for pi, page in enumerate(pdf.pages)]
         markers = _markers(pdf, [[g for _, g in pg] for pg in found])
+        highest = 0
         for page_idx, page in enumerate(pdf.pages):
             for _table, grid in found[page_idx]:
                 records = (_records_style_v(grid) or _records_style_h(grid)
@@ -452,12 +481,17 @@ def parse(pdf_path: str | Path, *, role: str) -> list[geo.Group]:
                     if not _in_section(markers, page_idx, grid.row_top[r0]):
                         continue
                     ticket = _ticket(grid, cellmap, len(groups) + 1)
+                    # 號次退回小的數字 = 換一場選舉重新編號。有些公報的「議員候選人」
+                    # 標題是直排美術字,抽不出文字,只能靠這個結構訊號收尾。
+                    if groups and ticket <= highest:
+                        return _sorted(groups)
                     region = _region_bbox(grid, r0, r1, c0, c1)
                     person = _mk_person(grid, role, cellmap, region)
                     name = _norm(person.cells["姓名"].text) if "姓名" in person.cells else ""
                     if not name or (ticket, name) in seen:
                         continue
                     seen.add((ticket, name))
+                    highest = max(highest, ticket)
                     _assign_photo(person, page.images, region)
                     group = geo.Group(ticket=ticket, page=page_idx)
                     group.members.append(person)
@@ -465,5 +499,8 @@ def parse(pdf_path: str | Path, *, role: str) -> list[geo.Group]:
                     if party is not None:
                         group.party_cell = party
                     groups.append(group)
-    groups.sort(key=lambda g: (g.ticket or 0))
-    return groups
+    return _sorted(groups)
+
+
+def _sorted(groups: list[geo.Group]) -> list[geo.Group]:
+    return sorted(groups, key=lambda g: (g.ticket or 0))

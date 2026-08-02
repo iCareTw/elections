@@ -59,9 +59,8 @@ def _list_pdfs(root: Path, imported: dict[str, str],
     from src.voter_guide import election_meta
 
     base = root / "_data" / "voter_guide"
-    found = list(base.glob("president/*.pdf")) + list(base.glob("mayor/*/*.pdf"))
-    metas = [(p, election_meta.from_pdf_path(p)) for p in found
-             if election_meta.is_gazette(p)]
+    metas = [(p, election_meta.from_pdf_path(p))
+             for p in election_meta.find_gazettes(base)]
     metas.sort(key=lambda pm: (-pm[1].year, pm[1].type, pm[1].region or ""))
     out = []
     for pdf, meta in metas:
