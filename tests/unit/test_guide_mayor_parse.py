@@ -110,6 +110,28 @@ def test_ticket_restart_ends_the_election():
                    (4, "柯文哲"), (5, "李錫錕")]
 
 
+def test_full_width_banner_ends_the_election():
+    """橫跨整表的橫幅(『縣議員第一選區(花蓮市)』)也是換一場選舉的宣告。"""
+    pdf = ROOT / "_data/voter_guide/mayor/107/花蓮縣縣長議員選舉公報.pdf"
+    if not pdf.exists():
+        pytest.skip("local gazette fixture not available")
+    meta = election_meta.from_pdf_path(pdf)
+    got = [(g.ticket, "".join(g.members[0].cells["姓名"].text.split()))
+           for g in table_parse.parse(pdf, role=meta.roles[0])]
+    assert got == [(1, "徐榛蔚"), (2, "劉曉玫"), (3, "黄師鵬")]
+
+
+def test_anchor_found_when_label_is_glued_to_other_text():
+    """欄名後面黏著別的字(『號次2經歷』)時仍要認得出候選人卡片,否則會少一位。"""
+    pdf = ROOT / "_data/voter_guide/mayor/107/新北市市長.pdf"
+    if not pdf.exists():
+        pytest.skip("local gazette fixture not available")
+    meta = election_meta.from_pdf_path(pdf)
+    got = [(g.ticket, "".join(g.members[0].cells["姓名"].text.split()))
+           for g in table_parse.parse(pdf, role=meta.roles[0])]
+    assert got == [(1, "蘇貞昌"), (2, "侯友宜")]
+
+
 def test_region_read_from_gazette_title_when_filename_is_useless():
     """檔名看不出縣市時改讀公報抬頭;內文提到的別的縣市不能蓋過抬頭。"""
     pdf = ROOT / "_data/voter_guide/mayor/107/第18屆縣長候選人選舉公報.pdf"

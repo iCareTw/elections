@@ -94,6 +94,7 @@ class _Grid:
     raw: list[list[str]]
     bbox: list[list[tuple[float, float, float, float] | None]]
     row_top: list[float]
+    width: float                 # 表格總寬,用來認出橫跨整表的段落橫幅
     page: int
     fixed: set[tuple[int, int]] = dc_field(default_factory=set)
 
@@ -134,6 +135,28 @@ def _marker_of(text: str) -> bool | None:
     return None
 
 
+def _banner_of(grid: _Grid, ri: int) -> bool | None:
+    """橫跨整張表格、只有一格有字的列 = 段落橫幅,是換一場選舉的宣告。
+
+    花蓮把「縣議員第一選區(花蓮市)」做成這種橫幅,沒有「候選人」三個字收尾。
+    限定「橫跨整表」才算,否則候選人經歷裡的『台北市議員』也會被當成橫幅。
+    """
+    filled = [ci for ci, t in enumerate(grid.text[ri]) if t]
+    if len(filled) != 1:
+        return None
+    box = grid.bbox[ri][filled[0]]
+    text = grid.text[ri][filled[0]]
+    if box is None or len(text) > _HEADING_MAX:
+        return None
+    if box[2] - box[0] < grid.width * 0.6:
+        return None
+    if SECTION_SKIP.search(text):
+        return False
+    if SECTION_KEEP.search(text):
+        return True
+    return None
+
+
 def _markers(pdf, page_grids: list[list[_Grid]]) -> list[tuple[int, float, bool]]:
     """全文件的段落標題,依出現順序回 (頁, y, 是否本場)。
 
@@ -156,6 +179,9 @@ def _markers(pdf, page_grids: list[list[_Grid]]) -> list[tuple[int, float, bool]
                     keep = _marker_of(t)
                     if keep is not None:
                         out.append((pi, grid.row_top[ri], keep))
+                keep = _banner_of(grid, ri)
+                if keep is not None:
+                    out.append((pi, grid.row_top[ri], keep))
     out.sort(key=lambda m: (m[0], m[1]))
     return out
 
@@ -190,7 +216,8 @@ def _to_grid(page, table, page_idx: int) -> _Grid:
         raw.append(rrow)
         bbox.append(brow)
         row_top.append(float(table.rows[ri].bbox[1]))
-    grid = _Grid(text=text, raw=raw, bbox=bbox, row_top=row_top, page=page_idx)
+    grid = _Grid(text=text, raw=raw, bbox=bbox, row_top=row_top,
+                 width=float(table.bbox[2] - table.bbox[0]), page=page_idx)
     _unsplit_labels(grid)
     return grid
 
@@ -222,11 +249,16 @@ def _unsplit_labels(grid: _Grid) -> None:
 # --------------------------------------------------------------- 版式判定
 
 def _anchor_rows(grid: _Grid) -> list[tuple[int, int]]:
-    """所有「號次」欄名的位置(內嵌版式每位候選人一個;表頭版式只在表頭列)。"""
+    """所有「號次」欄名的位置(內嵌版式每位候選人一個;表頭版式只在表頭列)。
+
+    欄名後面可能黏著別的字(2018 新北把第二位的『號次2經歷』擠成一格),
+    因此以「開頭是號次」認定,不要求整格剛好等於欄名——認不出來就會少一位候選人。
+    """
     hits = []
     for ri in range(grid.nrows):
         for ci, t in enumerate(grid.text[ri]):
-            if _pure_label(t) == "號次" or _COMBINED.match(t):
+            got = _split_label(t)
+            if (got and got[0] == "號次") or _COMBINED.match(t):
                 hits.append((ri, ci))
     return hits
 
