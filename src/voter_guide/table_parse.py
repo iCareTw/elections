@@ -28,10 +28,20 @@ import pdfplumber
 
 from . import geometry as geo
 
-# 段落標題:本場要留的 / 夾帶其他選舉要濾掉的
+# 段落標題:本場要留的 / 夾帶其他選舉要濾掉的。
+# 一份公報常同時刊好幾種選舉,「要留哪一種」隨本場而異——縣市長公報要濾掉議員,
+# 立委公報反而必須留下寫著「第1選舉區」的段落,兩邊的規則不能共用一份。
 SECTION_KEEP = re.compile(r"[市縣]長")
 SECTION_SKIP = re.compile(r"議員|選舉區|代表|里長|鄉鎮市長")
+_LEGISLATOR_KEEP = re.compile(r"立法委員|立委")
+_LEGISLATOR_SKIP = re.compile(r"議員|[市縣]長|代表|里長|總統")
 _HEADING_MAX = 30          # 標題行長度上限(超過就是內文,不是標題)
+
+
+def _section_rules(role: str) -> tuple[re.Pattern, re.Pattern]:
+    if "立法委員" in role or "立委" in role:
+        return _LEGISLATOR_KEEP, _LEGISLATOR_SKIP
+    return SECTION_KEEP, SECTION_SKIP
 
 # 欄名 → 正規化後可能的寫法(比對用完全相等,避免把值當欄名)
 _LABEL_FORMS = {
@@ -48,39 +58,52 @@ _LABEL_FORMS = {
 }
 
 
+# 欄名被排版拉開對齊時,字與字之間會塞填充符號(109 屏東的『號●●●次』『姓●●●名』)
+_FILLER = re.compile(r"[●○•·・‧．\.\-—─_]+")
+
+
 def _pure_label(text: str) -> str | None:
     """整格就是一個欄名時回欄名。
 
     直書欄名被排版切成兩段後字序會交錯(『出年月日生』其實是『出生年月日』),
     所以三字以上的欄名比對「字集」而不比對字序。
     """
-    for name, forms in _LABEL_FORMS.items():
-        for form in forms:
-            if text == form:
-                return name
-            if len(form) >= 3 and len(text) == len(form) and sorted(text) == sorted(form):
-                return name
+    for cand in (text, _FILLER.sub("", text)):
+        for name, forms in _LABEL_FORMS.items():
+            for form in forms:
+                if cand == form:
+                    return name
+                if (len(form) >= 3 and len(cand) == len(form)
+                        and sorted(cand) == sorted(form)):
+                    return name
     return None
 
 
 def _split_label(text: str) -> tuple[str, str] | None:
     """欄名和值黏在同一格時 → (欄名, 值)。"""
-    for name, forms in _LABEL_FORMS.items():
-        for form in forms:
-            n = len(form)
-            if len(text) < n:
-                continue
-            if text[:n] == form or (n >= 3 and sorted(text[:n]) == sorted(form)):
-                return name, text[n:]
+    for cand in (text, _FILLER.sub("", text)):
+        for name, forms in _LABEL_FORMS.items():
+            for form in forms:
+                n = len(form)
+                if len(cand) < n:
+                    continue
+                if cand[:n] == form or (n >= 3 and sorted(cand[:n]) == sorted(form)):
+                    return name, cand[n:]
     return None
 
 
-# 欄名同時列出兩欄的合併寫法(如「號次·姓名」),值也黏成「1張家豪」
-_COMBINED = re.compile(r"^號次\W?姓名$")
+# 欄名同時列出兩欄的合併寫法(如「號次·姓名」),值也黏成「1張家豪」。
+# 113 立委公報把段落標題排在同一列,欄名前面會黏上標題的碎字
+# (『舉區（北投區·號次姓名』),所以只要求結尾是欄名。
+_COMBINED = re.compile(r"^.{0,20}?號次\W?姓名$")
 _TICKET_NAME = re.compile(r"^(\d{1,2})\s*(\S{1,20})$")
 
-# 出生年月日/性別/出生地 疊在同一格的合併欄名
+# 公報常在候選人表格後面再接一張政黨對照表,它的欄名會被當成一位候選人
+_NOT_A_NAME = re.compile(r"^(政黨名稱|推薦之政黨|政黨|號次|姓名|備註|名稱)$")
+
+# 出生年月日/性別/出生地 疊在同一格的合併欄名(縣市長寫「個人資料」,立委寫「基本資料」)
 _BASIC_LABEL = "個人資料"
+_BASIC_FORMS = ("個人資料", "基本資料")
 
 
 @dataclass
@@ -123,19 +146,20 @@ def _norm(s: str | None) -> str:
 _HEADING = re.compile(r"候選人\s*[:：]?$")   # 標題以「候選人」收尾,才不會誤抓經歷內文
 
 
-def _marker_of(text: str) -> bool | None:
+def _marker_of(text: str, rules: tuple[re.Pattern, re.Pattern]) -> bool | None:
     """這行/這格是不是段落標題;是的話回傳「屬於本場嗎」。"""
+    keep, skip = rules
     t = _norm(text)
     if len(t) > _HEADING_MAX or not _HEADING.search(t):
         return None
-    if SECTION_SKIP.search(t):
+    if skip.search(t):
         return False
-    if SECTION_KEEP.search(t):
+    if keep.search(t):
         return True
     return None
 
 
-def _banner_of(grid: _Grid, ri: int) -> bool | None:
+def _banner_of(grid: _Grid, ri: int, rules: tuple[re.Pattern, re.Pattern]) -> bool | None:
     """橫跨整張表格、只有一格有字的列 = 段落橫幅,是換一場選舉的宣告。
 
     花蓮把「縣議員第一選區(花蓮市)」做成這種橫幅,沒有「候選人」三個字收尾。
@@ -150,14 +174,16 @@ def _banner_of(grid: _Grid, ri: int) -> bool | None:
         return None
     if box[2] - box[0] < grid.width * 0.6:
         return None
-    if SECTION_SKIP.search(text):
+    skip, keep = rules[1], rules[0]
+    if skip.search(text):
         return False
-    if SECTION_KEEP.search(text):
+    if keep.search(text):
         return True
     return None
 
 
-def _markers(pdf, page_grids: list[list[_Grid]]) -> list[tuple[int, float, bool]]:
+def _markers(pdf, page_grids: list[list[_Grid]],
+             rules: tuple[re.Pattern, re.Pattern]) -> list[tuple[int, float, bool]]:
     """全文件的段落標題,依出現順序回 (頁, y, 是否本場)。
 
     標題可能是內文的一行,也可能是表格裡的一格(臺中把「選舉類別」做成表格首欄),
@@ -170,16 +196,19 @@ def _markers(pdf, page_grids: list[list[_Grid]]) -> list[tuple[int, float, bool]
         except Exception:                      # 沒有內嵌文字的頁
             lines = []
         for ln in lines:
-            keep = _marker_of(ln.get("text"))
+            keep = _marker_of(ln.get("text"), rules)
             if keep is not None:
                 out.append((pi, float(ln["top"]), keep))
         for grid in page_grids[pi]:
+            # 一張表格就是一位候選人時(版式 V),表格裡橫跨整列的那一格是他的學經歷,
+            # 不是段落橫幅——『•盧秀燕市長競選總部發言人』會被誤判成「以下是市長選舉」。
+            card = bool(_records_style_v(grid))
             for ri in range(grid.nrows):
                 for t in grid.text[ri]:
-                    keep = _marker_of(t)
+                    keep = _marker_of(t, rules)
                     if keep is not None:
                         out.append((pi, grid.row_top[ri], keep))
-                keep = _banner_of(grid, ri)
+                keep = None if card else _banner_of(grid, ri, rules)
                 if keep is not None:
                     out.append((pi, grid.row_top[ri], keep))
     out.sort(key=lambda m: (m[0], m[1]))
@@ -198,6 +227,27 @@ def _in_section(markers, page: int, top: float) -> bool:
 
 
 # --------------------------------------------------------------- 表格 → 網格
+
+def _ocr_fill(grid: _Grid, sheet) -> None:
+    """匡線切出來的格子是好的,壞掉的只有文字層(101 金門的字型沒有對照表,
+    抽出來是亂碼;有些公報的欄名乾脆畫成圖)。→ 沿用同一套格子座標,
+    逐格截圖交給 Apple Vision 重讀,版式判定完全不用改。
+    """
+    from . import apple_ocr
+
+    # 往內縮避免吃到框線,格子本身要夠寬才縮得動(113 臺東有寬度近乎 0 的裝飾格)
+    least = 2 * apple_ocr.CROP_INSET / sheet.scale + 1
+    for ri in range(grid.nrows):
+        for ci in range(len(grid.text[ri])):
+            box = grid.bbox[ri][ci]
+            if box is None or box[2] - box[0] < least or box[3] - box[1] < least:
+                continue
+            text = sheet.text(box, keep_lines=True)
+            grid.raw[ri][ci] = text
+            grid.text[ri][ci] = _norm(text)
+    grid.fixed.clear()
+    _unsplit_labels(grid)
+
 
 def _to_grid(page, table, page_idx: int) -> _Grid:
     extracted = table.extract()
@@ -373,7 +423,7 @@ def _cards_style_i(grid: _Grid, anchors: list[tuple[int, int]]) -> list[tuple[in
 
 def _label_below(text: str) -> str | None:
     """版式 V 的欄名格:整格是欄名,或前一欄的內容溢出後接著欄名。"""
-    if text == _BASIC_LABEL:
+    if text in _BASIC_FORMS:
         return _BASIC_LABEL
     if _COMBINED.match(text):        # 號次·姓名 由錨點自己處理
         return None
@@ -385,7 +435,7 @@ def _label_below(text: str) -> str | None:
 
 
 def _records_style_v(grid: _Grid) -> list[_Record]:
-    """版式 V:一張表格就是一位候選人,欄名在上、值在正下方(臺北市)。"""
+    """版式 V:一張表格就是一位候選人,欄名在上、值在正下方(臺北市、113 立委)。"""
     anchor = next(((ri, ci) for ri in range(grid.nrows)
                    for ci, t in enumerate(grid.text[ri]) if _COMBINED.match(t)), None)
     if anchor is None:
@@ -394,11 +444,18 @@ def _records_style_v(grid: _Grid) -> list[_Record]:
     if ri + 1 >= grid.nrows or not _TICKET_NAME.match(grid.text[ri + 1][ci]):
         return []
     cellmap: dict[str, tuple[int, int]] = {"號次·姓名": (ri + 1, ci)}
-    for rr in range(grid.nrows - 1):
-        for cc in range(len(grid.text[rr])):
-            name = _label_below(grid.text[rr][cc])
-            if name and name not in cellmap and grid.text[rr + 1][cc]:
-                cellmap[name] = (rr + 1, cc)
+    # 先收「下面那格有字」的欄名;有字的才確定是值,不會被同名的空格搶走。
+    # 剩下的欄名(113 立委的政見常抽不到文字)再補進來,格子本身的位置仍要留給看圖。
+    for require_text in (True, False):
+        for rr in range(grid.nrows - 1):
+            for cc in range(len(grid.text[rr])):
+                name = _label_below(grid.text[rr][cc])
+                if name is None or name in cellmap:
+                    continue
+                if require_text and not grid.text[rr + 1][cc]:
+                    continue
+                if grid.bbox[rr + 1][cc] is not None:
+                    cellmap[name] = (rr + 1, cc)
     return [(cellmap, (0, grid.nrows, 0, len(grid.text[0])))]
 
 
@@ -480,6 +537,17 @@ def _region_bbox(grid: _Grid, r0: int, r1: int, c0: int, c1: int):
             max(b[2] for b in boxes), max(b[3] for b in boxes))
 
 
+def _looks_like_header(person: geo.Person) -> bool:
+    """一列裡有兩個以上的「值」本身就是欄名 → 這列是表頭,不是候選人。
+
+    逐格 OCR 時表頭列常整列都讀得出字(出生地、推薦之政黨、經歷…),
+    只擋姓名那一格擋不掉,會混進一位假候選人(109 宜蘭的第 9 號)。
+    """
+    labels = sum(1 for f, cell in person.cells.items()
+                 if f != "姓名" and _pure_label(_norm(cell.text)))
+    return labels >= 2
+
+
 def _assign_photo(person: geo.Person, images: list[dict], region) -> None:
     """相片欄沒有內嵌文字可比對,以「圖心落在候選人區塊內、面積最大」認定。"""
     if region is None:
@@ -494,14 +562,28 @@ def _assign_photo(person: geo.Person, images: list[dict], region) -> None:
     person.photo_bbox = (im["x0"], im["top"], im["x1"], im["bottom"])
 
 
-def parse(pdf_path: str | Path, *, role: str) -> list[geo.Group]:
-    """回傳每位候選人各自成一組(單人)的 Group 清單。"""
+def parse(pdf_path: str | Path, *, role: str, ocr: bool = False) -> list[geo.Group]:
+    """回傳每位候選人各自成一組(單人)的 Group 清單。
+
+    `ocr=True` 時不讀 PDF 的文字層,改用同一組匡線格子逐格截圖 OCR
+    (文字層是亂碼或欄名被畫成圖時的退路)。
+    """
     groups: list[geo.Group] = []
     seen: set[tuple[int, str]] = set()
-    with pdfplumber.open(str(pdf_path)) as pdf:
-        found = [[(t, _to_grid(page, t, pi)) for t in page.find_tables()]
-                 for pi, page in enumerate(pdf.pages)]
-        markers = _markers(pdf, [[g for _, g in pg] for pg in found])
+    with geo.open_pdf(pdf_path) as pdf:
+        found = []
+        for pi, page in enumerate(pdf.pages):
+            grids = [(t, _to_grid(page, t, pi)) for t in page.find_tables()]
+            if ocr and grids:
+                from . import apple_ocr
+
+                sheet = apple_ocr._Sheet(str(pdf_path), page, pi,
+                                         apple_ocr.RENDER_SCALE)
+                for _t, g in grids:
+                    _ocr_fill(g, sheet)
+            found.append(grids)
+        markers = _markers(pdf, [[g for _, g in pg] for pg in found],
+                           _section_rules(role))
         highest = 0
         for page_idx, page in enumerate(pdf.pages):
             for _table, grid in found[page_idx]:
@@ -520,7 +602,9 @@ def parse(pdf_path: str | Path, *, role: str) -> list[geo.Group]:
                     region = _region_bbox(grid, r0, r1, c0, c1)
                     person = _mk_person(grid, role, cellmap, region)
                     name = _norm(person.cells["姓名"].text) if "姓名" in person.cells else ""
-                    if not name or (ticket, name) in seen:
+                    if not name or _NOT_A_NAME.match(name) or (ticket, name) in seen:
+                        continue
+                    if _looks_like_header(person):
                         continue
                     seen.add((ticket, name))
                     highest = max(highest, ticket)

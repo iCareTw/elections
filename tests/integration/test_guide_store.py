@@ -26,9 +26,8 @@ def test_guide_tree(tmp_path):
     try:
         _load(store, tmp_path)
         tree = store.guide_tree()
-        pres = next(t for t in tree if t["type"] == "president")
-        assert any(e["id"] == ELECTION_ID
-                   for y in pres["years"] for e in y["elections"])
+        pres = next(t for t in tree if t["label"] == "總統")
+        assert any(e["id"] == ELECTION_ID for e in pres["children"])
     finally:
         store.guide_delete_election(ELECTION_ID)
         store.close()

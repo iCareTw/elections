@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import logging
 import os
+import re
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
@@ -23,6 +24,51 @@ from src.normalize import normalize_name as _normalize_name
 from src.webapp.identity_checks import find_identity_check_issues
 
 ROOT = Path(__file__).resolve().parents[2]
+
+# ---------------------------------------------------------------- 公報左樹
+#
+# 每場選舉自己帶一條 nav_path(見 election_meta),左樹照它攤開成資料夾。
+
+_NAV_TYPE_LABELS = {"president": "總統", "mayor": "縣市長", "legislator": "立法委員"}
+_NAV_TOP_ORDER = ("總統", "縣市長", "立法委員")
+# 年份/屆次那層由新到舊,其餘由小到大
+_NAV_YEARISH = re.compile(r"^(第\d+[任屆]\s*)?\d{3,4}$")
+
+
+def _nav_node(label: str) -> dict[str, Any]:
+    return {"label": label, "id": None, "children": [], "pending_commit_count": 0}
+
+
+def _nav_path_of(row: Any) -> list[str]:
+    """選舉在左樹的位置。舊資料沒填 nav_path 時,退回用類型/年份/地區拼。"""
+    raw = row["nav_path"]
+    if raw:
+        return [seg for seg in raw.split("/") if seg]
+    top = _NAV_TYPE_LABELS.get(row["type"], row["type"])
+    if row["region"]:
+        return [top, str(row["year"]), row["region"]]
+    return [top, row["label"] or str(row["year"])]
+
+
+def _nav_key(label: str):
+    return [int(t) if t.isdigit() else t for t in re.split(r"(\d+)", label)]
+
+
+def _nav_fill(node: dict[str, Any], pending: dict[str, int]) -> int:
+    """排序子節點並把未提交組數往上累加,回傳本節點的總數。"""
+    kids = node["children"]
+    if kids:
+        newest_first = all(_NAV_YEARISH.match(k["label"]) for k in kids)
+        kids.sort(key=lambda k: _nav_key(k["label"]), reverse=newest_first)
+    if not node["label"]:                       # 根:類型依固定順序
+        kids.sort(key=lambda k: (_NAV_TOP_ORDER.index(k["label"])
+                                 if k["label"] in _NAV_TOP_ORDER else len(_NAV_TOP_ORDER)))
+    total = pending.get(node["id"], 0) if node["id"] else 0
+    for kid in kids:
+        total += _nav_fill(kid, pending)
+    node["pending_commit_count"] = total
+    return total
+
 
 _ISSUE_TYPE_LABELS = {
     "same_year_multiple": "同一年多場選舉",
@@ -123,6 +169,9 @@ class Store:
                 "autocommit": True,
             },
             configure=self._setup_conn,
+            # 公報匯入一份要跑幾十分鐘到幾小時,連線在池子裡閒置到被 server 關掉,
+            # 回頭要寫 DB 時才發現斷線 → 借出前先驗一次,壞的換一條新的。
+            check=ConnectionPool.check_connection,
             open=True,
         )
 
@@ -158,7 +207,8 @@ class Store:
         ddl_files = ("001_init.sql", "004_rename_birthday_to_birthyear.sql",
                      "005_voter_guide.sql", "006_voter_guide_groups.sql",
                      "007_guide_manual_photos.sql", "008_guide_import_jobs.sql",
-                     "009_guide_election_region.sql")
+                     "009_guide_election_region.sql",
+                     "010_guide_election_nav_path.sql")
         with self.connect() as conn:
             conn.execute(
                 sql.SQL("CREATE SCHEMA IF NOT EXISTS {}").format(sql.Identifier(self.config.schema))
@@ -1210,13 +1260,19 @@ class Store:
     _GUIDE_FIELD_ORDER = ["姓名", "出生年月日", "性別", "學歷", "經歷"]
 
     def guide_tree(self) -> list[dict[str, Any]]:
+        """左樹:照每場選舉自己的 nav_path 攤成資料夾。
+
+        總統只有兩層(總統/第16任 2024),立委有五層(立法委員/第11屆 2024/區域/
+        臺北市/第1選舉區),所以這裡不預設層數,節點一律 {label, id, children}:
+        有 id 的是可點的選舉,其餘是資料夾。未提交組數往上層累加。
+        """
         with self.connect() as conn:
             self._setup_conn(conn)
             rows = conn.execute(
                 """
-                SELECT id, label, year, session, type, region
+                SELECT id, label, year, session, type, region, nav_path
                 FROM guide_elections
-                ORDER BY type, year DESC NULLS LAST, region NULLS FIRST
+                ORDER BY type, year DESC NULLS LAST, region NULLS FIRST, id
                 """
             ).fetchall()
             # 每場選舉未 commit 的組數(供左樹提醒記號)
@@ -1227,25 +1283,23 @@ class Store:
                 if self._group_has_uncommitted(conn, gr["id"]):
                     eid = gr["guide_election_id"]
                     pending[eid] = pending.get(eid, 0) + 1
-        # 類型 → 年份 → 選舉。同年只有一場(總統)時,年份那層由樣板攤平不另開一層。
-        grouped: dict[str, dict[str, Any]] = {}
+
+        root: dict[str, Any] = _nav_node("")
         for row in rows:
-            t = row["type"]
-            group = grouped.setdefault(
-                t, {"type": t, "years": [], "pending_commit_count": 0})
-            year = next((y for y in group["years"] if y["year"] == row["year"]), None)
-            if year is None:
-                year = {"year": row["year"], "elections": [], "pending_commit_count": 0}
-                group["years"].append(year)
-            n = pending.get(row["id"], 0)
-            year["elections"].append(
-                {"id": row["id"], "label": row["label"], "year": row["year"],
-                 "session": row["session"], "region": row["region"],
-                 "pending_commit_count": n}
-            )
-            year["pending_commit_count"] += n
-            group["pending_commit_count"] += n
-        return list(grouped.values())
+            path = _nav_path_of(row)
+            node = root
+            for name in path[:-1]:
+                child = next((c for c in node["children"] if c["label"] == name
+                              and not c["id"]), None)
+                if child is None:
+                    child = _nav_node(name)
+                    node["children"].append(child)
+                node = child
+            leaf = _nav_node(path[-1])
+            leaf["id"] = row["id"]
+            node["children"].append(leaf)
+        _nav_fill(root, pending)
+        return root["children"]
 
     def guide_candidates_of(self, election_id: str) -> list[dict[str, Any]]:
         with self.connect() as conn:
@@ -1318,17 +1372,18 @@ class Store:
         label: str,
         source_pdf_path: str,
         region: str | None = None,
+        nav_path: str | None = None,
     ) -> None:
         with self.connect() as conn:
             self._setup_conn(conn)
             conn.execute(
                 """
                 INSERT INTO guide_elections
-                    (id, type, year, session, label, region, source_pdf_path)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    (id, type, year, session, label, region, source_pdf_path, nav_path)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """,
                 (election_id, election_type, year, session, label, region,
-                 source_pdf_path),
+                 source_pdf_path, nav_path),
             )
 
     def guide_insert_group(

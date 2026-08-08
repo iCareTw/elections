@@ -4,8 +4,10 @@
 
     president/113年第16任總統副總統.pdf → 總統 2024 第16任(正副成組)
     mayor/111/臺北市市長.pdf            → 縣市長 2022 臺北市(單人一號)
+    legislator/11th_113/02區域立法委員/02臺北市/第1選舉區/….pdf
+                                        → 立委 2024 第11屆 臺北市第1選舉區
 
-各類型的差別(一組幾個人、號次怎麼稱呼、切圖檔名前綴)集中在這裡,
+各類型的差別(一組幾個人、號次怎麼稱呼、切圖檔名前綴、左樹擺在哪一層)集中在這裡,
 解析與匯入都讀這份判定,不各自寫死年份或類型。
 """
 from __future__ import annotations
@@ -24,9 +26,15 @@ REGIONS = (
 )
 
 PRESIDENT_ROLES = ("總統", "副總統")
+LEGISLATOR_ROLE = "立法委員"
 
-# 檔名不是公報本體(罷免、公告之類),匯入清單不列入
-NOT_A_GAZETTE = re.compile(r"罷免|公告")
+# 檔名不是公報本體(罷免、公告、投開票所地點之類),匯入清單不列入
+NOT_A_GAZETTE = re.compile(r"罷免|公告|投開票所|投票所")
+
+# 一組裡怎麼擺人:正副成組 / 單人一號 / 一個政黨一份名單
+PAIRED = "paired"
+SINGLE = "single"
+PARTY_LIST = "party_list"
 
 
 class UnknownGazette(ValueError):
@@ -35,21 +43,23 @@ class UnknownGazette(ValueError):
 
 @dataclass(frozen=True)
 class ElectionMeta:
-    type: str                  # president / mayor
+    type: str                  # president / mayor / legislator
     minguo_year: int
     year: int                  # 西元
     session: int | None
     region: str | None
-    roles: tuple[str, ...]     # 一組裡有哪些角色
+    roles: tuple[str, ...]     # 一組裡有哪些角色(不分區名單人數不固定,為空)
     election_id: str
     label: str
     crop_slug: str             # 切圖檔名前綴
     ticket_label: str          # 號次的稱呼:「組」(正副成組) / 「號」(單人)
+    nav_path: tuple[str, ...] = ()   # 校對台左樹的位置,最後一段是這場自己的標題
+    layout: str = SINGLE       # 版面型態,見 PAIRED / SINGLE / PARTY_LIST
 
     @property
     def paired(self) -> bool:
         """一組多人(總統/副總統)還是單人一號。"""
-        return len(self.roles) > 1
+        return self.layout == PAIRED
 
 
 def normalize_region(text: str) -> str:
@@ -82,6 +92,8 @@ def _president_meta(path: Path) -> ElectionMeta:
         label=f"第{session}任 {year} 總統",
         crop_slug=f"president/{session}th_{year}",
         ticket_label="組",
+        nav_path=("總統", f"第{session}任 {year}"),
+        layout=PAIRED,
     )
 
 
@@ -139,10 +151,179 @@ def _mayor_meta(path: Path) -> ElectionMeta:
         label=f"{year} {region}{office}{extra.replace('_', ' ')}",
         crop_slug=f"mayor/{year}_{region}{extra}",
         ticket_label="號",
+        nav_path=("縣市長", str(year), f"{region}{extra.replace('_', ' ')}"),
+        layout=SINGLE,
     )
 
 
-_BY_TYPE = {"president": _president_meta, "mayor": _mayor_meta}
+# --------------------------------------------------------------------- 立法委員
+#
+# 中選會四屆的目錄擺法不一致,一律用「屆次目錄 + 分類目錄 + 縣市目錄 + 檔名」判定:
+#
+#     08th_101/district/01臺北市/臺北市立委選舉第1選區.pdf
+#     11th_113/02區域立法委員/02臺北市/第1選舉區/臺北市立委第1選舉區.pdf
+#
+# 分類目錄叫 district 或「02區域立法委員」都認;檔名寫著補選的,即使放在區域
+# 目錄下(109 臺中市第2選舉區缺額補選)也歸補選。
+
+_SESSION_DIR = re.compile(r"^(\d+)th[_-](\d+)$")
+
+DISTRICT = "區域"
+PARTY = "不分區"
+NATIVE = "原住民"
+BY_ELECTION = "補選"
+
+_CATEGORY_DIRS = (
+    ("district", DISTRICT), ("party", PARTY),
+    ("native", NATIVE), ("by-election", BY_ELECTION),
+)
+_CATEGORY_WORDS = ((BY_ELECTION, "補選"), (PARTY, "不分區"),
+                   (NATIVE, "原住民"), (DISTRICT, "區域"))
+
+_CN_NUM = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5,
+           "六": 6, "七": 7, "八": 8, "九": 9, "十": 10}
+_DIGITS = "0-9０-９一二三四五六七八九十"
+# 「第1選舉區」「第1、2選舉區」「1.8.9選區」都要吃;「第10屆…」不能誤判成選舉區
+_DISTRICT_RE = re.compile(
+    rf"第?\s*([{_DIGITS}]+(?:\s*[.、,，及]\s*[{_DIGITS}]+)*)\s*選舉?區")
+
+
+def _strip_seq(name: str) -> str:
+    """目錄名前面的排序流水號(02臺北市 → 臺北市)。"""
+    return re.sub(r"^\d+[_\s-]*", "", name)
+
+
+def _to_int(token: str) -> int | None:
+    token = token.strip().translate(str.maketrans("０１２３４５６７８９", "0123456789"))
+    if token.isdigit():
+        return int(token)
+    if token in _CN_NUM:
+        return _CN_NUM[token]
+    if len(token) == 2 and token[0] == "十" and token[1] in _CN_NUM:   # 十一、十二
+        return 10 + _CN_NUM[token[1]]
+    return None
+
+
+def _districts(text: str) -> list[int]:
+    """文字裡提到的選舉區號。一份公報可能同時刊好幾區(新北市 1.8.9 選區)。"""
+    out: list[int] = []
+    for m in _DISTRICT_RE.finditer(text):
+        for token in re.split(r"[.、,，及]", m.group(1)):
+            n = _to_int(token)
+            if n is not None and n not in out:
+                out.append(n)
+    return sorted(out)
+
+
+def _district_label(nums: list[int]) -> str | None:
+    return f"第{'、'.join(str(n) for n in nums)}選舉區" if nums else None
+
+
+def _category_of(dirs: list[str], stem: str) -> str | None:
+    """分類目錄 + 檔名 → 區域 / 不分區 / 原住民 / 補選。"""
+    if "補選" in stem or "缺額" in stem:
+        return BY_ELECTION
+    head = dirs[0] if dirs else ""
+    for key, category in _CATEGORY_DIRS:
+        if head == key:
+            return category
+    for category, word in _CATEGORY_WORDS:
+        if word in head:
+            return category
+    return None
+
+
+def _native_kind(text: str) -> str:
+    """平地/山地;101 把兩者合刊成一份。"""
+    plain, hill = "平地" in text, "山地" in text
+    if plain and hill:
+        return "平地山地原住民"
+    if hill:
+        return "山地原住民"
+    if plain:
+        return "平地原住民"
+    return "原住民"
+
+
+def _find_region(texts: list[str]) -> str | None:
+    for text in texts:
+        norm = normalize_region(_strip_seq(text))
+        for region in REGIONS:
+            if region in norm:
+                return region
+    return None
+
+
+def _part_of(stem: str, category: str) -> str | None:
+    """同一場被拆成多份 PDF 時的分辨後綴,不加會互相覆蓋。"""
+    for side in ("正面", "背面"):
+        if side in stem:
+            return side
+    if category == PARTY:
+        m = re.search(r"(\d+)\s*$", stem)      # 105 的不分區公報拆成 1～4 份
+        if m:
+            return f"之{m.group(1)}"
+    return None
+
+
+def _legislator_meta(path: Path) -> ElectionMeta:
+    parts = list(path.parts)
+    idx = len(parts) - 1 - parts[::-1].index("legislator")
+    rel = parts[idx + 1:]
+    if len(rel) < 2:
+        raise UnknownGazette(f"立委公報需放在「NNth_民國年」目錄下:{path.name}")
+    m = _SESSION_DIR.match(rel[0])
+    if not m:
+        raise UnknownGazette(f"立委公報的屆次目錄需寫成「08th_101」:{rel[0]}")
+    session, minguo = int(m.group(1)), int(m.group(2))
+    year = minguo + 1911
+
+    dirs = [_strip_seq(d) for d in rel[1:-1]]
+    stem = normalize_region(path.stem)
+    category = _category_of(dirs, stem)
+    if category is None:
+        raise UnknownGazette(f"看不出是區域/不分區/原住民/補選:{'/'.join(rel)}")
+
+    region = _find_region(dirs[1:]) or _find_region([stem])
+    nums = _districts(stem) or _districts("/".join(dirs[1:]))
+    district = _district_label(nums)
+    part = _part_of(stem, category)
+
+    if category == PARTY:
+        scope, leaf = "全國不分區", "全國不分區"
+    elif category == NATIVE:
+        scope = leaf = _native_kind("/".join(dirs) + stem)
+    else:
+        if region is None:
+            raise UnknownGazette(f"看不出是哪一個縣市:{'/'.join(rel)}")
+        scope = f"{region}{district or ''}"
+        leaf = district or region
+    if part:
+        scope, leaf = f"{scope}_{part}", f"{leaf} {part}"
+
+    if category == DISTRICT:
+        # 一個縣市只有一個選舉區時不再多開一層(區域/南投縣,而非 區域/南投縣/南投縣)
+        nav_tail: tuple[str, ...] = (DISTRICT, region, leaf) if nums else (DISTRICT, leaf)
+    elif category == BY_ELECTION:
+        nav_tail = (BY_ELECTION, f"{region}{district or ''}{(' ' + part) if part else ''}")
+    else:
+        nav_tail = (scope.split("_")[0],) + ((part,) if part else ())
+
+    suffix = "補選" if category == BY_ELECTION else ""
+    return ElectionMeta(
+        type="legislator", minguo_year=minguo, year=year, session=session,
+        region=region, roles=() if category == PARTY else (LEGISLATOR_ROLE,),
+        election_id=f"legislator_{year}_{category}_{scope}",
+        label=f"第{session}屆 {year} {scope.replace('_', ' ')}立委{suffix}",
+        crop_slug=f"legislator/{year}_{category}_{scope}",
+        ticket_label="號",
+        nav_path=("立法委員", f"第{session}屆 {year}") + nav_tail,
+        layout=PARTY_LIST if category == PARTY else SINGLE,
+    )
+
+
+_BY_TYPE = {"president": _president_meta, "mayor": _mayor_meta,
+            "legislator": _legislator_meta}
 
 
 def from_pdf_path(pdf_path: str | Path) -> ElectionMeta:
@@ -158,9 +339,12 @@ def from_pdf_path(pdf_path: str | Path) -> ElectionMeta:
 
 
 def is_gazette(pdf_path: str | Path) -> bool:
-    """是公報本體(非罷免/選務公告)且能判定身分。"""
+    """是公報本體(非罷免/選務公告)且能判定身分。
+
+    罷免案的目錄名寫在上層(11th_113/06罷免案/…),所以檔名與所在目錄都要看。
+    """
     path = Path(pdf_path)
-    if NOT_A_GAZETTE.search(path.stem):
+    if any(NOT_A_GAZETTE.search(part) for part in (path.stem, *path.parts[:-1])):
         return False
     try:
         from_pdf_path(path)
@@ -173,6 +357,17 @@ def find_gazettes(base: str | Path) -> list[Path]:
     """公報目錄下所有能判定身分的公報 PDF。
 
     副檔名大小寫不拘(中選會的檔案混用 .pdf/.PDF),未支援的類型目錄自動略過。
+    同一份檔案被放進多個選舉區目錄時(臺南市第5、6選舉區合刊)只留一份,
+    否則同一場會被匯入兩次。
     """
-    return sorted(p for p in Path(base).rglob("*")
-                  if p.is_file() and p.suffix.lower() == ".pdf" and is_gazette(p))
+    seen: set[tuple] = set()
+    out = []
+    for p in sorted(Path(base).rglob("*")):
+        if not (p.is_file() and p.suffix.lower() == ".pdf" and is_gazette(p)):
+            continue
+        key = (p.name, p.stat().st_size)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(p)
+    return out

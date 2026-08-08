@@ -13,6 +13,16 @@ class GuideElectionExists(Exception):
     pass
 
 
+# 一組裡除了人以外的欄位
+_GROUP_KEYS = ("號次", "政黨", "政見", "_verify")
+
+
+def _roles_of(entry: dict) -> list[str]:
+    """一組裡有哪些人。YAML 的鍵序就是公報上的順序(正/副、名單第 1..N 名)。"""
+    return [k for k, v in entry.items()
+            if k not in _GROUP_KEYS and isinstance(v, dict)]
+
+
 def load_guide(
     store,
     *,
@@ -45,6 +55,7 @@ def load_guide(
         label=meta.label,
         region=meta.region,
         source_pdf_path=str(source_pdf_path),
+        nav_path="/".join(meta.nav_path) or None,
     )
 
     data = yaml.safe_load(Path(yaml_path).read_text(encoding="utf-8"))
@@ -80,10 +91,10 @@ def load_guide(
             source_crop_path=_crop("", "政見"), update_source="parse")
 
         candidate_ids: dict[str, int] = {}
-        for role in meta.roles:
-            role_dict = entry.get(role)
-            if role_dict is None:
-                continue
+        # 角色以解析結果為準:總統公報固定正副兩人,不分區則是名單上第 1..N 名,
+        # 人數隨政黨不同,不能拿 meta 的固定角色去套。
+        for role in _roles_of(entry):
+            role_dict = entry[role]
 
             order_counter += 1
             name_raw = role_dict.get("姓名")

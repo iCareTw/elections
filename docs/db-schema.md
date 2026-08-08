@@ -261,9 +261,13 @@ Index:
 | `year`           | INTEGER     | 選舉年份                                        |
 | `session`        | INTEGER     | 屆次 (可 NULL)                                  |
 | `label`          | TEXT        | 顯示名稱 (可 NULL)                              |
-| `region`         | VARCHAR(16) | 地區 (縣市長用; 總統為 NULL)                     |
+| `region`         | VARCHAR(16) | 地區 (縣市長、區域立委用; 總統與不分區為 NULL)     |
 | `source_pdf_path`| TEXT        | 來源 PDF 路徑 (可 NULL)                         |
 | `election_id`    | TEXT        | 預留; 不設 FK, 本期不填                          |
+| `nav_path`       | TEXT        | 校對台左樹位置, 以 `/` 分段, 最後一段是本場標題    |
+
+`nav_path` 由 `src/voter_guide/election_meta.py` 產生, 層數依類型不同:
+`總統/第16任 2024`、`縣市長/2022/臺北市`、`立法委員/第11屆 2024/區域/臺北市/第1選舉區`.
 
 ---
 

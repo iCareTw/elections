@@ -9,11 +9,12 @@ dataclass(Group/Person/Cell)，pipeline 可互換。
 from __future__ import annotations
 
 import io
+import re
 from pathlib import Path
 
 import pdfplumber
 import pypdfium2 as pdfium
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageDraw
 
 from . import geometry as geo
 from . import verify
@@ -167,9 +168,31 @@ def _repair_runs(runs: list[tuple[int, int]]) -> list[tuple[int, int]]:
     return [(t, b) for t, b in runs if b - t >= 0.4 * med]
 
 
+def erase_rules(img: Image.Image) -> Image.Image:
+    """抹掉格子裡殘留的框線(整行或整列都是墨的那幾條)。
+
+    `trim_border` 只削得掉貼著邊緣的;像 105 彰化補選那種在格內、貫穿整格高度的
+    直線就削不掉,而它會讓水平投影的每一列都有墨,整格的字因此切不開。
+    """
+    cols, rows = _ink_profile(img, "x"), _ink_profile(img, "y")
+    hits = ([x for x, v in enumerate(cols) if v >= BORDER_INK]
+            + [y for y, v in enumerate(rows) if v >= BORDER_INK])
+    if not hits:
+        return img
+    out = img.convert("RGB").copy()
+    draw = ImageDraw.Draw(out)
+    for x, v in enumerate(cols):
+        if v >= BORDER_INK:
+            draw.line([(x, 0), (x, out.height)], fill="white")
+    for y, v in enumerate(rows):
+        if v >= BORDER_INK:
+            draw.line([(0, y), (out.width, y)], fill="white")
+    return out
+
+
 def split_glyphs(img: Image.Image) -> list[tuple[int, int]]:
     """直排格的水平投影切字，回傳各字塊 (top, bottom)。"""
-    rows = _ink_profile(img, "y")
+    rows = _ink_profile(erase_rules(img), "y")
     runs: list[tuple[int, int]] = []
     start = None
     for i, v in enumerate(rows):
@@ -191,6 +214,7 @@ def reflow_vertical(img: Image.Image) -> Image.Image | None:
     單字也處理：號次那種『小數字擺在大格中央』的版面，Vision 會因文字佔比太小而
     整格讀空，裁到字身再讀就正常。
     """
+    img = erase_rules(img)          # 切片會連框線一起帶走,先抹掉再切
     runs = split_glyphs(img)
     if not runs:
         return None
@@ -212,17 +236,54 @@ def reflow_vertical(img: Image.Image) -> Image.Image | None:
     return out
 
 
+_STRAY = re.compile(r"[A-Za-z\[\]{}()【】｜|<>~^*_=+\\/]")
+_CJK = re.compile(r"[\u4e00-\u9fff]")
+
+
+def noise_score(text: str) -> int:
+    """判讀瑕疵的量。兩種都是掃描網點造成的:
+
+    - 夾在中文之間的字母或括號類符號(『陳K扁』的 K、『國民【』的【)。不算數字——
+      日期欄的數字本來就夾在『年月日』之間,算進去會把正確的日期判成雜訊。
+    - 相鄰的重複中文字(『推推薦』)。合併格橫跨兩欄時容易把同一字讀到兩次。
+    """
+    flat = text.replace("\n", "")
+    stray = sum(1 for i, ch in enumerate(flat)
+                if _STRAY.match(ch)
+                and any(_CJK.match(flat[j]) for j in (i - 1, i + 1)
+                        if 0 <= j < len(flat)))
+    repeats = sum(1 for a, b in zip(flat, flat[1:])
+                  if a == b and _CJK.match(a))
+    return stray + repeats
+
+
 def read_cell(img: Image.Image) -> list[str]:
-    """單格逐行文字。原圖優先(橫排欄位最準)，讀空才退到重排、再退到 ja-JP(救孤立數字)。"""
+    """單格逐行文字。原圖優先(橫排欄位最準)，直排格再讀一次重排版擇優，
+    兩邊都讀空才退到 ja-JP(救孤立數字)。
+
+    只在「讀空才重排」是不夠的:直排欄名(105 彰化補選的表頭)Vision 讀得出東西,
+    但讀出來是亂碼而不是空白,擇優才選得掉。
+    """
     lines = ocr_lines(img)
-    if lines:
-        return lines
     reflowed = reflow_vertical(img)
     if reflowed is not None:
-        lines = ocr_lines(reflowed)
-        if lines:
-            return lines
+        alt = ocr_lines(reflowed)
+        if alt and _cleaner(alt, lines):
+            return alt
+    if lines:
+        return lines
     return ocr_lines(img, langs=("ja-JP", "zh-Hant"))
+
+
+def _cleaner(alt: list[str], base: list[str]) -> bool:
+    """重排後的讀法是否明顯比原圖乾淨。
+
+    平手一律留原圖:橫排多行的欄位(住址、學歷)重排後會被拆成好幾行,
+    字沒讀錯但行結構壞掉,只有「雜訊確實比較少」才值得換。
+    """
+    if not "".join(base):
+        return True
+    return noise_score("".join(alt)) < noise_score("".join(base))
 
 
 # ------------------------------------------------------------------- 格線切分

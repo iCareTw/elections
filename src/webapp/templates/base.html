@@ -95,53 +95,36 @@
     </div>
     {% elif mode == 'guide' %}
     <div class="guide-tree" id="guide-tree">
-      {# 一場選舉一列。同年多場時列出地區,單場則把年份寫在列上(總統不必多一層) #}
-      {% macro election_row(e, show_year) %}
-      <a class="tree-row {% if selected_election_id == e.id %}selected{% endif %}"
-         href="/guide/election/{{ e.id }}">
-        <span class="tree-label">
-          {%- if show_year %}{% if e.session %}第{{ e.session }}任 {% endif %}{{ e.year }}{% endif -%}
-          {%- if e.region %}{% if show_year %} {% endif %}{{ e.region }}{% endif -%}
-        </span>
-        {% if e.pending_commit_count %}
-        <span class="badge badge-pending" title="{{ e.pending_commit_count }} 組尚未提交">{{ e.pending_commit_count }}</span>
+      {# 節點自己帶 label 與 children;有 id 的是可點的選舉,其餘是資料夾。
+         層數由 nav_path 決定:總統兩層、縣市長三層、立委到選舉區五層。 #}
+      {% macro has_selected(node) %}{% if node.id == selected_election_id %}1{% else %}
+        {%- for kid in node.children %}{{ has_selected(kid) }}{% endfor %}{% endif %}{% endmacro %}
+
+      {% macro guide_nodes(nodes) %}
+      {% for node in nodes %}
+      {% if node.id %}
+      <a class="tree-row {% if selected_election_id == node.id %}selected{% endif %}"
+         href="/guide/election/{{ node.id }}">
+        <span class="tree-label">{{ node.label }}</span>
+        {% if node.pending_commit_count %}
+        <span class="badge badge-pending" title="{{ node.pending_commit_count }} 組尚未提交">{{ node.pending_commit_count }}</span>
         {% endif %}
       </a>
-      {% endmacro %}
-
-      {% for group in tree %}
-      {% set gns = namespace(sel=false) %}
-      {% for y in group.years %}{% for e in y.elections %}{% if e.id == selected_election_id %}{% set gns.sel = true %}{% endif %}{% endfor %}{% endfor %}
-      <details class="tree-node dir" {% if gns.sel %}open{% endif %}>
+      {% else %}
+      <details class="tree-node dir" {% if '1' in has_selected(node) %}open{% endif %}>
         <summary class="tree-dir">
-          <span class="tree-dir-label">{{ group.type }}</span>
-          {% if group.pending_commit_count %}
-          <span class="badge badge-pending tree-dir-pending">{{ group.pending_commit_count }}</span>
+          <span class="tree-dir-label">{{ node.label }}</span>
+          {% if node.pending_commit_count %}
+          <span class="badge badge-pending tree-dir-pending">{{ node.pending_commit_count }}</span>
           {% endif %}
         </summary>
-        <div class="tree-children">
-          {% for y in group.years %}
-          {% if y.elections | length == 1 %}
-            {{ election_row(y.elections[0], true) }}
-          {% else %}
-            {% set yns = namespace(sel=false) %}
-            {% for e in y.elections %}{% if e.id == selected_election_id %}{% set yns.sel = true %}{% endif %}{% endfor %}
-            <details class="tree-node dir" {% if yns.sel %}open{% endif %}>
-              <summary class="tree-dir">
-                <span class="tree-dir-label">{{ y.year }}</span>
-                {% if y.pending_commit_count %}
-                <span class="badge badge-pending tree-dir-pending">{{ y.pending_commit_count }}</span>
-                {% endif %}
-              </summary>
-              <div class="tree-children">
-                {% for e in y.elections %}{{ election_row(e, false) }}{% endfor %}
-              </div>
-            </details>
-          {% endif %}
-          {% endfor %}
-        </div>
+        <div class="tree-children">{{ guide_nodes(node.children) }}</div>
       </details>
+      {% endif %}
       {% endfor %}
+      {% endmacro %}
+
+      {{ guide_nodes(tree) }}
       {% if not tree %}<div class="guide-tree-empty">尚無公報資料</div>{% endif %}
     </div>
     {% endif %}

@@ -9,6 +9,7 @@ import base64
 import io
 import json
 import os
+import urllib.error
 import urllib.request
 from functools import lru_cache
 from pathlib import Path
@@ -115,10 +116,25 @@ def transcribe(pdf_path, page_idx, bbox, field_name, *, key, cache: VisionCache 
     if crop_save is not None:
         crop_save.parent.mkdir(parents=True, exist_ok=True)
         img.save(crop_save)
-    text = _ask(img, field_name, timeout)
+    text = _ask_with_shrink(img, field_name, timeout)
     if cache is not None:
         cache.set(key, text)
     return text
+
+
+def _ask_with_shrink(img, field_name: str, timeout: int, note: str | None = None) -> str:
+    """整頁大小的政見欄切出來是一張很大的圖,模型會直接回 400 → 縮一半重問。
+
+    只在被拒絕時才縮,平常仍用原尺寸問(縮圖會傷判讀品質)。
+    """
+    for attempt in range(3):
+        try:
+            return _ask(img, field_name, timeout, note)
+        except urllib.error.HTTPError:
+            if attempt == 2:
+                raise
+            img = img.resize((max(1, img.width // 2), max(1, img.height // 2)))
+    raise AssertionError("unreachable")
 
 
 def transcribe_image(png_path, field_name: str, note: str | None = None,
@@ -130,4 +146,4 @@ def transcribe_image(png_path, field_name: str, note: str | None = None,
     from PIL import Image
 
     img = Image.open(png_path)
-    return _ask(img, field_name, timeout, note=note)
+    return _ask_with_shrink(img, field_name, timeout, note=note)

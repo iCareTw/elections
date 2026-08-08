@@ -18,6 +18,7 @@ import yaml
 from . import apple_ocr
 from . import election_meta
 from . import geometry as geo
+from . import party_list_parse
 from . import scan_parse
 from . import scan_table
 from . import table_parse
@@ -188,6 +189,9 @@ def _parse_structure(pdf_path: str, meta=None) -> tuple[list[geo.Group], str]:
     """
     if meta is None:
         meta = election_meta.from_pdf_path(pdf_path)
+    if meta.layout == election_meta.PARTY_LIST:
+        # 不分區:一個政黨一組,成員人數不固定,沒有掃描圖那條退路
+        return list(party_list_parse.parse(pdf_path)), SOURCE_TEXT
     if meta.paired:
         groups = list(geo.parse(pdf_path))
     else:
@@ -197,7 +201,11 @@ def _parse_structure(pdf_path: str, meta=None) -> tuple[list[geo.Group], str]:
     if not apple_ocr.available():
         return [], SOURCE_TEXT
     if not meta.paired:
-        # 縣市長公報抽不到文字時,多半是整頁被畫成向量曲線 → 畫出來自己找格線
+        # 匡線切得出格子、只有文字層壞掉(字型無對照表、欄名畫成圖)→ 沿用格子逐格 OCR
+        groups = list(table_parse.parse(pdf_path, role=meta.roles[0], ocr=True))
+        if groups:
+            return groups, SOURCE_OCR
+        # 連格子都沒有(整頁被畫成向量曲線)→ 畫出來自己找格線
         return list(scan_table.parse(pdf_path, role=meta.roles[0])), SOURCE_SCAN
     groups = list(apple_ocr.parse(pdf_path))
     if groups:

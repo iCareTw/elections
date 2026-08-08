@@ -5,7 +5,10 @@
 """
 from __future__ import annotations
 
+import os
 import re
+import tempfile
+from contextlib import contextmanager
 from dataclasses import dataclass, field as dc_field
 from pathlib import Path
 
@@ -65,8 +68,13 @@ class Group:
         return self.by_role("副總統")
 
 
+# 排版用的控制字元(101 南投把『姓名』存成 \x07\x07姓名、105 臺東的族名夾著 \x01),
+# 不是內容;留著會讓欄名比對不到,也會跟著候選人姓名一起進 DB。
+_CONTROL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+
+
 def decode(s: str | None) -> str:
-    return CID.sub(lambda m: chr(int(m.group(1))), s or "")
+    return _CONTROL.sub("", CID.sub(lambda m: chr(int(m.group(1))), s or ""))
 
 
 def _norm(s: str | None) -> str:
@@ -102,9 +110,34 @@ def _assign_photos(persons: list[Person], images: list[dict], photo_x: tuple[flo
         person.photo_bbox = (im["x0"], im["top"], im["x1"], im["bottom"])
 
 
+@contextmanager
+def open_pdf(pdf_path: str | Path):
+    """開啟公報 PDF 供讀表格用。
+
+    中選會有幾份檔案的索引表是壞的(109 臺北市八個選舉區),pdfplumber 會直接
+    丟「No /Root object」;這時先用 pdfium 重寫一份暫存檔再開,原始檔不動。
+    """
+    tmp: str | None = None
+    try:
+        pdf = pdfplumber.open(str(pdf_path))
+    except Exception:
+        import pypdfium2 as pdfium
+
+        handle, tmp = tempfile.mkstemp(suffix=".pdf")
+        os.close(handle)
+        pdfium.PdfDocument(str(pdf_path)).save(tmp)
+        pdf = pdfplumber.open(tmp)
+    try:
+        yield pdf
+    finally:
+        pdf.close()
+        if tmp:
+            os.unlink(tmp)
+
+
 def parse(pdf_path: str | Path) -> list[Group]:
     groups: list[Group] = []
-    with pdfplumber.open(str(pdf_path)) as pdf:
+    with open_pdf(pdf_path) as pdf:
         for page_idx, page in enumerate(pdf.pages):
             for table in page.find_tables():
                 grid = table.extract()

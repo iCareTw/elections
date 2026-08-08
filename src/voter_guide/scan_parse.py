@@ -15,7 +15,7 @@ from PIL import Image
 
 from . import geometry as geo
 from . import verify
-from .apple_ocr import read_cell
+from .apple_ocr import noise_score as _noise_score, read_cell
 from .layout import Layout, detect_layout, render_page
 from .scan_grid import (aligned_surface, auto_threshold, build_grid,
                         continuous_rules, even_runs, extend_columns, find_rules,
@@ -31,8 +31,6 @@ UPSCALE_BELOW = 1200
 READ_FACTOR = 2.5         # 讀取用圖的倍率(相對於格線圖)。實測 2.5 起才讀得出『步黨』
 _DIGITS = re.compile(r"\d+")
 # 夾在中文裡的字母或括號類符號幾乎都是網點誤判(『陳K扁』『國民【』)
-_STRAY = re.compile(r"[A-Za-z\[\]{}()【】｜|<>~^*_=+\\/]")
-_CJK = re.compile(r"[\u4e00-\u9fff]")
 _BIRTH_RE = re.compile(r"\d+年\d+月\d+日")
 
 
@@ -224,23 +222,6 @@ def _person_columns(grid_img: Image.Image, xs: list[int],
     """候選人欄範圍。右到左版式要反轉,讓第一位候選人排在最前面。"""
     spans = list(zip(xs, xs[1:]))
     return list(reversed(spans)) if right_to_left else spans
-
-
-def _noise_score(text: str) -> int:
-    """判讀瑕疵的量。兩種都是掃描網點造成的:
-
-    - 夾在中文之間的字母或括號類符號(『陳K扁』的 K、『國民【』的【)。不算數字——
-      日期欄的數字本來就夾在『年月日』之間,算進去會把正確的日期判成雜訊。
-    - 相鄰的重複中文字(『推推薦』)。合併格橫跨兩欄時容易把同一字讀到兩次。
-    """
-    flat = text.replace("\n", "")
-    stray = sum(1 for i, ch in enumerate(flat)
-                if _STRAY.match(ch)
-                and any(_CJK.match(flat[j]) for j in (i - 1, i + 1)
-                        if 0 <= j < len(flat)))
-    repeats = sum(1 for a, b in zip(flat, flat[1:])
-                  if a == b and _CJK.match(a))
-    return stray + repeats
 
 
 def _pick_reading(base: str, bigger: str) -> str:

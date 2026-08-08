@@ -5,7 +5,7 @@ progress 回呼:progress(message: str, done: int, total: int)
 from __future__ import annotations
 
 from pathlib import Path
-from urllib.error import URLError
+from urllib.error import HTTPError, URLError
 
 from src.voter_guide import election_meta
 from src.voter_guide.guide_load import load_guide
@@ -37,6 +37,10 @@ def import_pdf(store, pdf_path, *, out_dir: str = OUT_DIR, use_vision: bool = Tr
         result, yaml_file = parse_pdf(
             pdf_path, tag, out, use_vision,
             progress=lambda i, t, label: _p(label, i, t))
+    except HTTPError as exc:
+        # 連得上但被拒絕(多半是切圖太大),跟「模型沒開」是兩回事,訊息要分開
+        raise ImportError_(
+            f"本機視覺模型拒絕了這份公報的某張切圖(HTTP {exc.code} {exc.reason})。") from exc
     except (URLError, ConnectionError, TimeoutError, OSError) as exc:
         from src.voter_guide.vision import ENDPOINT
         raise ImportError_(
