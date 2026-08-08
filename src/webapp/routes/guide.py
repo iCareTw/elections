@@ -37,13 +37,34 @@ async def guide_election(request: Request, election_id: str):
     candidates = store.guide_candidates_of(election_id)
     if candidates:
         return RedirectResponse(_group_url(candidates[0]["guide_group_id"]), status_code=303)
+    # 一位候選人都沒有 = 這份公報解析不出來。場次仍然列在左樹,在這裡提供人工補的入口。
     return request.app.state.templates.TemplateResponse(request, "guide/index.html", {
         "app_mode": "guide",
         "tree": store.guide_tree(),
         "selected_election_id": election_id,
         "candidates": candidates,
         "selected_group_id": None,
+        "election": store.guide_election_row(election_id),
     })
+
+
+@router.post("/election/{election_id}/candidate")
+async def guide_add_candidate(request: Request, election_id: str):
+    """人工補一位候選人:建空白的一組,接著就用一般的欄位編輯介面填。"""
+    store = request.app.state.store
+    row = store.guide_election_row(election_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="election not found")
+    roles: tuple[str, ...] = ()
+    if row.get("source_pdf_path"):
+        from src.voter_guide import election_meta
+        try:
+            roles = election_meta.from_pdf_path(row["source_pdf_path"]).roles
+        except election_meta.UnknownGazette:
+            roles = ()
+    group_id = store.guide_add_manual_group(election_id, roles)
+    logger.info("manual group added: election=%s group=%s", election_id, group_id)
+    return RedirectResponse(_group_url(group_id), status_code=303)
 
 
 # ---------------------------------------------------------------------------

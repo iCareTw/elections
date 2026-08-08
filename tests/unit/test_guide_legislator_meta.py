@@ -37,10 +37,13 @@ def test_district_chinese_numeral():
     assert m.election_id == "legislator_2024_區域_雲林縣第1選舉區"
 
 
-def test_single_district_county_does_not_repeat_itself():
-    # 只有一個選舉區的縣市,左樹不再多開一層
+def test_tree_depth_is_the_same_for_every_county():
+    # 左樹一律「區域 → 縣市 → 選舉區」;全縣一席的縣市也照樣開一層,不然有的
+    # 縣市點得開、有的直接是連結,看起來很亂
     m = meta("09th_105/district/16花蓮縣/花蓮縣立委選舉.pdf")
-    assert m.nav_path == ("立法委員", "第9屆 2016", "區域", "花蓮縣")
+    assert m.nav_path == ("立法委員", "第9屆 2016", "區域", "花蓮縣", "選舉區")
+    other = meta("09th_105/district/01臺北市/臺北市立委選舉第1選區.pdf")
+    assert len(other.nav_path) == len(m.nav_path)
 
 
 def test_by_election_inside_district_dir():
@@ -49,6 +52,16 @@ def test_by_election_inside_district_dir():
     assert m.election_id == "legislator_2020_補選_臺中市第2選舉區"
     assert m.nav_path == ("立法委員", "第10屆 2020", "補選", "臺中市第2選舉區")
     assert m.label.endswith("立委補選")
+
+
+def test_for_district_splits_a_combined_gazette():
+    # 合刊公報依選舉區拆場:識別碼、標題、切圖前綴、左樹位置都跟著換
+    base = meta("08th_101/district/16南投縣/南投縣立委選舉.pdf")
+    one = base.for_district(2)
+    assert one.election_id == "legislator_2012_區域_南投縣第2選舉區"
+    assert one.nav_path == ("立法委員", "第8屆 2012", "區域", "南投縣", "第2選舉區")
+    assert one.crop_slug != base.crop_slug      # 不同區的第1號切圖不能互相覆蓋
+    assert one.region == base.region and one.roles == base.roles
 
 
 def test_party_list():

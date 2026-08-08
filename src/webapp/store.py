@@ -1386,6 +1386,47 @@ class Store:
                  source_pdf_path, nav_path),
             )
 
+    def guide_add_manual_group(self, election_id: str, roles: tuple[str, ...]) -> int:
+        """人工補一組候選人(公報解析不出來時),欄位留空待填。回傳 group id。
+
+        號次接在現有的後面。建出來的結構與解析匯入完全一樣(含 v1 snapshot),
+        所以後續編輯、提交、AI 修復都走同一條路。
+        """
+        with self.connect() as conn:
+            self._setup_conn(conn)
+            row = conn.execute(
+                "SELECT COALESCE(MAX(ticket), 0) t, COALESCE(MAX(order_id), 0) o "
+                "FROM guide_groups WHERE guide_election_id = %s",
+                (election_id,),
+            ).fetchone()
+        ticket, order_id = row["t"] + 1, row["o"] + 1
+
+        group_id = self.guide_insert_group(
+            guide_election_id=election_id, ticket=ticket, party=None, order_id=order_id)
+        self.guide_upsert_platform(guide_group_id=group_id, value=None, grade=None,
+                                   source_crop_path=None, update_source="manual")
+        for role in (roles or ("第1名",)):
+            order_id += 1
+            candidate_id = self.guide_insert_candidate(
+                guide_election_id=election_id, guide_group_id=group_id, role=role,
+                photo_path=None, source_page=None, order_id=order_id)
+            for field in self._GUIDE_FIELD_ORDER:
+                self.guide_insert_field(
+                    guide_candidate_id=candidate_id, field_name=field, value=None,
+                    grade=None, source_crop_path=None, update_source="manual")
+        snapshot_id = self.guide_create_group_snapshot(guide_group_id=group_id,
+                                                      version_no=1)
+        for cand in self.guide_candidates_of(election_id):
+            if cand["guide_group_id"] != group_id:
+                continue
+            for f in self.guide_get_fields(cand["id"]):
+                self.guide_insert_group_snapshot_field(
+                    snapshot_id=snapshot_id, scope=cand["role"],
+                    field_name=f["field_name"], value=f["value"], grade=f["grade"],
+                    source_crop_path=f["source_crop_path"],
+                    flagged=f["flagged"], flag_note=f["flag_note"])
+        return group_id
+
     def guide_insert_group(
         self,
         *,

@@ -14,7 +14,7 @@ class GuideElectionExists(Exception):
 
 
 # 一組裡除了人以外的欄位
-_GROUP_KEYS = ("號次", "政黨", "政見", "_verify")
+_GROUP_KEYS = ("號次", "選舉區", "政黨", "政見", "_verify")
 
 
 def _roles_of(entry: dict) -> list[str]:
@@ -31,15 +31,35 @@ def load_guide(
     crops_base_dir,
     force: bool = False,
 ) -> str:
-    """Load parser YAML output into guide_* DB tables and create v1 snapshots per candidate.
+    """把解析產物載進 guide_* 資料表並建立各組的 v1 snapshot。
 
-    Returns the guide_elections.id created (e.g. 'president_2024_16'、'mayor_2022_臺北市').
-    Raises GuideElectionExists if the election already exists and force=False.
+    回傳主要的 guide_elections.id。一份公報通常就是一場選舉,但立委常把好幾個
+    選舉區合刊在同一份(號次在各區各自從 1 編起)→ 依解析出的選舉區拆成多場,
+    回傳第一場的 id。
     """
     source_pdf_path = Path(source_pdf_path)
     meta = election_meta.from_pdf_path(source_pdf_path)
-    election_id = meta.election_id
+    data = yaml.safe_load(Path(yaml_path).read_text(encoding="utf-8")) or []
+    crops_base = Path(crops_base_dir)
 
+    buckets: dict[int | None, list[dict]] = {}
+    for entry in data:
+        buckets.setdefault(entry.get("選舉區"), []).append(entry)
+    if not buckets:                      # 解析不到候選人:場次還是要建,留給人工補
+        buckets = {None: []}
+
+    ids = []
+    for district in sorted(buckets, key=lambda d: (d is not None, d or 0)):
+        emeta = meta.for_district(district) if district is not None else meta
+        _load_election(store, emeta, buckets[district], source_pdf_path,
+                       crops_base, force=force)
+        ids.append(emeta.election_id)
+    return ids[0]
+
+
+def _load_election(store, meta, data, source_pdf_path, crops_base, *,
+                   force: bool) -> None:
+    election_id = meta.election_id
     if store.guide_election_exists(election_id):
         if not force:
             raise GuideElectionExists(
@@ -57,9 +77,6 @@ def load_guide(
         source_pdf_path=str(source_pdf_path),
         nav_path="/".join(meta.nav_path) or None,
     )
-
-    data = yaml.safe_load(Path(yaml_path).read_text(encoding="utf-8"))
-    crops_base = Path(crops_base_dir)
     order_counter = 0
 
     def _crop(name_clean: str, field: str) -> str | None:
@@ -135,8 +152,6 @@ def load_guide(
 
     # 套回手動更正的照片(獨立保存,重載/重解析都保留)
     store.guide_apply_manual_photos(election_id)
-
-    return election_id
 
 
 def main() -> None:

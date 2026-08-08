@@ -45,6 +45,7 @@ def _section_rules(role: str) -> tuple[re.Pattern, re.Pattern]:
 
 # 欄名 → 正規化後可能的寫法(比對用完全相等,避免把值當欄名)
 _LABEL_FORMS = {
+    "選舉區": ("選舉區",),
     "號次": ("號次", "號碼"),
     "相片": ("相片", "照片"),
     "姓名": ("姓名",),
@@ -569,7 +570,7 @@ def parse(pdf_path: str | Path, *, role: str, ocr: bool = False) -> list[geo.Gro
     (文字層是亂碼或欄名被畫成圖時的退路)。
     """
     groups: list[geo.Group] = []
-    seen: set[tuple[int, str]] = set()
+    seen: set[tuple[int | str | None, int, str]] = set()
     with geo.open_pdf(pdf_path) as pdf:
         found = []
         for pi, page in enumerate(pdf.pages):
@@ -584,7 +585,8 @@ def parse(pdf_path: str | Path, *, role: str, ocr: bool = False) -> list[geo.Gro
             found.append(grids)
         markers = _markers(pdf, [[g for _, g in pg] for pg in found],
                            _section_rules(role))
-        highest = 0
+        highest: dict[int | str | None, int] = {}
+        district = None
         for page_idx, page in enumerate(pdf.pages):
             for _table, grid in found[page_idx]:
                 records = (_records_style_v(grid) or _records_style_h(grid)
@@ -595,19 +597,24 @@ def parse(pdf_path: str | Path, *, role: str, ocr: bool = False) -> list[geo.Gro
                     if not _in_section(markers, page_idx, grid.row_top[r0]):
                         continue
                     ticket = _ticket(grid, cellmap, len(groups) + 1)
-                    # 號次退回小的數字 = 換一場選舉重新編號。有些公報的「議員候選人」
-                    # 標題是直排美術字,抽不出文字,只能靠這個結構訊號收尾。
-                    if groups and ticket <= highest:
-                        return _sorted(groups)
                     region = _region_bbox(grid, r0, r1, c0, c1)
                     person = _mk_person(grid, role, cellmap, region)
+                    # 選舉區欄是跨列的合併格,只有該區第一位有字 → 往下沿用
+                    district = _district_of(person) or district
+                    # 號次退回小的數字:同一個選舉區內代表換了一場選舉(議員的標題常是
+                    # 直排美術字抽不出文字,只能靠這個結構訊號收尾);跨選舉區則是正常
+                    # 重新編號,不能停。
+                    if ticket <= highest.get(district, 0):
+                        return _sorted(groups)
                     name = _norm(person.cells["姓名"].text) if "姓名" in person.cells else ""
-                    if not name or _NOT_A_NAME.match(name) or (ticket, name) in seen:
+                    if (not name or _NOT_A_NAME.match(name)
+                            or (district, ticket, name) in seen):
                         continue
                     if _looks_like_header(person):
                         continue
-                    seen.add((ticket, name))
-                    highest = max(highest, ticket)
+                    seen.add((district, ticket, name))
+                    highest[district] = ticket
+                    person.district = district
                     _assign_photo(person, page.images, region)
                     group = geo.Group(ticket=ticket, page=page_idx)
                     group.members.append(person)
@@ -618,5 +625,26 @@ def parse(pdf_path: str | Path, *, role: str, ocr: bool = False) -> list[geo.Gro
     return _sorted(groups)
 
 
+def _district_of(person: geo.Person) -> int | str | None:
+    """候選人所在選舉區。回傳號碼(區域)、名稱(原住民那種不編號的)、或 None(格子空白)。
+
+    一份公報常合刊好幾個選舉區,號次在各區各自從 1 編起;101 南投更是左半區域、
+    右半原住民排在同一張表格裡。選舉區欄自己就寫著是哪一區,比看段落標題可靠
+    (兩個標題並排在同一列時,用 y 位置分不出上下)。
+    """
+    cell = person.cells.get("選舉區")
+    if cell is None:
+        return None
+    text = _norm(cell.text).translate(str.maketrans("０１２３４５６７８９", "0123456789"))
+    if not text:
+        return None
+    nums = re.findall(r"\d+", text)
+    return int(nums[-1]) if nums else text
+
+
 def _sorted(groups: list[geo.Group]) -> list[geo.Group]:
-    return sorted(groups, key=lambda g: (g.ticket or 0))
+    def key(g: geo.Group):
+        d = g.members[0].district if g.members else None
+        # 有編號的選舉區排前面(依號碼),沒編號的(原住民)排後面(依名稱)
+        return (0, d, "") if isinstance(d, int) else (1, 0, str(d or ""))
+    return sorted(groups, key=lambda g: key(g) + (g.ticket or 0,))

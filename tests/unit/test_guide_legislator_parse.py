@@ -39,6 +39,20 @@ def test_113_vertical_layout_with_glued_labels():
     assert "政見" in first.cells          # 格內抽不到文字,但位置要留給看圖
 
 
+def test_gazette_covering_two_districts_reads_both():
+    # 101 南投把第1、2選舉區合刊,號次在各區各自從 1 編起;左半區域、右半原住民
+    # 排在同一張表格裡,只有選舉區欄分得出誰屬於哪一場
+    groups = _parse("08th_101/district/16南投縣/南投縣立委選舉.pdf")
+    by_district = {}
+    for g in groups:
+        by_district.setdefault(g.members[0].district, []).append(g.ticket)
+    assert by_district[1] == [1, 2, 3]
+    assert by_district[2] == [1, 2]
+    # 原住民候選人的選舉區欄寫的是名稱而非號碼,不會被當成區域的某一區
+    assert all(isinstance(d, (int, str)) for d in by_district)
+    assert any(isinstance(d, str) and "原住民" in d for d in by_district)
+
+
 def test_broken_pdf_index_is_repaired_on_open():
     # 109 臺北市八個選舉區的 PDF 索引表壞掉,pdfplumber 直接打不開
     groups = _parse("10th_109/02區域立法委員/02臺北市/臺北市立委第1選舉區.pdf")

@@ -788,6 +788,13 @@ button { font: inherit; cursor: pointer; border: 0; }
 .guide-main { flex: 1; min-width: 0; }
 .guide-scope .placeholder { color: var(--muted); font-size: 14px; margin-top: 60px; text-align: center; }
 .guide-scope .guide-link { color: var(--accent-strong); font-weight: 700; text-decoration: none; }
+
+/* 解析不出候選人的場次:留在左樹,在主欄給人工補的入口 */
+.guide-scope .empty-election { max-width: 560px; margin: 48px auto; text-align: center; }
+.guide-scope .empty-election h2 { font-family: Georgia, serif; font-size: 22px; margin: 0 0 10px; }
+.guide-scope .empty-election p { color: var(--muted); font-size: 14px; margin: 0 0 18px; }
+.guide-scope .empty-election .hint { font-size: 13px; margin-top: 18px; }
+.guide-scope .empty-actions { display: flex; gap: 10px; justify-content: center; align-items: center; }
 .guide-scope .guide-h2 { font-family: Georgia, serif; font-size: 24px; margin: 0 0 4px; }
 
 /* 候選人 rail 卡片 */

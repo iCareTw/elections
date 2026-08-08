@@ -46,14 +46,11 @@ def import_pdf(store, pdf_path, *, out_dir: str = OUT_DIR, use_vision: bool = Tr
         raise ImportError_(
             f"連不上本機視覺模型({ENDPOINT})。請先啟動視覺模型再匯入。") from exc
 
-    if not result:
-        raise ImportError_(
-            "解析不到任何候選人 — 這份公報只有掃描圖或版面尚未支援。")
-
-    _p("匯入資料庫中")
+    # 解析不到候選人也要把場次建起來:校對台看得到這場選舉,才有地方人工補。
+    _p("匯入資料庫中" if result else "解析不到候選人,建立空場次待人工補")
     election_id = load_guide(
         store, yaml_path=yaml_file, source_pdf_path=pdf_path,
         crops_base_dir=out, force=force)
 
-    _p("完成", 1, 1)
+    _p("完成" if result else "完成(解析不到候選人,待人工補)", 1, 1)
     return election_id

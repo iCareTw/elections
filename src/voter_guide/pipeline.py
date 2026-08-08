@@ -213,13 +213,39 @@ def _parse_structure(pdf_path: str, meta=None) -> tuple[list[geo.Group], str]:
     return list(scan_parse.parse(pdf_path)), SOURCE_SCAN
 
 
+def _for_this_election(groups: list[geo.Group], meta) -> list[geo.Group]:
+    """濾掉同一份公報裡別場選舉的候選人。
+
+    101 南投把區域(左半)與原住民(右半)排在同一張表格裡,兩個段落標題並排在同一列,
+    用 y 位置分不出來;但選舉區欄寫的是號碼(區域)還是名稱(原住民),一看就分得出。
+    """
+    if meta.type != "legislator":
+        return groups
+
+    def belongs(g: geo.Group) -> bool:
+        district = g.members[0].district if g.members else None
+        if district is None:                       # 公報沒有選舉區欄 → 整份都是本場
+            return True
+        return isinstance(district, int) if meta.by_district else isinstance(district, str)
+
+    return [g for g in groups if belongs(g)]
+
+
+def _district_meta(meta, group: geo.Group):
+    """合刊公報裡,這一組屬於哪一場(以選舉區為單位的選舉才拆)。"""
+    district = group.members[0].district if group.members else None
+    if meta.by_district and isinstance(district, int):
+        return meta.for_district(district), district
+    return meta, None
+
+
 def parse_pdf(pdf_path: str, tag: str, out_dir: Path, use_vision: bool, progress=None):
     meta = election_meta.from_pdf_path(pdf_path)
-    slug = meta.crop_slug
 
     cache = VisionCache(out_dir / "vision_cache" / f"{tag}.json")
 
     groups, source = _parse_structure(pdf_path, meta)
+    groups = _for_this_election(groups, meta)
     total = len(groups)
     if progress and total:
         progress(0, total, f"以{source}讀出 {total} 位候選人")
@@ -227,7 +253,12 @@ def parse_pdf(pdf_path: str, tag: str, out_dir: Path, use_vision: bool, progress
     for gi, g in enumerate(groups):
         if progress:
             progress(gi, total, f"解析第{g.ticket}{meta.ticket_label}")
+        # 合刊公報要拆場:切圖檔名跟著各選舉區走,否則不同區的第1號會互相覆蓋
+        gmeta, district = _district_meta(meta, g)
+        slug = gmeta.crop_slug
         entry: dict = {"號次": g.ticket}
+        if district is not None:
+            entry["選舉區"] = district
         verify_block: dict = {}
         party, party_rep = _verify_party(pdf_path, g, cache=cache,
                                          use_vision=use_vision,

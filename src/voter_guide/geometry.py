@@ -46,6 +46,7 @@ class Person:
     photo_bbox: tuple[float, float, float, float] | None = None
     row_bbox: tuple[float, float, float, float] | None = None
     photo_image: object | None = None  # 掃描圖來源:無 bbox 可裁,直接帶 PIL 圖
+    district: int | str | None = None  # 所在選舉區:號碼(區域)或名稱(原住民)
 
 
 @dataclass

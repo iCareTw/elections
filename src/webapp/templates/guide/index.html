@@ -1,6 +1,24 @@
 {% extends "guide/_layout.html" %}
 
 {% block main_col %}
+{% if election %}
+{# 這份公報解析不出候選人(掃描圖或未支援的版面)。場次留著,讓人工補。 #}
+<div class="empty-election">
+  <h2>{{ election.label }}</h2>
+  <p>這份公報解析不出候選人 — 多半是整份掃描圖，或版面目前還讀不出來。</p>
+  <div class="empty-actions">
+    <form method="post" action="/guide/election/{{ election.id }}/candidate">
+      <button class="btn btn-primary" type="submit">＋ 手動新增候選人</button>
+    </form>
+    {% if election.source_pdf_path %}
+    <a class="btn btn-gray" target="_blank"
+       href="/guide/import/pdf?path={{ election.source_pdf_path | urlencode }}">開啟公報 PDF</a>
+    {% endif %}
+    <a class="btn btn-gray" href="/guide/import">重新匯入</a>
+  </div>
+  <p class="hint">新增後就是一般的候選人頁面，逐欄填寫、提交流程與解析進來的完全一樣。</p>
+</div>
+{% else %}
 <div class="placeholder">
   {% if candidates %}
   從中間清單選擇候選人以查看欄位詳情
@@ -10,4 +28,5 @@
   尚無公報資料 — <a href="/guide/import" class="guide-link">＋ 匯入公報</a> 選一份 PDF 開始
   {% endif %}
 </div>
+{% endif %}
 {% endblock %}

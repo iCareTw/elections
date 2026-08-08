@@ -13,7 +13,7 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 # 現行與改制前的行政區(舊公報檔名會出現臺北縣、臺中縣…)
@@ -55,11 +55,30 @@ class ElectionMeta:
     ticket_label: str          # 號次的稱呼:「組」(正副成組) / 「號」(單人)
     nav_path: tuple[str, ...] = ()   # 校對台左樹的位置,最後一段是這場自己的標題
     layout: str = SINGLE       # 版面型態,見 PAIRED / SINGLE / PARTY_LIST
+    category: str = ""         # 立委才有:區域 / 不分區 / 原住民 / 補選
 
     @property
     def paired(self) -> bool:
         """一組多人(總統/副總統)還是單人一號。"""
         return self.layout == PAIRED
+
+    @property
+    def by_district(self) -> bool:
+        """這場選舉是以選舉區為單位嗎(一份公報可能合刊好幾個選舉區)。"""
+        return self.category in (DISTRICT, BY_ELECTION)
+
+    def for_district(self, num: int) -> ElectionMeta:
+        """同一份公報裡某個選舉區自己的場次。合刊的公報靠這個拆成多場。"""
+        seat = f"第{num}選舉區"
+        scope = f"{self.region}{seat}"
+        return replace(
+            self,
+            election_id=f"legislator_{self.year}_{self.category}_{scope}",
+            label=f"第{self.session}屆 {self.year} {scope}立委"
+                  + ("補選" if self.category == BY_ELECTION else ""),
+            crop_slug=f"legislator/{self.year}_{self.category}_{scope}",
+            nav_path=self.nav_path[:-1] + (seat,),
+        )
 
 
 def normalize_region(text: str) -> str:
@@ -302,8 +321,11 @@ def _legislator_meta(path: Path) -> ElectionMeta:
         scope, leaf = f"{scope}_{part}", f"{leaf} {part}"
 
     if category == DISTRICT:
-        # 一個縣市只有一個選舉區時不再多開一層(區域/南投縣,而非 區域/南投縣/南投縣)
-        nav_tail: tuple[str, ...] = (DISTRICT, region, leaf) if nums else (DISTRICT, leaf)
+        # 左樹一律「區域 → 縣市 → 選舉區」三層。只有一個選舉區的縣市也照樣開一層,
+        # 否則有的縣市點得開、有的直接是連結,看起來很亂。
+        seat = district or "選舉區"          # 全縣一席時官方寫法就是「○○縣選舉區」
+        nav_tail: tuple[str, ...] = (
+            DISTRICT, region, f"{seat} {part}" if part else seat)
     elif category == BY_ELECTION:
         nav_tail = (BY_ELECTION, f"{region}{district or ''}{(' ' + part) if part else ''}")
     else:
@@ -319,6 +341,7 @@ def _legislator_meta(path: Path) -> ElectionMeta:
         ticket_label="號",
         nav_path=("立法委員", f"第{session}屆 {year}") + nav_tail,
         layout=PARTY_LIST if category == PARTY else SINGLE,
+        category=category,
     )
 
 
