@@ -54,14 +54,23 @@ def test_by_election_inside_district_dir():
     assert m.label.endswith("立委補選")
 
 
-def test_for_district_splits_a_combined_gazette():
-    # 合刊公報依選舉區拆場:識別碼、標題、切圖前綴、左樹位置都跟著換
+def test_for_scope_splits_a_combined_gazette():
+    # 合刊公報拆場:識別碼、標題、切圖前綴、左樹位置都跟著換
     base = meta("08th_101/district/16南投縣/南投縣立委選舉.pdf")
-    one = base.for_district(2)
+    one = base.for_scope(2)
     assert one.election_id == "legislator_2012_區域_南投縣第2選舉區"
     assert one.nav_path == ("立法委員", "第8屆 2012", "區域", "南投縣", "第2選舉區")
     assert one.crop_slug != base.crop_slug      # 不同區的第1號切圖不能互相覆蓋
     assert one.region == base.region and one.roles == base.roles
+
+
+def test_for_scope_splits_by_name_for_indigenous_seats():
+    # 101 把平地與山地原住民合刊,兩邊號次也各自從 1 編起
+    base = meta("08th_101/native/101年第8屆平地山地原住民立委選舉.pdf")
+    assert base.splits_by_scope and not base.by_district
+    one = base.for_scope("山地原住民")
+    assert one.election_id == "legislator_2012_原住民_山地原住民"
+    assert one.nav_path == ("立法委員", "第8屆 2012", "山地原住民")
 
 
 def test_party_list():

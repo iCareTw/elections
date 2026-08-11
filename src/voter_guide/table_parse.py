@@ -26,6 +26,7 @@ from pathlib import Path
 
 import pdfplumber
 
+from . import election_meta
 from . import geometry as geo
 
 # 段落標題:本場要留的 / 夾帶其他選舉要濾掉的。
@@ -635,11 +636,12 @@ def _district_of(person: geo.Person) -> int | str | None:
     cell = person.cells.get("選舉區")
     if cell is None:
         return None
-    text = _norm(cell.text).translate(str.maketrans("０１２３４５６７８９", "0123456789"))
+    text = _norm(cell.text)
     if not text:
         return None
-    nums = re.findall(r"\d+", text)
-    return int(nums[-1]) if nums else text
+    # 「苗栗縣第一選舉區」的中文數字也要認得,否則兩個選區會被當成同一場
+    nums = election_meta.district_numbers(text)
+    return nums[0] if len(nums) == 1 else text
 
 
 def _sorted(groups: list[geo.Group]) -> list[geo.Group]:

@@ -30,6 +30,7 @@ def load_guide(
     source_pdf_path,
     crops_base_dir,
     force: bool = False,
+    parse_log: str | None = None,
 ) -> str:
     """把解析產物載進 guide_* 資料表並建立各組的 v1 snapshot。
 
@@ -42,23 +43,28 @@ def load_guide(
     data = yaml.safe_load(Path(yaml_path).read_text(encoding="utf-8")) or []
     crops_base = Path(crops_base_dir)
 
-    buckets: dict[int | None, list[dict]] = {}
+    buckets: dict[int | str | None, list[dict]] = {}
     for entry in data:
         buckets.setdefault(entry.get("選舉區"), []).append(entry)
     if not buckets:                      # 解析不到候選人:場次還是要建,留給人工補
         buckets = {None: []}
 
+    def order(scope):                    # None 在前,號碼依序,名稱依字典序
+        if scope is None:
+            return (0, 0, "")
+        return (1, scope, "") if isinstance(scope, int) else (2, 0, scope)
+
     ids = []
-    for district in sorted(buckets, key=lambda d: (d is not None, d or 0)):
-        emeta = meta.for_district(district) if district is not None else meta
+    for district in sorted(buckets, key=order):
+        emeta = meta.for_scope(district) if district is not None else meta
         _load_election(store, emeta, buckets[district], source_pdf_path,
-                       crops_base, force=force)
+                       crops_base, force=force, parse_log=parse_log)
         ids.append(emeta.election_id)
     return ids[0]
 
 
 def _load_election(store, meta, data, source_pdf_path, crops_base, *,
-                   force: bool) -> None:
+                   force: bool, parse_log: str | None = None) -> None:
     election_id = meta.election_id
     if store.guide_election_exists(election_id):
         if not force:
@@ -76,6 +82,7 @@ def _load_election(store, meta, data, source_pdf_path, crops_base, *,
         region=meta.region,
         source_pdf_path=str(source_pdf_path),
         nav_path="/".join(meta.nav_path) or None,
+        parse_log=parse_log,
     )
     order_counter = 0
 

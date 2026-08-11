@@ -25,7 +25,7 @@ def test_crop_filename_platform_omits_name():
 def test_parse_pdf_entries_include_platform_key(tmp_path):
     if not PRESIDENT_PDF.exists():
         pytest.skip("local president PDF fixture not available")
-    result, _ = parse_pdf(str(PRESIDENT_PDF), "113", tmp_path, use_vision=False)
+    result, _, _ = parse_pdf(str(PRESIDENT_PDF), "113", tmp_path, use_vision=False)
     assert result
     for entry in result:
         assert "政見" in entry                      # 每組都有政見欄(值可能為 None)
@@ -36,7 +36,7 @@ def test_parse_pdf_records_include_page(tmp_path):
     if not PRESIDENT_PDF.exists():
         pytest.skip("local president PDF fixture not available")
     # use_vision=False → 幾何即可,快速;頁碼來自 person.page
-    result, _ = parse_pdf(str(PRESIDENT_PDF), "113", tmp_path, use_vision=False)
+    result, _, _ = parse_pdf(str(PRESIDENT_PDF), "113", tmp_path, use_vision=False)
     assert result
     for entry in result:
         for role in ("總統", "副總統"):

@@ -56,6 +56,7 @@ class ElectionMeta:
     nav_path: tuple[str, ...] = ()   # 校對台左樹的位置,最後一段是這場自己的標題
     layout: str = SINGLE       # 版面型態,見 PAIRED / SINGLE / PARTY_LIST
     category: str = ""         # 立委才有:區域 / 不分區 / 原住民 / 補選
+    districts: tuple[int, ...] = ()   # 檔名寫的選舉區(合刊公報會有好幾個)
 
     @property
     def paired(self) -> bool:
@@ -64,19 +65,27 @@ class ElectionMeta:
 
     @property
     def by_district(self) -> bool:
-        """這場選舉是以選舉區為單位嗎(一份公報可能合刊好幾個選舉區)。"""
+        """本場的分區是用號碼的(區域、補選),還是用名稱的(平地/山地原住民)。"""
         return self.category in (DISTRICT, BY_ELECTION)
 
-    def for_district(self, num: int) -> ElectionMeta:
-        """同一份公報裡某個選舉區自己的場次。合刊的公報靠這個拆成多場。"""
-        seat = f"第{num}選舉區"
-        scope = f"{self.region}{seat}"
+    @property
+    def splits_by_scope(self) -> bool:
+        """一份公報可能合刊本類型的好幾場(各自從第1號重編),需要拆場。"""
+        return self.category in (DISTRICT, BY_ELECTION, NATIVE)
+
+    def for_scope(self, scope: int | str) -> ElectionMeta:
+        """同一份公報裡某一區自己的場次。合刊的公報靠這個拆成多場。
+
+        scope 是選舉區號(區域、補選)或分區名稱(平地原住民、山地原住民)。
+        """
+        seat = f"第{scope}選舉區" if isinstance(scope, int) else scope
+        full = f"{self.region}{seat}" if isinstance(scope, int) else seat
         return replace(
             self,
-            election_id=f"legislator_{self.year}_{self.category}_{scope}",
-            label=f"第{self.session}屆 {self.year} {scope}立委"
+            election_id=f"legislator_{self.year}_{self.category}_{full}",
+            label=f"第{self.session}屆 {self.year} {full}立委"
                   + ("補選" if self.category == BY_ELECTION else ""),
-            crop_slug=f"legislator/{self.year}_{self.category}_{scope}",
+            crop_slug=f"legislator/{self.year}_{self.category}_{full}",
             nav_path=self.nav_path[:-1] + (seat,),
         )
 
@@ -223,7 +232,7 @@ def _to_int(token: str) -> int | None:
     return None
 
 
-def _districts(text: str) -> list[int]:
+def district_numbers(text: str) -> list[int]:
     """文字裡提到的選舉區號。一份公報可能同時刊好幾區(新北市 1.8.9 選區)。"""
     out: list[int] = []
     for m in _DISTRICT_RE.finditer(text):
@@ -252,7 +261,7 @@ def _category_of(dirs: list[str], stem: str) -> str | None:
     return None
 
 
-def _native_kind(text: str) -> str:
+def native_kind(text: str) -> str:
     """平地/山地;101 把兩者合刊成一份。"""
     plain, hill = "平地" in text, "山地" in text
     if plain and hill:
@@ -264,11 +273,21 @@ def _native_kind(text: str) -> str:
     return "原住民"
 
 
+# 2008 以前的複數選區有些不編號,直接叫北區/南區(高雄市)
+_NAMED_SEAT = re.compile(r"(北區|南區)")
+
+
 def _find_region(texts: list[str]) -> str | None:
     for text in texts:
         norm = normalize_region(_strip_seq(text))
         for region in REGIONS:
             if region in norm:
+                return region
+    # 檔名省略了縣/市(「花蓮立委補選」)時退一步用前綴比對
+    for text in texts:
+        norm = normalize_region(_strip_seq(text))
+        for region in REGIONS:
+            if region[:-1] in norm:
                 return region
     return None
 
@@ -304,14 +323,17 @@ def _legislator_meta(path: Path) -> ElectionMeta:
         raise UnknownGazette(f"看不出是區域/不分區/原住民/補選:{'/'.join(rel)}")
 
     region = _find_region(dirs[1:]) or _find_region([stem])
-    nums = _districts(stem) or _districts("/".join(dirs[1:]))
+    nums = district_numbers(stem) or district_numbers("/".join(dirs[1:]))
     district = _district_label(nums)
+    if district is None:                   # 2008 以前有些選區不編號(高雄市北區/南區)
+        named = _NAMED_SEAT.search(stem)
+        district = named.group(1) if named else None
     part = _part_of(stem, category)
 
     if category == PARTY:
         scope, leaf = "全國不分區", "全國不分區"
     elif category == NATIVE:
-        scope = leaf = _native_kind("/".join(dirs) + stem)
+        scope = leaf = native_kind("/".join(dirs) + stem)
     else:
         if region is None:
             raise UnknownGazette(f"看不出是哪一個縣市:{'/'.join(rel)}")
@@ -342,6 +364,7 @@ def _legislator_meta(path: Path) -> ElectionMeta:
         nav_path=("立法委員", f"第{session}屆 {year}") + nav_tail,
         layout=PARTY_LIST if category == PARTY else SINGLE,
         category=category,
+        districts=tuple(nums),
     )
 
 

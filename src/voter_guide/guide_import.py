@@ -4,6 +4,7 @@ progress 回呼:progress(message: str, done: int, total: int)
 """
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 
@@ -12,6 +13,15 @@ from src.voter_guide.guide_load import load_guide
 from src.voter_guide.pipeline import parse_pdf
 
 OUT_DIR = "_out/parsed"
+LOG_FILE = Path("logs") / "guide_import.log"
+
+
+def _write_log(report) -> None:
+    """每份公報試過哪些讀法、為什麼被否決,逐份累積落檔。"""
+    LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with LOG_FILE.open("a", encoding="utf-8") as fh:
+        fh.write(f"[{stamp}] {report.as_text()}\n")
 
 
 class ImportError_(RuntimeError):
@@ -34,7 +44,7 @@ def import_pdf(store, pdf_path, *, out_dir: str = OUT_DIR, use_vision: bool = Tr
 
     _p("開始解析")
     try:
-        result, yaml_file = parse_pdf(
+        result, yaml_file, report = parse_pdf(
             pdf_path, tag, out, use_vision,
             progress=lambda i, t, label: _p(label, i, t))
     except HTTPError as exc:
@@ -46,11 +56,13 @@ def import_pdf(store, pdf_path, *, out_dir: str = OUT_DIR, use_vision: bool = Tr
         raise ImportError_(
             f"連不上本機視覺模型({ENDPOINT})。請先啟動視覺模型再匯入。") from exc
 
+    _write_log(report)
+
     # 解析不到候選人也要把場次建起來:校對台看得到這場選舉,才有地方人工補。
     _p("匯入資料庫中" if result else "解析不到候選人,建立空場次待人工補")
     election_id = load_guide(
         store, yaml_path=yaml_file, source_pdf_path=pdf_path,
-        crops_base_dir=out, force=force)
+        crops_base_dir=out, force=force, parse_log=report.as_text())
 
     _p("完成" if result else "完成(解析不到候選人,待人工補)", 1, 1)
     return election_id

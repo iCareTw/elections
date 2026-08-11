@@ -795,6 +795,11 @@ button { font: inherit; cursor: pointer; border: 0; }
 .guide-scope .empty-election p { color: var(--muted); font-size: 14px; margin: 0 0 18px; }
 .guide-scope .empty-election .hint { font-size: 13px; margin-top: 18px; }
 .guide-scope .empty-actions { display: flex; gap: 10px; justify-content: center; align-items: center; }
+.guide-scope .parse-log { margin-top: 22px; text-align: left; }
+.guide-scope .parse-log summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+.guide-scope .parse-log pre { margin: 8px 0 0; padding: 10px 12px; overflow-x: auto;
+  border: 1px solid var(--line); border-radius: 8px; background: var(--panel);
+  font-size: 12px; line-height: 1.6; white-space: pre; }
 .guide-scope .guide-h2 { font-family: Georgia, serif; font-size: 24px; margin: 0 0 4px; }
 
 /* 候選人 rail 卡片 */

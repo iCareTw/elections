@@ -20,22 +20,31 @@ def _pdf(name: str) -> Path:
     return p
 
 
-def test_import_rejects_unparseable_layout(monkeypatch):
-    """解析不到候選人 → 明確報錯,而且不留下一場空選舉。
+def test_unparseable_layout_still_creates_the_election(monkeypatch, tmp_path):
+    """解析不到候選人時,場次照樣建立,並附上「試過哪些讀法」的紀錄。
 
-    版面支援度會隨解析器成長而變(085 一度解析不了,現在可以),所以不綁特定年份,
-    直接讓解析結果為空來驗這條錯誤路徑。
+    公報讀不出來不代表這場選舉不存在——校對台要看得到它,才有地方人工補。
+    版面支援度會隨解析器成長而變,所以不綁特定年份,直接讓解析結果為空。
     """
+    from src.voter_guide.strategies import Attempt, ParseReport
+
     p = _pdf("085年第9任總統副總統.pdf")
+    report = ParseReport(pdf=str(p), election_id="president_1996_9")
+    report.attempts.append(Attempt("文字層", 0.1, 0, None, None, "讀不到任何候選人"))
+    empty = tmp_path / "empty.yaml"
+    empty.write_text("[]", encoding="utf-8")
     monkeypatch.setattr("src.voter_guide.guide_import.parse_pdf",
-                        lambda *a, **kw: ([], Path("unused.yaml")))
+                        lambda *a, **kw: ([], empty, report))
     store = _store()
     try:
         store.init_schema()
-        with pytest.raises(ImportError_):
-            import_pdf(store, str(p), progress=lambda *a: None)
-        assert not store.guide_election_exists("president_1996_9")
+        store.guide_delete_election("president_1996_9")
+        eid = import_pdf(store, str(p), progress=lambda *a: None)
+        assert eid == "president_1996_9"
+        assert store.guide_candidates_of(eid) == []
+        assert "讀不到任何候選人" in store.guide_election_row(eid)["parse_log"]
     finally:
+        store.guide_delete_election("president_1996_9")
         store.close()
 
 

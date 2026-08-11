@@ -17,6 +17,12 @@
     <a class="btn btn-gray" href="/guide/import">重新匯入</a>
   </div>
   <p class="hint">新增後就是一般的候選人頁面，逐欄填寫、提交流程與解析進來的完全一樣。</p>
+  {% if election.parse_log %}
+  <details class="parse-log">
+    <summary>試過哪些讀法</summary>
+    <pre>{{ election.parse_log }}</pre>
+  </details>
+  {% endif %}
 </div>
 {% else %}
 <div class="placeholder">

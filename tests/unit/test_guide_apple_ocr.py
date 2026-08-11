@@ -108,7 +108,7 @@ def test_parse_pdf_105_bullets_come_from_ocr(tmp_path):
         pytest.skip("local 105 president PDF fixture not available")
     if not apple_ocr.available():
         pytest.skip("macOS Vision OCR not available")
-    result, _ = parse_pdf(str(PDF_105), "105", tmp_path, use_vision=False)
+    result, _, _ = parse_pdf(str(PDF_105), "105", tmp_path, use_vision=False)
     tsai = result[1]["總統"]
     assert tsai["姓名"] == "蔡英文"
     assert tsai["學歷"] == "- 倫敦政經學院法學博士\n- 國立台灣大學法律系學士"
@@ -123,7 +123,7 @@ def test_parse_pdf_105_without_vision(tmp_path):
         pytest.skip("local 105 president PDF fixture not available")
     if not apple_ocr.available():
         pytest.skip("macOS Vision OCR not available")
-    result, _ = parse_pdf(str(PDF_105), "105", tmp_path, use_vision=False)
+    result, _, _ = parse_pdf(str(PDF_105), "105", tmp_path, use_vision=False)
     assert [e["號次"] for e in result] == [1, 2, 3]
     assert [e["政黨"] for e in result] == ["中國國民黨", "民主進步黨", "親民黨"]
     assert result[0]["總統"]["姓名"] == "朱立倫"

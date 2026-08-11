@@ -208,7 +208,8 @@ class Store:
                      "005_voter_guide.sql", "006_voter_guide_groups.sql",
                      "007_guide_manual_photos.sql", "008_guide_import_jobs.sql",
                      "009_guide_election_region.sql",
-                     "010_guide_election_nav_path.sql")
+                     "010_guide_election_nav_path.sql",
+                     "011_guide_election_parse_log.sql")
         with self.connect() as conn:
             conn.execute(
                 sql.SQL("CREATE SCHEMA IF NOT EXISTS {}").format(sql.Identifier(self.config.schema))
@@ -1373,17 +1374,19 @@ class Store:
         source_pdf_path: str,
         region: str | None = None,
         nav_path: str | None = None,
+        parse_log: str | None = None,
     ) -> None:
         with self.connect() as conn:
             self._setup_conn(conn)
             conn.execute(
                 """
                 INSERT INTO guide_elections
-                    (id, type, year, session, label, region, source_pdf_path, nav_path)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    (id, type, year, session, label, region, source_pdf_path,
+                     nav_path, parse_log)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """,
                 (election_id, election_type, year, session, label, region,
-                 source_pdf_path, nav_path),
+                 source_pdf_path, nav_path, parse_log),
             )
 
     def guide_add_manual_group(self, election_id: str, roles: tuple[str, ...]) -> int:
