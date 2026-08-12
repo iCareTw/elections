@@ -78,18 +78,9 @@ def _ocr_tokens(pdf_path: str, page_idx: int, size) -> list[lay.Token]:
         return []
     img = lay.render_page(pdf_path, page_idx)
     sx, sy = size[0] / img.width, size[1] / img.height
-    tokens = []
-    for text, _conf, x, y_from_bottom, height in apple_ocr.ocr_blocks(img):
-        text = text.strip()
-        if not text:
-            continue
-        # Vision 給的是 0~1 正規化座標、原點在左下
-        x0 = x * img.width * sx
-        bottom = (1 - y_from_bottom) * img.height * sy
-        top = bottom - height * img.height * sy
-        tokens.append(lay.Token(text=text, x0=x0, x1=x0 + len(text) * height * img.width * sx,
-                                top=top, bottom=bottom))
-    return tokens
+    return [lay.Token(text=t.text.strip(), x0=t.x0 * sx, x1=t.x1 * sx,
+                      top=t.top * sy, bottom=t.bottom * sy)
+            for t in lay.tiled_ocr(img) if t.text.strip()]
 
 
 def _median_height(tokens: list[lay.Token]) -> float:
