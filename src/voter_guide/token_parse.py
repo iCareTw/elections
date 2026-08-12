@@ -13,6 +13,7 @@
 """
 from __future__ import annotations
 
+import re
 from collections import defaultdict
 
 import pdfplumber
@@ -153,21 +154,30 @@ def _assign_column(columns, pos: float) -> str | None:
     return min(columns, key=lambda kv: abs(kv[1] - pos))[0]
 
 
-_NAME_OK = __import__("re").compile(r"^[^\d\s]{2,15}$")
+_NAME_OK = re.compile(r"^[^\d\s]{2,12}$")
+# 姓名欄底下常接著學經歷的內文,長度像名字但一看就不是
+_NOT_NAME_WORDS = ("大學", "學校", "學系", "碩士", "博士", "畢業", "委員", "公報",
+                   "選舉", "協會", "主任", "理事", "議員", "校長", "研究")
 
 
 def _looks_like_name(text: str) -> bool:
     text = text.strip()
-    return bool(_NAME_OK.match(text)) and not any(
-        lab in text for lab in lay.FIELD_LABELS)
+    if not _NAME_OK.match(text):
+        return False
+    return not any(w in text for w in lay.FIELD_LABELS + list(_NOT_NAME_WORDS))
+
+
+def _is_header(text: str) -> bool:
+    return "姓名" in text
 
 
 def _person_groups(tokens: list[lay.Token], layout: lay.Layout,
                    name_pos: float, tol: float) -> list[list[lay.Token]]:
-    """以姓名欄的每一塊當錨點分人:其餘文字塊歸給最近的那個錨點。
+    """把文字塊切成一位候選人一群。兩種排法都吃:
 
-    不用「間隙大於某個值就切一刀」——學經歷本來就有大量換行,間隙切法會把
-    一位候選人切成十幾份。姓名一定存在且一人一個,拿它當錨點最穩。
+    - **表頭每人重複一次**(113 那種一人一張小表):表頭出現的位置就是分界。
+    - **表頭只有一列**,候選人排在其後:以姓名欄裡像人名的文字塊當錨點,
+      其餘文字塊歸給最近的錨點(學經歷本來就有大量換行,不能用間隙切)。
     """
     def along(t: lay.Token) -> float:
         return t.cx if layout.person_axis == "x" else t.cy
@@ -175,17 +185,29 @@ def _person_groups(tokens: list[lay.Token], layout: lay.Layout,
     def across(t: lay.Token) -> float:
         return t.cy if layout.axis == "x" else t.cx
 
-    anchors = sorted((t for t in tokens
-                      if abs(across(t) - name_pos) <= tol and _looks_like_name(t.text)),
-                     key=along)
-    if not anchors:
-        return []
-    buckets: list[list[lay.Token]] = [[a] for a in anchors]
-    spots = [along(a) for a in anchors]
+    in_name_column = [t for t in tokens if abs(across(t) - name_pos) <= tol]
+    headers = sorted((t for t in in_name_column if _is_header(t.text)), key=along)
+    if len(headers) >= 2:
+        spots = [along(h) for h in headers]
+    else:
+        anchors = sorted((t for t in in_name_column if _looks_like_name(t.text)),
+                         key=along)
+        if not anchors:
+            return []
+        spots = [along(a) for a in anchors]
+
+    card_mode = len(headers) >= 2
+    buckets: list[list[lay.Token]] = [[] for _ in spots]
     for token in tokens:
-        if token in anchors:
+        if _is_header(token.text):
             continue
-        idx = min(range(len(spots)), key=lambda i: abs(spots[i] - along(token)))
+        if card_mode:
+            before = [i for i, s in enumerate(spots) if s <= along(token)]
+            if not before:            # 表頭之前的頁面抬頭,不屬於任何一位
+                continue
+            idx = before[-1]
+        else:
+            idx = min(range(len(spots)), key=lambda i: abs(spots[i] - along(token)))
         buckets[idx].append(token)
     return buckets
 
@@ -200,6 +222,14 @@ def _build_person(bucket: list[lay.Token], layout: lay.Layout, columns,
             cells[field].append(token)
     if "姓名" not in cells or len(cells) < MIN_FIELDS:
         return None
+    # 姓名欄底下還疊著基本資料、推薦之政黨那些,整欄接起來就不是名字了 → 只取
+    # 第一個像人名的文字塊
+    names = [t for t in sorted(cells["姓名"], key=lambda t: (t.top, t.x0))
+             if _looks_like_name(t.text)]
+    if not names:
+        return None
+    cells["姓名"] = names[:1]
+
     person = geo.Person(role=role, page=page_idx)
     for field, items in cells.items():
         items.sort(key=lambda t: (t.top, t.x0))
