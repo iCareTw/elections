@@ -157,7 +157,8 @@ def _assign_column(columns, pos: float) -> str | None:
 _NAME_OK = re.compile(r"^[^\d\s]{2,12}$")
 # 姓名欄底下常接著學經歷的內文,長度像名字但一看就不是
 _NOT_NAME_WORDS = ("大學", "學校", "學系", "碩士", "博士", "畢業", "委員", "公報",
-                   "選舉", "協會", "主任", "理事", "議員", "校長", "研究")
+                   "選舉", "協會", "主任", "理事", "議員", "校長", "研究", "資料",
+                   "政黨", "推薦")
 
 
 def _looks_like_name(text: str) -> bool:
@@ -171,8 +172,32 @@ def _is_header(text: str) -> bool:
     return "姓名" in text
 
 
+_HEADING = re.compile(r"候選人")
+_HEADING_MAX = 30
+
+
+def _headings(tokens: list[lay.Token], layout: lay.Layout) -> list[tuple[float, str]]:
+    """段落標題(「區域立法委員選舉候選人 臺東縣選舉區」)出現的位置。
+
+    一份公報常同時刊區域與原住民,靠這些標題才分得出每位候選人屬於哪一場。
+    """
+    def along(t: lay.Token) -> float:
+        return t.cx if layout.person_axis == "x" else t.cy
+
+    out = [(along(t), t.text) for t in tokens
+           if len(t.text) <= _HEADING_MAX and _HEADING.search(t.text)]
+    return sorted(out)
+
+
+def _scope_at(headings: list[tuple[float, str]], pos: float) -> str | None:
+    """這個位置之前最近的段落標題。"""
+    before = [text for at, text in headings if at <= pos]
+    return before[-1] if before else None
+
+
 def _person_groups(tokens: list[lay.Token], layout: lay.Layout,
-                   name_pos: float, tol: float) -> list[list[lay.Token]]:
+                   name_pos: float, tol: float,
+                   first_split: float | None = None) -> list[list[lay.Token]]:
     """把文字塊切成一位候選人一群。兩種排法都吃:
 
     - **表頭每人重複一次**(113 那種一人一張小表):表頭出現的位置就是分界。
@@ -189,6 +214,9 @@ def _person_groups(tokens: list[lay.Token], layout: lay.Layout,
     headers = sorted((t for t in in_name_column if _is_header(t.text)), key=along)
     if len(headers) >= 2:
         spots = [along(h) for h in headers]
+        # 第一位候選人的分界是頁面最上方那條表頭,它不在內文裡,要自己補回來
+        if first_split is not None and spots[0] > first_split + tol:
+            spots.insert(0, first_split)
     else:
         anchors = sorted((t for t in in_name_column if _looks_like_name(t.text)),
                          key=along)
@@ -224,8 +252,13 @@ def _build_person(bucket: list[lay.Token], layout: lay.Layout, columns,
         return None
     # 姓名欄底下還疊著基本資料、推薦之政黨那些,整欄接起來就不是名字了 → 只取
     # 第一個像人名的文字塊
+    # 姓名在卡片最上方(號次之後);再往下是基本資料、推薦之政黨那些,
+    # 只看前段可以避免把政黨名稱當成人名
+    along = [t.cx for t in bucket] if layout.person_axis == "x" else [t.cy for t in bucket]
+    head_end = min(along) + (max(along) - min(along)) * 0.4 if along else 0
     names = [t for t in sorted(cells["姓名"], key=lambda t: (t.top, t.x0))
-             if _looks_like_name(t.text)]
+             if _looks_like_name(t.text)
+             and (t.cx if layout.person_axis == "x" else t.cy) <= head_end]
     if not names:
         return None
     cells["姓名"] = names[:1]
@@ -255,6 +288,7 @@ def parse(pdf_path: str, *, role: str, ocr: bool = False) -> list[geo.Group]:
             if layout is None:
                 continue
             tol = max(size) * lay.AXIS_TOLERANCE
+            headings = _headings(tokens, layout)
             for band in _bands(_label_hits(tokens, layout, tol)):
                 name_pos = next((pos for f, pos in band if f == "姓名"), None)
                 if name_pos is None:
@@ -264,10 +298,14 @@ def parse(pdf_path: str, *, role: str, ocr: bool = False) -> list[geo.Group]:
                         if lo <= (t.cy if layout.axis == "x" else t.cx) <= hi
                         and abs((t.cx if layout.axis == "x" else t.cy)
                                 - layout.axis_pos) > tol]
-                for bucket in _person_groups(body, layout, name_pos, tol * 2):
+                for bucket in _person_groups(body, layout, name_pos, tol * 2,
+                                             first_split=layout.axis_pos):
                     person = _build_person(bucket, layout, band, role, page_idx)
                     if person is None:
                         continue
+                    name_cell = person.cells["姓名"]
+                    at = name_cell.bbox[0] if layout.person_axis == "x" else name_cell.bbox[1]
+                    person.district = _scope_at(headings, at)
                     group = geo.Group(ticket=len(groups) + 1, page=page_idx)
                     group.members.append(person)
                     party = person.cells.pop("政黨", None)
