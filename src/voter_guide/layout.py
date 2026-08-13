@@ -189,6 +189,39 @@ def _merge_split_labels(tokens: list[Token], tol: float) -> list[Token]:
     return merged
 
 
+def _spread_label_hits(tokens: list[Token], tol: float) -> list[tuple[str, Token]]:
+    """標籤被拉開撐滿整格高度時的補救(093 的『政』與『見』相隔 900 像素)。
+
+    只串接同一直行上連續的短塊,而且串起來要「剛好等於」欄位名才算——用包含比對
+    會把內文誤判成標籤(『號十六路三』串下去就含了『學歷』)。
+    """
+    columns: dict[float, list[Token]] = defaultdict(list)
+    for token in tokens:
+        if len(token.text.replace(" ", "")) > 3:
+            continue
+        for key in columns:
+            if abs(key - token.cx) <= tol:
+                columns[key].append(token)
+                break
+        else:
+            columns[token.cx].append(token)
+
+    hits: list[tuple[str, Token]] = []
+    for items in columns.values():
+        items.sort(key=lambda t: t.cy)
+        for i, first in enumerate(items):
+            joined = ""
+            for nxt in items[i:i + 4]:
+                joined += nxt.text.replace(" ", "")
+                if joined in FIELD_LABELS or joined[::-1] in FIELD_LABELS:
+                    lab = joined if joined in FIELD_LABELS else joined[::-1]
+                    box = Token(text=lab, x0=first.x0, x1=nxt.x1,
+                                top=first.top, bottom=nxt.bottom)
+                    hits.append((lab, box))
+                    break
+    return hits
+
+
 def _label_hits(tokens: list[Token], tol: float) -> list[tuple[str, Token]]:
     """找出含欄位名的 token。也比對反轉字串,因為直書右到左會被讀成『名姓』。"""
     hits = []
@@ -196,7 +229,7 @@ def _label_hits(tokens: list[Token], tol: float) -> list[tuple[str, Token]]:
         lab = _match_label(t.text)
         if lab:
             hits.append((lab, t))
-    return hits
+    return hits + _spread_label_hits(tokens, tol)
 
 
 def detect_layout(img: Image.Image, tokens: list[Token] | None = None) -> Layout | None:
