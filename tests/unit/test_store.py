@@ -444,3 +444,62 @@ def test_identity_fix_splits_committed_candidate_with_operation_snapshot() -> No
         store.delete_candidate(candidate_id)
         store.delete_candidate(f"{candidate_id}a")
         store.close()
+
+
+def test_batch_review_decisions_accept_not_yet_created_candidates() -> None:
+    """匯入時「新人物」的 candidate id 還沒寫進 candidates, 決策仍須存得進去。"""
+    config = load_database_config()
+    if not config.database_url:
+        pytest.skip("PostgreSQL connection not configured")
+
+    store = Store(config)
+    try:
+        store.open()
+    except Exception:
+        pytest.skip("PostgreSQL is not reachable")
+    try:
+        store.init_schema()
+    except ConnectionError:
+        store.close()
+        pytest.skip("PostgreSQL is not reachable")
+
+    token = uuid4().hex
+    election_id = f"test/batch-new-{token}.yaml"
+    source_record_id = f"{election_id}:0"
+    candidate_id = f"id_全新人物_{token[:8]}"
+    payload = {"name": "全新人物", "birthyear": 1970, "year": 2024, "type": "縣市議員", "region": "臺北市 第01選舉區"}
+
+    try:
+        store.upsert_election(
+            {"election_id": election_id, "type": "test", "label": "Batch New", "path": f"/tmp/{election_id}"}
+        )
+        store.batch_upsert_source_records(
+            [{
+                "source_record_id": source_record_id,
+                "election_id": election_id,
+                "payload": payload,
+                "original_kind": "new",
+            }]
+        )
+        store.batch_upsert_review_decisions(
+            [{
+                "source_record_id": source_record_id,
+                "election_id": election_id,
+                "candidate_id": candidate_id,
+                "mode": "new",
+            }]
+        )
+
+        decisions = store.list_review_decisions(election_id)
+        assert [d["candidate_id"] for d in decisions] == [candidate_id]
+
+        store.commit_election(
+            election_id=election_id,
+            decisions={source_record_id: {"mode": "new", "candidate_id": candidate_id}},
+            source_records_map={source_record_id: payload},
+        )
+        assert store.list_candidates_by_name("全新人物")[0]["id"] == candidate_id
+    finally:
+        store.delete_election(election_id)
+        store.delete_candidate(candidate_id)
+        store.close()

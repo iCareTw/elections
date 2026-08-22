@@ -209,7 +209,8 @@ class Store:
                      "007_guide_manual_photos.sql", "008_guide_import_jobs.sql",
                      "009_guide_election_region.sql",
                      "010_guide_election_nav_path.sql",
-                     "011_guide_election_parse_log.sql")
+                     "011_guide_election_parse_log.sql",
+                     "012_review_decisions_drop_candidate_fk.sql")
         with self.connect() as conn:
             conn.execute(
                 sql.SQL("CREATE SCHEMA IF NOT EXISTS {}").format(sql.Identifier(self.config.schema))
@@ -1120,6 +1121,16 @@ class Store:
                     mode = decision["mode"]
                     payload = source_records_map[src_id]
 
+                    # 候選人必須先建立: resolutions.candidate_id 有 FK 指向 candidates,
+                    # 新人物在此之前不存在於 candidates.
+                    conn.execute(
+                        """
+                        INSERT INTO candidates(id, name, birthyear)
+                        VALUES (%s, %s, %s)
+                        ON CONFLICT(id) DO NOTHING
+                        """,
+                        (candidate_id, _normalize_candidate_name(payload["name"]), payload.get("birthyear")),
+                    )
                     conn.execute(
                         """
                         INSERT INTO resolutions(source_record_id, election_id, candidate_id, mode)
@@ -1129,14 +1140,6 @@ class Store:
                             mode         = EXCLUDED.mode
                         """,
                         (src_id, election_id, candidate_id, mode),
-                    )
-                    conn.execute(
-                        """
-                        INSERT INTO candidates(id, name, birthyear)
-                        VALUES (%s, %s, %s)
-                        ON CONFLICT(id) DO NOTHING
-                        """,
-                        (candidate_id, _normalize_candidate_name(payload["name"]), payload.get("birthyear")),
                     )
                     conn.execute(
                         """

@@ -30,8 +30,9 @@ Schema name: `elections`. 此文件記錄套用 `db/*.sql` 所有 migration 後�
 └───────────────────────┘        └─────────────────────────┘
 
 candidates.id 另被以下表以 FK 參照 (皆 ON UPDATE/DELETE CASCADE):
-  candidate_elections, identity_check_issues, resolutions, review_decisions
-identity_fix_operations 僅記錄當時的 candidate id, 不設 FK (稽核歷史).
+  candidate_elections, identity_check_issues, resolutions
+review_decisions 是 commit 前的暫存區, 其 candidate_id 可能是「還沒建立的新人物」,
+  故刻意不設 FK; identity_fix_operations 僅記錄當時的 candidate id, 亦不設 FK (稽核歷史).
 ```
 
 ---
@@ -91,7 +92,7 @@ Index:
 |--------------------|-------------|---------------------------------------------------|
 | `source_record_id` | TEXT PK FK  | 1-to-1 對應 `source_records.source_record_id`      |
 | `election_id`      | TEXT FK     | 所屬選舉 → `elections.election_id` (denormalized)  |
-| `candidate_id`     | VARCHAR(64) FK | 審核人員判定對應的候選人 → `candidates.id` (`ON UPDATE/DELETE CASCADE`) |
+| `candidate_id`     | VARCHAR(64) | 審核人員判定對應的候選人 id. **無 FK**: 判定為新人物時, 該 id 要等 commit 才會出現在 `candidates` |
 | `mode`             | VARCHAR(16) | 判定方式                                           |
 | `updated_at`       | TIMESTAMPTZ | 最後修改時間, 由 trigger 自動維護                    |
 
