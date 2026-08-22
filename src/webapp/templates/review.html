@@ -78,8 +78,9 @@
         <label class="match-card-main">
           <span class="match-card-head">
             <input class="match-select" type="radio" name="candidate_id" value="{{ match.id }}"
-                   {% if loop.first %}checked{% endif %}>
+                   {% if match.id == auto_candidate_id or (not auto_candidate_id and loop.first) %}checked{% endif %}>
             <strong>{{ match.name }}</strong>
+            {% if match.id == auto_candidate_id %}<span class="auto-match-tag">自動判定</span>{% endif %}
             <span class="selected-label">目前選取</span>
           </span>
           <span class="mono match-candidate-id">{{ match.id }}</span>
@@ -152,6 +153,10 @@
       </div>
       {% endfor %}
 
+      {% if not matches %}
+      <p class="no-matches">名單中查無同名的既有人物，這位會建立為新的候選人。</p>
+      {% endif %}
+
       {% if not current_decision %}
       {% if matches %}
       <p class="decision-summary" id="decision-summary"></p>
@@ -192,7 +197,14 @@
 {% if resolved_count < total_count %}
 <div class="commit-pending">
   <p>⏳ 仍有 {{ total_count - resolved_count }} 筆待審核</p>
-  <button class="button" disabled>Commit to DB</button>
+  <div class="commit-pending-actions">
+    <form method="post" action="/elections/{{ election.election_id | urlencode }}/load">
+      <button class="button secondary" type="submit" title="對尚未決定的記錄重新比對名單，已做過的判斷不會被覆蓋">
+        ↻ 重跑自動判定
+      </button>
+    </form>
+    <button class="button" disabled>Commit to DB</button>
+  </div>
 </div>
 {% else %}
 <div class="commit-ready">

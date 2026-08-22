@@ -704,3 +704,128 @@ def test_auto_decisions_survive_without_browser_session(tmp_path: Path) -> None:
         for manual_candidate_id in manual_candidate_ids:
             store.delete_candidate(manual_candidate_id)
         store.close()
+
+
+def test_review_page_shows_the_auto_matched_candidate(tmp_path: Path) -> None:
+    """自動判定的記錄也要看得到判定對象, 不能只有空白的 possible existing candidates。"""
+    config = load_database_config()
+    if not config.database_url:
+        pytest.skip("PostgreSQL connection not configured")
+
+    store = Store(config)
+    try:
+        store.open()
+    except Exception:
+        pytest.skip("PostgreSQL is not reachable")
+    try:
+        store.init_schema()
+    except ConnectionError:
+        store.close()
+        pytest.skip("PostgreSQL is not reachable")
+
+    token = uuid4().hex
+    name = f"審核測試{token[:6]}"
+    seed_id = f"legislator/party-list-legislator/{token}seed.yaml"
+    target_id = f"legislator/party-list-legislator/{token}th.yaml"
+    candidate_id = None
+
+    def _write(path_id: str, year: int) -> None:
+        p = tmp_path / "_data" / "legislator" / "party-list-legislator" / path_id.rsplit("/", 1)[-1]
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(
+            f"- name: {name}\n  party: 測試黨\n  birthyear: 1970\n"
+            f"  year: {year}\n  region: 全國\n  type: 立法委員\n  elected: 0\n  session: 11\n",
+            encoding="utf-8",
+        )
+
+    _write(seed_id, 2020)
+    _write(target_id, 2024)
+
+    client = TestClient(_make_app(tmp_path, store), raise_server_exceptions=True)
+
+    try:
+        # 先讓這個人存在於 candidates
+        client.post(f"/elections/{seed_id}/load", follow_redirects=False)
+        client.post(f"/elections/{seed_id}/commit", follow_redirects=False)
+        candidate_id = next(c["id"] for c in store.list_candidates_with_elections() if c["name"] == name)
+
+        # 第二場同名同生年 → 自動判定, 回頭看審核畫面仍要顯示判定對象
+        client.post(f"/elections/{target_id}/load", follow_redirects=False)
+
+        resp = client.get(f"/review/{target_id}")
+        assert resp.status_code == 200
+        html = resp.text
+        assert candidate_id in html
+        assert "自動判定" in html
+        assert "查無同名的既有人物" not in html
+    finally:
+        store.delete_election(target_id)
+        store.delete_election(seed_id)
+        if candidate_id:
+            store.delete_candidate(candidate_id)
+        store.close()
+
+
+def test_review_status_page_can_rerun_auto_matching(tmp_path: Path) -> None:
+    """審核中的選舉要能重跑自動判定, 補回缺漏的決策, 且不覆蓋已做過的判斷。"""
+    config = load_database_config()
+    if not config.database_url:
+        pytest.skip("PostgreSQL connection not configured")
+
+    store = Store(config)
+    try:
+        store.open()
+    except Exception:
+        pytest.skip("PostgreSQL is not reachable")
+    try:
+        store.init_schema()
+    except ConnectionError:
+        store.close()
+        pytest.skip("PostgreSQL is not reachable")
+
+    token = uuid4().hex
+    name = f"重跑測試{token[:6]}"
+    data_dir = tmp_path / "_data" / "legislator" / "party-list-legislator"
+    data_dir.mkdir(parents=True)
+
+    def _row(birthyear: int, year: int) -> str:
+        return (
+            f"- name: {name}\n  party: 測試黨\n  birthyear: {birthyear}\n"
+            f"  year: {year}\n  region: 全國\n  type: 立法委員\n  elected: 0\n  session: 11\n"
+        )
+
+    (data_dir / f"{token}seed.yaml").write_text(_row(1970, 2020), encoding="utf-8")
+    # 一筆同生年(自動判定) + 一筆不同生年(需人工判斷) → 匯入後停在 review
+    (data_dir / f"{token}th.yaml").write_text(_row(1970, 2024) + _row(1980, 2024), encoding="utf-8")
+    seed_id = f"legislator/party-list-legislator/{token}seed.yaml"
+    target_id = f"legislator/party-list-legislator/{token}th.yaml"
+    candidate_ids: list[str] = []
+
+    client = TestClient(_make_app(tmp_path, store), raise_server_exceptions=True)
+
+    try:
+        client.post(f"/elections/{seed_id}/load", follow_redirects=False)
+        client.post(f"/elections/{seed_id}/commit", follow_redirects=False)
+        candidate_ids = [c["id"] for c in store.list_candidates_with_elections() if c["name"] == name]
+
+        client.post(f"/elections/{target_id}/load", follow_redirects=False)
+        assert len(store.list_review_decisions(target_id)) == 1
+
+        # 模擬決策寫入失敗後留下的狀態
+        with store.connect() as conn:
+            store._setup_conn(conn)
+            conn.execute("DELETE FROM review_decisions WHERE election_id = %s", (target_id,))
+        assert store.list_review_decisions(target_id) == []
+
+        html = client.get(f"/review/{target_id}").text
+        assert "重跑自動判定" in html
+
+        client.post(f"/elections/{target_id}/load", follow_redirects=False)
+        decisions = store.list_review_decisions(target_id)
+        assert [d["mode"] for d in decisions] == ["auto"]
+    finally:
+        store.delete_election(target_id)
+        store.delete_election(seed_id)
+        for cid in candidate_ids:
+            store.delete_candidate(cid)
+        store.close()

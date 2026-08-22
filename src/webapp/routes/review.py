@@ -76,6 +76,18 @@ def _annotate_match(incoming: dict, match: dict) -> dict:
     return {**match, "age_diff": age_diff, "cmp": cmp, "cmp_val": cmp_val}
 
 
+def _possible_candidates(payload: dict, store: Store) -> list[dict]:
+    """同名(或忽略英文後同名)的既有候選人。
+
+    classify_record 只有在判定為 manual 時才回傳 matches, 但 auto 判定同樣是挑中了
+    某個既有人物, 這裡一律把可能的對象撈出來, 讓畫面看得到判定的依據。
+    """
+    matches = store.list_candidates_by_name(payload["name"])
+    if matches:
+        return matches
+    return store.list_candidates_by_name_without_latin(payload["name"])
+
+
 _FIELD_LABELS = {
     "name": "姓名", "birthyear": "生日", "party": "政黨",
     "type": "選舉", "region": "地區", "elected": "當選",
@@ -111,9 +123,10 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
 
     current_decision = decisions.get(current_record["source_record_id"])
     result = classify_record(payload, store)
-    matches = result.get("matches", [])
+    matches = result.get("matches") or _possible_candidates(payload, store)
     matches = [_annotate_match(payload, m) for m in matches]
     matches.sort(key=lambda m: (m["age_diff"] is None, m["age_diff"] or 0))
+    auto_candidate_id = result["candidate_id"] if result["kind"] == "auto" else None
 
     record_fields = [
         (_FIELD_LABELS.get(k, k), payload[k])
@@ -167,6 +180,7 @@ async def review_page(request: Request, election_id: str, i: int = 0, error: str
         "current_record": current_record,
         "record_fields": record_fields,
         "matches": matches,
+        "auto_candidate_id": auto_candidate_id,
         "incoming_birthyear": payload.get("birthyear"),
         "incoming_type": payload.get("type"),
         "incoming_party": payload.get("party"),
