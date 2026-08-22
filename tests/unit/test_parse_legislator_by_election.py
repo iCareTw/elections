@@ -44,3 +44,16 @@ def test_parse_file_uses_top_ticket_when_no_victor_mark_exists(tmp_path: Path) -
 
     assert rows[0]["elected"] == 1
     assert rows[1]["elected"] == 0
+
+
+def test_parse_file_pads_single_digit_district_number(tmp_path: Path) -> None:
+    path = tmp_path / "10th" / "第10屆立法委員臺北市第3選舉區缺額補選.xlsx"
+    path.parent.mkdir(parents=True)
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.append(("投票日", "地區", "號次", "姓名", "性別", "出生年", "政黨", "得票數", "得票率", "當選"))
+    ws.append(("2023-01-08", "選舉區", 2, "王鴻薇", None, None, "中國國民黨", 60519, 52.26, "*"))
+    wb.save(path)
+
+    assert parse_file(path)[0]["region"] == "臺北市第03選舉區"

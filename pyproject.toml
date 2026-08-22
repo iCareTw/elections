@@ -17,6 +17,7 @@ dependencies = [
     "psycopg[binary]>=3.2.0",
     "pyobjc-framework-quartz>=12.2.1",
     "pyobjc-framework-vision>=12.2.1",
+    "pypdf>=6.16.1",
     "pytest>=9.0.3",
     "python-multipart>=0.0.27",
     "pyyaml>=6.0.3",

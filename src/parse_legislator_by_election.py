@@ -19,7 +19,9 @@ def _year_from_vote_date(vote_date: object) -> int | None:
 def _region_from_path(path: Path) -> str:
     stem = path.stem
     match = re.search(r"立法委員(.+?)(?:缺額)?補選$", stem)
-    return match.group(1) if match else stem
+    region = match.group(1) if match else stem
+    # 中選會的場次名稱有「第3選舉區」也有「第03選舉區」，一律補成兩位數
+    return re.sub(r"第(\d+)選舉區", lambda m: f"第{int(m.group(1)):02d}選舉區", region)
 
 
 def parse_file(path: str | Path) -> list[dict]:

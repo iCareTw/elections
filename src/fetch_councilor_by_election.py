@@ -1,217 +1,193 @@
 """
-Fetch T1/T2 by-election (補選) data from CEC attachment XLS files.
-These elections have has_data=false in the tickets API; candidate data is only
-available as XLS attachments at:
-  {BASE}/data/attachments/BEL/{subject_id}/{theme_group}/list.json
+抓中選會公告的縣市議員缺額補選「選舉結果清冊」。
+
+中選會的選舉資料庫(db.cec.gov.tw)只收錄 2024 年之後的議員補選，更早的場次
+只出現在全球資訊網的公告區「罷免、補選及重行選舉資訊／直轄市議員、縣市議員」，
+附件是含出生年月日的 PDF 清冊，比資料庫的得票數一覽表還完整。
+
+產出檔案放在 _data/council/{年}/，欄位與正選議員資料一致，可直接由
+parse_councilor 解析。
 """
+import argparse
 import asyncio
 import re
 from pathlib import Path
 
 import httpx
 import openpyxl
-import xlrd
+import pdfplumber
 
-BASE_URL = "https://db.cec.gov.tw"
-DATA_ROOT = Path("_data/council/by-election-councilor")
+BASE_URL = "https://www.cec.gov.tw"
+# 公告區「罷免、補選及重行選舉資訊／直轄市議員、縣市議員」的分類編號
+ARTICLE_LIST_ID = 628
+DATA_ROOT = Path("_data/council")
 
-XLSX_COLUMNS = [
-    ("投票日", "vote_date"),
-    ("地區",   "area_name"),
-    ("號次",   "cand_no"),
-    ("姓名",   "cand_name"),
-    ("性別",   "cand_sex"),
-    ("出生年", "cand_birthyear"),
-    ("政黨",   "party_name"),
-    ("得票數", "ticket_num"),
-    ("得票率", "ticket_percent"),
-    ("當選",   "is_victor"),
-]
+XLSX_COLUMNS = ["地區", "號次", "姓名", "性別", "出生年", "政黨", "得票數", "得票率", "當選"]
+
+_VOTE_DATE_RE = re.compile(r"投[（(]?開?[)）]?票日期[：:]\s*(\d{2,3})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日")
+_ROC_YEAR_RE = re.compile(r"(\d{2,3})")
+_SPACE_RE = re.compile(r"[\s　]+")
 
 
 def _safe_filename(name: str) -> str:
     return re.sub(r'[\\/:*?"<>|]', "_", name)
 
 
-def output_path(vote_date: str, theme_name: str) -> Path:
-    year = vote_date[:4] if vote_date else "unknown"
-    return DATA_ROOT / year / f"{_safe_filename(theme_name)}.xlsx"
+def election_name(article_title: str) -> str:
+    """公告標題「…缺額補選結果」→ 選舉名稱「…缺額補選」。"""
+    return article_title.strip().removesuffix("結果")
 
 
-def _parse_votes_xls(xls_bytes: bytes, vote_date: str, theme_name: str) -> list[dict]:
-    import tempfile, os
-    with tempfile.NamedTemporaryFile(suffix=".xls", delete=False) as f:
-        f.write(xls_bytes)
-        tmp = f.name
-    try:
-        wb = xlrd.open_workbook(tmp)
-        ws = wb.sheet_by_index(0)
-    finally:
-        os.unlink(tmp)
-
-    # Find candidate number row and 總計 row
-    cand_no_row_idx = total_row_idx = None
-    for i in range(ws.nrows):
-        val0 = ws.cell_value(i, 0)
-        val1 = ws.cell_value(i, 1)
-        if val0 in ("", None) and (val1 == 1.0 or val1 == "1"):
-            cand_no_row_idx = i
-        if val0 == "總計":
-            total_row_idx = i
-
-    if cand_no_row_idx is None or total_row_idx is None:
-        return []
-
-    def row_vals(idx):
-        return [ws.cell_value(idx, j) for j in range(ws.ncols)]
-
-    cand_no_vals = row_vals(cand_no_row_idx)
-    name_vals    = row_vals(cand_no_row_idx + 1)
-    party_vals   = row_vals(cand_no_row_idx + 2)
-    total_vals   = row_vals(total_row_idx)
-
-    candidates = []
-    for j in range(1, ws.ncols):
-        v = cand_no_vals[j]
-        if isinstance(v, float) and v >= 1:
-            no = int(v)
-        elif isinstance(v, str) and v.strip().isdigit():
-            no = int(v)
-        else:
-            continue
-        name  = str(name_vals[j]).replace("\n", " ").strip()
-        party = str(party_vals[j]).strip() if party_vals[j] not in ("", None) else "無"
-        votes = total_vals[j]
-        if not name:
-            continue
-        candidates.append({"no": no, "name": name, "party": party, "votes": int(votes) if votes else 0})
-
-    if not candidates:
-        return []
-
-    total_valid = sum(c["votes"] for c in candidates)
-    max_votes   = max(c["votes"] for c in candidates)
-
-    records = []
-    for c in candidates:
-        party = c["party"]
-        if party in ("無", "") or not party:
-            party = "無黨籍"
-        pct = round(c["votes"] / total_valid * 100, 2) if total_valid else 0.0
-        records.append({
-            "vote_date":     vote_date,
-            "area_name":     theme_name,
-            "cand_no":       c["no"],
-            "cand_name":     c["name"],
-            "cand_sex":      None,
-            "cand_birthyear": None,
-            "party_name":    party,
-            "ticket_num":    c["votes"],
-            "ticket_percent": pct,
-            "is_victor":     "*" if c["votes"] == max_votes else " ",
-        })
-    return records
+def output_path(year: int, name: str) -> Path:
+    return DATA_ROOT / str(year) / f"{_safe_filename(name)}.xlsx"
 
 
-def _write_xlsx(records: list[dict], path: Path) -> None:
+def _clean(text: object) -> str:
+    return _SPACE_RE.sub("", str(text or ""))
+
+
+def _birthyear(cell: object) -> int | None:
+    """清冊的出生年月日有 060/11/06、45 年 4 月 9 日、46.2.2 等寫法，取民國年轉西元。"""
+    match = _ROC_YEAR_RE.search(str(cell or ""))
+    if not match:
+        return None
+    return int(match.group(1)) + 1911
+
+
+def _votes(cell: object) -> int:
+    text = _clean(cell).replace(",", "")
+    return int(text) if text.isdigit() else 0
+
+
+def parse_result_pdf(pdf_path: Path) -> tuple[str | None, list[dict]]:
+    """讀選舉結果清冊 PDF，回傳 (投票日 YYYY-MM-DD, 候選人記錄)。掃描檔會回傳 (None, [])。"""
+    with pdfplumber.open(pdf_path) as pdf:
+        page = pdf.pages[0]
+        text = page.extract_text() or ""
+        tables = page.extract_tables()
+
+    vote_date = None
+    match = _VOTE_DATE_RE.search(_SPACE_RE.sub("", text))
+    if match:
+        roc, month, day = (int(g) for g in match.groups())
+        vote_date = f"{roc + 1911:04d}-{month:02d}-{day:02d}"
+
+    rows: list[dict] = []
+    for table in tables:
+        for row in table:
+            cells = [_clean(c) for c in row]
+            # 清冊列：選舉區 號次 姓名 性別 出生年月日 政黨 得票數 是否當選 備註
+            if len(cells) < 8 or not cells[1].isdigit():
+                continue
+            name = cells[2]
+            if not name or cells[3] not in ("男", "女"):
+                continue
+            rows.append(
+                {
+                    "cand_no": int(cells[1]),
+                    "name": name,
+                    "sex": "1" if cells[3] == "男" else "2",
+                    "birthyear": _birthyear(cells[4]),
+                    "party": "無黨籍" if cells[5] in ("", "無") else cells[5],
+                    "votes": _votes(cells[6]),
+                    "elected": cells[7] == "是",
+                }
+            )
+        if rows:
+            break
+    return vote_date, rows
+
+
+def write_xlsx(name: str, rows: list[dict], path: Path) -> None:
+    total = sum(r["votes"] for r in rows)
     path.parent.mkdir(parents=True, exist_ok=True)
     wb = openpyxl.Workbook()
     ws = wb.active
-    ws.append([col for col, _ in XLSX_COLUMNS])
-    for r in records:
-        ws.append([r.get(field) for _, field in XLSX_COLUMNS])
+    ws.append(XLSX_COLUMNS)
+    for r in rows:
+        ws.append(
+            [
+                name,
+                r["cand_no"],
+                r["name"],
+                r["sex"],
+                r["birthyear"],
+                r["party"],
+                r["votes"],
+                round(r["votes"] / total * 100, 2) if total else 0.0,
+                "*" if r["elected"] else " ",
+            ]
+        )
     wb.save(path)
 
 
-def _collect_items(raw: list[dict], subject_ids: set[str]) -> list[dict]:
-    """Flatten BEL list; keep has_data=false items for the given subject_ids."""
-    result = []
-    seen = set()
-    for term in raw:
-        for time_item in term.get("time_items", []):
-            for item in time_item.get("theme_items", []):
-                tid = item.get("theme_id")
-                if (
-                    item.get("subject_id") in subject_ids
-                    and not item.get("has_data")
-                    and tid not in seen
-                ):
-                    seen.add(tid)
-                    result.append(item)
-    return result
-
-
-async def _fetch_json(client: httpx.AsyncClient, url: str) -> list | dict:
-    r = await client.get(url)
+async def _fetch_json(client: httpx.AsyncClient, url: str) -> dict:
+    r = await client.get(url, headers={"Referer": f"{BASE_URL}/central/article/list/{ARTICLE_LIST_ID}"})
     r.raise_for_status()
     return r.json()
 
 
-async def _fetch_bytes(client: httpx.AsyncClient, url: str) -> bytes:
-    r = await client.get(url)
-    r.raise_for_status()
-    return r.content
+async def list_by_elections(client: httpx.AsyncClient) -> list[dict]:
+    """列出公告區裡的議員缺額補選（略過罷免案）。"""
+    items: list[dict] = []
+    page = 1
+    while True:
+        url = (
+            f"{BASE_URL}/api/central/article/list?id={ARTICLE_LIST_ID}"
+            f"&page={page}&keyword&beginDate&endDate&webRoute=central"
+        )
+        data = (await _fetch_json(client, url))["data"]
+        for article in data["articleList"]:
+            title = article["directName"]
+            if "補選" in title and "罷免" not in title:
+                items.append({"title": title, "article_id": article["directPath"]})
+        if page >= data["pages"]["totalPage"]:
+            return items
+        page += 1
 
 
-async def _scrape_item(client: httpx.AsyncClient, item: dict, force: bool) -> None:
-    sid        = item["subject_id"]
-    theme_name = item["theme_name"]
-    theme_grp  = item["theme_group"]
-    vote_date  = item.get("vote_date", "")
-    path       = output_path(vote_date, theme_name)
+async def _scrape_item(client: httpx.AsyncClient, item: dict, force: bool, tmp_dir: Path) -> None:
+    name = election_name(item["title"])
+    detail = (await _fetch_json(client, f"{BASE_URL}/api/central/article/{item['article_id']}?webRoute=central"))["data"]
+    files = detail.get("fileList") or []
+    if not files:
+        print(f"  WARNING {name}: 公告沒有附件")
+        return
 
+    pdf_bytes = (await client.get(f"{BASE_URL}/api/file/{files[0]['fileId']}.pdf")).content
+    tmp_dir.mkdir(parents=True, exist_ok=True)
+    tmp_pdf = tmp_dir / f"{_safe_filename(name)}.pdf"
+    tmp_pdf.write_bytes(pdf_bytes)
+
+    vote_date, rows = parse_result_pdf(tmp_pdf)
+    if not vote_date or not rows:
+        print(f"  WARNING {name}: 清冊讀不出內容（可能是掃描檔）")
+        return
+
+    path = output_path(int(vote_date[:4]), name)
     if path.exists() and not force:
-        print(f"  skip {path.name}")
+        print(f"  skip {path}")
         return
 
-    # Get attachment list
-    list_url = f"{BASE_URL}/static/elections/data/attachments/BEL/{sid}/{theme_grp}/list.json"
-    attachments = await _fetch_json(client, list_url)
-
-    # Find the 得票數一覽表 XLS
-    xls_entry = next(
-        (a for a in attachments if "得票數一覽表" in a.get("file_name", "")),
-        None,
-    )
-    if xls_entry is None:
-        print(f"  WARNING {theme_name}: no 得票數一覽表 attachment")
-        return
-
-    xls_url = f"{BASE_URL}/static/{xls_entry['file_path']}"
-    xls_bytes = await _fetch_bytes(client, xls_url)
-    records = _parse_votes_xls(xls_bytes, vote_date, theme_name)
-
-    if not records:
-        print(f"  WARNING {theme_name}: failed to parse XLS")
-        return
-
-    _write_xlsx(records, path)
-    print(f"  wrote {path}  ({len(records)} 筆)")
-    await asyncio.sleep(0.5)
+    write_xlsx(name, rows, path)
+    print(f"  wrote {path}  ({len(rows)} 筆)")
 
 
-async def _run(subject_ids: list[str], force: bool) -> None:
-    async with httpx.AsyncClient(timeout=30, verify=False) as client:
-        all_items = []
-        for sid in subject_ids:
-            raw = await _fetch_json(client, f"{BASE_URL}/static/elections/list/BEL_{sid}.json")
-            items = _collect_items(raw, {sid})
-            print(f"\n=== BEL_{sid}: {len(items)} 場有附件的補選 ===")
-            all_items.extend(items)
-
-        for item in sorted(all_items, key=lambda i: (i["subject_id"], i.get("vote_date", ""))):
-            await _scrape_item(client, item, force)
+async def _run(force: bool, tmp_dir: Path) -> None:
+    async with httpx.AsyncClient(timeout=60, verify=False, follow_redirects=True) as client:
+        items = await list_by_elections(client)
+        print(f"=== 公告區共 {len(items)} 場議員缺額補選 ===")
+        for item in items:
+            await _scrape_item(client, item, force, tmp_dir)
+            await asyncio.sleep(0.3)
 
 
 def main() -> None:
-    import argparse
-    parser = argparse.ArgumentParser(description="Fetch councilor by-election XLS from CEC")
-    parser.add_argument("--subject", choices=["T1", "T2"], action="append",
-                        help="subject_id to fetch (default: T1 and T2)")
+    parser = argparse.ArgumentParser(description="Fetch councilor by-election result rosters from CEC")
     parser.add_argument("--force", action="store_true", help="overwrite existing files")
+    parser.add_argument("--pdf-dir", default="_out/cec_by_election", help="下載的清冊 PDF 存放位置")
     args = parser.parse_args()
-    subjects = args.subject if args.subject else ["T1", "T2"]
-    asyncio.run(_run(subjects, args.force))
+    asyncio.run(_run(args.force, Path(args.pdf_dir)))
 
 
 if __name__ == "__main__":

@@ -82,7 +82,8 @@ def test_write_xlsx_includes_vote_date(tmp_path: Path) -> None:
     assert rows[1][3] == "測試"
 
 
-def test_parse_by_election_items_keeps_only_supported_has_data_items() -> None:
+def test_parse_by_election_items_keeps_district_items_regardless_of_has_data() -> None:
+    """第 9、10 屆補選 has_data=false，資料只在附件裡，仍然要留下來。"""
     raw = [
         {
             "time_items": [
@@ -93,14 +94,14 @@ def test_parse_by_election_items_keeps_only_supported_has_data_items() -> None:
                             "legislator_type_id": "L1",
                             "session": 8,
                             "has_data": True,
-                            "theme_id": "keep",
+                            "theme_id": "keep-tickets",
                         },
                         {
                             "subject_id": "L0",
                             "legislator_type_id": "L1",
                             "session": 9,
                             "has_data": False,
-                            "theme_id": "drop-no-data",
+                            "theme_id": "keep-attachment",
                         },
                         {
                             "subject_id": "L0",
@@ -109,10 +110,56 @@ def test_parse_by_election_items_keeps_only_supported_has_data_items() -> None:
                             "has_data": True,
                             "theme_id": "drop-not-l1",
                         },
+                        {
+                            "subject_id": "L0",
+                            "legislator_type_id": "L1",
+                            "session": 7,
+                            "has_data": True,
+                            "theme_id": "drop-other-session",
+                        },
                     ]
                 }
             ]
         }
     ]
 
-    assert [item["theme_id"] for item in parse_by_election_items(raw, {8, 9})] == ["keep"]
+    assert [item["theme_id"] for item in parse_by_election_items(raw, {8, 9})] == [
+        "keep-tickets",
+        "keep-attachment",
+    ]
+
+
+def test_roc_birthyear_reads_vertical_gazette_cell() -> None:
+    from src.fetch_legislator_by_election import _roc_birthyear
+
+    assert _roc_birthyear("57\n年\n08\n月\n30\n日") == 1968
+    assert _roc_birthyear("民國44年6月10日") == 1955
+    assert _roc_birthyear("") is None
+    assert _roc_birthyear("不詳") is None
+
+
+def _word(text: str, x: float, top: float) -> dict:
+    return {"text": text, "x0": x, "x1": x + 20, "top": top}
+
+
+def test_birthyear_is_read_from_the_column_next_to_the_vertical_name() -> None:
+    from src.fetch_legislator_by_election import _birthyear_beside, _name_runs
+
+    words = [
+        _word("柯", 223, 309), _word("呈", 223, 346), _word("枋", 223, 383),
+        _word("61", 280, 304), _word("11", 280, 352), _word("30", 280, 400),
+        # 隔壁欄的其他數字不該被當成出生年
+        _word("2019", 600, 300),
+    ]
+    runs = _name_runs(words, "柯呈枋")
+
+    assert len(runs) == 1
+    assert _birthyear_beside(words, runs[0]) == 1972
+
+
+def test_name_runs_ignores_characters_that_are_not_stacked() -> None:
+    from src.fetch_legislator_by_election import _name_runs
+
+    words = [_word("柯", 223, 309), _word("呈", 500, 346), _word("枋", 223, 383)]
+
+    assert _name_runs(words, "柯呈枋") == []
