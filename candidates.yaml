@@ -23406,6 +23406,8 @@
 - id: id_石國勳_1981
   name: 石國勳
   birthyear: 1981
+  alias_names:
+  - 石國勲
   elections:
   - year: 2022
     type: 村里長
@@ -100923,26 +100925,24 @@
 - id: id_賴啓誠_1969
   name: 賴啓誠
   birthyear: 1969
+  alias_names:
+  - 賴啟誠
   elections:
   - year: 2014
     type: 村里長
     region: 臺中市 坪林里
     party: 無黨籍
     elected: 0
-  - year: 2022
-    type: 村里長
-    region: 臺中市 坪林里
-    party: 中國國民黨
-    elected: 0
-- id: id_賴啟誠_1969
-  name: 賴啟誠
-  birthyear: 1969
-  elections:
   - year: 2018
     type: 村里長
     region: 臺中市 坪林里
     party: 中國國民黨
     elected: 1
+  - year: 2022
+    type: 村里長
+    region: 臺中市 坪林里
+    party: 中國國民黨
+    elected: 0
 - id: id_賴巧汝_1969
   name: 賴巧汝
   birthyear: 1969
@@ -102202,13 +102202,13 @@
     party: 無黨籍
     elected: 0
   - year: 2022
-    type: 村里長
-    region: 宜蘭縣 國華里
+    type: 縣市議員
+    region: 花蓮縣 第04選舉區
     party: 無黨籍
     elected: 0
   - year: 2022
-    type: 縣市議員
-    region: 花蓮縣 第04選舉區
+    type: 村里長
+    region: 宜蘭縣 國華里
     party: 無黨籍
     elected: 0
 - id: id_陳恒輝_1969
@@ -112892,13 +112892,13 @@
     elected: 1
   - year: 2014
     type: 村里長
-    region: 臺中市 新北里
-    party: 中國國民黨
+    region: 雲林縣 興新里
+    party: 無黨籍
     elected: 1
   - year: 2014
     type: 村里長
-    region: 雲林縣 興新里
-    party: 無黨籍
+    region: 臺中市 新北里
+    party: 中國國民黨
     elected: 1
   - year: 2018
     type: 村里長
@@ -126360,22 +126360,22 @@
   elections:
   - year: 2010
     type: 村里長
-    region: 臺中市 東昇里
+    region: 新北市 漁光里
     party: 無黨籍
     elected: 1
   - year: 2010
     type: 村里長
-    region: 新北市 漁光里
-    party: 無黨籍
-    elected: 1
-  - year: 2014
-    type: 村里長
     region: 臺中市 東昇里
     party: 無黨籍
     elected: 1
   - year: 2014
     type: 村里長
     region: 新北市 漁光里
+    party: 無黨籍
+    elected: 1
+  - year: 2014
+    type: 村里長
+    region: 臺中市 東昇里
     party: 無黨籍
     elected: 1
   - year: 2018
@@ -159605,6 +159605,8 @@
 - id: id_塗夢龍_1964
   name: 塗夢龍
   birthyear: 1964
+  alias_names:
+  - 𡍼夢龍
   elections:
   - year: 2002
     type: 縣市議員
@@ -159621,6 +159623,11 @@
     region: 新竹市 金竹里
     party: 中國國民黨
     elected: 1
+  - year: 2018
+    type: 縣市議員
+    region: 新竹市 第04選舉區
+    party: 中國國民黨
+    elected: 0
   - year: 2022
     type: 村里長
     region: 新竹市 金竹里
@@ -170374,12 +170381,12 @@
     elected: 0
   - year: 2022
     type: 村里長
-    region: 高雄市 竹西里
+    region: 新北市 彭厝里
     party: 無黨籍
     elected: 0
   - year: 2022
     type: 村里長
-    region: 新北市 彭厝里
+    region: 高雄市 竹西里
     party: 無黨籍
     elected: 0
 - id: id_鄭朝鴻_1964
@@ -173795,15 +173802,6 @@
     region: 臺東縣 中心里
     party: 無黨籍
     elected: 0
-- id: id_𡍼夢龍_1964
-  name: 𡍼夢龍
-  birthyear: 1964
-  elections:
-  - year: 2018
-    type: 縣市議員
-    region: 新竹市 第04選舉區
-    party: 中國國民黨
-    elected: 0
 - id: id_丁彥伶_1963
   name: 丁彥伶
   birthyear: 1963
@@ -175707,17 +175705,17 @@
   birthyear: 1963
   elections:
   - year: 2005
-    type: 縣市議員
-    region: 臺北縣 第04選舉區
-    party: 台灣團結聯盟
-    elected: 1
-  - year: 2005
     type: 國大代表
     region: 全國
     party: 台灣團結聯盟
     elected: 1
     session: 4
     order_id: 20
+  - year: 2005
+    type: 縣市議員
+    region: 臺北縣 第04選舉區
+    party: 台灣團結聯盟
+    elected: 1
   - year: 2010
     type: 縣市議員
     region: 新北市 第07選舉區
@@ -175794,16 +175792,16 @@
     party: 親民黨
     elected: 1
   - year: 2020
-    type: 縣市首長
-    region: 高雄市
-    party: 台灣民眾黨
-    elected: 0
-  - year: 2020
     type: 立法委員
     region: 高雄市 第06選舉區
     party: 親民黨
     elected: 0
     session: 10
+  - year: 2020
+    type: 縣市首長
+    region: 高雄市
+    party: 台灣民眾黨
+    elected: 0
   - year: 2022
     type: 縣市議員
     region: 高雄市 第08選舉區
@@ -187016,13 +187014,13 @@
     elected: 0
   - year: 2022
     type: 村里長
-    region: 連江縣 橋仔村
-    party: 民主進步黨
+    region: 桃園市 大同里
+    party: 無黨籍
     elected: 0
   - year: 2022
     type: 村里長
-    region: 桃園市 大同里
-    party: 無黨籍
+    region: 連江縣 橋仔村
+    party: 民主進步黨
     elected: 0
 - id: id_邱榮發_1963
   name: 邱榮發
@@ -188867,14 +188865,14 @@
     party: 無黨籍
     elected: 1
   - year: 2014
-    type: 鄉鎮市長
-    region: 宜蘭縣 大同鄉
-    party: 中國國民黨
-    elected: 1
-  - year: 2014
     type: 村里長
     region: 新北市 吉興里
     party: 無黨籍
+    elected: 1
+  - year: 2014
+    type: 鄉鎮市長
+    region: 宜蘭縣 大同鄉
+    party: 中國國民黨
     elected: 1
   - year: 2018
     type: 村里長
@@ -225023,14 +225021,14 @@
     elected: 1
   - year: 2018
     type: 村里長
-    region: 新北市 崁頂里
-    party: 中國國民黨
-    elected: 1
-  - year: 2018
-    type: 村里長
     region: 臺北市 關渡里
     party: 無黨籍
     elected: 0
+  - year: 2018
+    type: 村里長
+    region: 新北市 崁頂里
+    party: 中國國民黨
+    elected: 1
   - year: 2022
     type: 村里長
     region: 新北市 崁頂里
@@ -232826,14 +232824,14 @@
   elections:
   - year: 2010
     type: 村里長
-    region: 宜蘭縣 蘇東里
-    party: 無黨籍
-    elected: 0
-  - year: 2010
-    type: 村里長
     region: 臺南市 安順里
     party: 中國國民黨
     elected: 1
+  - year: 2010
+    type: 村里長
+    region: 宜蘭縣 蘇東里
+    party: 無黨籍
+    elected: 0
   - year: 2014
     type: 村里長
     region: 宜蘭縣 蘇東里
@@ -233070,23 +233068,11 @@
     region: 南投縣 田寮里
     party: 無黨籍
     elected: 0
-- id: id_陳鳯梅_1961
-  name: 陳鳯梅
-  birthyear: 1961
-  elections:
-  - year: 2014
-    type: 鄉鎮市長
-    region: 嘉義縣 布袋鎮
-    party: 民主進步黨
-    elected: 1
-  - year: 2018
-    type: 鄉鎮市長
-    region: 嘉義縣 布袋鎮
-    party: 民主進步黨
-    elected: 1
 - id: id_陳鳳梅_1961
   name: 陳鳳梅
   birthyear: 1961
+  alias_names:
+  - 陳鳯梅
   elections:
   - year: 2002
     type: 縣市議員
@@ -233101,6 +233087,16 @@
   - year: 2009
     type: 縣市議員
     region: 嘉義縣 第05選舉區
+    party: 民主進步黨
+    elected: 1
+  - year: 2014
+    type: 鄉鎮市長
+    region: 嘉義縣 布袋鎮
+    party: 民主進步黨
+    elected: 1
+  - year: 2018
+    type: 鄉鎮市長
+    region: 嘉義縣 布袋鎮
     party: 民主進步黨
     elected: 1
   - year: 2022
@@ -238515,16 +238511,16 @@
     session: 3
     order_id: 1
   - year: 1998
-    type: 鄉鎮市長
-    region: 屏東縣 潮州鎮
-    party: 中國國民黨
-    elected: 0
-  - year: 1998
     type: 立法委員
     region: 屏東縣選舉區
     party: 中國國民黨
     elected: 1
     session: 4
+  - year: 1998
+    type: 鄉鎮市長
+    region: 屏東縣 潮州鎮
+    party: 中國國民黨
+    elected: 0
   - year: 2001
     type: 立法委員
     region: 屏東縣選舉區
@@ -255165,13 +255161,13 @@
   elections:
   - year: 2010
     type: 村里長
-    region: 臺南市 嘉芳里
-    party: 無黨籍
+    region: 新北市 秀仁里
+    party: 中國國民黨
     elected: 1
   - year: 2010
     type: 村里長
-    region: 新北市 秀仁里
-    party: 中國國民黨
+    region: 臺南市 嘉芳里
+    party: 無黨籍
     elected: 1
   - year: 2014
     type: 村里長
@@ -255185,13 +255181,13 @@
     elected: 1
   - year: 2018
     type: 村里長
-    region: 新北市 秀仁里
-    party: 中國國民黨
+    region: 臺南市 嘉芳里
+    party: 無黨籍
     elected: 1
   - year: 2018
     type: 村里長
-    region: 臺南市 嘉芳里
-    party: 無黨籍
+    region: 新北市 秀仁里
+    party: 中國國民黨
     elected: 1
   - year: 2022
     type: 村里長
@@ -285585,16 +285581,16 @@
   birthyear: 1958
   elections:
   - year: 1998
+    type: 鄉鎮市長
+    region: 臺北縣 新店市
+    party: 新黨
+    elected: 0
+  - year: 1998
     type: 立法委員
     region: 臺北縣 第03選舉區
     party: 新黨
     elected: 0
     session: 4
-  - year: 1998
-    type: 鄉鎮市長
-    region: 臺北縣 新店市
-    party: 新黨
-    elected: 0
   - year: 2002
     type: 縣市議員
     region: 臺北縣 第10選舉區
@@ -373569,12 +373565,12 @@
   elections:
   - year: 2010
     type: 村里長
-    region: 臺南市 中華里
+    region: 新北市 五順里
     party: 無黨籍
     elected: 0
   - year: 2010
     type: 村里長
-    region: 新北市 五順里
+    region: 臺南市 中華里
     party: 無黨籍
     elected: 0
   - year: 2014
@@ -382381,16 +382377,16 @@
   birthyear: 1955
   elections:
   - year: 1998
+    type: 鄉鎮市長
+    region: 金門縣 金沙鎮
+    party: 中國國民黨
+    elected: 0
+  - year: 1998
     type: 立法委員
     region: 金門縣選舉區
     party: 無黨籍
     elected: 0
     session: 4
-  - year: 1998
-    type: 鄉鎮市長
-    region: 金門縣 金沙鎮
-    party: 中國國民黨
-    elected: 0
 - id: id_陳國安_1955
   name: 陳國安
   birthyear: 1955
@@ -429701,14 +429697,14 @@
   elections:
   - year: 2010
     type: 村里長
-    region: 臺南市 社子里
-    party: 無黨籍
-    elected: 0
-  - year: 2010
-    type: 村里長
     region: 臺南市 崇德里
     party: 中國國民黨
     elected: 1
+  - year: 2010
+    type: 村里長
+    region: 臺南市 社子里
+    party: 無黨籍
+    elected: 0
   - year: 2014
     type: 村里長
     region: 臺南市 崇德里
@@ -471842,20 +471838,15 @@
   elections:
   - year: 2010
     type: 村里長
-    region: 高雄市 南端里
-    party: 無黨籍
-    elected: 1
-  - year: 2010
-    type: 村里長
     region: 臺中市 瑞城里
     party: 無黨籍
     elected: 0
-  - year: 2014
+  - year: 2010
     type: 村里長
     region: 高雄市 南端里
     party: 無黨籍
     elected: 1
-  - year: 2018
+  - year: 2014
     type: 村里長
     region: 高雄市 南端里
     party: 無黨籍
@@ -471865,6 +471856,11 @@
     region: 臺中市 瑞城里
     party: 民主進步黨
     elected: 0
+  - year: 2018
+    type: 村里長
+    region: 高雄市 南端里
+    party: 無黨籍
+    elected: 1
   - year: 2022
     type: 村里長
     region: 高雄市 南端里
@@ -489390,25 +489386,25 @@
   birthyear: 1950
   elections:
   - year: 2002
-    type: 鄉鎮市長
-    region: 臺南縣 將軍鄉
-    party: 中國國民黨
-    elected: 1
+    type: 縣市議員
+    region: 臺南縣 第09選舉區
+    party: 無黨籍
+    elected: 0
   - year: 2002
-    type: 縣市議員
-    region: 臺南縣 第09選舉區
-    party: 無黨籍
-    elected: 0
-  - year: 2005
-    type: 縣市議員
-    region: 臺南縣 第09選舉區
-    party: 無黨籍
-    elected: 0
+    type: 鄉鎮市長
+    region: 臺南縣 將軍鄉
+    party: 中國國民黨
+    elected: 1
   - year: 2005
     type: 鄉鎮市長
     region: 臺南縣 將軍鄉
     party: 中國國民黨
     elected: 1
+  - year: 2005
+    type: 縣市議員
+    region: 臺南縣 第09選舉區
+    party: 無黨籍
+    elected: 0
   - year: 2014
     type: 縣市議員
     region: 臺南市 第03選舉區
@@ -525263,12 +525259,17 @@
   elections:
   - year: 2010
     type: 村里長
-    region: 苗栗縣 頂埔里
+    region: 臺北市 介壽里
     party: 無黨籍
     elected: 1
   - year: 2010
     type: 村里長
-    region: 臺北市 介壽里
+    region: 苗栗縣 頂埔里
+    party: 無黨籍
+    elected: 1
+  - year: 2014
+    type: 村里長
+    region: 苗栗縣 頂埔里
     party: 無黨籍
     elected: 1
   - year: 2014
@@ -525276,21 +525277,16 @@
     region: 臺北市 介壽里
     party: 無黨籍
     elected: 0
-  - year: 2014
-    type: 村里長
-    region: 苗栗縣 頂埔里
-    party: 無黨籍
-    elected: 1
-  - year: 2018
-    type: 村里長
-    region: 臺北市 介壽里
-    party: 無黨籍
-    elected: 1
   - year: 2018
     type: 村里長
     region: 苗栗縣 頂埔里
     party: 無黨籍
     elected: 0
+  - year: 2018
+    type: 村里長
+    region: 臺北市 介壽里
+    party: 無黨籍
+    elected: 1
   - year: 2022
     type: 村里長
     region: 臺北市 介壽里
@@ -539786,16 +539782,16 @@
   birthyear: 1945
   elections:
   - year: 1998
-    type: 鄉鎮市長
-    region: 新竹縣 湖口鄉
-    party: 中國國民黨
-    elected: 0
-  - year: 1998
     type: 立法委員
     region: 新竹縣選舉區
     party: 民主聯盟
     elected: 0
     session: 4
+  - year: 1998
+    type: 鄉鎮市長
+    region: 新竹縣 湖口鄉
+    party: 中國國民黨
+    elected: 0
   - year: 2002
     type: 縣市議員
     region: 新竹縣 第02選舉區
@@ -554969,14 +554965,14 @@
   elections:
   - year: 2010
     type: 村里長
-    region: 花蓮縣 明里村
-    party: 中國國民黨
-    elected: 1
-  - year: 2010
-    type: 村里長
     region: 彰化縣 東城村
     party: 無黨籍
     elected: 0
+  - year: 2010
+    type: 村里長
+    region: 花蓮縣 明里村
+    party: 中國國民黨
+    elected: 1
   - year: 2014
     type: 村里長
     region: 花蓮縣 明里村
@@ -584519,16 +584515,16 @@
     party: 無黨籍
     elected: 0
   - year: 1998
+    type: 鄉鎮市長
+    region: 屏東縣 屏東市
+    party: 無黨籍
+    elected: 0
+  - year: 1998
     type: 立法委員
     region: 屏東縣選舉區
     party: 無黨籍
     elected: 0
     session: 4
-  - year: 1998
-    type: 鄉鎮市長
-    region: 屏東縣 屏東市
-    party: 無黨籍
-    elected: 0
   - year: 2001
     type: 縣市首長
     region: 屏東縣
