@@ -25,6 +25,11 @@
 | `candidates.yaml`     | 候選人主 mapping (姓名、id、參選紀錄) |
 | `election_types.yaml` | 合法選別 enum 清單                 |
 
+## 儲存依賴
+
+- PostgreSQL：候選人身分判定、別名管理、公報資料與操作狀態
+- 本機檔案系統：中選會原始資料（`_data/`）、操作紀錄（`logs/`）、YAML 產出文件、PDF 與圖片
+
 ## 服務
 
 同一個 App 內的三個頁面：
