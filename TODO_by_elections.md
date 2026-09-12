@@ -1,5 +1,12 @@
 # TODO: 補齊立委與議員補選候選人資料
 
+## 後續：補齊不分區立委 `elected`
+
+- 範圍：第 3～11 屆不分區／僑選名單，共 1,230 筆。
+- 原因：現有候選人名單只有政黨與順位，沒有正式當選結果。
+- 處理：取得中選會正式當選名單，回填來源資料與 DB，再重新 build `candidates.yaml`。
+- 驗收：所有立委參選紀錄都有 `elected: 0/1`，且 `test_legislator.py` 通過。
+
 ## 為什麼要做
 
 `candidates.yaml` 目前缺 8 場補選。下游的 PoliticalContributions 專案拿政治獻金申報資料來比對候選人時,有 35 位申報人因此找不到對應的人,無法取得 candidate id 與黨籍。
