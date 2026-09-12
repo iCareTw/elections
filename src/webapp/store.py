@@ -14,7 +14,7 @@ import psycopg
 from psycopg import sql
 from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
-from psycopg_pool import ConnectionPool
+from psycopg_pool import ConnectionPool, PoolTimeout
 
 from src.normalize import (
     normalize_candidate_name as _normalize_candidate_name,
@@ -174,6 +174,12 @@ class Store:
             check=ConnectionPool.check_connection,
             open=True,
         )
+        try:
+            self._pool.wait(timeout=5)
+        except PoolTimeout as exc:
+            self._pool.close()
+            self._pool = None
+            raise RuntimeError("無法在 5 秒內連上 PostgreSQL,請確認 DB 是否已啟動") from exc
 
     def close(self) -> None:
         """Close the connection pool."""
