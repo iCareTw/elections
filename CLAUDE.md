@@ -27,6 +27,15 @@ uv add <package>
 
 資料類型：`president/`, `mayor/`, `legislator/`, `councilor/`
 
+## 跨專案職責邊界（硬規則）
+
+- 本專案只負責中選會候選人資料、Identity UI/DB，以及產出 `candidates.yaml`、`election_types.yaml`。
+- `verify/` 可產出一次性交付檔供下游釐清差異；交付後的 mapping、排除規則與清單長期維護屬於下游專案。
+- PoliticalContributions 負責政治獻金原始資料、category 分類、候選人 mapping、已知差異排除及其設定檔維護。
+- Q&A 或實作前先判斷問題來源：候選人名單缺漏／錯誤回本專案；政治獻金資料錯置、mapping 行為或排除清單使用方式回 PoliticalContributions。
+- 不因本機可讀取 sibling repo 就自行跨專案修改；除非 user 明確切換工作專案或要求跨專案實作，否則只提供交付檔與問題證據。
+- 下游回報差異時，本專案只修正確認屬於 elections 的資料；其餘項目整理後交回下游，不在此處延伸實作或驗收。
+
 ## Identity UI（`src/webapp/`）
 
 FastAPI + Jinja2 候選人身分判定介面（同義詞：identity ui / identity-ui / mapping app）。DB 是 single source of truth。要點：
